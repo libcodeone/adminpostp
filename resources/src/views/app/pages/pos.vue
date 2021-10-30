@@ -811,6 +811,165 @@
           </button>
         </b-modal>
 
+
+
+        <!-- Modal Show Invoice-->
+        <b-modal hide-footer size="lg" scrollable id="Show_invoiceF" :title="$t('Invoice')">
+          <vue-easy-print table-show ref="Show_invoiceF">
+            <div id="invoice-POSF">
+              <!-- <h6 class="text-right">{{$t('date')}} : {{invoice_pos.sale.date}}</h6>
+              <center id="top">
+                <div class="logo">
+                  <img :src="'/images/' + invoice_pos.setting.logo">
+                </div>
+                <div class="info">
+                  <h3>{{invoice_pos.setting.CompanyName}}</h3>
+                </div>
+              </center> -->
+
+              <div class="container">
+                <div class="row">
+                  <div class="col-9">
+                    <div class="row">
+                      <div class="info">
+                        <h3>{{invoice_pos.setting.CompanyName}}</h3>
+                      </div>
+                    </div>
+                    <div class="row">
+                      Giro: Venta de partes, piezas y accesorios Nuevos  para vehiculos automotores version americana, Koreanos originales garantizados
+                    </div>
+                    <div class="row">
+                      <div class="col-3">
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                      </div>
+                      <div class="col-3">
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                      </div>
+                      <div class="col-3">
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                      </div>
+                      <div class="col-3">
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                        <span>.col-md-3</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-3 border border-danger rounded">
+                    <span class="text-danger">Comprobante de credito fiscal</span>
+                    <span class="text-danger">we323988</span>
+                    <h2 class="text-danger">N° 0047755</h2><span>8785</span>
+                    <span class="text-danger">NIT: we323988</span>
+                    <span class="text-danger">N.R.C: we323988</span>
+                  </div>
+                </div>
+                <div class="row ">
+                  <div class="col-8  border border-primary"> 
+                    <div class="row">
+                      <div class="col-12 border border-primary padding-top padding-bottom"> 
+                        {{invoice_pos.sale.client_name}}
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-4 border border-primary"> 
+                        REG. No.:
+                      </div>
+                      <div class="col-8 border border-primary"> 
+                        GIRO CLIENTE:
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-4 border border-primary">
+                    <div class="row">
+                      <div class="col-4 border border-primary">Vendedor</div>
+                      <div class="col-4 border border-primary">{{$t('date')}}</div>
+                      <div class="col-4 border border-primary">Forma de pago</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-4 border border-primary">{{currentUser.username}}</div>
+                      <div class="col-4 border border-primary">{{invoice_pos.sale.date}}</div>
+                      <div class="col-4 border border-primary">Remesa</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 border border-primary">NIT:546545454</div>
+                      <div class="col-6 border border-primary">N.R.C No:</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row rounded">
+                  <div class="col-1 border border-primary">CANT.</div>
+                  <div class="col-2 border border-primary">CODIGO</div>
+                  <div class="col-5 border border-primary">DESCRIPCION</div>
+                  <div class="col-1 border border-primary">PRECIO UNITARIO</div>
+                  <div class="col-1 border border-primary">VENTAS NO SUJ.</div>
+                  <div class="col-1 border border-primary">VENTAS EXENTAS</div>
+                  <div class="col-1 border border-primary">VENTAS GRAVADAS</div>
+                </div>
+                <div class="row"  v-for="detail_invoice in invoice_pos.details">
+                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</div>
+                  <div class="col-2 border border-primary">{{detail_invoice.code}}</div>
+                  <div class="col-5 border border-primary">{{detail_invoice.name}}</div>
+                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.total,2)}}</div>
+                  <div class="col-1 border border-primary"></div>
+                  <div class="col-1 border border-primary"></div>
+                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.total,2)}}</div>
+                </div>
+                <div class="row">
+                  <div class="col-9 border border-primary">
+                    <div class="row rounded">
+                      SON: {{GrandTotalText}}
+                    </div>
+                  </div>
+                  <div class="col-3 border border-primary">
+                    <div class="row">
+                      <div class="col-6 border border-primary">V. GRAVADAS</div>
+                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,2)}}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 border border-primary">IVA</div>
+                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.taxe,2)}}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 border border-primary">SUB-TOTAL</div>
+                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 border border-primary">IVA retenido</div>
+                      <div class="col-6 border border-primary"></div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 border border-primary">V. NO SUJETAS</div>
+                      <div class="col-6 border border-primary"></div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 border border-primary">V. EXENTAS</div>
+                      <div class="col-6 border border-primary"></div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 border border-primary">TOTAL</div>
+                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </vue-easy-print>
+          <button @click="print_pos()" class="btn btn-outline-primary">
+            <i class="i-Billing"></i>
+            {{$t('print')}}
+          </button>
+        </b-modal>
+
         <!-- Modal Add Payment-->
         <validation-observer ref="Add_payment">
           <b-modal hide-footer size="lg" id="Add_Payment" :title="$t('AddPayment')">
@@ -891,11 +1050,11 @@
                       >
                         <b-form-group :label="$t('Cash')">
                           <b-form-input
+                            :state="getValidationState(validationContext)"
                             label="Cash"
                             :placeholder="$t('Cash')"
                             v-model="payment.cash"
-                            @keyup="Calculate_Change()"
-                            :state="getValidationState(validationContext)"
+                            @keyup="keyup_Change()"
                             aria-describedby="Cash-feedback"
                           ></b-form-input>
                           <b-form-invalid-feedback
@@ -917,7 +1076,6 @@
                             label="Change"
                             :placeholder="$t('Change')"
                             v-model="payment.change"
-                            
                             :state="getValidationState(validationContext)"
                             aria-describedby="Change-feedback"
                           ></b-form-input>
@@ -940,8 +1098,16 @@
                         ></b-form-textarea>
                       </b-form-group>
                     </b-col>
+                    
+                    <b-col lg="12" md="12" sm="12" class="mt-2">
+                      <b-form-group :label="$t('BillingMethod')" v-slot="{ ariaDescribedby }">
+                      <b-form-radio v-model="BillingMethod" :aria-describedby="ariaDescribedby" name="factura" value="0">Factura</b-form-radio>
+                      <b-form-radio v-model="BillingMethod" :aria-describedby="ariaDescribedby" name="ticket" value="1">Ticket</b-form-radio>
+                      </b-form-group>
+                    </b-col>
                   </b-row>
                 </b-col>
+
 
                 <b-col md="6">
                   <b-card>
@@ -1163,7 +1329,7 @@ export default {
         // "hn",
         // "vn"
       ],
-      GrandTotal: 0,
+      
       stripe: {},
       stripe_key:'',
       cardElement: {},
@@ -1172,11 +1338,13 @@ export default {
         amount: "",
         Reglement: "",
         notes: "",
-        cash: GrandTotal,
+        cash: 0,
         change: 0
       },
       isLoading: true,
-      
+      BillingMethod:0,
+      GrandTotal: 0,
+      GrandTotalText: "",
       total: 0,
       Ref: "",
       search: "",
@@ -1206,7 +1374,7 @@ export default {
           discount: "",
           taxe: "",
           date:"",
-          tax_rate: "",
+          tax_rate: 13,
           shipping: "",
           GrandTotal: ""
         },
@@ -1223,7 +1391,7 @@ export default {
       sale: {
         warehouse_id: "",
         client_id: "",
-        tax_rate: 0,
+        tax_rate: 13,
         shipping: 0,
         discount: 0,
         TaxNet: 0
@@ -1313,19 +1481,7 @@ export default {
         }, 500);
       }
     },
-    Set_Cash() {
-      if (isNaN(this.payment.cash)) {
-        this.payment.cash = 0;
-      }
-    },
-    Calculate_Change(){
-      if (isNaN(this.payment.cash)) {
-        this.payment.change = 0;
-      }else{
-        this.payment.change = payment.amount-payment.cash;
-      }
-    },
-
+    
 
     SetLocal(locale) {
       this.$i18n.locale = locale;
@@ -1696,6 +1852,9 @@ export default {
     print_pos() {
       this.$refs.Show_invoice.print();
     },
+    print_pos() {
+      this.$refs.Show_invoiceF.print();
+    },
 
     //-------------------------------- Invoice POS ------------------------------\\
     Invoice_POS(id) {
@@ -1706,10 +1865,16 @@ export default {
         .get("Sales/Print_Invoice/" + id)
         .then(response => {
           this.invoice_pos = response.data;
+          this.GrandTotalText= Util.numeroALetras(this.formatNumber(this.invoice_pos.sale.GrandTotal , 2));
           setTimeout(() => {
             // Complete the animation of the  progress bar.
             NProgress.done();
-            this.$bvModal.show("Show_invoice");
+            if(this.BillingMethod  == 0){
+              this.$bvModal.show("Show_invoiceF");
+            }else{
+              this.$bvModal.show("Show_invoice");
+
+            }
           }, 500);
           setTimeout(() => this.print_pos(), 1000);
         })
@@ -1924,7 +2089,7 @@ export default {
 
     keyup_OrderTax() {
       if (isNaN(this.sale.tax_rate)) {
-        this.sale.tax_rate = 0;
+        this.sale.tax_rate = 13;
       } else {
         this.CaclulTotal();
       }
@@ -1948,6 +2113,20 @@ export default {
       } else {
         this.CaclulTotal();
       }
+    },
+    keyup_Cash() {
+      if (isNaN(this.payment.cash)) {
+        this.payment.cash = 0;
+      }
+    },
+    keyup_Change(){
+      this.payment.change = this.formatNumber(this.payment.cash - this.payment.amount , 2);  
+      this.$forceUpdate();
+      // if (isNaN(this.payment.cash)) {
+      //   this.payment.change = 0;
+      // }else{
+      //   this.payment.change = payment.amount-payment.cash;
+      // }
     },
 
     //-----------------------------------Delete Detail Product ------------------------------\\
@@ -2085,12 +2264,15 @@ export default {
     Fire.$on("pay_now", () => {
       setTimeout(() => {
         this.payment.amount = this.formatNumber(this.GrandTotal , 2);
+        this.payment.cash = this.formatNumber(this.GrandTotal , 2);
         this.payment.Reglement = "Cash";
         this.$bvModal.show("Add_Payment");
         // Complete the animation of theprogress bar.
         NProgress.done();
       }, 500);
     });
-  }
+  },
+
+
 };
 </script>

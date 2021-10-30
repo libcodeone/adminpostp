@@ -465,7 +465,7 @@ export default {
     ListTransfers: "Lista de transferencias",
     CreateTransfer: "Crear transferencia",
     OrdersManager: "Gerente de pedidos",
-    ListQuotations: "List Quotations",
+    ListQuotations: "Lista de cotizaciones",
     ListPurchases: "Lista de compras",
     ListSales: "Lista de ventas",
     ListReturns: "Lista de devoluciones",
@@ -622,4 +622,5 @@ export default {
     oops: "¡error! Página no encontrada.",
     couldNotFind: "No pudimos encontrar la página que estaba buscando.",
     ReturnDashboard: "volver al tablero",
+    BillingMethod: "Método de facturación",
 };

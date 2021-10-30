@@ -53,6 +53,9 @@ class PosController extends BaseController
             $order->discount = $request->discount;
             $order->shipping = $request->shipping;
             $order->GrandTotal = $request->GrandTotal;
+            $order->cash = $request->payment['cash'];
+            $order->change = $request->payment['change'];
+
             $order->statut = 'completed';
             $order->user_id = Auth::user()->id;
 

@@ -20,7 +20,7 @@ mix.js('resources/src/main.js', 'public').js('resources/src/login.js', 'public')
     .sass('resources/src/assets/styles/sass/globals/globals.scss', 'public/css');
 
     mix.webpackConfig({
-        devtool: "inline-source-map",
+        // devtool: "inline-source-map",
         output: {
           
             filename:'js/[name].min.js',
