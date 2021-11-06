@@ -265,7 +265,7 @@
                       <div class="col-4 border border-primary"> 
                       </div>
                       <div class="col-8 border border-primary"> 
-                        {{sale.client_Giro}}
+                        {{sale.client_giro}}
                       </div>
                     </div>
                   </div>
@@ -413,7 +413,7 @@
                
                       </div>
                       <div class="col-8 border border-primary"> 
-                        {{clients.giro}}
+                        {{sale.client_giro}}
                       </div>
                     </div>
                   </div>
@@ -429,8 +429,8 @@
                       <div class="col-4 border border-primary">Efectivo</div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary">{{clients.NIT}}</div>
-                      <div class="col-6 border border-primary">{{clients.NRC}}</div>
+                      <div class="col-6 border border-primary">{{sale.client_NIT}}</div>
+                      <div class="col-6 border border-primary">{{sale.client_NRC}}</div>
                     </div>
                   </div>
                 </div>
@@ -894,7 +894,7 @@ export default {
               this.$t("Success")
             );
             NProgress.done();
-            this.Invoice_POS(id);
+            this.Invoice_POS(this.$route.params.id);
             this.$bvModal.hide("Add_Payment");
             this.$router.push({ name: "index_sales_pay" });
           })
