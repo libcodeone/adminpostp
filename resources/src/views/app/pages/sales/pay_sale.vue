@@ -246,7 +246,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-3 border border-danger rounded">
+                  <div class="col-3  rounded">
                     <span class="text-danger">Factura comercial</span>
                     <span class="text-danger">we323988</span>
                     <h2 class="text-danger">N° 0047755</h2><span>8785</span>
@@ -255,89 +255,89 @@
                   </div>
                 </div>
                 <div class="row ">
-                  <div class="col-8  border border-primary"> 
+                  <div class="col-8  "> 
                     <div class="row">
-                      <div class="col-12 border border-primary padding-top padding-bottom"> 
+                      <div class="col-12  padding-top padding-bottom"> 
                         {{invoice_pos.sale.client_name}}
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-4 border border-primary"> 
+                      <div class="col-4 "> 
                       </div>
-                      <div class="col-8 border border-primary"> 
+                      <div class="col-8 "> 
                         {{sale.client_giro}}
                       </div>
                     </div>
                   </div>
-                  <div class="col-4 border border-primary">
+                  <div class="col-4 ">
                     <div class="row">
-                      <div class="col-4 border border-primary">Vendedor</div>
-                      <div class="col-4 border border-primary">{{$t('date')}}</div>
-                      <div class="col-4 border border-primary">Forma de pago</div>
+                      <div class="col-4 ">Vendedor</div>
+                      <div class="col-4 ">{{$t('date')}}</div>
+                      <div class="col-4 ">Forma de pago</div>
                     </div>
                     <div class="row">
-                      <div class="col-4 border border-primary">{{currentUser.username}}</div>
-                      <div class="col-4 border border-primary">{{invoice_pos.sale.date}}</div>
-                      <div class="col-4 border border-primary">Efectivo</div>
+                      <div class="col-4 ">{{currentUser.username}}</div>
+                      <div class="col-4 ">{{invoice_pos.sale.date}}</div>
+                      <div class="col-4 ">Efectivo</div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary">{{sale.client_NIT}}</div>
-                      <div class="col-6 border border-primary">{{sale.client_NRC}}</div>
+                      <div class="col-6 ">{{sale.client_NIT}}</div>
+                      <div class="col-6 ">{{sale.client_NRC}}</div>
                     </div>
                   </div>
                 </div>
                 <div class="row rounded">
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-2 border border-primary"></div>
-                  <div class="col-5 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
+                  <div class="col-1 "></div>
+                  <div class="col-2 "></div>
+                  <div class="col-5 "></div>
+                  <div class="col-1 "></div>
+                  <div class="col-1 "></div>
+                  <div class="col-1 "></div>
+                  <div class="col-1 "></div>
                 </div>
                 <div class="row"  v-for="detail_invoice in invoice_pos.details">
-                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</div>
-                  <div class="col-2 border border-primary">{{detail_invoice.code}}</div>
-                  <div class="col-5 border border-primary">{{detail_invoice.name}}</div>
-                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.total,2)}}</div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.total,2)}}</div>
+                  <div class="col-1 ">{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</div>
+                  <div class="col-2 ">{{detail_invoice.code}}</div>
+                  <div class="col-5 ">{{detail_invoice.name}}</div>
+                  <div class="col-1 ">{{formatNumber(detail_invoice.total,2)}}</div>
+                  <div class="col-1 "></div>
+                  <div class="col-1 "></div>
+                  <div class="col-1 ">{{formatNumber(detail_invoice.total,2)}}</div>
                 </div>
                 <div class="row">
-                  <div class="col-9 border border-primary">
+                  <div class="col-9 ">
                     <div class="row rounded">
                        {{GrandTotalText}}
                     </div>
                   </div>
-                  <div class="col-3 border border-primary">
+                  <div class="col-3 ">
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,2)}}</div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 ">{{formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,2)}}</div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.taxe,2)}}</div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 ">{{formatNumber(invoice_pos.sale.taxe,2)}}</div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 ">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary"></div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 "></div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary"></div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 "></div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary"></div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 "></div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 ">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
                     </div>
                   </div>
                 </div>
@@ -393,7 +393,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-3 border border-danger rounded">
+                  <div class="col-3 ">
                     <span class="text-danger">Comprobante de credito fiscal</span>
                     <span class="text-danger">we323988</span>
                     <h2 class="text-danger">N° 0047755</h2><span>8785</span>
@@ -402,90 +402,90 @@
                   </div>
                 </div>
                 <div class="row ">
-                  <div class="col-8  border border-primary"> 
+                  <div class="col-8 "> 
                     <div class="row">
-                      <div class="col-12 border border-primary padding-top padding-bottom"> 
+                      <div class="col-12  padding-top padding-bottom"> 
                         {{invoice_pos.sale.client_name}}
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-4 border border-primary"> 
+                      <div class="col-4"> 
                
                       </div>
-                      <div class="col-8 border border-primary"> 
+                      <div class="col-8"> 
                         {{sale.client_giro}}
                       </div>
                     </div>
                   </div>
-                  <div class="col-4 border border-primary">
+                  <div class="col-4">
                     <div class="row">
-                      <div class="col-4 border border-primary"></div>
-                      <div class="col-4 border border-primary">{{$t('date')}}</div>
-                      <div class="col-4 border border-primary"></div>
+                      <div class="col-4 "></div>
+                      <div class="col-4 ">{{$t('date')}}</div>
+                      <div class="col-4 "></div>
                     </div>
                     <div class="row">
-                      <div class="col-4 border border-primary">{{currentUser.username}}</div>
-                      <div class="col-4 border border-primary">{{invoice_pos.sale.date}}</div>
-                      <div class="col-4 border border-primary">Efectivo</div>
+                      <div class="col-4 ">{{currentUser.username}}</div>
+                      <div class="col-4 ">{{invoice_pos.sale.date}}</div>
+                      <div class="col-4 ">Efectivo</div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary">{{sale.client_NIT}}</div>
-                      <div class="col-6 border border-primary">{{sale.client_NRC}}</div>
+                      <div class="col-6 ">{{sale.client_NIT}}</div>
+                      <div class="col-6 ">{{sale.client_NRC}}</div>
                     </div>
                   </div>
                 </div>
                 <div class="row rounded">
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-2 border border-primary"></div>
-                  <div class="col-5 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
+                  <div class="col-1 "></div>
+                  <div class="col-2 "></div>
+                  <div class="col-5 "></div>
+                  <div class="col-1 "></div>
+                  <div class="col-1 "></div>
+                  <div class="col-1 "></div>
+                  <div class="col-1 "></div>
                 </div>
                 <div class="row"  v-for="detail_invoice in invoice_pos.details">
-                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</div>
-                  <div class="col-2 border border-primary">{{detail_invoice.code}}</div>
-                  <div class="col-5 border border-primary">{{detail_invoice.name}}</div>
-                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.total,2)}}</div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.total,2)}}</div>
+                  <div class="col-1 ">{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</div>
+                  <div class="col-2 ">{{detail_invoice.code}}</div>
+                  <div class="col-5 ">{{detail_invoice.name}}</div>
+                  <div class="col-1 ">{{formatNumber(detail_invoice.total,2)}}</div>
+                  <div class="col-1 "></div>
+                  <div class="col-1 "></div>
+                  <div class="col-1 ">{{formatNumber(detail_invoice.total,2)}}</div>
                 </div>
                 <div class="row">
-                  <div class="col-9 border border-primary">
+                  <div class="col-9 ">
                     <div class="row rounded">
                          {{GrandTotalText}}
                     </div>
                   </div>
-                  <div class="col-3 border border-primary">
+                  <div class="col-3 ">
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,2)}}</div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 ">{{formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,2)}}</div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.taxe,2)}}</div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 ">{{formatNumber(invoice_pos.sale.taxe,2)}}</div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 ">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary"></div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 "></div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary"></div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 "></div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary"></div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 "></div>
                     </div>
                     <div class="row">
-                      <div class="col-6 border border-primary"></div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
+                      <div class="col-6 "></div>
+                      <div class="col-6 ">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
                     </div>
                   </div>
                 </div>
@@ -645,6 +645,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import NProgress from "nprogress";
+import Util from "./../../../../utils";
 
 export default {
   computed: mapGetters(["currentUserPermissions", "currentUser"]),
@@ -801,6 +802,9 @@ export default {
           }, 500);
         });
     },
+     print_pos() {
+      this.$refs.Show_invoiceCCF.print();
+    },
     Check_in(){
       this.payment.amount = this.formatNumber(this.GrandTotal , 2);
         this.payment.cash = this.formatNumber(this.GrandTotal , 2);
@@ -855,8 +859,8 @@ export default {
             if(this.BillingMethod  == 0){
               this.$bvModal.show("Show_invoiceF");
             }else if(this.BillingMethod  == 1){
-              this.$bvModal.show("Show_invoiceF");
-            }{
+              this.$bvModal.show("Show_invoiceCCF");
+            }else{
               this.$bvModal.show("Show_invoice");
 
             }
@@ -871,7 +875,10 @@ export default {
     Update_Sale() {
         // Start the progress bar.
         this.payment.amount = this.formatNumber(this.sale.GrandTotal , 2);
-        this.payment.Reglement = "Cash";
+        if(this.payment.Reglement == ""){
+
+          this.payment.Reglement = "Cash";
+        }
         NProgress.start();
         NProgress.set(0.1);
         let id = this.$route.params.id;
@@ -903,51 +910,51 @@ export default {
             this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
           });
     },
-    //----------------------------------Process Payment ------------------------------\\
-    async processPayment() {
-      this.paymentProcessing = true;
+  //   //----------------------------------Process Payment ------------------------------\\
+  //   async processPayment() {
+  //     this.paymentProcessing = true;
 
-      const { token, error } = await this.stripe.createToken(
-        this.cardElement
-      );
+  //     const { token, error } = await this.stripe.createToken(
+  //       this.cardElement
+  //     );
 
-          if (error) {
-              this.paymentProcessing = false;
-               NProgress.done();
-              this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
-          } else {
+  //         if (error) {
+  //             this.paymentProcessing = false;
+  //              NProgress.done();
+  //             this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
+  //         } else {
    
-         axios
-        .post("pos/CreatePOS", {
-          client_id: this.sale.client_id,
-          warehouse_id: this.sale.warehouse_id,
-          tax_rate: this.sale.tax_rate,
-          TaxNet: this.sale.TaxNet,
-          discount: this.sale.discount,
-          shipping: this.sale.shipping,
-          details: this.details,
-          GrandTotal: this.GrandTotal,
-          payment: this.payment,
-          token : token.id,
-        })
-        .then(response => {
-          this.paymentProcessing = false;
-          if (response.data.success === true) {
-            // Complete the animation of theprogress bar.
-            NProgress.done();
-            this.Invoice_POS(response.data.id);
-            this.$bvModal.hide("Add_Payment");
-            this.Reset_Pos();
-          }
-        })
-        .catch(error => {
-          this.paymentProcessing = false;
-          // Complete the animation of theprogress bar.
-          NProgress.done();
-          this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
-        });
-    }
-  },
+  //        axios
+  //       .post("pos/CreatePOS", {
+  //         client_id: this.sale.client_id,
+  //         warehouse_id: this.sale.warehouse_id,
+  //         tax_rate: this.sale.tax_rate,
+  //         TaxNet: this.sale.TaxNet,
+  //         discount: this.sale.discount,
+  //         shipping: this.sale.shipping,
+  //         details: this.details,
+  //         GrandTotal: this.GrandTotal,
+  //         payment: this.payment,
+  //         token : token.id,
+  //       })
+  //       .then(response => {
+  //         this.paymentProcessing = false;
+  //         if (response.data.success === true) {
+  //           // Complete the animation of theprogress bar.
+  //           NProgress.done();
+  //           this.Invoice_POS(response.data.id);
+  //           this.$bvModal.hide("Add_Payment");
+  //           this.Reset_Pos();
+  //         }
+  //       })
+  //       .catch(error => {
+  //         this.paymentProcessing = false;
+  //         // Complete the animation of theprogress bar.
+  //         NProgress.done();
+  //         this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
+  //       });
+  //   }
+  // },
     //---------------------------------Get Product Details ------------------------\\
     Get_Product_Details(product, product_id) {
       axios.get("Products/" + product_id).then(response => {

@@ -503,22 +503,19 @@ class SalesController extends BaseController
          $this->authorizeForUser($request->user('api'), 'update', Sale::class);
          $current_Sale = Sale::findOrFail($id);
  
-         $payment_statut = 'unpaid';
+         $payment_statut = 'paid';
          
-        //  PaymentSale::create([
-        //                 'sale_id' => $id,
-        //                 'Ref' => app('App\Http\Controllers\PaymentSalesController')->getNumberOrder(),
-        //                 'date' => Carbon::now(),
-        //                 'Reglement' => $request['Reglement'],
-        //                 'montant' => $request['amount'],
-        //                 'notes' => $request['notes'],
-        //                 'user_id' => Auth::user()->id,
-        //             ]);
+                    $PaymentSale = new PaymentSale();
+                        $PaymentSale->sale_id = $id;
+                        $PaymentSale->Ref = app('App\Http\Controllers\PaymentSalesController')->getNumberOrder();
+                        $PaymentSale->date = Carbon::now();
+                        $PaymentSale->Reglement = $request['Reglement'];
+                        $PaymentSale->montant = $request['GrandTotal'];
+                        $PaymentSale->user_id = Auth::user()->id;
+                        $PaymentSale->save();
                     $current_Sale->update([
                         'notes' => $request['notes'],
                         'statut' => 'pending',
-                        'tax_rate' => $request['tax_rate'],
-                        'TaxNet' => $request['TaxNet'],
                         'discount' => $request['discount'],
                         'change' => $request['change'],
                         'cash' => $request['cash'],
