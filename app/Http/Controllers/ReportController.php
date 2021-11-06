@@ -454,6 +454,9 @@ class ReportController extends BaseController
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('code', 'LIKE', "%{$request->search}%")
+                        ->orWhere('NIT', 'LIKE', "%{$request->search}%")
+                        ->orWhere('NRC', 'LIKE', "%{$request->search}%")
+                        ->orWhere('giro', 'LIKE', "%{$request->search}%")
                         ->orWhere('phone', 'LIKE', "%{$request->search}%");
                 });
             });

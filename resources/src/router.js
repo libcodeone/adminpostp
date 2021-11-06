@@ -24,7 +24,6 @@ const routes = [
                 name: "dashboard",
                 component: () => import(/* webpackChunkName: "dashboard" */ "./views/app/dashboard/dashboard")
             },
-
             //Products
             {
                 path: "/app/products",
@@ -256,6 +255,19 @@ const routes = [
                             import(/* webpackChunkName: "index_sales" */"./views/app/pages/sales/index_sale")
                     },
                     {
+                        name: "index_sales_pay",
+                        path: "list_checkin",
+                        component: () =>
+                            import(/* webpackChunkName: "index_sales_pay" */"./views/app/pages/sales/index_sale_pay")
+                    },
+                    {
+                        name: "index_sale_dispatcher",
+                        path: "list_dispatcher",
+                        component: () =>
+                            import(/* webpackChunkName: "index_sale_dispatcher" */"./views/app/pages/sales/index_sale_dispatcher")
+                    },
+                    
+                    {
                         name: "store_sale",
                         path: "store",
                         component: () =>
@@ -267,6 +279,19 @@ const routes = [
                         component: () =>
                             import(/* webpackChunkName: "edit_sale" */"./views/app/pages/sales/edit_sale")
                     },
+                    {
+                        name: "checkin",
+                        path: "checkin/:id",
+                        component: () =>
+                            import(/* webpackChunkName: "pay_sale" */"./views/app/pages/sales/pay_sale")
+                    },
+                    {
+                        name: "dispatcher_sale",
+                        path: "dispatcher/:id",
+                        component: () =>
+                            import(/* webpackChunkName: "dispatcher_sale" */"./views/app/pages/sales/dispatcher_sale")
+                    },
+                    
                     {
                         name: "detail_sale",
                         path: "detail/:id",

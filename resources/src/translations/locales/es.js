@@ -623,4 +623,6 @@ export default {
     couldNotFind: "No pudimos encontrar la página que estaba buscando.",
     ReturnDashboard: "volver al tablero",
     BillingMethod: "Método de facturación",
+    sendtobox: "Enviar a caja",
+
 };

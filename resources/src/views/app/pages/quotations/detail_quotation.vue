@@ -62,6 +62,9 @@
               <div>{{quote.client_email}}</div>
               <div>{{quote.client_phone}}</div>
               <div>{{quote.client_adr}}</div>
+              <div>{{quote.client_NIT}}</div>
+              <div>{{quote.client_NRC}}</div>
+              <div>{{quote.client_giro}}</div>
             </b-col>
             <b-col md="4" class="mb-4">
               <h5 class="font-weight-bold">{{$t('Company_Info')}}</h5>

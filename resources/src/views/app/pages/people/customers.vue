@@ -121,6 +121,26 @@
             </b-form-group>
           </b-col>
 
+          <!-- NIT Customer   -->
+          <b-col md="12">
+            <b-form-group :label="$t('NIT')">
+              <b-form-input label="NIT" :placeholder="$t('SearchByNIT')" v-model="Filter_NIT"></b-form-input>
+            </b-form-group>
+          </b-col>
+
+          <!-- NRC Customer   -->
+          <b-col md="12">
+            <b-form-group :label="$t('NRC')">
+              <b-form-input label="NRC" :placeholder="$t('SearchByNRC')" v-model="Filter_NRC"></b-form-input>
+            </b-form-group>
+          </b-col>
+          <!-- Giro Customer   -->
+          <b-col md="12">
+            <b-form-group :label="$t('Giro')">
+              <b-form-input label="giro" :placeholder="$t('SearchByGiro')" v-model="Filter_Giro"></b-form-input>
+            </b-form-group>
+          </b-col>
+
           <b-col md="6" sm="12">
             <b-button @click="Get_Clients(serverParams.page)" variant="primary m-1" size="sm" block>
               <i class="i-Filter-2"></i>
@@ -165,7 +185,7 @@
             <b-col md="6" sm="12">
               <validation-provider
                 name="Email customer"
-                :rules="{ required: true}"
+                :rules="{ required: false}"
                 v-slot="validationContext"
               >
                 <b-form-group :label="$t('Email')">
@@ -261,6 +281,63 @@
                 </b-form-group>
               </validation-provider>
             </b-col>
+            <!-- Customer NIT -->
+            <b-col md="6" sm="12">
+              <validation-provider
+                name="NIT"
+                :rules="{ required: true}"
+                v-slot="validationContext"
+              >
+                <b-form-group :label="$t('NIT')">
+                  <b-form-input
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="NIT-feedback"
+                    label="NIT"
+                    v-model="client.NIT"
+                  ></b-form-input>
+                  <b-form-invalid-feedback id="NIT-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+            <!-- Customer NRC -->
+            <b-col md="6" sm="12">
+              <validation-provider
+                name="NRC"
+                :rules="{ required: true}"
+                v-slot="validationContext"
+              >
+                <b-form-group :label="$t('NRC')">
+                  <b-form-input
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="NRC-feedback"
+                    label="NRC"
+                    v-model="client.NRC"
+                  ></b-form-input>
+                  <b-form-invalid-feedback id="NRC-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+
+            <!-- Customer Giro -->
+                <b-col md="6" sm="12">
+                  <validation-provider
+                    name="giro"
+                    :rules="{ required: true}"
+                    v-slot="validationContext"
+                  >
+                    <b-form-group :label="$t('Giro')">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="giro-feedback"
+                        label="giro"
+                        v-model="client.giro"
+                      ></b-form-input>
+                      <b-form-invalid-feedback
+                        id="giro-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
 
             <b-col md="12" class="mt-3">
               <b-button variant="primary" type="submit">{{$t('submit')}}</b-button>
@@ -311,6 +388,22 @@
                 <td>{{$t('Adress')}}</td>
                 <th>{{client.adresse.substring(0, 24)}}</th>
               </tr>
+              <tr>
+                <!-- Customer NIT -->
+                <td>{{$t('NIT')}}</td>
+                <th>{{client.NIT.substring(0, 24)}}</th>
+              </tr>
+              <tr>
+                <!-- Customer NRC -->
+                <td>{{$t('NRC')}}</td>
+                <th>{{client.NRC.substring(0, 24)}}</th>
+              </tr>
+              <tr>
+                <!-- Customer Giro -->
+                <td>{{$t('Giro')}}</td>
+                <th>{{client.giro.substring(0, 24)}}</th>
+              </tr>
+
             </tbody>
           </table>
         </b-col>
@@ -365,7 +458,7 @@
                 <tr>
                   <td>{{$t('Email')}}</td>
                   <th>
-                    <span class="badge badge-outline-success">{{$t('Field_is_required')}} | unique</span>
+                    <span class="badge badge-outline-success"> unique</span>
                   </th>
                 </tr>
 
@@ -385,6 +478,24 @@
 
                 <tr>
                   <td>{{$t('Adress')}}</td>
+                  <th>
+                    <span class="badge badge-outline-success">{{$t('Field_is_required')}}</span>
+                  </th>
+                </tr>
+                <tr>
+                  <td>{{$t('NIT')}}</td>
+                  <th>
+                    <span class="badge badge-outline-success">{{$t('Field_is_required')}}</span>
+                  </th>
+                </tr>
+                <tr>
+                  <td>{{$t('NRC')}}</td>
+                  <th>
+                    <span class="badge badge-outline-success">{{$t('Field_is_required')}}</span>
+                  </th>
+                </tr>
+                <tr>
+                  <td>{{$t('Giro')}}</td>
                   <th>
                     <span class="badge badge-outline-success">{{$t('Field_is_required')}}</span>
                   </th>
@@ -429,6 +540,9 @@ export default {
       Filter_Code: "",
       Filter_Phone: "",
       Filter_Email: "",
+      Filter_NIT: "",
+      Filter_NRC: "",
+      Filter_Giro: "",
       clients: [],
       editmode: false,
       import_clients: "",
@@ -441,7 +555,10 @@ export default {
         phone: "",
         country: "",
         city: "",
-        adresse: ""
+        adresse: "",
+        NIT: "",
+        NRC: "",
+        giro: ""
       }
     };
   },
@@ -484,6 +601,24 @@ export default {
         {
           label: this.$t("City"),
           field: "city",
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+        {
+          label: this.$t("NIT"),
+          field: "NIT",
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+        {
+          label: this.$t("NRC"),
+          field: "NRC",
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+        {
+          label: this.$t("Giro"),
+          field: "giro",
           tdClass: "text-left",
           thClass: "text-left"
         },
@@ -579,6 +714,9 @@ export default {
       this.Filter_Code = "";
       this.Filter_Phone = "";
       this.Filter_Email = "";
+      this.Filter_NIT = "";
+      this.Filter_NRC = "";
+      this.Filter_Giro = "";
       this.Get_Clients(this.serverParams.page);
     },
 
@@ -602,7 +740,10 @@ export default {
         { title: "Phone", dataKey: "phone" },
         { title: "Email", dataKey: "email" },
         { title: "Country", dataKey: "country" },
-        { title: "City", dataKey: "city" }
+        { title: "City", dataKey: "city" },
+        { title: "NIT", dataKey: "NIT" },
+        { title: "NRC", dataKey: "NRC" },
+        { title: "Giro", dataKey: "giro" }
       ];
       pdf.autoTable(columns, self.clients);
       pdf.text("Customer List", 40, 25);
@@ -654,6 +795,12 @@ export default {
             this.Filter_Phone +
             "&email=" +
             this.Filter_Email +
+            "&NIT=" +
+            this.Filter_NIT +
+            "&NRC=" +
+            this.Filter_NRC +
+            "&giro=" +
+            this.Filter_Giro +
             "&SortField=" +
             this.serverParams.sort.field +
             "&SortType=" +
@@ -778,7 +925,10 @@ export default {
           phone: this.client.phone,
           country: this.client.country,
           city: this.client.city,
-          adresse: this.client.adresse
+          adresse: this.client.adresse,
+          NIT: this.client.NIT,
+          NRC: this.client.NRC,
+          giro: this.client.giro
         })
         .then(response => {
           Fire.$emit("Event_Customer");
@@ -806,7 +956,10 @@ export default {
           phone: this.client.phone,
           country: this.client.country,
           city: this.client.city,
-          adresse: this.client.adresse
+          adresse: this.client.adresse,
+          NIT: this.client.NIT,
+          NRC: this.client.NRC,
+          giro: this.client.giro
         })
         .then(response => {
           Fire.$emit("Event_Customer");
@@ -834,7 +987,11 @@ export default {
         phone: "",
         country: "",
         city: "",
-        adresse: ""
+        adresse: "",
+        NIT: "",
+        NRC: "",
+        giro: ""
+        
       };
     },
 

@@ -55,62 +55,6 @@
                         <a @click="SetLocal('en')">
                           <i title="en" class="flag-icon flag-icon-squared flag-icon-gb"></i> English
                         </a>
-                        <!-- <a @click="SetLocal('fr')">
-                          <i title="fr" class="flag-icon flag-icon-squared flag-icon-fr"></i>
-                          <span class="title-lang">French</span>
-                        </a>
-                        <a @click="SetLocal('ar')">
-                          <i title="sa" class="flag-icon flag-icon-squared flag-icon-sa"></i>
-                          <span class="title-lang">Arabic</span>
-                        </a>
-                        <a @click="SetLocal('tur')">
-                          <i title="sa" class="flag-icon flag-icon-squared flag-icon-tr"></i>
-                          <span class="title-lang">Turkish</span>
-                        </a>
-
-                        <a @click="SetLocal('sm_ch')">
-                          <i title="sa" class="flag-icon flag-icon-squared flag-icon-cn"></i>
-                          <span class="title-lang">Simplified Chinese</span>
-                        </a>
-
-                        <a @click="SetLocal('thai')">
-                          <i title="sa" class="flag-icon flag-icon-squared flag-icon-tw"></i>
-                          <span class="title-lang">Thaï</span>
-                        </a>
-
-                        <a @click="SetLocal('hn')">
-                          <i title="sa" class="flag-icon flag-icon-squared flag-icon-in"></i>
-                          <span class="title-lang">Hindi</span>
-                        </a>
-
-                        <a @click="SetLocal('de')">
-                          <i title="de" class="flag-icon flag-icon-squared flag-icon-de"></i>
-                          <span class="title-lang">German</span>
-                        </a>
-                        
-                        <a @click="SetLocal('it')">
-                          <i title="it" class="flag-icon flag-icon-squared flag-icon-it"></i>
-                          <span class="title-lang">Italien</span>
-                        </a>
-                        <a @click="SetLocal('Ind')">
-                          <i title="sa" class="flag-icon flag-icon-squared flag-icon-id"></i>
-                          <span class="title-lang">Indonesian</span>
-                        </a>
-
-                        <a @click="SetLocal('tr_ch')">
-                          <i title="sa" class="flag-icon flag-icon-squared flag-icon-cn"></i>
-                          <span class="title-lang">Traditional Chinese</span>
-                        </a>
-
-                        <a @click="SetLocal('ru')">
-                          <i title="sa" class="flag-icon flag-icon-squared flag-icon-ru"></i>
-                          <span class="title-lang">Russian</span>
-                        </a>
-
-                        <a @click="SetLocal('vn')">
-                          <i title="sa" class="flag-icon flag-icon-squared flag-icon-vn"></i>
-                          <span class="title-lang">Vietnamese</span>
-                        </a> -->
                       </div>
                     </vue-perfect-scrollbar>
                   </b-dropdown>
@@ -155,6 +99,7 @@
                 </div>
               </div>
             </div>
+            
             <validation-observer ref="create_pos">
               <b-form @submit.prevent="Submit_Pos">
                 <b-card-body>
@@ -370,7 +315,7 @@
                       <b-col md="6" sm="12">
                         <b-button type="submit" variant="primary ripple mt-1 btn-rounded btn-block">
                           <i class="i-Checkout"></i>
-                          {{ $t("payNow") }}
+                          {{ $t("sendtobox") }}
                         </b-button>
                       </b-col>
                     </b-row>
@@ -549,7 +494,7 @@
                     <div
                       class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center"
                     >
-                      <div class="w-40 w-sm-100 item-title">{{product.name}}</div>
+                      <div class="w-40 w-sm-100 item-title">{{product.category}} -  {{product.name}}</div>
                       <p class="text-muted text-small w-15 w-sm-100 mb-2">{{product.code}}</p>
 
                       <span
@@ -725,439 +670,6 @@
           </div>
         </b-sidebar>
 
-        <!-- Modal Show Invoice POS-->
-        <b-modal hide-footer size="md" scrollable id="Show_invoice" :title="$t('Invoice_POS')">
-          <vue-easy-print table-show ref="Show_invoice">
-            <div id="invoice-POS">
-              <h6 class="text-right">{{$t('date')}} : {{invoice_pos.sale.date}}</h6>
-              <center id="top">
-                <div class="logo">
-                  <img :src="'/images/' + invoice_pos.setting.logo">
-                </div>
-                <div class="info">
-                  <h3>{{invoice_pos.setting.CompanyName}}</h3>
-                </div>
-              </center>
-
-              <div class="info">
-                <h6>{{$t('Adress')}} : {{invoice_pos.setting.CompanyAdress}}</h6>
-                <h6>{{$t('Email')}} : {{invoice_pos.setting.email}}</h6>
-                <h6>{{$t('Phone')}} : {{invoice_pos.setting.CompanyPhone}}</h6>
-                <h6>{{$t('Customer')}} : {{invoice_pos.sale.client_name}}</h6>
-              </div>
-
-              <table class="mt-3 table-md">
-                <thead>
-                  <tr>
-                    <th scope="col">{{$t('ProductName')}}</th>
-                    <th scope="col">{{$t('Qty')}}</th>
-                    <th scope="col">{{$t('SubTotal')}}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="detail_invoice in invoice_pos.details">
-                    <td>{{detail_invoice.name}}</td>
-                    <td>{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</td>
-                    <td>{{formatNumber(detail_invoice.total,2)}} {{invoice_pos.symbol}}</td>
-                  </tr>
-                  <tr>
-                    <th></th>
-                    <th>{{$t('Tax')}}</th>
-                    <td>{{formatNumber(invoice_pos.sale.taxe,2)}} {{invoice_pos.symbol}} ({{invoice_pos.sale.tax_rate}} %)</td>
-                  </tr>
-                  <tr>
-                    <th></th>
-                    <th>{{$t('Discount')}}</th>
-                    <td>{{formatNumber(invoice_pos.sale.discount,2)}} {{invoice_pos.symbol}}</td>
-                  </tr>
-                  <tr>
-                    <th></th>
-                    <th>{{$t('Shipping')}}</th>
-                    <td>{{formatNumber(invoice_pos.sale.shipping,2)}} {{invoice_pos.symbol}}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <table id="total" class="mt-2">
-                <tbody>
-                  <tr>
-                    <th class="p-1 w-75">{{$t('Total')}}</th>
-                    <th
-                      class="p-1 w-25"
-                    >{{formatNumber(invoice_pos.sale.GrandTotal,2)}} {{invoice_pos.symbol}}</th>
-                  </tr>
-                </tbody>
-              </table>
-
-              <div id="legalcopy">
-                <p class="legal">
-                  <strong>{{$t('Thank_you_for_your_business')}}</strong>
-                </p>
-                <div id="bar">
-                  <barcode
-                    class="barcode"
-                    :format="barcodeFormat"
-                    :value="invoice_pos.sale.Ref"
-                    textmargin="0"
-                    fontoptions="bold"
-                    height="25"
-                  ></barcode>
-                </div>
-              </div>
-            </div>
-          </vue-easy-print>
-          <button @click="print_pos()" class="btn btn-outline-primary">
-            <i class="i-Billing"></i>
-            {{$t('print')}}
-          </button>
-        </b-modal>
-
-
-
-        <!-- Modal Show Invoice-->
-        <b-modal hide-footer size="lg" scrollable id="Show_invoiceF" :title="$t('Invoice')">
-          <vue-easy-print table-show ref="Show_invoiceF">
-            <div id="invoice-POSF">
-              <!-- <h6 class="text-right">{{$t('date')}} : {{invoice_pos.sale.date}}</h6>
-              <center id="top">
-                <div class="logo">
-                  <img :src="'/images/' + invoice_pos.setting.logo">
-                </div>
-                <div class="info">
-                  <h3>{{invoice_pos.setting.CompanyName}}</h3>
-                </div>
-              </center> -->
-
-              <div class="container">
-                <div class="row">
-                  <div class="col-9">
-                    <div class="row">
-                      <div class="info">
-                        <h3>{{invoice_pos.setting.CompanyName}}</h3>
-                      </div>
-                    </div>
-                    <div class="row">
-                      Giro: Venta de partes, piezas y accesorios Nuevos  para vehiculos automotores version americana, Koreanos originales garantizados
-                    </div>
-                    <div class="row">
-                      <div class="col-3">
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                      </div>
-                      <div class="col-3">
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                      </div>
-                      <div class="col-3">
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                      </div>
-                      <div class="col-3">
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                        <span>.col-md-3</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-3 border border-danger rounded">
-                    <span class="text-danger">Comprobante de credito fiscal</span>
-                    <span class="text-danger">we323988</span>
-                    <h2 class="text-danger">N° 0047755</h2><span>8785</span>
-                    <span class="text-danger">NIT: we323988</span>
-                    <span class="text-danger">N.R.C: we323988</span>
-                  </div>
-                </div>
-                <div class="row ">
-                  <div class="col-8  border border-primary"> 
-                    <div class="row">
-                      <div class="col-12 border border-primary padding-top padding-bottom"> 
-                        {{invoice_pos.sale.client_name}}
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-4 border border-primary"> 
-                        REG. No.:
-                      </div>
-                      <div class="col-8 border border-primary"> 
-                        GIRO CLIENTE:
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-4 border border-primary">
-                    <div class="row">
-                      <div class="col-4 border border-primary">Vendedor</div>
-                      <div class="col-4 border border-primary">{{$t('date')}}</div>
-                      <div class="col-4 border border-primary">Forma de pago</div>
-                    </div>
-                    <div class="row">
-                      <div class="col-4 border border-primary">{{currentUser.username}}</div>
-                      <div class="col-4 border border-primary">{{invoice_pos.sale.date}}</div>
-                      <div class="col-4 border border-primary">Remesa</div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6 border border-primary">NIT:546545454</div>
-                      <div class="col-6 border border-primary">N.R.C No:</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="row rounded">
-                  <div class="col-1 border border-primary">CANT.</div>
-                  <div class="col-2 border border-primary">CODIGO</div>
-                  <div class="col-5 border border-primary">DESCRIPCION</div>
-                  <div class="col-1 border border-primary">PRECIO UNITARIO</div>
-                  <div class="col-1 border border-primary">VENTAS NO SUJ.</div>
-                  <div class="col-1 border border-primary">VENTAS EXENTAS</div>
-                  <div class="col-1 border border-primary">VENTAS GRAVADAS</div>
-                </div>
-                <div class="row"  v-for="detail_invoice in invoice_pos.details">
-                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</div>
-                  <div class="col-2 border border-primary">{{detail_invoice.code}}</div>
-                  <div class="col-5 border border-primary">{{detail_invoice.name}}</div>
-                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.total,2)}}</div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary"></div>
-                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.total,2)}}</div>
-                </div>
-                <div class="row">
-                  <div class="col-9 border border-primary">
-                    <div class="row rounded">
-                      SON: {{GrandTotalText}}
-                    </div>
-                  </div>
-                  <div class="col-3 border border-primary">
-                    <div class="row">
-                      <div class="col-6 border border-primary">V. GRAVADAS</div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,2)}}</div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6 border border-primary">IVA</div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.taxe,2)}}</div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6 border border-primary">SUB-TOTAL</div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6 border border-primary">IVA retenido</div>
-                      <div class="col-6 border border-primary"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6 border border-primary">V. NO SUJETAS</div>
-                      <div class="col-6 border border-primary"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6 border border-primary">V. EXENTAS</div>
-                      <div class="col-6 border border-primary"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6 border border-primary">TOTAL</div>
-                      <div class="col-6 border border-primary">{{formatNumber(invoice_pos.sale.GrandTotal,2)}}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </vue-easy-print>
-          <button @click="print_pos()" class="btn btn-outline-primary">
-            <i class="i-Billing"></i>
-            {{$t('print')}}
-          </button>
-        </b-modal>
-
-        <!-- Modal Add Payment-->
-        <validation-observer ref="Add_payment">
-          <b-modal hide-footer size="lg" id="Add_Payment" :title="$t('AddPayment')">
-            <b-form @submit.prevent="Submit_Payment">
-              <b-row>
-                <b-col md="6">
-                  <b-row>
-                    <!-- Amount  -->
-                    <b-col lg="12" md="12" sm="12">
-                      <validation-provider
-                        name="Amount"
-                        :rules="{ required: true , regex: /^\d*\.?\d*$/}"
-                        v-slot="validationContext"
-                      >
-                        <b-form-group :label="$t('Amount')">
-                          <b-form-input
-                            label="Amount"
-                            :placeholder="$t('Amount')"
-                            v-model="payment.amount"
-                            :state="getValidationState(validationContext)"
-                            aria-describedby="Amount-feedback"
-                          ></b-form-input>
-                          <b-form-invalid-feedback
-                            id="Amount-feedback"
-                          >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-                    
-
-                    <!-- Payment choice -->
-                    <b-col lg="12" md="12" sm="12">
-                      <validation-provider name="Payment choice" :rules="{ required: true}">
-                        <b-form-group slot-scope="{ valid, errors }" :label="$t('Paymentchoice')">
-                          <v-select
-                            :class="{'is-invalid': !!errors.length}"
-                            :state="errors[0] ? false : (valid ? true : null)"
-                            v-model="payment.Reglement"
-                            @input="Selected_PaymentMethod"
-                            :reduce="label => label.value"
-                            :placeholder="$t('PleaseSelect')"
-                            :options="
-                              [
-                              {label: 'Cash', value: 'Cash'},
-                              {label: 'credit card', value: 'credit card'},
-                              {label: 'cheque', value: 'cheque'},
-                              {label: 'Western Union', value: 'Western Union'},
-                              {label: 'bank transfer', value: 'bank transfer'},
-                              ]"
-                          ></v-select>
-                          <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-
-                     <b-col
-                      md="12"
-                      v-if="payment.Reglement == 'credit card'"
-                    >
-                      <form id="payment-form">
-                        <label
-                          for="card-element"
-                          class="leading-7 text-sm text-gray-600"
-                        >{{$t('Credit_Card_Info')}}</label>
-                        <div id="card-element">
-                          <!-- Elements will create input elements here -->
-                        </div>
-                        <!-- We'll put the error messages in this element -->
-                        <div id="card-errors" class="is-invalid" role="alert"></div>
-                      </form>
-                    </b-col>
-                     <!-- cash  -->
-                     <b-col lg="12" md="12" sm="12">
-                      <validation-provider
-                        name="Cash"
-                        :rules="{ required: true , regex: /^\d*\.?\d*$/}"
-                        v-slot="validationContext"
-                      >
-                        <b-form-group :label="$t('Cash')">
-                          <b-form-input
-                            :state="getValidationState(validationContext)"
-                            label="Cash"
-                            :placeholder="$t('Cash')"
-                            v-model="payment.cash"
-                            @keyup="keyup_Change()"
-                            aria-describedby="Cash-feedback"
-                          ></b-form-input>
-                          <b-form-invalid-feedback
-                            id="Cash-feedback"
-                          >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-                    
-                     <!-- Amount_Change  -->
-                     <b-col lg="12" md="12" sm="12">
-                      <validation-provider
-                        name="Change"
-                        :rules="{ required: true , regex: /^\d*\.?\d*$/}"
-                        v-slot="validationContext"
-                      >
-                        <b-form-group :label="$t('Change')">
-                          <b-form-input
-                            label="Change"
-                            :placeholder="$t('Change')"
-                            v-model="payment.change"
-                            :state="getValidationState(validationContext)"
-                            aria-describedby="Change-feedback"
-                          ></b-form-input>
-                          <b-form-invalid-feedback
-                            id="Change-feedback"
-                          >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-                    
-
-                    <!-- Note -->
-                    <b-col lg="12" md="12" sm="12" class="mt-2">
-                      <b-form-group :label="$t('Note')">
-                        <b-form-textarea
-                          id="textarea"
-                          v-model="payment.notes"
-                          rows="3"
-                          max-rows="6"
-                        ></b-form-textarea>
-                      </b-form-group>
-                    </b-col>
-                    
-                    <b-col lg="12" md="12" sm="12" class="mt-2">
-                      <b-form-group :label="$t('BillingMethod')" v-slot="{ ariaDescribedby }">
-                      <b-form-radio v-model="BillingMethod" :aria-describedby="ariaDescribedby" name="factura" value="0">Factura</b-form-radio>
-                      <b-form-radio v-model="BillingMethod" :aria-describedby="ariaDescribedby" name="ticket" value="1">Ticket</b-form-radio>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
-                </b-col>
-
-
-                <b-col md="6">
-                  <b-card>
-                    <b-list-group>
-                      <b-list-group-item class="d-flex justify-content-between align-items-center">
-                        {{$t('TotalProducts')}}
-                        <b-badge variant="primary" pill>{{details.length}}</b-badge>
-                      </b-list-group-item>
-
-                      <b-list-group-item class="d-flex justify-content-between align-items-center">
-                        {{$t('OrderTax')}}
-                        <span
-                          class="font-weight-bold"
-                        >{{formatNumber(sale.TaxNet , 2)}} {{currentUser.currency}} ({{sale.tax_rate}} %)</span>
-                      </b-list-group-item>
-                      <b-list-group-item class="d-flex justify-content-between align-items-center">
-                        {{$t('Discount')}}
-                        <span
-                          class="font-weight-bold"
-                        >{{formatNumber(sale.discount, 2)}} {{currentUser.currency}}</span>
-                      </b-list-group-item>
-
-                      <b-list-group-item class="d-flex justify-content-between align-items-center">
-                        {{$t('Shipping')}}
-                        <span
-                          class="font-weight-bold"
-                        >{{formatNumber(sale.shipping ,2)}} {{currentUser.currency}}</span>
-                      </b-list-group-item>
-
-                      <b-list-group-item class="d-flex justify-content-between align-items-center">
-                        {{$t('Total')}}
-                        <span
-                          class="font-weight-bold"
-                        >{{formatNumber(GrandTotal ,2)}} {{currentUser.currency}}</span>
-                      </b-list-group-item>
-                    </b-list-group>
-                  </b-card>
-                </b-col>
-
-                <b-col md="12" class="mt-3">
-                  <b-button variant="primary" type="submit"  :disabled="paymentProcessing">{{$t('submit')}}</b-button>
-                    <div v-once class="typo__p" v-if="paymentProcessing">
-                      <div class="spinner sm spinner-primary mt-3"></div>
-                    </div>
-                </b-col>
-              </b-row>
-            </b-form>
-          </b-modal>
-        </validation-observer>
-
         <validation-observer ref="Create_Customer">
           <b-modal hide-footer size="lg" id="New_Customer" :title="$t('Add')">
             <b-form @submit.prevent="Submit_Customer">
@@ -1185,7 +697,7 @@
                 <b-col md="6" sm="12">
                   <validation-provider
                     name="Email customer"
-                    :rules="{ required: true}"
+                    :rules="{ required: false}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('Email')">
@@ -1279,6 +791,66 @@
                     </b-form-group>
                   </validation-provider>
                 </b-col>
+                <!-- Customer NIT -->
+                <b-col md="6" sm="12">
+                  <validation-provider
+                    name="NIT"
+                    :rules="{ required: true}"
+                    v-slot="validationContext"
+                  >
+                    <b-form-group :label="$t('NIT')">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="NIT-feedback"
+                        label="NIT"
+                        v-model="client.NIT"
+                      ></b-form-input>
+                      <b-form-invalid-feedback
+                        id="NIT-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+                <!-- Customer NRC -->
+                <b-col md="6" sm="12">
+                  <validation-provider
+                    name="NRC"
+                    :rules="{ required: true}"
+                    v-slot="validationContext"
+                  >
+                    <b-form-group :label="$t('NRC')">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="NRC-feedback"
+                        label="NRC"
+                        v-model="client.NRC"
+                      ></b-form-input>
+                      <b-form-invalid-feedback
+                        id="NRC-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
+                <!-- Customer Giro -->
+                <b-col md="6" sm="12">
+                  <validation-provider
+                    name="giro"
+                    :rules="{ required: true}"
+                    v-slot="validationContext"
+                  >
+                    <b-form-group :label="$t('Giro')">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="giro-feedback"
+                        label="giro"
+                        v-model="client.giro"
+                      ></b-form-input>
+                      <b-form-invalid-feedback
+                        id="giro-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
 
                 <b-col md="12" class="mt-3">
                   <b-button variant="primary" type="submit">{{$t('submit')}}</b-button>
@@ -1295,17 +867,12 @@
 <script>
 import NProgress from "nprogress";
 import { mapActions, mapGetters } from "vuex";
-import vueEasyPrint from "vue-easy-print";
-import VueBarcode from "vue-barcode";
 import FlagIcon from "vue-flag-icon";
 import Util from "./../../../utils";
-import { loadStripe } from "@stripe/stripe-js";
 
 
 export default {
   components: {
-    vueEasyPrint,
-    barcode: VueBarcode,
     FlagIcon
   },
   metaInfo: {
@@ -1316,22 +883,8 @@ export default {
       langs: [
         "es",
         "en",
-        // "fr",
-        // "ar",
-        // "de",
-        // "it",
-        // "Ind",
-        // "thai",
-        // "tr_ch",
-        // "sm_ch",
-        // "tur",
-        // "ru",
-        // "hn",
-        // "vn"
       ],
       
-      stripe: {},
-      stripe_key:'',
       cardElement: {},
       paymentProcessing: false,
       payment: {
@@ -1387,7 +940,6 @@ export default {
           CompanyPhone: ""
         }
       },
-
       sale: {
         warehouse_id: "",
         client_id: "",
@@ -1404,7 +956,10 @@ export default {
         phone: "",
         country: "",
         city: "",
-        adresse: ""
+        adresse: "",
+        NIT: "",
+        NRC: "",
+        giro: ""
       },
       category_id: "",
       brand_id: "",
@@ -1458,26 +1013,12 @@ export default {
       this.$store.dispatch("logout");
     },
 
-    async loadStripe_payment() {
-      this.stripe = await loadStripe(`${this.stripe_key}`);
-      const elements = this.stripe.elements();
-
-      this.cardElement = elements.create("card", {
-        classes: {
-          base:
-            "bg-gray-100 rounded border border-gray-300 focus:border-indigo-500 text-base outline-none text-gray-700 p-3 leading-8 transition-colors duration-200 ease-in-out"
-        }
-      });
-
-      this.cardElement.mount("#card-element");
-    },
-
   //---------------------- Event Select Payment Method ------------------------------\\
 
     Selected_PaymentMethod(value) {
       if (value == "credit card") {
         setTimeout(() => {
-          this.loadStripe_payment();
+          // this.loadStripe_payment();
         }, 500);
       }
     },
@@ -1600,26 +1141,6 @@ export default {
       });
     },
 
-    //------ Validate Form Submit_Payment
-    Submit_Payment() {
-      // Start the progress bar.
-      NProgress.start();
-      NProgress.set(0.1);
-      this.$refs.Add_payment.validate().then(success => {
-        if (!success) {
-          // Complete the animation of theprogress bar.
-          NProgress.done();
-          this.makeToast(
-            "danger",
-            this.$t("Please_fill_the_form_correctly"),
-            this.$t("Failed")
-          );
-        } else {
-          this.CreatePOS();
-        }
-      });
-    },
-
     //------------- Submit Validation Create & Edit Customer
     Submit_Customer() {
       // Start the progress bar.
@@ -1648,7 +1169,10 @@ export default {
           phone: this.client.phone,
           country: this.client.country,
           city: this.client.city,
-          adresse: this.client.adresse
+          adresse: this.client.adresse,
+          NIT: this.client.NIT,
+          NRC: this.client.NRC,
+          giro: this.client.giro
         })
         .then(response => {
           NProgress.done();
@@ -1681,7 +1205,10 @@ export default {
         phone: "",
         country: "",
         city: "",
-        adresse: ""
+        adresse: "",
+        NIT: "",
+        giro: "",
+        NRC: ""
       };
     },
 
@@ -1847,105 +1374,11 @@ export default {
         }
       }
     },
-
-    //-------------------- print invoice Pos
-    print_pos() {
-      this.$refs.Show_invoice.print();
-    },
-    print_pos() {
-      this.$refs.Show_invoiceF.print();
-    },
-
-    //-------------------------------- Invoice POS ------------------------------\\
-    Invoice_POS(id) {
-      // Start the progress bar.
-      NProgress.start();
-      NProgress.set(0.1);
-      axios
-        .get("Sales/Print_Invoice/" + id)
-        .then(response => {
-          this.invoice_pos = response.data;
-          this.GrandTotalText= Util.numeroALetras(this.formatNumber(this.invoice_pos.sale.GrandTotal , 2));
-          setTimeout(() => {
-            // Complete the animation of the  progress bar.
-            NProgress.done();
-            if(this.BillingMethod  == 0){
-              this.$bvModal.show("Show_invoiceF");
-            }else{
-              this.$bvModal.show("Show_invoice");
-
-            }
-          }, 500);
-          setTimeout(() => this.print_pos(), 1000);
-        })
-        .catch(() => {
-          // Complete the animation of the  progress bar.
-          setTimeout(() => NProgress.done(), 500);
-        });
-    },
-
-    
-    //----------------------------------Process Payment ------------------------------\\
-
-   async processPayment() {
-      this.paymentProcessing = true;
-
-      const { token, error } = await this.stripe.createToken(
-        this.cardElement
-      );
-
-          if (error) {
-              this.paymentProcessing = false;
-               NProgress.done();
-              this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
-          } else {
-   
-         axios
-        .post("pos/CreatePOS", {
-          client_id: this.sale.client_id,
-          warehouse_id: this.sale.warehouse_id,
-          tax_rate: this.sale.tax_rate,
-          TaxNet: this.sale.TaxNet,
-          discount: this.sale.discount,
-          shipping: this.sale.shipping,
-          details: this.details,
-          GrandTotal: this.GrandTotal,
-          payment: this.payment,
-          token : token.id,
-        })
-        .then(response => {
-          this.paymentProcessing = false;
-          if (response.data.success === true) {
-            // Complete the animation of theprogress bar.
-            NProgress.done();
-            this.Invoice_POS(response.data.id);
-            this.$bvModal.hide("Add_Payment");
-            this.Reset_Pos();
-          }
-        })
-        .catch(error => {
-          this.paymentProcessing = false;
-          // Complete the animation of theprogress bar.
-          NProgress.done();
-          this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
-        });
-    }
-  },
-
-
     //----------------------------------Create POS ------------------------------\\
     CreatePOS() {
       
       NProgress.start();
       NProgress.set(0.1);
-      if(this.payment.Reglement  == 'credit card'){
-        if(this.stripe_key != ''){
-          this.processPayment();
-        }else{
-          this.makeToast("danger", this.$t("credit_card_account_not_available"), this.$t("Failed"));
-          NProgress.done();
-        }
-      }else{
         axios
         .post("pos/CreatePOS", {
           client_id: this.sale.client_id,
@@ -1962,8 +1395,6 @@ export default {
           if (response.data.success === true) {
             // Complete the animation of theprogress bar.
             NProgress.done();
-            this.Invoice_POS(response.data.id);
-            this.$bvModal.hide("Add_Payment");
             this.Reset_Pos();
           }
         })
@@ -1972,7 +1403,6 @@ export default {
           NProgress.done();
           this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
         });
-      }
     },
 
     //------------------------------Formetted Numbers -------------------------\\
@@ -2266,7 +1696,8 @@ export default {
         this.payment.amount = this.formatNumber(this.GrandTotal , 2);
         this.payment.cash = this.formatNumber(this.GrandTotal , 2);
         this.payment.Reglement = "Cash";
-        this.$bvModal.show("Add_Payment");
+        // this.$bvModal.show("Add_Payment");
+        this.CreatePOS();
         // Complete the animation of theprogress bar.
         NProgress.done();
       }, 500);

@@ -53,10 +53,13 @@ class PosController extends BaseController
             $order->discount = $request->discount;
             $order->shipping = $request->shipping;
             $order->GrandTotal = $request->GrandTotal;
-            $order->cash = $request->payment['cash'];
-            $order->change = $request->payment['change'];
+            $order->cash = 0;
+            $order->change = 0;
+            // $order->cash = $request->payment['cash'];
+            // $order->change = $request->payment['change'];
+            $order->payment_statut = 'unpaid';
 
-            $order->statut = 'completed';
+            $order->statut = 'ordered';
             $order->user_id = Auth::user()->id;
 
             $order->save();
@@ -120,91 +123,93 @@ class PosController extends BaseController
                 $this->authorizeForUser($request->user('api'), 'check_record', $sale);
             }
 
-            try {
+            // try {
 
-                $total_paid = $sale->paid_amount + $request->payment['amount'];
-                $due = $sale->GrandTotal - $total_paid;
+            //     $total_paid = $sale->paid_amount + $request->payment['amount'];
+            //     $due = $sale->GrandTotal - $total_paid;
+            //     $payment_statut = 'unpaid';
 
-                if ($due === 0.0 || $due < 0.0) {
-                    $payment_statut = 'paid';
-                } else if ($due != $sale->GrandTotal) {
-                    $payment_statut = 'partial';
-                } else if ($due == $sale->GrandTotal) {
-                    $payment_statut = 'unpaid';
-                }
 
-                if ($request->payment['Reglement'] == 'credit card') {
-                    $Client = Client::whereId($request->client_id)->first();
-                    Stripe\Stripe::setApiKey(config('app.STRIPE_SECRET'));
+            //     // if ($due === 0.0 || $due < 0.0) {
+            //     //     $payment_statut = 'paid';
+            //     // } else if ($due != $sale->GrandTotal) {
+            //     //     $payment_statut = 'partial';
+            //     // } else if ($due == $sale->GrandTotal) {
+            //     //     $payment_statut = 'unpaid';
+            //     // }
 
-                    $PaymentWithCreditCard = PaymentWithCreditCard::where('customer_id', $request->client_id)->first();
-                    if (!$PaymentWithCreditCard) {
-                        // Create a Customer
-                        $customer = \Stripe\Customer::create([
-                            'source' => $request->token,
-                            'email' => $Client->email,
-                        ]);
+            //     if ($request->payment['Reglement'] == 'credit card') {
+            //         $Client = Client::whereId($request->client_id)->first();
+            //         Stripe\Stripe::setApiKey(config('app.STRIPE_SECRET'));
 
-                        // Charge the Customer instead of the card:
-                        $charge = \Stripe\Charge::create([
-                            'amount' => $request->payment['amount'] * 100,
-                            'currency' => 'usd',
-                            'customer' => $customer->id,
-                        ]);
-                        $PaymentCard['customer_stripe_id'] = $customer->id;
+            //         $PaymentWithCreditCard = PaymentWithCreditCard::where('customer_id', $request->client_id)->first();
+            //         if (!$PaymentWithCreditCard) {
+            //             // Create a Customer
+            //             $customer = \Stripe\Customer::create([
+            //                 'source' => $request->token,
+            //                 'email' => $Client->email,
+            //             ]);
 
-                    } else {
-                        $customer_id = $PaymentWithCreditCard->customer_stripe_id;
-                        $charge = \Stripe\Charge::create([
-                            'amount' => $request->payment['amount'] * 100,
-                            'currency' => 'usd',
-                            'customer' => $customer_id,
-                        ]);
-                        $PaymentCard['customer_stripe_id'] = $customer_id;
-                    }
+            //             // Charge the Customer instead of the card:
+            //             $charge = \Stripe\Charge::create([
+            //                 'amount' => $request->payment['amount'] * 100,
+            //                 'currency' => 'usd',
+            //                 'customer' => $customer->id,
+            //             ]);
+            //             $PaymentCard['customer_stripe_id'] = $customer->id;
 
-                    $PaymentSale = new PaymentSale();
-                    $PaymentSale->sale_id = $order->id;
-                    $PaymentSale->Ref = app('App\Http\Controllers\PaymentSalesController')->getNumberOrder();
-                    $PaymentSale->date = Carbon::now();
-                    $PaymentSale->Reglement = $request->payment['Reglement'];
-                    $PaymentSale->montant = $request->payment['amount'];
-                    $PaymentSale->notes = $request->payment['notes'];
-                    $PaymentSale->user_id = Auth::user()->id;
-                    $PaymentSale->save();
+            //         } else {
+            //             $customer_id = $PaymentWithCreditCard->customer_stripe_id;
+            //             $charge = \Stripe\Charge::create([
+            //                 'amount' => $request->payment['amount'] * 100,
+            //                 'currency' => 'usd',
+            //                 'customer' => $customer_id,
+            //             ]);
+            //             $PaymentCard['customer_stripe_id'] = $customer_id;
+            //         }
 
-                    $sale->update([
-                        'paid_amount' => $total_paid,
-                        'payment_statut' => $payment_statut,
-                    ]);
+            //         $PaymentSale = new PaymentSale();
+            //         $PaymentSale->sale_id = $order->id;
+            //         $PaymentSale->Ref = app('App\Http\Controllers\PaymentSalesController')->getNumberOrder();
+            //         $PaymentSale->date = Carbon::now();
+            //         $PaymentSale->Reglement = $request->payment['Reglement'];
+            //         $PaymentSale->montant = $request->payment['amount'];
+            //         $PaymentSale->notes = $request->payment['notes'];
+            //         $PaymentSale->user_id = Auth::user()->id;
+            //         $PaymentSale->save();
 
-                    $PaymentCard['customer_id'] = $request->client_id;
-                    $PaymentCard['payment_id'] = $PaymentSale->id;
-                    $PaymentCard['charge_id'] = $charge->id;
-                    PaymentWithCreditCard::create($PaymentCard);
+            //         $sale->update([
+            //             'paid_amount' => $total_paid,
+            //             'payment_statut' => $payment_statut,
+            //         ]);
 
-                    // Paying Method Cash
-                } else {
+            //         $PaymentCard['customer_id'] = $request->client_id;
+            //         $PaymentCard['payment_id'] = $PaymentSale->id;
+            //         $PaymentCard['charge_id'] = $charge->id;
+            //         PaymentWithCreditCard::create($PaymentCard);
 
-                    PaymentSale::create([
-                        'sale_id' => $order->id,
-                        'Ref' => app('App\Http\Controllers\PaymentSalesController')->getNumberOrder(),
-                        'date' => Carbon::now(),
-                        'Reglement' => $request->payment['Reglement'],
-                        'montant' => $request->payment['amount'],
-                        'notes' => $request->payment['notes'],
-                        'user_id' => Auth::user()->id,
-                    ]);
+            //         // Paying Method Cash
+            //     } else {
 
-                    $sale->update([
-                        'paid_amount' => $total_paid,
-                        'payment_statut' => $payment_statut,
-                    ]);
-                }
+            //         PaymentSale::create([
+            //             'sale_id' => $order->id,
+            //             'Ref' => app('App\Http\Controllers\PaymentSalesController')->getNumberOrder(),
+            //             'date' => Carbon::now(),
+            //             'Reglement' => $request->payment['Reglement'],
+            //             'montant' => $request->payment['amount'],
+            //             'notes' => $request->payment['notes'],
+            //             'user_id' => Auth::user()->id,
+            //         ]);
 
-            } catch (Exception $e) {
-                return response()->json(['message' => $e->getMessage()], 500);
-            }
+            //         $sale->update([
+            //             'paid_amount' => $total_paid,
+            //             'payment_statut' => $payment_statut,
+            //         ]);
+            //     }
+
+            // } catch (Exception $e) {
+            //     return response()->json(['message' => $e->getMessage()], 500);
+            // }
 
             return $order->id;
 

@@ -54,6 +54,9 @@
               <div>{{sale_return.client_email}}</div>
               <div>{{sale_return.client_phone}}</div>
               <div>{{sale_return.client_adr}}</div>
+              <div>{{sale_return.client_NIT}}</div>
+              <div>{{sale_return.client_NRC}}</div>
+              <div>{{sale_return.client_giro}}</div>
             </b-col>
             <b-col lg="4" md="4" sm="12" class="mb-4">
               <h5 class="font-weight-bold">{{$t('Company_Info')}}</h5>

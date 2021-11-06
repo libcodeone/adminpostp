@@ -453,7 +453,7 @@ export default {
         notes: "",
         client_id: "",
         warehouse_id: "",
-        tax_rate: 0,
+        tax_rate: 13,
         TaxNet: 0,
         shipping: 0,
         discount: 0
@@ -754,7 +754,7 @@ export default {
     //---------- keyup OrderTax
     keyup_OrderTax() {
       if (isNaN(this.sale.tax_rate)) {
-        this.sale.tax_rate = 0;
+        this.sale.tax_rate = 13;
       } else {
         this.Calcul_Total();
       }

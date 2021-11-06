@@ -291,6 +291,9 @@ class PaymentSaleReturnsController extends BaseController
         $payment_data['client_phone'] = $payment['SaleReturn']['client']->phone;
         $payment_data['client_adr'] = $payment['SaleReturn']['client']->adresse;
         $payment_data['client_email'] = $payment['SaleReturn']['client']->email;
+        $payment_data['client_NIT'] = $payment['SaleReturn']['client']->NIT;
+        $payment_data['client_NRC'] = $payment['SaleReturn']['client']->NRC;
+        $payment_data['client_giro'] = $payment['SaleReturn']['client']->giro;
         $payment_data['montant'] = $payment->montant;
         $payment_data['Ref'] = $payment->Ref;
         $payment_data['date'] = $payment->date;

@@ -25,6 +25,21 @@
             </router-link>
           </li>
           <li
+            v-show="currentUserPermissions && (currentUserPermissions.includes('Sales_view') 
+                        || currentUserPermissions.includes('Sales_add'))"
+            class="nav-item"
+            @mouseenter="toggleSubMenu"
+            :class="{ active: selectedParentMenu == 'sales' }"
+            data-item="sales"
+            :data-submenu="true"
+          >
+            <a class="nav-item-hold" href="#">
+              <i class="nav-icon i-Full-Cart"></i>
+              <span class="nav-text">{{$t('Sales')}}</span>
+            </a>
+            <div class="triangle"></div>
+          </li>
+          <li
             v-show="currentUserPermissions 
             && (currentUserPermissions.includes('products_add')
             || currentUserPermissions.includes('products_view') 
@@ -117,21 +132,7 @@
             </a>
             <div class="triangle"></div>
           </li>
-          <li
-            v-show="currentUserPermissions && (currentUserPermissions.includes('Sales_view') 
-                        || currentUserPermissions.includes('Sales_add'))"
-            class="nav-item"
-            @mouseenter="toggleSubMenu"
-            :class="{ active: selectedParentMenu == 'sales' }"
-            data-item="sales"
-            :data-submenu="true"
-          >
-            <a class="nav-item-hold" href="#">
-              <i class="nav-icon i-Full-Cart"></i>
-              <span class="nav-text">{{$t('Sales')}}</span>
-            </a>
-            <div class="triangle"></div>
-          </li>
+          
           <li
             v-show="currentUserPermissions && (currentUserPermissions.includes('Sale_Returns_view') 
                         || currentUserPermissions.includes('Sale_Returns_add'))"
@@ -247,6 +248,52 @@
       class="sidebar-left-secondary ps rtl-ps-none"
     >
       <div ref="sidebarChild">
+        
+        <ul
+          class="childNav d-none"
+          data-parent="sales"
+          :class="{ 'd-block': selectedParentMenu == 'sales' }"
+        >
+          <li
+            class="nav-item"
+            v-if="currentUserPermissions && currentUserPermissions.includes('Sales_add')"
+          >
+            <router-link tag="a" class to="/app/sales/store">
+              <i class="nav-icon i-Add-File"></i>
+              <span class="item-name">{{$t('AddSale')}}</span>
+            </router-link>
+          </li>
+          <li
+            class="nav-item"
+            v-if="currentUserPermissions && currentUserPermissions.includes('Sales_view')"
+          >
+            <router-link tag="a" class to="/app/sales/list">
+              <i class="nav-icon i-Files"></i>
+              <span class="item-name">{{$t('ListSales')}}</span>
+            </router-link>
+          </li>
+          <li
+            class="nav-item"
+            v-if="currentUserPermissions && currentUserPermissions.includes('Sales_view')"
+          >
+            <router-link tag="a" class to="/app/sales/list_checkin">
+              <i class="nav-icon i-Files"></i>
+              <span class="item-name">{{$t('Checkin')}}</span>
+            </router-link>
+          </li>
+
+          <li
+            class="nav-item"
+            v-if="currentUserPermissions && currentUserPermissions.includes('Sales_view')"
+          >
+            <router-link tag="a" class to="/app/sales/list_dispatcher">
+              <i class="nav-icon i-Files"></i>
+              <span class="item-name">{{$t('Dispatcher')}}</span>
+            </router-link>
+          </li>
+
+          
+        </ul>
         <ul
           class="childNav d-none"
           data-parent="products"
@@ -415,30 +462,6 @@
           </li>
         </ul>
 
-        <ul
-          class="childNav d-none"
-          data-parent="sales"
-          :class="{ 'd-block': selectedParentMenu == 'sales' }"
-        >
-          <li
-            class="nav-item"
-            v-if="currentUserPermissions && currentUserPermissions.includes('Sales_add')"
-          >
-            <router-link tag="a" class to="/app/sales/store">
-              <i class="nav-icon i-Add-File"></i>
-              <span class="item-name">{{$t('AddSale')}}</span>
-            </router-link>
-          </li>
-          <li
-            class="nav-item"
-            v-if="currentUserPermissions && currentUserPermissions.includes('Sales_view')"
-          >
-            <router-link tag="a" class to="/app/sales/list">
-              <i class="nav-icon i-Files"></i>
-              <span class="item-name">{{$t('ListSales')}}</span>
-            </router-link>
-          </li>
-        </ul>
 
         <ul
           class="childNav d-none"
@@ -843,3 +866,9 @@ export default {
 <style lang="" scoped>
 </style>
 
+
+
+
+
+
+        

@@ -65,12 +65,12 @@ class SalesController extends BaseController
 
         // Check If User Has Permission View  All Records
         $Sales = Sale::with('facture', 'client', 'warehouse')
-            ->where('deleted_at', '=', null)
-            ->where(function ($query) use ($view_records) {
-                if (!$view_records) {
-                    return $query->where('user_id', '=', Auth::user()->id);
-                }
-            });
+            ->where('deleted_at', '=', null);
+            // ->where(function ($query) use ($view_records) {
+            //     if (!$view_records) {
+            //         return $query->where('user_id', '=', Auth::user()->id);
+            //     }
+            // });
         //Multiple Filter
         $Filtred = $helpers->filter($Sales, $columns, $param, $request)
         // Search With Multiple Param
@@ -494,6 +494,52 @@ class SalesController extends BaseController
 
         }, 10);
 
+        return response()->json(['success' => true]);
+    }
+     //------------- UPDATE SALE TO CREATED PAYMENT s-----------
+
+     public function update_to_payment(Request $request, $id)
+     {
+         $this->authorizeForUser($request->user('api'), 'update', Sale::class);
+         $current_Sale = Sale::findOrFail($id);
+ 
+         $payment_statut = 'unpaid';
+         
+        //  PaymentSale::create([
+        //                 'sale_id' => $id,
+        //                 'Ref' => app('App\Http\Controllers\PaymentSalesController')->getNumberOrder(),
+        //                 'date' => Carbon::now(),
+        //                 'Reglement' => $request['Reglement'],
+        //                 'montant' => $request['amount'],
+        //                 'notes' => $request['notes'],
+        //                 'user_id' => Auth::user()->id,
+        //             ]);
+                    $current_Sale->update([
+                        'notes' => $request['notes'],
+                        'statut' => 'pending',
+                        'tax_rate' => $request['tax_rate'],
+                        'TaxNet' => $request['TaxNet'],
+                        'discount' => $request['discount'],
+                        'change' => $request['change'],
+                        'cash' => $request['cash'],
+                        'shipping' => $request['shipping'],
+                        'GrandTotal' => $request['GrandTotal'],
+                        'payment_statut' => $payment_statut,
+                        'paid_amount' => $request['GrandTotal'],
+                    ]);
+         
+ 
+         return response()->json(['success' => true]);
+     }
+    //------------- UPDATE STATUS SALE -----------
+
+    public function update_status(Request $request, $id)
+    {
+        $this->authorizeForUser($request->user('api'), 'update', Sale::class);
+        $current_Sale = Sale::findOrFail($id);
+            $current_Sale->update([
+                'statut' => $request['statut'],
+            ]);
         return response()->json(['success' => true]);
     }
 

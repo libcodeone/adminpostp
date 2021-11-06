@@ -107,7 +107,6 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::get('Products/Stock/Alerts', 'ProductsController@Products_Alert');
     Route::get('Products/Get_element/barcode', 'ProductsController@Get_element_barcode');
     Route::post('Products/delete/by_selection', 'ProductsController@delete_by_selection');
-
     //------------------------------- Category --------------------------\\
     //------------------------------------------------------------------\\
 
@@ -169,7 +168,11 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::post('sales/send/sms', 'SalesController@Send_SMS');
     Route::get('sales/export/Excel', 'SalesController@exportExcel');
     Route::post('sales/delete/by_selection', 'SalesController@delete_by_selection');
+    Route::put('sales/change_status/{id}', 'SalesController@update_status');
+    Route::put('sales/update_to_payment/{id}', 'SalesController@update_to_payment');
+    
 
+    
 
     //------------------------------- Payments  Sales --------------------------\\
     //------------------------------------------------------------------\\

@@ -29,8 +29,8 @@ class ClientController extends BaseController
         $dir = $request->SortType;
         $helpers = new helpers();
         // Filter fields With Params to retrieve
-        $columns = array(0 => 'name', 1 => 'code', 2 => 'phone', 3 => 'email');
-        $param = array(0 => 'like', 1 => 'like', 2 => 'like', 3 => 'like');
+        $columns = array(0 => 'name', 1 => 'code', 2 => 'phone', 3 => 'email', 4 => 'NIT', 5 => 'NRC', 6 => 'giro');
+        $param = array(0 => 'like', 1 => 'like', 2 => 'like', 3 => 'like', 4 => 'like', 5 => 'like', 6 => 'like');
         $data = array();
 
         $clients = Client::where('deleted_at', '=', null);
@@ -43,6 +43,9 @@ class ClientController extends BaseController
                     return $query->where('name', 'LIKE', "%{$request->search}%")
                         ->orWhere('code', 'LIKE', "%{$request->search}%")
                         ->orWhere('phone', 'LIKE', "%{$request->search}%")
+                        ->orWhere('NIT', 'LIKE', "%{$request->search}%")
+                        ->orWhere('NRC', 'LIKE', "%{$request->search}%")
+                        ->orWhere('giro', 'LIKE', "%{$request->search}%")
                         ->orWhere('email', 'LIKE', "%{$request->search}%");
                 });
             });
@@ -63,14 +66,30 @@ class ClientController extends BaseController
     public function store(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'create', Client::class);
-
+        if($request['email'] != null){
+            $this->validate($request, [
+                'name' => 'required|min:4|max:30',
+                'adresse' => 'required',
+                'phone' => 'required|min:4',
+                'email' => 'unique:clients',
+                'country' => 'required',
+                'city' => 'required',
+                'NIT' => 'required',
+                'NRC' => 'required',
+                'giro' => 'required',
+            ], [
+                'email.unique' => 'This Email already taken.',
+            ]);
+        }
         $this->validate($request, [
             'name' => 'required|min:4|max:30',
             'adresse' => 'required',
             'phone' => 'required|min:4',
-            'email' => 'required|unique:clients',
             'country' => 'required',
             'city' => 'required',
+            'NIT' => 'required',
+            'NRC' => 'required',
+            'giro' => 'required',
         ], [
             'email.unique' => 'This Email already taken.',
         ]);
@@ -83,6 +102,9 @@ class ClientController extends BaseController
             'email' => $request['email'],
             'country' => $request['country'],
             'city' => $request['city'],
+            'NIT' => $request['NIT'],
+            'NRC' => $request['NRC'],
+            'giro' => $request['giro'],
         ]);
         return response()->json(['success' => true]);
     }
@@ -92,14 +114,31 @@ class ClientController extends BaseController
     public function update(Request $request, $id)
     {
         $this->authorizeForUser($request->user('api'), 'update', Client::class);
+        if($request['email'] != null){
+            $this->validate($request, [
+                'email' => 'email|unique:clients',
+                'email' => Rule::unique('clients')->ignore($id),
+                'name' => 'required|min:4|max:30',
+                'adresse' => 'required',
+                'phone' => 'required|min:4',
+                'country' => 'required',
+                'city' => 'required',
+                'NIT' => 'required',
+                'NRC' => 'required',
+                'giro' => 'required',
+            ], [
+                'email.unique' => 'This Email already taken.',
+            ]);
+        }
         $this->validate($request, [
-            'email' => 'required|email|unique:clients',
-            'email' => Rule::unique('clients')->ignore($id),
             'name' => 'required|min:4|max:30',
             'adresse' => 'required',
             'phone' => 'required|min:4',
             'country' => 'required',
             'city' => 'required',
+            'NIT' => 'required',
+            'NRC' => 'required',
+            'giro' => 'required',
         ], [
             'email.unique' => 'This Email already taken.',
         ]);
@@ -111,6 +150,9 @@ class ClientController extends BaseController
             'email' => $request['email'],
             'country' => $request['country'],
             'city' => $request['city'],
+            'NIT' => $request['NIT'],
+            'NRC' => $request['NRC'],
+            'giro' => $request['giro'],
         ]);
         return response()->json(['success' => true]);
 
@@ -206,13 +248,13 @@ class ClientController extends BaseController
                 return null;
             }
            
-            $rules = array('email' => 'required|email|unique:clients');
+            // $rules = array('email' => 'required|email|unique:clients');
             //-- Create New Client
             foreach ($data as $key => $value) {
                 $input['email'] = $value['email'];
 
-                $validator = Validator::make($input, $rules);
-                if (!$validator->fails()) {
+                // $validator = Validator::make($input, $rules);
+                // if (!$validator->fails()) {
                     
                     Client::create([
                         'name' => $value['name'] == '' ? null : $value['name'],
@@ -222,8 +264,11 @@ class ClientController extends BaseController
                         'email' => $value['email'] == '' ? null : $value['email'],
                         'country' => $value['country'] == '' ? null : $value['country'],
                         'city' => $value['city'] == '' ? null : $value['city'],
+                        'NIT' => $value['NIT'] == '' ? null : $value['NIT'],
+                        'NRC' => $value['NRC'] == '' ? null : $value['NRC'],
+                        'giro' => $value['giro'] == '' ? null : $value['giro'],
                     ]);
-                }
+                // }
 
             }
 

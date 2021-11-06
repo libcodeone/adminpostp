@@ -135,7 +135,7 @@ export default {
               this.$t("Successfully_Logged_In"),
               this.$t("Success")
             );
-
+response
           window.location = '/';
            
           NProgress.done();

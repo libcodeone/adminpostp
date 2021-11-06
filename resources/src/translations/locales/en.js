@@ -623,5 +623,6 @@ export default {
     oops: 'Oops! Page not found.',
     couldNotFind: 'We could not find the page you were looking for.Meanwhile, you may',
     BillingMethod: 'Billing method',
+    sendtobox: "Send to box",
 
 };

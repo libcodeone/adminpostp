@@ -242,6 +242,13 @@
                   </tr>
 
                   <tr>
+                    <td>{{$t('Quantity')}}</td>
+                    <th>
+                      <span class="badge badge-outline-success">{{$t('Field_is_required')}}</span>
+                    </th>
+                  </tr>
+
+                  <tr>
                     <td>{{$t('UnitProduct')}}</td>
                     <th>
                       <span class="badge badge-outline-success">{{$t('Field_is_required')}}</span>

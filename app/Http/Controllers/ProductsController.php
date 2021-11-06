@@ -6,6 +6,8 @@ use App\Exports\ProductsExport;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Adjustment;
+use App\Models\AdjustmentDetail;
 use App\Models\ProductVariant;
 use App\Models\product_warehouse;
 use App\Models\Unit;
@@ -18,9 +20,12 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use \Gumlet\ImageResize;
+
 use DB;
+
 
 class ProductsController extends BaseController
 {
@@ -1026,6 +1031,7 @@ class ProductsController extends BaseController
                 } else {
                     $brand_id = null;
                 }
+                 
                 $Product = new Product;
                 $Product->name = $value['name'] == '' ? null : $value['name'];
                 $Product->code = $this->generate_random_code();
@@ -1043,14 +1049,46 @@ class ProductsController extends BaseController
                 $Product->stock_alert = $value['stock_alert'] ? $value['stock_alert'] : 0;
                 $Product->is_variant = 0;
                 $Product->image = 'no-image.png';
+                if ($value['codeAN'] != 'N/A' && $value['codeAN'] != '') {
+                    $Product->codeAN = $value['codeAN'];
+                } else {
+                    $Product->codeAN = null;
+                }
                 $Product->save();
 
                 if ($warehouses) {
                     foreach ($warehouses as $warehouse) {
-                        $product_warehouse[] = [
-                            'product_id' => $Product->id,
-                            'warehouse_id' => $warehouse,
-                        ];
+                        //-- Add Adjustment
+                        if ($value['quantity'] != 'N/A' && $value['quantity'] != '') {
+                            // $order = new Adjustment;
+                            // $order->date = strtotime("now");
+                            // $order->Ref = $this->getNumberOrder();
+                            // $order->warehouse_id = $warehouse;
+                            // $order->notes = '';
+                            // $order->items = 1;
+                            // $order->user_id = Auth::user()->id;
+                            // $order->save();
+                            
+                            // //-- Add AdjustmentDetail
+                            // $orderDetails[] = [
+                            //     'adjustment_id' => $order->id,
+                            //     'quantity' => $value['quantity'],
+                            //     'product_id' => $Product->id,
+                            //     'type' => 'add',
+                            // ];
+                            // AdjustmentDetail::insert($orderDetails);
+                            $product_warehouse[] = [
+                                'product_id' => $Product->id,
+                                'warehouse_id' => $warehouse,
+                                'qte' => $value['quantity'],
+                            ];
+                        }else{
+                            $product_warehouse[] = [
+                                'product_id' => $Product->id,
+                                'warehouse_id' => $warehouse,
+                                'qte' => 0,
+                            ];
+                        }
                     }
                 }
             }
@@ -1060,6 +1098,24 @@ class ProductsController extends BaseController
                 'status' => true,
             ], 200);
         }
+
+    }
+    // //------------ Reference Number of Adjustement  -----------\\
+
+    public function getNumberOrder()
+    {
+
+        $last = DB::table('adjustments')->latest('id')->first();
+
+        if ($last) {
+            $item = $last->Ref;
+            $nwMsg = explode("_", $item);
+            $inMsg = $nwMsg[1] + 1;
+            $code = $nwMsg[0] . '_' . $inMsg;
+        } else {
+            $code = 'AD_1111';
+        }
+        return $code;
 
     }
 

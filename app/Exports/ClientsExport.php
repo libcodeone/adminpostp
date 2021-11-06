@@ -26,6 +26,9 @@ class ClientsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEven
                 $item['email'] = $client->email;
                 $item['phone'] = $client->phone;
                 $item['adresse'] = substr($client->adresse, 0, 20);
+                $item['NIT'] = $client->NIT;
+                $item['NRC'] = $client->NRC;
+                $item['giro'] = $client->giro;
 
                 $data[] = $item;
             }
@@ -69,6 +72,9 @@ class ClientsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEven
             'Email',
             'Phone',
             'Adresse',
+            'NIT',
+            'NRC',
+            'giro',
         ];
     }
 }
