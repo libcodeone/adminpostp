@@ -735,6 +735,9 @@ class SalesController extends BaseController
         $item['taxe'] = $sale->TaxNet;
         $item['tax_rate'] = $sale->tax_rate;
         $item['client_name'] = $sale['client']->name;
+        $item['client_NIT'] = $sale['client']->NIT;
+        $item['client_NRC'] = $sale['client']->NRC;
+        $item['client_giro'] = $sale['client']->giro;
         $item['GrandTotal'] = $sale->GrandTotal;
 
         foreach ($sale['details'] as $detail) {

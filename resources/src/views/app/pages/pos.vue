@@ -868,7 +868,7 @@
 import NProgress from "nprogress";
 import { mapActions, mapGetters } from "vuex";
 import FlagIcon from "vue-flag-icon";
-import Util from "./../../../utils";
+import Util from "../../../utils";
 
 
 export default {
@@ -1627,6 +1627,31 @@ export default {
     GetAllBrands() {
       this.brand_id = "";
       this.getProducts(1);
+    },
+    //------------------------- get Result Value Search Product
+
+    getResultValue(result) {
+      return result.code + " " + "(" + result.name + ")";
+    },
+    SearchProduct(result) {
+      this.product = {};
+      if (
+        this.details.length > 0 &&
+        this.details.some(detail => detail.code === result.code)
+      ) {
+        this.makeToast("warning", this.$t("AlreadyAdd"), this.$t("Warning"));
+      } else {
+        this.product.code = result.code;
+        this.product.stock = result.qte_sale;
+        if (result.qte_sale < 1) {
+          this.product.quantity = result.qte_sale;
+        } else {
+          this.product.quantity = 1;
+        }
+        this.product.product_variant_id = result.product_variant_id;
+        this.Get_Product_Details(result.id);
+      }
+      this.$refs.autocomplete.value = "";
     },
 
     //------------------------------- Get Products with Filters ------------------------------\\

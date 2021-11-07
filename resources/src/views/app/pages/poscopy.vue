@@ -1358,7 +1358,7 @@ import { mapActions, mapGetters } from "vuex";
 import vueEasyPrint from "vue-easy-print";
 import VueBarcode from "vue-barcode";
 import FlagIcon from "vue-flag-icon";
-import Util from "./../../../utils";
+import Util from "../../../utils";
 import { loadStripe } from "@stripe/stripe-js";
 
 

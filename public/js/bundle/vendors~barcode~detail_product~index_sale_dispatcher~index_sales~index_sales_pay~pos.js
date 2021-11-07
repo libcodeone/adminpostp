@@ -2763,7 +2763,7 @@ if (isForced_1(NUMBER, !NativeNumber(' 0o1') || !NativeNumber('0b1') || NativeNu
   redefine(global_1, NUMBER, NumberWrapper);
 }
 
-(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["vendors~barcode~detail_product~index_sale_dispatcher~index_sales~index_sales_pay"],{
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["vendors~barcode~detail_product~index_sale_dispatcher~index_sales~index_sales_pay~pos"],{
 
 /***/"./node_modules/jsbarcode/bin/JsBarcode.js":
 /*!*************************************************!*\

@@ -85,7 +85,7 @@
                 <b-navbar-nav>
                   <b-dropdown-item title="Checkin" :to="{ name:'checkin', params: { id: props.row.id } }">
                     <i class="nav-icon i-Checkout font-weight-bold mr-2"></i>
-                    {{$t('SaleDetail')}}
+                    {{$t('CheckIn')}}
                   </b-dropdown-item>
                 </b-navbar-nav>
                 <b-dropdown-item title="Show" :to="'/app/sales/detail/'+props.row.id">
@@ -131,15 +131,6 @@
                 <b-dropdown-item title="Email" @click="Sale_Email(props.row , props.row.id)">
                   <i class="nav-icon i-Envelope-2 font-weight-bold mr-2"></i>
                   {{$t('EmailSale')}}
-                </b-dropdown-item>
-
-                <b-dropdown-item
-                  title="Delete"
-                  v-if="currentUserPermissions.includes('Sales_delete')"
-                  @click="Remove_Sale(props.row.id)"
-                >
-                  <i class="nav-icon i-Close-Window font-weight-bold mr-2"></i>
-                  {{$t('DeleteSale')}}
                 </b-dropdown-item>
               </b-dropdown>
             </div>
