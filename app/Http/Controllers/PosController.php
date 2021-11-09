@@ -234,12 +234,12 @@ class PosController extends BaseController
         $product_warehouse_data = product_warehouse::where('warehouse_id', $request->warehouse_id)
             ->with('product', 'product.unitSale')
             ->where('deleted_at', '=', null)
-            ->where(function ($query) use ($request) {
-                if ($request->stock == '1') {
-                    return $query->where('qte', '>', 0);
-                }
+            // ->where(function ($query) use ($request) {
+            //     if ($request->stock == '1') {
+            //         return $query->where('qte', '>', 0);
+            //     }
 
-            })
+            // })
         // Filter
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('category_id'), function ($query) use ($request) {
@@ -271,7 +271,7 @@ class PosController extends BaseController
 
         $product_warehouse_data = $product_warehouse_data
             ->offset($offSet)
-            ->limit(6)
+            ->limit(8)
             ->get();
 
         foreach ($product_warehouse_data as $product_warehouse) {

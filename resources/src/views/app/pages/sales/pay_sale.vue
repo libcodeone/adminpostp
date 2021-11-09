@@ -9,12 +9,11 @@
     <b-row v-if="!isLoading">
       <b-row>
         <b-col md="12" class="mb-5">
-          
-<button
+          <button
             @click="back()"
             class="btn btn-success btn-icon ripple btn-sm"
           >
-            {{ $t("back") }}
+            {{ $t("go_list") }}
           </button>
           <button
             @click="Sale_PDF()"
@@ -23,20 +22,19 @@
             <i class="i-File-TXT"></i>
             PDF
           </button>
-          <button
-            @click="print_pos()"
+          <!-- <button
+            @click="Invoice_POS()"
             class="btn btn-warning btn-icon ripple btn-sm"
           >
             <i class="i-Billing"></i>
             {{ $t("print") }}
-          </button>
+          </button> -->
           <button
             @click="Check_in()"
             class="btn btn-success btn-icon ripple btn-sm"
           >
             {{ $t("Checkin") }}
           </button>
-          
         </b-col>
       </b-row>
 
@@ -221,347 +219,319 @@
         </div>
       </div>
 
-     
+<!-- 
+  421
+  210
+  105
+  53
 
-     
+
+  140
+
+
+  421 - 100
+  321 - 105
+  216 - 40
+  176 - 160
+  16
+
+ -->
       <!-- Modal Show Invoice-->
-        <b-modal
-          hide-footer
-          size="lg"
-          scrollable
-          id="Show_invoiceF"
-          :title="$t('Invoice')"
-        >
-          <vue-easy-print table-show ref="Show_invoiceF">
-            <div id="invoice-POSF">
-              <div class="container">
-                <div class="row">
-                  <div class="col-9">
-                    <div class="row">
-                      <div class="info">
-                        <h3>{{ invoice_pos.setting.CompanyName }}</h3>
-                      </div>
-                    </div>
-                    <div class="row"></div>
-                    <div class="row">
-                      <div class="col-3">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                      <div class="col-3">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                      <div class="col-3">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                      <div class="col-3">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
+      <b-modal
+        hide-footer
+        size="lg"
+        scrollable
+        id="Show_invoiceF"
+        :title="$t('Invoice')"
+      >
+        <vue-easy-print table-show ref="Show_invoiceF">
+          <div id="invoice-POSF">
+            <div class="container" style="height:421">
+              <div class="row" style="height:100px">
+                <div class="col-9">
+                  <div class="row">
+                    <div class="info">
+                      <h3></h3>
                     </div>
                   </div>
-                  <div class="col-3 rounded">
-                    <span class="text-danger">Factura comercial</span>
-                    <span class="text-danger">we323988</span>
-                    <h2 class="text-danger">N° 0047755</h2>
-                    <span>8785</span>
-                    <span class="text-danger">NIT: we323988</span>
-                    <span class="text-danger">N.R.C: we323988</span>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-8">
-                    <div class="row">
-                      <div class="col-12 padding-top padding-bottom">
-                        {{ invoice_pos.sale.client_name }}
-                      </div>
+                  <div class="row"></div>
+                  <div class="row">
+                    <div class="col-3">
                     </div>
-                    <div class="row">
-                      <div class="col-4"></div>
-                      <div class="col-8">
-                        {{ sale.client_giro }}
-                      </div>
+                    <div class="col-3">
                     </div>
-                  </div>
-                  <div class="col-4">
-                    <div class="row">
-                      <div class="col-4">Vendedor</div>
-                      <div class="col-4">{{ $t("date") }}</div>
-                      <div class="col-4">Forma de pago</div>
+                    <div class="col-3">
                     </div>
-                    <div class="row">
-                      <div class="col-4">{{ currentUser.username }}</div>
-                      <div class="col-4">{{ invoice_pos.sale.date }}</div>
-                      <div class="col-4">Efectivo</div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6">{{ sale.client_NIT }}</div>
-                      <div class="col-6">{{ sale.client_NRC }}</div>
+                    <div class="col-3">
                     </div>
                   </div>
                 </div>
-                <div class="row rounded">
-                  <div class="col-1"></div>
-                  <div class="col-2"></div>
-                  <div class="col-5"></div>
-                  <div class="col-1"></div>
-                  <div class="col-1"></div>
-                  <div class="col-1"></div>
-                  <div class="col-1"></div>
+                <div class="col-3 rounded">
+                  <span>{{ invoice_pos.sale.refInvoice }}</span>
                 </div>
-                <div class="row" v-for="detail_invoice in invoice_pos.details">
-                  <div class="col-1">
-                    {{ formatNumber(detail_invoice.quantity, 2) }}
-                    {{ detail_invoice.unit_sale }}
+              </div>
+              <div class="row" style="height:105px">
+                <div class="col-8">
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      {{ invoice_pos.sale.client_name }}
+                    </div>
                   </div>
-                  <div class="col-2">{{ detail_invoice.code }}</div>
-                  <div class="col-5">{{ detail_invoice.name }}</div>
-                  <div class="col-1">
-                    {{ formatNumber(detail_invoice.total, 2) }}
-                  </div>
-                  <div class="col-1"></div>
-                  <div class="col-1"></div>
-                  <div class="col-1">
-                    {{ formatNumber(detail_invoice.total, 2) }}
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-8">
+                      {{ sale.client_giro }}
+                    </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-9">
-                    <div class="row rounded">
-                      {{ GrandTotalText }}
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4"></div>
+                    <div class="col-4"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4">{{ currentUser.username }}</div>
+                    <div class="col-4">{{ invoice_pos.sale.date }}</div>
+                    <div class="col-4">Efectivo</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6">{{ invoice_pos.sale.client_NIT }}</div>
+                    <div class="col-6">{{ invoice_pos.sale.client_NRC }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="height:40px">
+                <div class="col-1"></div>
+                <div class="col-2"></div>
+                <div class="col-5"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+              </div>
+              <div class="row" style="height:160px" v-for="detail_invoice in invoice_pos.details">
+                <div class="col-1">
+                  {{ formatNumber(detail_invoice.quantity, 2) }}
+                  {{ detail_invoice.unit_sale }}
+                </div>
+                <div class="col-2">{{ detail_invoice.code }}</div>
+                <div class="col-5">{{ detail_invoice.name }}</div>
+                <div class="col-1">
+                  {{ formatNumber(detail_invoice.total, 2) }}
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  {{ formatNumber(detail_invoice.total, 2) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-9">
+                  <div class="row rounded">
+                    {{ GrandTotalText }}
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      {{
+                        formatNumber(
+                          invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,
+                          2
+                        )
+                      }}
                     </div>
                   </div>
-                  <div class="col-3">
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6">
-                        {{
-                          formatNumber(
-                            invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,
-                            2
-                          )
-                        }}
-                      </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      {{ formatNumber(invoice_pos.sale.taxe, 2) }}
                     </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6">
-                        {{ formatNumber(invoice_pos.sale.taxe, 2) }}
-                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
                     </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6">
-                        {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6">
-                        {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
-                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </vue-easy-print>
-          <button @click="print_pos()" class="btn btn-outline-primary">
-            <i class="i-Billing"></i>
-            {{ $t("print") }}
-          </button>
-        </b-modal>
-         <!-- Modal Show Invoice-->
-        <b-modal
-          hide-footer
-          size="lg"
-          scrollable
-          id="Show_invoiceCCF"
-          :title="$t('Invoice')"
-        >
-          <vue-easy-print table-show ref="Show_invoiceCCF">
-            <div id="invoice-POSCCF">
-              <div class="container">
-                <div class="row">
-                  <div class="col-9">
-                    <div class="row">
-                      <div class="info">
-                        <h3>{{ invoice_pos.setting.CompanyName }}</h3>
-                      </div>
-                    </div>
-                    <div class="row"></div>
-                    <div class="row">
-                      <div class="col-3">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                      <div class="col-3">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                      <div class="col-3">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
-                      <div class="col-3">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                      </div>
+          </div>
+        </vue-easy-print>
+        <button @click="print_pos()" class="btn btn-outline-primary">
+          <i class="i-Billing"></i>
+          {{ $t("print") }}
+        </button>
+      </b-modal>
+      <!-- Modal Show Invoice-->
+      <b-modal
+        hide-footer
+        size="lg"
+        scrollable
+        id="Show_invoiceCCF"
+        :title="$t('Invoice')"
+      >
+        <vue-easy-print table-show ref="Show_invoiceCCF">
+          <div id="invoice-POSCCF">
+            <div class="container" style="height:421">
+              <div class="row" style="height:100px">
+                <div class="col-9">
+                  <div class="row">
+                    <div class="info">
+                      <h3></h3>
                     </div>
                   </div>
-                  <div class="col-3 rounded">
-                    <span class="text-danger">Comprobante Credito Fiscal</span>
-                    <span class="text-danger">we323988</span>
-                    <h2 class="text-danger">N° 0047755</h2>
-                    <span>8785</span>
-                    <span class="text-danger">NIT: we323988</span>
-                    <span class="text-danger">N.R.C: we323988</span>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-8">
-                    <div class="row">
-                      <div class="col-12 padding-top padding-bottom">
-                        {{ invoice_pos.sale.client_name }}
-                      </div>
+                  <div class="row"></div>
+                  <div class="row">
+                    <div class="col-3">
                     </div>
-                    <div class="row">
-                      <div class="col-4"></div>
-                      <div class="col-8">
-                        {{ sale.client_giro }}
-                      </div>
+                    <div class="col-3">
                     </div>
-                  </div>
-                  <div class="col-4">
-                    <div class="row">
-                      <div class="col-4"></div>
-                      <div class="col-4">{{ $t("date") }}</div>
-                      <div class="col-4"></div>
+                    <div class="col-3">
                     </div>
-                    <div class="row">
-                      <div class="col-4">{{ currentUser.username }}</div>
-                      <div class="col-4">{{ invoice_pos.sale.date }}</div>
-                      <div class="col-4">Efectivo</div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6">{{ sale.client_NIT }}</div>
-                      <div class="col-6">{{ sale.client_NRC }}</div>
+                    <div class="col-3">
                     </div>
                   </div>
                 </div>
-                <div class="row rounded">
-                  <div class="col-1"></div>
-                  <div class="col-2"></div>
-                  <div class="col-5"></div>
-                  <div class="col-1"></div>
-                  <div class="col-1"></div>
-                  <div class="col-1"></div>
-                  <div class="col-1"></div>
+                <div class="col-3 rounded">
+                  <span>{{ invoice_pos.sale.refInvoice }}</span>
                 </div>
-                <div class="row" v-for="detail_invoice in invoice_pos.details">
-                  <div class="col-1">
-                    {{ formatNumber(detail_invoice.quantity, 2) }}
-                    {{ detail_invoice.unit_sale }}
+              </div>
+              <div class="row" style="height:105px">
+                <div class="col-8">
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      {{ invoice_pos.sale.client_name }}
+                    </div>
                   </div>
-                  <div class="col-2">{{ detail_invoice.code }}</div>
-                  <div class="col-5">{{ detail_invoice.name }}</div>
-                  <div class="col-1">
-                    {{ formatNumber(detail_invoice.total, 2) }}
-                  </div>
-                  <div class="col-1"></div>
-                  <div class="col-1"></div>
-                  <div class="col-1">
-                    {{ formatNumber(detail_invoice.total, 2) }}
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-8">
+                      {{ sale.client_giro }}
+                    </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-9">
-                    <div class="row rounded">
-                      {{ GrandTotalText }}
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4"></div>
+                    <div class="col-4"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4">{{ currentUser.username }}</div>
+                    <div class="col-4">{{ invoice_pos.sale.date }}</div>
+                    <div class="col-4">Efectivo</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6">{{ invoice_pos.sale.client_NIT }}</div>
+                    <div class="col-6">{{ invoice_pos.sale.client_NRC }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="height:40px">
+                <div class="col-1"></div>
+                <div class="col-2"></div>
+                <div class="col-5"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+              </div>
+              <div class="row" style="height:160px" v-for="detail_invoice in invoice_pos.details">
+                <div class="col-1">
+                  {{ formatNumber(detail_invoice.quantity, 2) }}
+                  {{ detail_invoice.unit_sale }}
+                </div>
+                <div class="col-2">{{ detail_invoice.code }}</div>
+                <div class="col-5">{{ detail_invoice.name }}</div>
+                <div class="col-1">
+                  {{ formatNumber(detail_invoice.total, 2) }}
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  {{ formatNumber(detail_invoice.total, 2) }}
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-9">
+                  <div class="row rounded">
+                    {{ GrandTotalText }}
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      {{
+                        formatNumber(
+                          invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,
+                          2
+                        )
+                      }}
                     </div>
                   </div>
-                  <div class="col-3">
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6">
-                        {{
-                          formatNumber(
-                            invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,
-                            2
-                          )
-                        }}
-                      </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      {{ formatNumber(invoice_pos.sale.taxe, 2) }}
                     </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6">
-                        {{ formatNumber(invoice_pos.sale.taxe, 2) }}
-                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
                     </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6">
-                        {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6"></div>
-                    </div>
-                    <div class="row">
-                      <div class="col-6"></div>
-                      <div class="col-6">
-                        {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
-                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </vue-easy-print>
-          <button @click="print_pos()" class="btn btn-outline-primary">
-            <i class="i-Billing"></i>
-            {{ $t("print") }}
-          </button>
-        </b-modal>
+          </div>
+        </vue-easy-print>
+        <button @click="print_pos()" class="btn btn-outline-primary">
+          <i class="i-Billing"></i>
+          {{ $t("print") }}
+        </button>
+      </b-modal>
 
       <!-- Modal Add Payment-->
       <validation-observer ref="Add_payment">
@@ -615,15 +585,13 @@
                           :reduce="(label) => label.value"
                           :placeholder="$t('PleaseSelect')"
                           :options="[
-                            { label: 'Cash', value: 'Cash' },
-                            { label: 'credit card', value: 'credit card' },
-                            { label: 'cheque', value: 'cheque' },
+                            { label: 'Efectivo', value: 'Cash' },
                             {
-                              label: 'Western Union',
-                              value: 'Western Union',
+                              label: 'Tarjeta de credito',
+                              value: 'credit card',
                             },
                             {
-                              label: 'bank transfer',
+                              label: 'Transferencia Bancaria',
                               value: 'bank transfer',
                             },
                           ]"
@@ -636,22 +604,44 @@
                   </b-col>
 
                   <b-col md="12" v-if="payment.Reglement == 'credit card'">
-                    <form id="payment-form">
-                      <label
-                        for="card-element"
-                        class="leading-7 text-sm text-gray-600"
-                        >{{ $t("Credit_Card_Info") }}</label
-                      >
-                      <div id="card-element">
-                        <!-- Elements will create input elements here -->
-                      </div>
-                      <!-- We'll put the error messages in this element -->
-                      <div
-                        id="card-errors"
-                        class="is-invalid"
-                        role="alert"
-                      ></div>
-                    </form>
+                    <validation-provider
+                      name="RefCreditCard"
+                      :rules="{ required: true, regex: /^\d*\.?\d*$/ }"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('RefCreditCa')">
+                        <b-form-input
+                          :state="getValidationState(validationContext)"
+                          label="RefCreditCar"
+                          :placeholder="$t('RefCreditCar')"
+                          v-model="sale.RefCreditCard"
+                          aria-describedby="RefCreditCard-feedback"
+                        ></b-form-input>
+                        <b-form-invalid-feedback id="RefCreditCard-feedback">{{
+                          validationContext.errors[0]
+                        }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+                  <b-col md="12" v-if="payment.Reglement == 'bank transfer'">
+                    <validation-provider
+                      name="RefTransfer"
+                      :rules="{ required: true, regex: /^\d*\.?\d*$/ }"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('RefTransfer')">
+                        <b-form-input
+                          :state="getValidationState(validationContext)"
+                          label="RefTransfer"
+                          :placeholder="$t('RefTransfer')"
+                          v-model="sale.RefTransfer"
+                          aria-describedby="RefTransfer-feedback"
+                        ></b-form-input>
+                        <b-form-invalid-feedback id="RefTransfer-feedback">{{
+                          validationContext.errors[0]
+                        }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
                   </b-col>
                   <!-- cash  -->
                   <b-col lg="12" md="12" sm="12">
@@ -860,6 +850,7 @@ export default {
       product_totalRows: "",
       barcodeFormat: "CODE128",
       invoice_pos: {
+        symbol: "",
         sale: {
           Ref: "",
           client_name: "",
@@ -869,6 +860,10 @@ export default {
           tax_rate: 13,
           shipping: "",
           GrandTotal: "",
+          RefTransfer: "",
+          RefCreditCard: "",
+          type_invoice: "",
+          refInvoice: "",
         },
         details: [],
         setting: {
@@ -887,6 +882,10 @@ export default {
         shipping: 0,
         discount: 0,
         TaxNet: 0,
+        type_invoice: "",
+        RefTransfer: "",
+        RefCreditCard: "",
+        refInvoice: "",
       },
       client: {
         id: "",
@@ -931,14 +930,8 @@ export default {
   computed: {
     ...mapGetters(["currentUser"]),
   },
-
-  mounted() {
-    this.changeSidebarProperties();
-    this.paginate_products(this.product_perPage, 0);
-  },
-
   methods: {
-    ...mapActions(["changeSidebarProperties", "changeThemeMode", "logout"]),
+    ...mapActions(["changeThemeMode", "logout"]),
     ...mapGetters(["currentUser"]),
     logoutUser() {
       this.$store.dispatch("logout");
@@ -985,9 +978,9 @@ export default {
       this.logout();
     },
 
-back(){
-              this.$router.push({ name: "index_sales_pay" });
-          },
+    back() {
+      this.$router.push({ name: "index_sales_pay" });
+    },
     //------ Validate Form Submit_Payment
     Submit_Payment() {
       // Start the progress bar.
@@ -1022,17 +1015,19 @@ back(){
     },
     //-------------------- print invoice Pos
     print_pos() {
-      this.$refs.Show_invoiceCCF.print();
-    },
-    print_pos() {
-      this.$refs.Show_invoiceF.print();
+      if (this.invoice_pos.sale.type_invoice == "CF") {
+        this.$refs.Show_invoiceF.print();
+      } else {
+        this.$refs.Show_invoiceCCF.print();
+      }
     },
 
     //-------------------------------- Invoice POS ------------------------------\\
-    Invoice_POS(id) {
+    Invoice_POS() {
       // Start the progress bar.
       NProgress.start();
       NProgress.set(0.1);
+      let id = this.$route.params.id;
       axios
         .get("Sales/Print_Invoice/" + id)
         .then((response) => {
@@ -1043,7 +1038,9 @@ back(){
           setTimeout(() => {
             // Complete the animation of the  progress bar.
             NProgress.done();
-            if (this.BillingMethod == 0) {
+            this.$bvModal.show("Show_invoiceF");
+
+            if (this.invoice_pos.sale.type_invoice == "CF") {
               this.$bvModal.show("Show_invoiceF");
             } else {
               this.$bvModal.show("Show_invoiceCCF");
@@ -1066,9 +1063,9 @@ back(){
         this.payment.Reglement = "Cash";
       }
       let id = this.$route.params.id;
-        axios
-          .put(`sales/update_to_payment/${id}`, {
-            notes: this.payment.notes,
+      axios
+        .put(`sales/update_to_payment/${id}`, {
+          notes: this.payment.notes,
           tax_rate: this.sale.tax_rate,
           TaxNet: this.sale.taxe,
           discount: this.sale.discount,
@@ -1077,28 +1074,31 @@ back(){
           cash: this.payment.cash,
           shipping: this.sale.shipping,
           GrandTotal: this.payment.amount,
+          RefTransfer: this.sale.RefTransfer,
+          RefCreditCard: this.sale.RefCreditCard,
+          type_invoice: this.BillingMethod == 0 ? "CF" : "CCF",
+          GrandTotal: this.payment.amount,
           statut: "pending",
-          })
-          .then((response) => {
-            if (response.data.success === true) {
-              // Complete the animation of theprogress bar.
-                NProgress.done();
-              this.makeToast(
-            "success",
-            this.$t("Update.TitleSale"),
-            this.$t("Success")
-          );
-              this.Invoice_POS(id);
-              this.$bvModal.hide("Add_Payment");
-
-    
-            }
-          })
-          .catch((error) => {
+        })
+        .then((response) => {
+          if (response.data.success === true) {
             // Complete the animation of theprogress bar.
             NProgress.done();
-            this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
-          });
+            this.makeToast(
+              "success",
+              this.$t("Update.TitleSale"),
+              this.$t("Success")
+            );
+            this.Invoice_POS();
+            this.Get_Details();
+            this.$bvModal.hide("Add_Payment");
+          }
+        })
+        .catch((error) => {
+          // Complete the animation of theprogress bar.
+          NProgress.done();
+          this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
+        });
     },
     //  CreatePOS() {
     //   // Start the progress bar.
@@ -1223,7 +1223,7 @@ back(){
       //   this.payment.change = payment.amount-payment.cash;
       // }
     },
-    },
+  },
 
   //-------------------- Created Function -----\\
 

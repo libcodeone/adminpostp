@@ -38,16 +38,12 @@
           <b-button @click="Sales_Excel()" size="sm" variant="outline-danger ripple m-1">
             <i class="i-File-Excel"></i> EXCEL
           </b-button>
-          <router-link
-            class="btn-sm btn btn-primary ripple btn-icon m-1"
-            v-if="currentUserPermissions && currentUserPermissions.includes('Sales_add')"
-            to="/app/sales/store"
-          >
+          <b-button @click="Get_Sales(1)" size="sm" variant="btn-sm btn btn-primary ripple btn-icon m-1">
             <span class="ul-btn__icon">
-              <i class="i-Add"></i>
+              <i class="i-arrow-rotate-right"></i>
             </span>
-            <span class="ul-btn__text ml-1">{{$t('Add')}}</span>
-          </router-link>
+            <span class="ul-btn__text ml-1">{{$t('Actualizar')}}</span> 
+          </b-button>
         </div>
 
         <template slot="table-row" slot-scope="props">
@@ -68,71 +64,15 @@
 
           <span v-if="props.column.field == 'actions'">
             <div>
-              <b-dropdown
-                id="dropdown-right"
-                variant="link"
-                text="right align"
-                toggle-class="text-decoration-none"
-                size="lg"
-                right
-                no-caret
+              <router-link
+                class="btn-sm btn btn-primary ripple btn-icon m-1"
+                v-if="currentUserPermissions && currentUserPermissions.includes('checkin')"
+                :to="{ name:'checkin', params: { id: props.row.id } }"
               >
-                <template v-slot:button-content class="_r_btn border-0">
-                  <span class="_dot _r_block-dot bg-dark"></span>
-                  <span class="_dot _r_block-dot bg-dark"></span>
-                  <span class="_dot _r_block-dot bg-dark"></span>
-                </template>
-                <b-navbar-nav>
-                  <b-dropdown-item title="Checkin" :to="{ name:'checkin', params: { id: props.row.id } }">
-                    <i class="nav-icon i-Checkout font-weight-bold mr-2"></i>
-                    {{$t('CheckIn')}}
-                  </b-dropdown-item>
-                </b-navbar-nav>
-                <b-dropdown-item title="Show" :to="'/app/sales/detail/'+props.row.id">
-                    <i class="nav-icon i-Eye font-weight-bold mr-2"></i>
-                    {{$t('SaleDetail')}}
-                  </b-dropdown-item>
-
-                <b-dropdown-item
-                  title="Edit"
-                  v-if="currentUserPermissions.includes('Sales_edit')"
-                  :to="'/app/sales/edit/'+props.row.id"
-                >
-                  <i class="nav-icon i-Pen-2 font-weight-bold mr-2"></i>
-                  {{$t('EditSale')}}
-                </b-dropdown-item>
-
-                <b-dropdown-item
-                  v-if="currentUserPermissions.includes('payment_sales_view')"
-                  @click="Show_Payments(props.row.id , props.row)"
-                >
-                  <i class="nav-icon i-Money-Bag font-weight-bold mr-2"></i>
-                  {{$t('ShowPayment')}}
-                </b-dropdown-item>
-
-                <b-dropdown-item
-                  v-if="currentUserPermissions.includes('payment_sales_add')"
-                  @click="New_Payment(props.row)"
-                >
-                  <i class="nav-icon i-Add font-weight-bold mr-2"></i>
-                  {{$t('AddPayment')}}
-                </b-dropdown-item>
-
-                <b-dropdown-item title="Invoice" @click="Invoice_POS(props.row.id)">
-                  <i class="nav-icon i-File-TXT font-weight-bold mr-2"></i>
-                  {{$t('Invoice_POS')}}
-                </b-dropdown-item>
-
-                <b-dropdown-item title="PDF" @click="Invoice_PDF(props.row , props.row.id)">
-                  <i class="nav-icon i-File-TXT font-weight-bold mr-2"></i>
-                  {{$t('DownloadPdf')}}
-                </b-dropdown-item>
-
-                <b-dropdown-item title="Email" @click="Sale_Email(props.row , props.row.id)">
-                  <i class="nav-icon i-Envelope-2 font-weight-bold mr-2"></i>
-                  {{$t('EmailSale')}}
-                </b-dropdown-item>
-              </b-dropdown>
+              <i class="nav-icon i-Checkout font-weight-bold mr-2"></i>
+                    {{$t('Checkin')}}
+                
+              </router-link>
             </div>
           </span>
           <div v-else-if="props.column.field == 'statut'">
@@ -205,7 +145,7 @@
           </b-col>
 
           <!-- Status  -->
-          <b-col md="12">
+          <!-- <b-col md="12">
             <b-form-group :label="$t('Status')">
               <v-select
                 v-model="Filter_status"
@@ -219,10 +159,10 @@
                       ]"
               ></v-select>
             </b-form-group>
-          </b-col>
+          </b-col> -->
 
           <!-- Payment Status  -->
-          <b-col md="12">
+          <!-- <b-col md="12">
             <b-form-group :label="$t('PaymentStatus')">
               <v-select
                 v-model="Filter_Payment"
@@ -236,7 +176,7 @@
                       ]"
               ></v-select>
             </b-form-group>
-          </b-col>
+          </b-col> -->
 
           <b-col md="6" sm="12">
             <b-button
@@ -409,8 +349,6 @@
                           [
                           {label: 'Cash', value: 'Cash'},
                           {label: 'credit card', value: 'credit card'},
-                          {label: 'cheque', value: 'cheque'},
-                          {label: 'Western Union', value: 'Western Union'},
                           {label: 'bank transfer', value: 'bank transfer'},
                           ]"
                   ></v-select>
@@ -583,7 +521,7 @@ export default {
       Filter_Ref: "",
       Filter_date: "",
       Filter_status: "",
-      Filter_Payment: "",
+      Filter_Payment: "unpaid",
       Filter_warehouse: "",
       customers: [],
       warehouses: [],
@@ -811,7 +749,7 @@ export default {
       this.search = "";
       this.Filter_Client = "";
       this.Filter_status = "";
-      this.Filter_Payment = "";
+      this.Filter_Payment = "unpaid";
       this.Filter_Ref = "";
       this.Filter_date = "";
       (this.Filter_warehouse = ""), this.Get_Sales(this.serverParams.page);
@@ -867,6 +805,9 @@ export default {
           setTimeout(() => NProgress.done(), 500);
         });
     },
+    refresh(){
+              this.$router.push({ name: "index_sales_pay" });
+          },
     //-------------------------------- Sales Excel ------------------------------\\
     Sales_Excel() {
       // Start the progress bar.
@@ -1376,84 +1317,7 @@ export default {
         notes: ""
       };
     },
-    //------------------------------------------ Remove Sale ------------------------------\\
-    // Remove_Sale(id) {
-    //   this.$swal({
-    //     title: this.$t("Delete.Title"),
-    //     text: this.$t("Delete.Text"),
-    //     type: "warning",
-    //     showCancelButton: true,
-    //     confirmButtonColor: "#3085d6",
-    //     cancelButtonColor: "#d33",
-    //     cancelButtonText: this.$t("Delete.cancelButtonText"),
-    //     confirmButtonText: this.$t("Delete.confirmButtonText")
-    //   }).then(result => {
-    //     if (result.value) {
-    //       // Start the progress bar.
-    //       NProgress.start();
-    //       NProgress.set(0.1);
-    //       axios
-    //         .delete("sales/" + id)
-    //         .then(() => {
-    //           this.$swal(
-    //             this.$t("Delete.Deleted"),
-    //             this.$t("Delete.SaleDeleted"),
-    //             "success"
-    //           );
-    //           Fire.$emit("Delete_sale");
-    //         })
-    //         .catch(() => {
-    //           // Complete the animation of the  progress bar.
-    //           setTimeout(() => NProgress.done(), 500);
-    //           this.$swal(
-    //             this.$t("Delete.Failed"),
-    //             this.$t("Delete.Therewassomethingwronge"),
-    //             "warning"
-    //           );
-    //         });
-    //     }
-    //   });
-    // },
-    // //---- Delete sales by selection
-    // delete_by_selected() {
-    //   this.$swal({
-    //     title: this.$t("Delete.Title"),
-    //     text: this.$t("Delete.Text"),
-    //     type: "warning",
-    //     showCancelButton: true,
-    //     confirmButtonColor: "#3085d6",
-    //     cancelButtonColor: "#d33",
-    //     cancelButtonText: this.$t("Delete.cancelButtonText"),
-    //     confirmButtonText: this.$t("Delete.confirmButtonText")
-    //   }).then(result => {
-    //     if (result.value) {
-    //       // Start the progress bar.
-    //       NProgress.start();
-    //       NProgress.set(0.1);
-    //       axios
-    //         .post("sales/delete/by_selection", {
-    //           selectedIds: this.selectedIds
-    //         })
-    //         .then(() => {
-    //           this.$swal(
-    //             this.$t("Delete.Deleted"),
-    //             this.$t("Delete.SaleDeleted"),
-    //             "success"
-    //           );
-    //           Fire.$emit("Delete_sale");
-    //         })
-    //         .catch(() => {
-    //           // Complete the animation of theprogress bar.
-    //           setTimeout(() => NProgress.done(), 500);
-    //           this.$swal(
-    //             this.$t("Delete.Failed"),
-    //             this.$t("Delete.Therewassomethingwronge"),
-    //             "warning"
-    //           );
-    //         });
-    //     }
-    //   });
-    // }
+   
   },
   //----------------------------- Created function-------------------\\
   created() {
@@ -1475,21 +1339,6 @@ export default {
         this.$bvModal.hide("Add_Payment");
       }, 500);
     });
-    // Fire.$on("Delete_Facture_sale", () => {
-    //   setTimeout(() => {
-    //     this.Get_Payments(this.Sale_id);
-    //     this.Get_Sales(this.serverParams.page);
-    //     // Complete the animation of the  progress bar.
-    //     NProgress.done();
-    //   }, 500);
-    // });
-    // Fire.$on("Delete_sale", () => {
-    //   setTimeout(() => {
-    //     this.Get_Sales(this.serverParams.page);
-    //     // Complete the animation of the  progress bar.
-    //     NProgress.done();
-    //   }, 500);
-    // });
   }
 };
 </script>

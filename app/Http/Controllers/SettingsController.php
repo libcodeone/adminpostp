@@ -70,6 +70,10 @@ class SettingsController extends Controller
             'CompanyAdress' => $request['CompanyAdress'],
             'footer' => $request['footer'],
             'developed_by' => $request['developed_by'],
+            'initial_invoiceCF' => $request['initial_invoiceCF'],
+            'current_invoiceCF' => $request['current_invoiceCF'],
+            'initial_invoiceCCF' => $request['initial_invoiceCCF'],
+            'current_invoiceCCF' => $request['current_invoiceCCF'],
             'logo' => $filename,
         ]);
 
@@ -222,6 +226,11 @@ class SettingsController extends Controller
             $item['logo'] = $settings->logo;
             $item['footer'] = $settings->footer;
             $item['developed_by'] = $settings->developed_by;
+            $item['initial_invoiceCF'] = $settings->initial_invoiceCF;
+            $item['current_invoiceCF'] = $settings->current_invoiceCF;
+            $item['initial_invoiceCCF'] = $settings->initial_invoiceCCF;
+            $item['current_invoiceCCF'] = $settings->current_invoiceCCF;
+            
 
             $Currencies = Currency::where('deleted_at', null)->get(['id', 'name']);
             $clients = client::where('deleted_at', '=', null)->get(['id', 'name']);

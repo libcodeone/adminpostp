@@ -26,7 +26,7 @@
           </li>
           <li
             v-show="currentUserPermissions && (currentUserPermissions.includes('Sales_view') 
-                        || currentUserPermissions.includes('Sales_add'))"
+                        || currentUserPermissions.includes('Sales_add') || currentUserPermissions.includes('checkin') || currentUserPermissions.includes('Dispatchers'))"
             class="nav-item"
             @mouseenter="toggleSubMenu"
             :class="{ active: selectedParentMenu == 'sales' }"
@@ -274,7 +274,7 @@
           </li>
           <li
             class="nav-item"
-            v-if="currentUserPermissions && currentUserPermissions.includes('Sales_view')"
+            v-if="currentUserPermissions && currentUserPermissions.includes('checkin')"
           >
             <router-link tag="a" class to="/app/sales/list_checkin">
               <i class="nav-icon i-Files"></i>
@@ -284,7 +284,7 @@
 
           <li
             class="nav-item"
-            v-if="currentUserPermissions && currentUserPermissions.includes('Sales_view')"
+            v-if="currentUserPermissions && currentUserPermissions.includes('Dispatchers')"
           >
             <router-link tag="a" class to="/app/sales/list_dispatcher">
               <i class="nav-icon i-Files"></i>

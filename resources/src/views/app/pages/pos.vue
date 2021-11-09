@@ -540,6 +540,19 @@
         <b-sidebar id="sidebar-brand" :title="$t('ListofBrand')" bg-variant="white" right shadow>
           <div class="px-3 py-2">
             <b-row>
+              <b-col md="12 mt-2">
+                <div class="input-group">
+                  <input
+                    @keyup="Get_Brands()"
+                    v-model="search_brand"
+                    type="text"
+                    :placeholder="$t('Search_this_table')"
+                    class="form-control"
+                  >
+                </div>
+              </b-col>
+            </b-row>
+            <b-row>
               <div class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2">
                 <div
                   @click="GetAllBrands()"
@@ -609,6 +622,19 @@
           shadow
         >
           <div class="px-3 py-2">
+            <b-row>
+              <b-col md="12 mt-2">
+                <div class="input-group">
+                  <input
+                    @keyup="Get_Categories()"
+                    v-model="search_category"
+                    type="text"
+                    :placeholder="$t('Search_this_table')"
+                    class="form-control"
+                  >
+                </div>
+              </b-col>
+            </b-row>
             <b-row>
               <div class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2">
                 <div
@@ -902,6 +928,8 @@ export default {
       Ref: "",
       search: "",
       SearchProduct: "",
+      search_category: "",
+      search_brand: "",
       clients: [],
       warehouses: [],
       products: [],
@@ -1011,6 +1039,79 @@ export default {
     ...mapGetters(["currentUser"]),
     logoutUser() {
       this.$store.dispatch("logout");
+    },
+
+
+    
+    Get_Categories() {
+      // Start the progress bar.
+      NProgress.start();
+      NProgress.set(0.1);
+      axios
+        .get(
+          "categories?page=" +
+            1 +
+            "&SortField=" +
+            "id" +
+            "&SortType=" +
+            "desc" +
+            "&search=" +
+            this.search_category +
+            "&limit=" +
+            10
+            
+        )
+        .then(response => {
+          this.categories = response.data.categories;
+          this.paginate_Category(this.category_perPage, 0);
+
+
+          // Complete the animation of theprogress bar.
+          NProgress.done();
+          this.isLoading = false;
+        })
+        .catch(response => {
+          // Complete the animation of theprogress bar.
+          NProgress.done();
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 500);
+        });
+    },
+
+      //---------------------------------------- Get All brands-----------------\\
+    Get_Brands() {
+      // Start the progress bar.
+      NProgress.start();
+      NProgress.set(0.1);
+      axios
+        .get(
+           "brands?page=" +
+            1 +
+            "&SortField=" +
+            "id" +
+            "&SortType=" +
+            "desc" +
+            "&search=" +
+            this.search_brand +
+            "&limit=" +
+            10
+        )
+        .then(response => {
+          this.brands = response.data.brands;
+          this.paginate_Brands(this.brand_perPage, 0);
+
+          // Complete the animation of theprogress bar.
+          NProgress.done();
+          this.isLoading = false;
+        })
+        .catch(response => {
+          // Complete the animation of theprogress bar.
+          NProgress.done();
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 500);
+        });
     },
 
   //---------------------- Event Select Payment Method ------------------------------\\
@@ -1396,6 +1497,8 @@ export default {
             // Complete the animation of theprogress bar.
             NProgress.done();
             this.Reset_Pos();
+            this.makeToast("success", this.$t("sendtocheckin"), this.$t("Success"));
+
           }
         })
         .catch(error => {

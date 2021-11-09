@@ -502,7 +502,8 @@ class SalesController extends BaseController
      {
          $this->authorizeForUser($request->user('api'), 'update', Sale::class);
          $current_Sale = Sale::findOrFail($id);
- 
+         $company = Setting::where('deleted_at', '=', null)->first();
+
          $payment_statut = 'paid';
          
                     $PaymentSale = new PaymentSale();
@@ -523,7 +524,21 @@ class SalesController extends BaseController
                         'GrandTotal' => $request['GrandTotal'],
                         'payment_statut' => $payment_statut,
                         'paid_amount' => $request['GrandTotal'],
+                        'refTrasnsferedBank' => $request['RefTransfer'],
+                        'refCreditCard' => $request['RefCreditCard'],
+                        'type_invoice' => $request['type_invoice'],
+                        'refInvoice' =>$request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1,
                     ]);
+                    if($request['type_invoice']=='CF'){
+                        $company->update([
+                            'current_invoiceCF' => $current_Sale['refInvoice']
+                        ]);    
+                    }else{
+                        $company->update([
+                            'current_invoiceCCF' => $current_Sale['refInvoice']
+                        ]);
+                    }
+                    
          
  
          return response()->json(['success' => true]);
@@ -739,7 +754,8 @@ class SalesController extends BaseController
         $item['client_NRC'] = $sale['client']->NRC;
         $item['client_giro'] = $sale['client']->giro;
         $item['GrandTotal'] = $sale->GrandTotal;
-
+        $item['type_invoice'] = $sale->type_invoice;
+        $item['refInvoice'] = $sale->refInvoice;
         foreach ($sale['details'] as $detail) {
             if ($detail->product_variant_id) {
 

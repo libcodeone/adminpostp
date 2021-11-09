@@ -646,63 +646,34 @@
                                 <span class="checkmark"></span>
                               </label>
                             </b-col>
-                          </b-row>
-                        </b-card-text>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </b-col>
-                
-                 <!-- Dispatchers -->
-                <b-col md="4">
-                  <b-card no-body class="ul-card__border-radius">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button
-                        class="card-title mb-0"
-                        block
-                        href="#"
-                        v-b-toggle.panel-Dispachers
-                        variant="transparent"
-                      >{{$t('Dispatchers')}}</b-button>
-                    </b-card-header>
-                    <b-collapse
-                      id="panel-Dispatchers"
-                      :visible="true"
-                      accordion="my-accordion7"
-                      role="tabpanel"
-                    >
-                      <b-card-body>
-                        <b-card-text>
-                          <b-row>
-                            <!--Dispachers View -->
-                            <b-col md="6">
+
+                            <!--Sales Checkin -->
+                            <b-col md="12">
                               <label class="checkbox checkbox-outline-primary">
                                 <input
                                   type="checkbox"
                                   checked
                                   v-model="permissions"
-                                  value="Dispatchers_view"
+                                  value="checkin"
                                 >
-                                <span>{{$t('View')}}</span>
+                                <span>{{$t('Checkin')}}</span>
                                 <span class="checkmark"></span>
                               </label>
                             </b-col>
-                           
-                            <!--Dispachers Edit -->
-                            <b-col md="6">
+
+                            <!--Sales Dispatcher -->
+                            <b-col md="12">
                               <label class="checkbox checkbox-outline-primary">
                                 <input
                                   type="checkbox"
                                   checked
                                   v-model="permissions"
-                                  value="Dispatchers_edit"
+                                  value="Dispatchers"
                                 >
-                                <span>{{$t('Edit')}}</span>
+                                <span>{{$t('Dispatchers')}}</span>
                                 <span class="checkmark"></span>
                               </label>
                             </b-col>
-                           
-                           
                           </b-row>
                         </b-card-text>
                       </b-card-body>

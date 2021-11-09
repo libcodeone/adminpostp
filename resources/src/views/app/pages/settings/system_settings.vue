@@ -196,6 +196,88 @@
                     </validation-provider>
                   </b-col>
 
+                   <!-- Initial Invoice CF -->
+                  <b-col lg="4" md="4" sm="12">
+                    <validation-provider
+                      name="initial_invoiceCF"
+                      :rules="{ required: true}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('initial_invoiceCF')">
+                         <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="initial_invoiceCF-feedback"
+                          v-model="setting.initial_invoiceCF"
+                          class="form-control"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="initial_invoiceCF-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+                  <!-- Current Invoice CF -->
+                  <b-col lg="4" md="4" sm="12">
+                    <validation-provider
+                      name="current_invoiceCF"
+                      :rules="{ required: true}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('current_invoiceCF')">
+                         <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="current_invoiceCF-feedback"
+                          v-model="setting.current_invoiceCF"
+                          class="form-control"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="current_invoiceCF-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+
+                  <!-- Initial Invoice CCF -->
+                  <b-col lg="4" md="4" sm="12">
+                    <validation-provider
+                      name="initial_invoiceCCF"
+                      :rules="{ required: true}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('initial_invoiceCCF')">
+                         <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="initial_invoiceCCF-feedback"
+                          v-model="setting.initial_invoiceCCF"
+                          class="form-control"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="initial_invoiceCCF-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+                  <!-- Current Invoice CCF -->
+                  <b-col lg="4" md="4" sm="12">
+                    <validation-provider
+                      name="current_invoiceCCF"
+                      :rules="{ required: true}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('current_invoiceCCF')">
+                         <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="current_invoiceCCF-feedback"
+                          v-model="setting.current_invoiceCCF"
+                          class="form-control"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="current_invoiceCCF-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+
 
                   <b-col md="12">
                     <b-form-group>
@@ -515,6 +597,10 @@ export default {
         CompanyAdress: "",
         footer:"",
         developed_by:"",
+        initial_invoiceCF:"",
+        current_invoiceCF:"",
+        initial_invoiceCCF:"",
+        current_invoiceCCF:"",
       },
 
       gateway:{
@@ -649,9 +735,12 @@ export default {
       self.data.append("CompanyPhone", self.setting.CompanyPhone);
       self.data.append("CompanyAdress", self.setting.CompanyAdress);
       self.data.append("footer", self.setting.footer);
+      self.data.append("initial_invoiceCF", self.setting.initial_invoiceCF);
+      self.data.append("current_invoiceCF", self.setting.current_invoiceCF);
+      self.data.append("initial_invoiceCCF", self.setting.initial_invoiceCCF);
+      self.data.append("current_invoiceCCF", self.setting.current_invoiceCCF);
       self.data.append("developed_by", self.setting.developed_by);
       self.data.append("_method", "put");
-
       axios
         .post("settings/" + self.setting.id, self.data)
         .then(response => {

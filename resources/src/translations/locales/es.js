@@ -624,5 +624,20 @@ export default {
     ReturnDashboard: "volver al tablero",
     BillingMethod: "Método de facturación",
     sendtobox: "Enviar a caja",
+    Delivered: "Entregar",
+    Dispatcher: "Despachar",
+    Dispatchers: "Despachador",
+    Checkin: "Facturar",
+    RefTransfer: "Referencia de pago por transfrencia",
+    RefCreditCar: "Referencia de pago por tarjeta",
+    sendtocheckin: "Enviado a caja",
+    dispatcher: "Despachar",
+    go_list: "Ir a Lista",
+    initial_invoiceCF: "Correlativo inicial de factura",
+    current_invoiceCF: "Correlativo actual de factura",
+    initial_invoiceCCF: "Correlativo inicial de CCF",
+    current_invoiceCCF: "Correlativo actual de CCF",
 
+
+    
 };

@@ -646,6 +646,33 @@
                                 <span class="checkmark"></span>
                               </label>
                             </b-col>
+                            <!--Sales Checkin -->
+                            <b-col md="12">
+                              <label class="checkbox checkbox-outline-primary">
+                                <input
+                                  type="checkbox"
+                                  checked
+                                  v-model="permissions"
+                                  value="checkin"
+                                >
+                                <span>{{$t('Checkin')}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </b-col>
+
+                            <!--Sales Dispatcher -->
+                            <b-col md="12">
+                              <label class="checkbox checkbox-outline-primary">
+                                <input
+                                  type="checkbox"
+                                  checked
+                                  v-model="permissions"
+                                  value="Dispatchers"
+                                >
+                                <span>{{$t('Dispatchers')}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </b-col>
                           </b-row>
                         </b-card-text>
                       </b-card-body>

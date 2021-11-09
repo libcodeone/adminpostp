@@ -598,11 +598,6 @@ export default {
       var now = new Date();
       this.CurrentMonth = months[now.getMonth()];
     },
-    permiss(){
-      if(currentUser.role_id == 2){
-      window.location = '/app/pos';
-      }
-    },
 
     //------------------------------Formetted Numbers -------------------------\\
     formatNumber(number, dec) {
@@ -619,10 +614,8 @@ export default {
     }
   },
   async mounted() {
-    this.permiss();
     await this.report_with_echart();
     this.GetMonth();
   }
-  
 };
 </script>
