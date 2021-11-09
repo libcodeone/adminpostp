@@ -6,14 +6,14 @@
           <div class="col-md-12">
             <div class="p-4">
               <div class="auth-logo text-center mb-30">
-                <img :src="'/images/logo.png'" />
+                <img :src="'/images/logo.png'">
               </div>
-              <h1 class="mb-3 text-18">{{ $t("SignIn") }}</h1>
+              <h1 class="mb-3 text-18">{{$t('SignIn')}}</h1>
               <validation-observer ref="submit_login">
                 <b-form @submit.prevent="Submit_Login">
                   <validation-provider
                     name="Email Address"
-                    :rules="{ required: true }"
+                    :rules="{ required: true}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('Email_Address')" class="text-12">
@@ -25,15 +25,13 @@
                         v-model="email"
                         email
                       ></b-form-input>
-                      <b-form-invalid-feedback id="Email-feedback">{{
-                        validationContext.errors[0]
-                      }}</b-form-invalid-feedback>
+                      <b-form-invalid-feedback id="Email-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
                     </b-form-group>
                   </validation-provider>
 
                   <validation-provider
                     name="Password"
-                    :rules="{ required: true }"
+                    :rules="{ required: true}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('password')" class="text-12">
@@ -44,9 +42,9 @@
                         type="password"
                         v-model="password"
                       ></b-form-input>
-                      <b-form-invalid-feedback id="Password-feedback">{{
-                        validationContext.errors[0]
-                      }}</b-form-invalid-feedback>
+                      <b-form-invalid-feedback
+                        id="Password-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
                     </b-form-group>
                   </validation-provider>
 
@@ -56,8 +54,7 @@
                     class="btn-rounded btn-block mt-2"
                     variant="primary mt-2"
                     :disabled="loading"
-                    >{{ $t("SignIn") }}</b-button
-                  >
+                  >{{$t('SignIn')}}</b-button>
                   <div v-once class="typo__p" v-if="loading">
                     <div class="spinner sm spinner-primary mt-3"></div>
                   </div>
@@ -65,8 +62,8 @@
               </validation-observer>
 
               <div class="mt-3 text-center">
-                <a href="/password/reset" class="text-muted">
-                  <u>{{ $t("Forgot_Password") }}</u>
+                <a href="/password/reset"  class="text-muted">
+                  <u>{{$t('Forgot_Password')}}</u>
                 </a>
               </div>
             </div>
@@ -82,31 +79,25 @@ import NProgress from "nprogress";
 
 export default {
   metaInfo: {
-    title: "SignIn",
+    title: "SignIn"
   },
   data() {
     return {
-      permissions:[],
       email: "",
       password: "",
       userId: "",
       bgImage: require("./../../../assets/images/photo-wide-4.jpg"),
-      loading: false,
+      loading: false
     };
   },
   computed: {
-    ...mapGetters([
-      "isAuthenticated",
-      "error",
-      "currentUserPermissions",
-      "currentUser",
-    ]),
+    ...mapGetters(["isAuthenticated", "error"])
   },
 
   methods: {
     //------------- Submit Form login
     Submit_Login() {
-      this.$refs.submit_login.validate().then((success) => {
+      this.$refs.submit_login.validate().then(success => {
         if (!success) {
           this.makeToast(
             "danger",
@@ -130,67 +121,33 @@ export default {
       NProgress.set(0.1);
       self.loading = true;
       axios
-        .post(
-          "/login",
-          {
-            email: self.email,
-            password: self.password,
-          },
-          {
-            baseURL: "",
-          }
-        )
-        .then((response) => {
-          this.makeToast(
-            "success",
-            this.$t("Successfully_Logged_In"),
-            this.$t("Success")
-          );
-          // if(currentUserPermissions && 
-          //    currentUserPermissions.includes('Pos_view') ||
-          //    currentUserPermissions.includes('Sales_view') 
-          //    ){
-          //      window.location = "/";
-          // }else if (currentUserPermissions && 
-          //    currentUserPermissions.includes('Pos_view')) {
-               
-          //      }
-               window.location = "/";
-
-          NProgress.done();
-          this.loading = false;
+        .post("/login",{
+          email: self.email,
+          password: self.password
+        },
+        {
+          baseURL: '',
         })
-        .catch((error) => {
-          NProgress.done();
-          this.loading = false;
-          this.makeToast(
-            "danger",
-            this.$t("Incorrect_Login"),
-            this.$t("Failed")
-          );
-        });
-    },
-    GetPermisions(){
-    
-        axios.get("/GetPermissions")
         .then(response => {
-          this.permissions = response.data;
-          this.isLoading = false;
-          if(permissions.length==1){
-            if(permissions.includes('Pos_view')){
-              window.location = '/app/pos';
-            }
-          }else{
-            if(permissions.includes('Pos_view')){
-               window.location = "/app/pos";
 
-          }else{
-               window.location = "/";
-          }
-          }
+            this.makeToast(
+              "success",
+              this.$t("Successfully_Logged_In"),
+              this.$t("Success")
+            );
+          window.location = '/';
+           
+          NProgress.done();
+          this.loading = false;
         })
-        .catch(response => {
-          this.isLoading = false;
+        .catch(error => {
+          NProgress.done();
+          this.loading = false;
+          this.makeToast(
+              "danger",
+              this.$t("Incorrect_Login"),
+              this.$t("Failed")
+            );
         });
     },
 
@@ -199,9 +156,9 @@ export default {
       this.$root.$bvToast.toast(msg, {
         title: title,
         variant: variant,
-        solid: true,
+        solid: true
       });
-    },
-  },
+    }
+  }
 };
 </script>

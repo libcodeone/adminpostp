@@ -260,7 +260,8 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
 
     //------------------------------- Users --------------------------\\
     //------------------------------------------------------------------\\
-
+    
+    Route::get('GetUserRole', 'UserController@GetUserRole');
     Route::get('GetUserAuth', 'UserController@GetUserAuth');
     Route::get("/GetPermissions", "UserController@GetPermissions");
     Route::resource('users', 'UserController');

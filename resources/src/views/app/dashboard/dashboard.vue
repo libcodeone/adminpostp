@@ -233,7 +233,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["currentUser"]),
+    ...mapGetters(["currentUser","currentUserPermissions"]),
     columns_sales() {
       return [
         {
@@ -614,8 +614,13 @@ export default {
     }
   },
   async mounted() {
-    await this.report_with_echart();
-    this.GetMonth();
+
+    if(this.currentUserPermissions.length ==1 && this.currentUserPermissions.includes('Pos_view')){
+      window.location= '/app/pos';
+    }else{
+      await this.report_with_echart();
+      this.GetMonth();
+    }
   }
 };
 </script>
