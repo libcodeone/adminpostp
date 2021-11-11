@@ -60,7 +60,7 @@
                   </b-dropdown>
                 </div>
 
-                <!-- User avatar dropdown -->
+                <!-- User avatar dropdown 
                 <div class="dropdown">
                   <b-dropdown
                     id="dropdown-1"
@@ -96,7 +96,7 @@
                       <a class="dropdown-item" href="#" @click.prevent="logoutUser">{{$t('logout')}}</a>
                     </div>
                   </b-dropdown>
-                </div>
+                </div>-->
               </div>
             </div>
             
