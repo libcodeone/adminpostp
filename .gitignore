@@ -1,13 +1,13 @@
 /public/hot
 
 # /public/js/bundle
-# /public/images/vendor
+/public/images/vendor
 # /public/js/main.js
 /node_modules
 /public/hot
-# /public/storage
-# /storage/*.key
-# /storage/framework/sessions
+/public/storage
+/storage/*.key
+/storage/framework/sessions
 /vendor
 .env
 .env.backup

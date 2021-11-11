@@ -235,6 +235,8 @@
   176 - 160
   16
 
+
+421+50+40+160
  -->
       <!-- Modal Show Invoice-->
       <b-modal
@@ -246,8 +248,8 @@
       >
         <vue-easy-print table-show ref="Show_invoiceF">
           <div id="invoice-POSF">
-            <div class="container" style="height:421">
-              <div class="row" style="height:100px">
+            <div class="container" style="height:671px">
+              <div class="row" style="height:150px">
                 <div class="col-9">
                   <div class="row">
                     <div class="info">
@@ -301,7 +303,7 @@
                   </div>
                 </div>
               </div>
-              <div class="row" style="height:40px">
+              <div class="row" style="height:80px">
                 <div class="col-1"></div>
                 <div class="col-2"></div>
                 <div class="col-5"></div>
@@ -310,7 +312,7 @@
                 <div class="col-1"></div>
                 <div class="col-1"></div>
               </div>
-              <div class="row" style="height:160px" v-for="detail_invoice in invoice_pos.details">
+              <div class="row" style="height:320px" v-for="detail_invoice in invoice_pos.details">
                 <div class="col-1">
                   {{ formatNumber(detail_invoice.quantity, 2) }}
                   {{ detail_invoice.unit_sale }}
@@ -394,8 +396,8 @@
       >
         <vue-easy-print table-show ref="Show_invoiceCCF">
           <div id="invoice-POSCCF">
-            <div class="container" style="height:421">
-              <div class="row" style="height:100px">
+            <div class="container" style="height:671px">
+              <div class="row" style="height:150px">
                 <div class="col-9">
                   <div class="row">
                     <div class="info">
@@ -449,7 +451,7 @@
                   </div>
                 </div>
               </div>
-              <div class="row" style="height:40px">
+              <div class="row" style="height:80px">
                 <div class="col-1"></div>
                 <div class="col-2"></div>
                 <div class="col-5"></div>
@@ -458,7 +460,7 @@
                 <div class="col-1"></div>
                 <div class="col-1"></div>
               </div>
-              <div class="row" style="height:160px" v-for="detail_invoice in invoice_pos.details">
+              <div class="row" style="height:320px" v-for="detail_invoice in invoice_pos.details">
                 <div class="col-1">
                   {{ formatNumber(detail_invoice.quantity, 2) }}
                   {{ detail_invoice.unit_sale }}
