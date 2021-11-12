@@ -249,7 +249,7 @@
         <vue-easy-print table-show ref="Show_invoiceF">
           <div id="invoice-POSF">
             <div class="container" style="height:671px">
-              <div class="row" style="height:200px">
+              <div class="row" style="height:180px">
                 <div class="col-9">
                   <div class="row">
                     <div class="info">
@@ -322,7 +322,8 @@
                 <div class="col-1"></div>
                 <div class="col-1"></div>
               </div>
-              <div class="row" style="height:400px" v-for="detail_invoice in invoice_pos.details">
+              <div style="height:400px">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details">
                 <div class="col-1">
                   {{ formatNumber(detail_invoice.quantity, 2) }}
                   {{ detail_invoice.unit_sale }}
@@ -337,6 +338,8 @@
                   {{ formatNumber(detail_invoice.total, 2) }}
                 </div>
               </div>
+              </div>
+              
               <div class="row">
                 <div class="col-10">
                   <div class="row rounded">
@@ -484,7 +487,8 @@
                 <div class="col-1"></div>
                 <div class="col-1"></div>
               </div>
-              <div class="row" style="height:320px" v-for="detail_invoice in invoice_pos.details">
+              <div style="height:400px">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details">
                 <div class="col-1">
                   {{ formatNumber(detail_invoice.quantity, 2) }}
                   {{ detail_invoice.unit_sale }}
@@ -494,10 +498,11 @@
                 <div class="col-1">
                   {{ formatNumber(detail_invoice.total, 2) }}
                 </div>
-               <div class="col-1"></div>
+                <div class="col-1"></div>
                 <div class="col-1">
                   {{ formatNumber(detail_invoice.total, 2) }}
                 </div>
+              </div>
               </div>
               <div class="row">
                 <div class="col-9">
