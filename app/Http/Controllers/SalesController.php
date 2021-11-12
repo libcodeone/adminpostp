@@ -753,6 +753,9 @@ class SalesController extends BaseController
         $item['client_NIT'] = $sale['client']->NIT;
         $item['client_NRC'] = $sale['client']->NRC;
         $item['client_giro'] = $sale['client']->giro;
+        $item['client_adresse'] = $sale['client']->adresse;
+        $item['client_country'] = $sale['client']->country;
+        $item['client_city'] = $sale['client']->city;
         $item['GrandTotal'] = $sale->GrandTotal;
         $item['type_invoice'] = $sale->type_invoice;
         $item['refInvoice'] = $sale->refInvoice;
