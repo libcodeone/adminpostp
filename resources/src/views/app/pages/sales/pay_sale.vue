@@ -345,7 +345,7 @@
               </div>
               </div>
               
-              <div class="row">
+              <div class="row" style="height:400px">
                 <div class="col-10">
                   <div class="row rounded">
                     {{ GrandTotalText }}
