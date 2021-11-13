@@ -553,9 +553,9 @@
                 <div class="col-1">
                   <span class="h5 text-uppercase">
                   {{ formatNumber(detail_invoice.quantity, 2) }}
-                  {{ detail_invoice.unit_sale }}
                       </span>
                 </div>
+               
                 <div class="col-7">
                    <span class="h5 text-uppercase">
                   {{ detail_invoice.code }}
@@ -565,10 +565,17 @@
                       </span>
                   </div>
                 <div class="col-1">
-                  <span class="h5 text-uppercase">
-                  {{ formatNumber(detail_invoice.total, 2) }}
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase">
+                      {{ formatNumber(detail_invoice.total, 2) }}
                       </span>
+                      </div>
+                  </div>
+                  
                 </div>
+                <div class="col-1"></div>
                 <div class="col-1"></div>
                 <div class="col-1">
                   <span class="h5 text-uppercase">
