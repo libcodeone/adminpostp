@@ -295,31 +295,21 @@
                       </span>
                     </div>
                   </div>
-                  <!-- <div class="row">
-                    <div class="col-4"></div>
-                    <div class="col-8">
-                      {{ sale.client_giro }}
-                    </div>
-                  </div> -->
                 </div>
                 <div class="col-4">
                   <div class="row">
                     <div class="col-4"></div>
                     <div class="col-4"></div>
-                    <div class="col-4"></div>
-                  </div>
-                  <div class="row">
-                    <div class="col-4"></div>
-                    <div class="col-4"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase">
+                      <span >
                       Efectivo
                       </span>
                       </div>
                   </div>
                   <div class="row">
                     <div class="col-6"></div>
-                    <div class="col-6"><span class="h5 text-uppercase">
+                    <div class="col-6">
+                      <span>
                       {{ invoice_pos.sale.date }}
                       </span>
                       </div>
@@ -340,15 +330,13 @@
                 <div class="col-1">
                   <span class="h5 text-uppercase">
                   {{ formatNumber(detail_invoice.quantity, 2) }}
-                  {{ detail_invoice.unit_sale }}
                       </span>
                 </div>
-                <div class="col-2">
-                  <span class="h5 text-uppercase">
+               
+                <div class="col-7">
+                   <span class="h5 text-uppercase">
                   {{ detail_invoice.code }}
-                      </span>
-                  </div>
-                <div class="col-5">
+                      </span> - 
                   <span class="h5 text-uppercase">
                   {{ detail_invoice.name }}
                       </span>
@@ -374,7 +362,7 @@
               </div>
               </div>
               
-              <div class="row" style="height:200px">
+              <div class="row" >
                 <div class="col-10">
                   <div class="row rounded">
                     <span class="h5 text-uppercase">
@@ -383,7 +371,7 @@
                   </div>
                 </div>
                 <div class="col-2">
-                  <div class="row">
+                  <div class="row align-items-start">
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
@@ -396,7 +384,7 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row align-items-start">
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
@@ -404,31 +392,31 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row align-items-start">
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
-                      {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
+                     
                       </span>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row align-items-start">
                     <div class="col-6"></div>
                     <div class="col-6"></div>
                   </div>
-                  <div class="row">
+                  <div class="row align-items-start">
                     <div class="col-6"></div>
                     <div class="col-6"></div>
                   </div>
-                  <div class="row">
+                  <div class="row align-items-start">
                     <div class="col-6"></div>
                     <div class="col-6"></div>
                   </div> 
-                  <div class="row align-items-end">
+                  <div class="row align-items-end " style="height:200px">
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
-                      {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
+                      {{ formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe, 2) }}
                       </span>
                       
                     </div>
@@ -515,12 +503,12 @@
                   <div class="row">
                     <div class="col-4"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase">
+                      <span >
                       {{ invoice_pos.sale.date }}
                       </span>
                       </div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase">
+                      <span >
                       Efectivo
                       </span>
 
@@ -572,12 +560,10 @@
                   {{ detail_invoice.unit_sale }}
                       </span>
                 </div>
-                <div class="col-2">
-                  <span class="h5 text-uppercase">
+                <div class="col-7">
+                   <span class="h5 text-uppercase">
                   {{ detail_invoice.code }}
-                      </span>
-                  </div>
-                <div class="col-6">
+                      </span> - 
                   <span class="h5 text-uppercase">
                   {{ detail_invoice.name }}
                       </span>
