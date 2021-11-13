@@ -298,12 +298,13 @@
                 </div>
                 <div class="col-4">
                   <div class="row">
+                    <div class="col-2"> </div>
                     <div class="col-6">
                        <span>
                       {{ invoice_pos.sale.date }}
                       </span>
                     </div>
-                    <div class="col-6">
+                    <div class="col-4">
                      <span >
                       Efectivo
                       </span>
@@ -320,7 +321,7 @@
                 <div class="col-1"></div>
                 <div class="col-1"></div>
               </div>
-              <div style="height:380px">
+              <div style="height:360px">
                   <div class="row"  v-for="detail_invoice in invoice_pos.details">
                 <div class="col-1">
                   <span class="h5 text-uppercase">
@@ -407,7 +408,7 @@
                     <div class="col-6"></div>
                     <div class="col-6"></div>
                   </div> 
-                  <div class="row align-items-end " style="height:100px">
+                  <div class="row align-items-end " style="height:120px">
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
