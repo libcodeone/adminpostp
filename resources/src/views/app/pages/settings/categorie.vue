@@ -114,7 +114,7 @@
             <!-- -Category Image -->
             <b-col md="12">
               <validation-provider name="Image" ref="Image" rules="mimes:image/*|size:200">
-                <b-form-group slot-scope="{validate, valid, errors }" :label="$t('BrandImage')">
+                <b-form-group slot-scope="{validate, valid, errors }" :label="$t('CategoryImage')">
                   <input
                     :state="errors[0] ? false : (valid ? true : null)"
                     :class="{'is-invalid': !!errors.length}"
@@ -176,7 +176,7 @@ export default {
     columns() {
       return [
         {
-          label: this.$t("BrandImage"),
+          label: this.$t("CategoryImage"),
           field: "image",
           tdClass: "text-left",
           thClass: "text-left"
