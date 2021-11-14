@@ -56,16 +56,15 @@ class CategorieController extends BaseController
         request()->validate([
             'name' => 'required',
             'code' => 'required',
-            'image'=> 'nullable|image'
         ]);
         if ($request->hasFile('image')) {
 
             $image = $request->file('image');
             $filename = rand(11111111, 99999999) . $image->getClientOriginalName();
-
+            $path = public_path() . '/images/categorys';
             $image_resize = Image::make($image->getRealPath());
             $image_resize->resize(200, 200);
-            $image_resize->save(public_path('/images/categorys/' . $filename));
+            $image_resize->save(public_path('/images/categorys/' . $filename)); 
 
         } else {
             $filename = 'no-image.png';
@@ -73,6 +72,7 @@ class CategorieController extends BaseController
         Category::create([
             'code' => $request['code'],
             'name' => $request['name'],
+            'image' => $filename
         ]);
         return response()->json(['success' => true]);
     }
@@ -86,22 +86,19 @@ class CategorieController extends BaseController
         request()->validate([
             'name' => 'required',
             'code' => 'required',
-            //'image' => 'nullable|image',
         ]);
         $category=Category::findOrFail($id);
-
         $currentImage = $category->image;
         Log::debug($request->all());
         if ($request->image != $currentImage) {
             
             $image = $request->file('image');
-            $path = public_path() . '/images/categorys';
             $filename = rand(11111111, 99999999) . $image->getClientOriginalName();
+            $path = public_path() . '/images/categorys';
 
             $image_resize = Image::make($image->getRealPath());
             $image_resize->resize(200, 200);
-            $image_resize->save(public_path('/images/categorys/' . $filename));
-
+            $image_resize->save(public_path('/images/categorys/' . $filename)); 
             $BrandImage = $path . '/' . $currentImage;
             if (file_exists($BrandImage)) {
                 if ($currentImage != 'no-image.png') {
@@ -114,7 +111,7 @@ class CategorieController extends BaseController
         Category::whereId($id)->update([
             'code' => $request['code'],
             'name' => $request['name'],
-            'image' => $filename,
+            'image' => $filename
         ]);
         return response()->json(['success' => true]);
 

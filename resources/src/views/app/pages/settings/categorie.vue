@@ -53,6 +53,16 @@
               <i class="i-Close-Window text-25 text-danger"></i>
             </a>
           </span>
+          <span v-else-if="props.column.field == 'image'">
+            <b-img
+              thumbnail
+              height="50"
+              width="50"
+              fluid
+              :src="'/images/categorys/' + props.row.image"
+              alt="image"
+            ></b-img>
+          </span>
         </template>
       </vue-good-table>
     </b-card>
@@ -154,7 +164,6 @@ export default {
       limit: "10",
       categories: [],
       editmode: false,
-
       category: {
         id: "",
         name: "",
@@ -342,12 +351,13 @@ export default {
 
     //----------------------------------Create new Category ----------------\\
     Create_Category() {
+      var self = this;
+      self.data.append("name", self.category.name);
+      self.data.append("code", self.category.code);
+      self.data.append("image", self.category.image);
+      console.log(self.category.image);
       axios
-        .post("categories", {
-          name: this.category.name,
-          code: this.category.code
-          //image: this.category.image
-        })
+        .post("categories",self.data)
         .then(response => {
           Fire.$emit("Event_Category");
           this.makeToast(
@@ -365,8 +375,9 @@ export default {
     Update_Category() {
       var self = this;
       self.data.append("name", self.category.name);
-      self.data.append("description", self.category.description);
+      self.data.append("code", self.category.code);
       self.data.append("image", self.category.image);
+      self.data.append("_method", "put");
       axios
         .post("categories/" + this.category.id,self.data)
         .then(response => {

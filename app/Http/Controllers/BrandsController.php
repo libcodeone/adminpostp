@@ -8,8 +8,6 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManagerStatic as Image;
-use Illuminate\Support\Facades\Log;
-
 
 class BrandsController extends Controller
 {
@@ -101,8 +99,6 @@ class BrandsController extends Controller
         \DB::transaction(function () use ($request, $id) {
             $Brand = Brand::findOrFail($id);
             $currentImage = $Brand->image;
-        Log::debug($request->all());
-
             if ($request->image != $currentImage) {
 
                 $image = $request->file('image');
@@ -122,6 +118,7 @@ class BrandsController extends Controller
             } else {
                 $filename = $currentImage;
             }
+
             Brand::whereId($id)->update([
                 'name' => $request['name'],
                 'description' => $request['description'],
