@@ -5700,8 +5700,7 @@ _vm._l(_vm.products,function(product){
 return _c(
 "div",
 {
-staticClass:
-"card o-hidden bd-highlight m-1",
+staticClass:"card bd-highlight m-1",
 on:{
 click:function click($event){
 return _vm.Check_Product_Exist(

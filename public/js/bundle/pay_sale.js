@@ -2693,6 +2693,124 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2748,6 +2866,9 @@ symbol:"",
 sale:{
 Ref:"",
 client_name:"",
+client_adresse:"",
+client_country:"",
+client_city:"",
 discount:"",
 taxe:"",
 date:"",
@@ -3693,7 +3814,7 @@ _c(
 "div",
 {
 staticClass:"row",
-staticStyle:{height:"150px"}},
+staticStyle:{height:"180px"}},
 
 [
 _c("div",{staticClass:"col-9"},[
@@ -3717,11 +3838,7 @@ _c("div",{staticClass:"col-3"})])]),
 
 _vm._v(" "),
 _c("div",{staticClass:"col-3 rounded"},[
-_c("span",[
-_vm._v(
-_vm._s(_vm.invoice_pos.sale.refInvoice))])])]),
-
-
+_c("span")])]),
 
 
 
@@ -3742,63 +3859,96 @@ staticClass:
 "col-12 padding-top padding-bottom"},
 
 [
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                      "+
 _vm._s(
-_vm.invoice_pos.sale.client_name)+
+_vm.invoice_pos.sale.
+client_name)+
 
-"\n                    ")])]),
+"\n                      ")])])]),
+
+
 
 
 
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-4"}),
-_vm._v(" "),
-_c("div",{staticClass:"col-8"},[
+_c(
+"div",
+{
+staticClass:
+"col-12 padding-top padding-bottom"},
+
+[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                      "+
-_vm._s(_vm.sale.client_giro)+
-"\n                    ")])])]),
+_vm._s(
+_vm.invoice_pos.sale.
+client_adresse)+
+
+"\n                      ")])])]),
 
 
 
 
-_vm._v(" "),
-_c("div",{staticClass:"col-4"},[
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-4"}),
-_vm._v(" "),
-_c("div",{staticClass:"col-4"}),
-_vm._v(" "),
-_c("div",{staticClass:"col-4"})]),
-
-_vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-4"},[
-_vm._v(_vm._s(_vm.currentUser.username))]),
-
-_vm._v(" "),
-_c("div",{staticClass:"col-4"},[
-_vm._v(_vm._s(_vm.invoice_pos.sale.date))]),
-
-_vm._v(" "),
-_c("div",{staticClass:"col-4"},[
-_vm._v("Efectivo")])]),
 
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"},[
+_c(
+"div",
+{
+staticClass:
+"col-12 padding-top padding-bottom"},
+
+[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
-_vm._s(_vm.invoice_pos.sale.client_NIT))]),
+"\n                      "+
+_vm._s(
+_vm.invoice_pos.sale.
+client_NIT)+
+
+"\n                      ")])])])]),
+
+
+
+
+
 
 
 _vm._v(" "),
+_c("div",{staticClass:"col-4"},[
+_c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-2"}),
+_vm._v(" "),
 _c("div",{staticClass:"col-6"},[
+_c("span",[
 _vm._v(
-_vm._s(_vm.invoice_pos.sale.client_NRC))])])])]),
+"\n                      "+
+_vm._s(_vm.invoice_pos.sale.date)+
+"\n                      ")])]),
+
+
+
+_vm._v(" "),
+_c("div",{staticClass:"col-4"},[
+_c("span",[
+_vm._v(
+"\n                      Efectivo\n                      ")])])])])]),
+
 
 
 
@@ -3810,7 +3960,7 @@ _c(
 "div",
 {
 staticClass:"row",
-staticStyle:{height:"80px"}},
+staticStyle:{height:"40px"}},
 
 [
 _c("div",{staticClass:"col-1"}),
@@ -3829,17 +3979,18 @@ _c("div",{staticClass:"col-1"})]),
 
 
 _vm._v(" "),
+_c(
+"div",
+{staticStyle:{height:"360px"}},
 _vm._l(_vm.invoice_pos.details,function(
 detail_invoice)
 {
-return _c(
-"div",
-{
-staticClass:"row",
-staticStyle:{height:"320px"}},
-
-[
+return _c("div",{staticClass:"row"},[
 _c("div",{staticClass:"col-1"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                  "+
 _vm._s(
@@ -3848,30 +3999,60 @@ detail_invoice.quantity,
 2))+
 
 
+"\n                      ")])]),
+
+
+
+
+_vm._v(" "),
+_c("div",{staticClass:"col-7"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
+_vm._v(
 "\n                  "+
-_vm._s(detail_invoice.unit_sale)+
-"\n                ")]),
+_vm._s(detail_invoice.code)+
+"\n                      ")]),
 
 
-_vm._v(" "),
-_c("div",{staticClass:"col-2"},[
-_vm._v(_vm._s(detail_invoice.code))]),
 
-_vm._v(" "),
-_c("div",{staticClass:"col-5"},[
-_vm._v(_vm._s(detail_invoice.name))]),
+_vm._v(" - \n                  "),
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
+_vm._v(
+"\n                  "+
+_vm._s(detail_invoice.name)+
+"\n                      ")])]),
+
+
+
 
 _vm._v(" "),
 _c("div",{staticClass:"col-1"},[
+_c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-4"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-6"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
-"\n                  "+
+"\n                      "+
 _vm._s(
 _vm.formatNumber(
 detail_invoice.total,
 2))+
 
 
-"\n                ")]),
+"\n                      ")])])])]),
+
+
+
+
 
 
 _vm._v(" "),
@@ -3880,6 +4061,10 @@ _vm._v(" "),
 _c("div",{staticClass:"col-1"}),
 _vm._v(" "),
 _c("div",{staticClass:"col-1"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                  "+
 _vm._s(
@@ -3888,115 +4073,155 @@ detail_invoice.total,
 2))+
 
 
-"\n                ")])]);
+"\n                      ")])])]);
+
 
 
 
 
 }),
+0),
+
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-9"},[
+_c("div",{staticClass:"col-10"},[
 _c("div",{staticClass:"row rounded"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                    "+
 _vm._s(_vm.GrandTotalText)+
-"\n                  ")])]),
+"\n                      ")])])]),
+
+
 
 
 
 _vm._v(" "),
-_c("div",{staticClass:"col-3"},[
-_c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-2"},[
+_c(
+"div",
+{staticClass:"row align-items-start"},
+[
 _c("div",{staticClass:"col-6"}),
 _vm._v(" "),
 _c("div",{staticClass:"col-6"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                      "+
 _vm._s(
 _vm.formatNumber(
-_vm.invoice_pos.sale.GrandTotal-
+_vm.invoice_pos.sale.
+GrandTotal-
 _vm.invoice_pos.sale.taxe,
 2))+
 
 
-"\n                    ")])]),
+"\n                      ")])])]),
+
+
+
 
 
 
 _vm._v(" "),
-_c("div",{staticClass:"row"},[
+_c(
+"div",
+{staticClass:"row align-items-start"},
+[
 _c("div",{staticClass:"col-6"}),
 _vm._v(" "),
 _c("div",{staticClass:"col-6"},[
+_c("span",{
+staticClass:"h5 text-uppercase"})])]),
+
+
+
+
+_vm._v(" "),
+_c(
+"div",
+{staticClass:"row align-items-start"},
+[
+_c("div",{staticClass:"col-6"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-6"},[
+_c("span",{
+staticClass:"h5 text-uppercase"})])]),
+
+
+
+
+_vm._v(" "),
+_c(
+"div",
+{staticClass:"row align-items-start"},
+[
+_c("div",{staticClass:"col-6"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-6"})]),
+
+
+_vm._v(" "),
+_c(
+"div",
+{staticClass:"row align-items-start"},
+[
+_c("div",{staticClass:"col-6"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-6"})]),
+
+
+_vm._v(" "),
+_c(
+"div",
+{staticClass:"row align-items-start"},
+[
+_c("div",{staticClass:"col-6"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-6"})]),
+
+
+_vm._v(" "),
+_c(
+"div",
+{
+staticClass:"row align-items-end ",
+staticStyle:{height:"120px"}},
+
+[
+_c("div",{staticClass:"col-6"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-6"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                      "+
 _vm._s(
 _vm.formatNumber(
+_vm.invoice_pos.sale.
+GrandTotal-
 _vm.invoice_pos.sale.taxe,
 2))+
 
 
-"\n                    ")])]),
-
-
-
-_vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
-_vm._v(" "),
-_c("div",{staticClass:"col-6"},[
-_vm._v(
-"\n                      "+
-_vm._s(
-_vm.formatNumber(
-_vm.invoice_pos.sale.GrandTotal,
-2))+
-
-
-"\n                    ")])]),
-
-
-
-_vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
-_vm._v(" "),
-_c("div",{staticClass:"col-6"})]),
-
-_vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
-_vm._v(" "),
-_c("div",{staticClass:"col-6"})]),
-
-_vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
-_vm._v(" "),
-_c("div",{staticClass:"col-6"})]),
-
-_vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
-_vm._v(" "),
-_c("div",{staticClass:"col-6"},[
-_vm._v(
-"\n                      "+
-_vm._s(
-_vm.formatNumber(
-_vm.invoice_pos.sale.GrandTotal,
-2))+
-
-
-"\n                    ")])])])])],
+"\n                      ")])])])])])])])]),
 
 
 
 
 
 
-2)])]),
+
+
+
 
 
 
@@ -4075,11 +4300,7 @@ _c("div",{staticClass:"col-3"})])]),
 
 _vm._v(" "),
 _c("div",{staticClass:"col-3 rounded"},[
-_c("span",[
-_vm._v(
-_vm._s(_vm.invoice_pos.sale.refInvoice))])])]),
-
-
+_c("span")])]),
 
 
 
@@ -4100,25 +4321,96 @@ staticClass:
 "col-12 padding-top padding-bottom"},
 
 [
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                      "+
 _vm._s(
-_vm.invoice_pos.sale.client_name)+
+_vm.invoice_pos.sale.
+client_name)+
 
-"\n                    ")])]),
+"\n                      ")])])]),
+
+
 
 
 
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-4"}),
-_vm._v(" "),
-_c("div",{staticClass:"col-8"},[
+_c(
+"div",
+{
+staticClass:
+"col-12 padding-top padding-bottom"},
+
+[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                      "+
-_vm._s(_vm.sale.client_giro)+
-"\n                    ")])])]),
+_vm._s(
+_vm.invoice_pos.sale.
+client_adresse)+
+
+"\n                      ")])])]),
+
+
+
+
+
+
+_vm._v(" "),
+_c("div",{staticClass:"row"},[
+_c(
+"div",
+{
+staticClass:
+"col-6 padding-top padding-bottom"},
+
+[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
+_vm._v(
+"\n                      "+
+_vm._s(
+_vm.invoice_pos.sale.
+client_country)+
+
+"\n                      ")])]),
+
+
+
+
+
+_vm._v(" "),
+_c(
+"div",
+{
+staticClass:
+"col-6 padding-top padding-bottom"},
+
+[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
+_vm._v(
+"\n                      "+
+_vm._s(
+_vm.invoice_pos.sale.
+client_city)+
+
+"\n                      ")])])])]),
+
+
+
 
 
 
@@ -4134,29 +4426,81 @@ _c("div",{staticClass:"col-4"})]),
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-4"}),
+_vm._v(" "),
 _c("div",{staticClass:"col-4"},[
-_vm._v(_vm._s(_vm.currentUser.username))]),
+_c("span",[
+_vm._v(
+"\n                      "+
+_vm._s(_vm.invoice_pos.sale.date)+
+"\n                      ")])]),
+
+
 
 _vm._v(" "),
 _c("div",{staticClass:"col-4"},[
-_vm._v(_vm._s(_vm.invoice_pos.sale.date))]),
+_c("span",[
+_vm._v(
+"\n                      Efectivo\n                      ")])])]),
 
-_vm._v(" "),
-_c("div",{staticClass:"col-4"},[
-_vm._v("Efectivo")])]),
+
 
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-6"}),
+_vm._v(" "),
 _c("div",{staticClass:"col-6"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
-_vm._s(_vm.invoice_pos.sale.client_NIT))]),
+"\n                      "+
+_vm._s(
+_vm.invoice_pos.sale.client_NRC)+
+
+"\n                      ")])])]),
+
+
+
 
 
 _vm._v(" "),
+_c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-6"}),
+_vm._v(" "),
 _c("div",{staticClass:"col-6"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
-_vm._s(_vm.invoice_pos.sale.client_NRC))])])])]),
+"\n                      "+
+_vm._s(
+_vm.invoice_pos.sale.client_NIT)+
+
+"\n                      ")])])]),
+
+
+
+
+
+_vm._v(" "),
+_c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-6"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-6"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
+_vm._v(
+"\n                      "+
+_vm._s(_vm.sale.client_giro)+
+"\n                      ")])])])])]),
+
+
 
 
 
@@ -4187,17 +4531,18 @@ _c("div",{staticClass:"col-1"})]),
 
 
 _vm._v(" "),
+_c(
+"div",
+{staticStyle:{height:"400px"}},
 _vm._l(_vm.invoice_pos.details,function(
 detail_invoice)
 {
-return _c(
-"div",
-{
-staticClass:"row",
-staticStyle:{height:"320px"}},
-
-[
+return _c("div",{staticClass:"row"},[
 _c("div",{staticClass:"col-1"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                  "+
 _vm._s(
@@ -4206,30 +4551,60 @@ detail_invoice.quantity,
 2))+
 
 
+"\n                      ")])]),
+
+
+
+
+_vm._v(" "),
+_c("div",{staticClass:"col-7"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
+_vm._v(
 "\n                  "+
-_vm._s(detail_invoice.unit_sale)+
-"\n                ")]),
+_vm._s(detail_invoice.code)+
+"\n                      ")]),
 
 
-_vm._v(" "),
-_c("div",{staticClass:"col-2"},[
-_vm._v(_vm._s(detail_invoice.code))]),
 
-_vm._v(" "),
-_c("div",{staticClass:"col-5"},[
-_vm._v(_vm._s(detail_invoice.name))]),
+_vm._v(" - \n                  "),
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
+_vm._v(
+"\n                  "+
+_vm._s(detail_invoice.name)+
+"\n                      ")])]),
+
+
+
 
 _vm._v(" "),
 _c("div",{staticClass:"col-1"},[
+_c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-4"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-6"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
-"\n                  "+
+"\n                      "+
 _vm._s(
 _vm.formatNumber(
 detail_invoice.total,
 2))+
 
 
-"\n                ")]),
+"\n                      ")])])])]),
+
+
+
+
 
 
 _vm._v(" "),
@@ -4238,6 +4613,10 @@ _vm._v(" "),
 _c("div",{staticClass:"col-1"}),
 _vm._v(" "),
 _c("div",{staticClass:"col-1"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                  "+
 _vm._s(
@@ -4246,47 +4625,67 @@ detail_invoice.total,
 2))+
 
 
-"\n                ")])]);
+"\n                      ")])])]);
+
 
 
 
 
 }),
+0),
+
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
 _c("div",{staticClass:"col-9"},[
 _c("div",{staticClass:"row rounded"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                    "+
 _vm._s(_vm.GrandTotalText)+
-"\n                  ")])]),
+"\n                      ")])])]),
+
+
 
 
 
 _vm._v(" "),
 _c("div",{staticClass:"col-3"},[
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c("div",{staticClass:"col-8"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"},[
+_c("div",{staticClass:"col-4"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                      "+
 _vm._s(
 _vm.formatNumber(
-_vm.invoice_pos.sale.GrandTotal-
+_vm.invoice_pos.sale.
+GrandTotal-
 _vm.invoice_pos.sale.taxe,
 2))+
 
 
-"\n                    ")])]),
+"\n                      ")])])]),
+
+
 
 
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c("div",{staticClass:"col-8"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"},[
+_c("div",{staticClass:"col-4"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                      "+
 _vm._s(
@@ -4295,15 +4694,21 @@ _vm.invoice_pos.sale.taxe,
 2))+
 
 
-"\n                    ")])]),
+"\n                      ")])])]),
+
+
 
 
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c("div",{staticClass:"col-8"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"},[
+_c("div",{staticClass:"col-4"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                      "+
 _vm._s(
@@ -4312,49 +4717,64 @@ _vm.invoice_pos.sale.GrandTotal,
 2))+
 
 
-"\n                    ")])]),
+"\n                      ")])])]),
+
+
 
 
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c("div",{staticClass:"col-8"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"})]),
+_c("div",{staticClass:"col-4"})]),
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c("div",{staticClass:"col-8"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"})]),
+_c("div",{staticClass:"col-4"})]),
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c("div",{staticClass:"col-8"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"})]),
+_c("div",{staticClass:"col-4"})]),
 
 _vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c(
+"div",
+{
+staticClass:"row align-items-end",
+staticStyle:{height:"100px"}},
+
+[
+_c("div",{staticClass:"col-8"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"},[
+_c("div",{staticClass:"col-4"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
 _vm._v(
 "\n                      "+
 _vm._s(
 _vm.formatNumber(
-_vm.invoice_pos.sale.GrandTotal,
+_vm.invoice_pos.sale.
+GrandTotal,
 2))+
 
 
-"\n                    ")])])])])],
+"\n                      ")])])])])])])])]),
 
 
 
 
 
 
-2)])]),
+
+
+
 
 
 
