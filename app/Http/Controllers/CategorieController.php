@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\utils\helpers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class CategorieController extends BaseController
 {
@@ -55,10 +57,22 @@ class CategorieController extends BaseController
             'name' => 'required',
             'code' => 'required',
         ]);
+        if ($request->hasFile('image')) {
 
+            $image = $request->file('image');
+            $filename = rand(11111111, 99999999) . $image->getClientOriginalName();
+            $path = public_path() . '/images/categorys';
+            $image_resize = Image::make($image->getRealPath());
+            $image_resize->resize(200, 200);
+            $image_resize->save(public_path('/images/categorys/' . $filename)); 
+
+        } else {
+            $filename = 'no-image.png';
+        }
         Category::create([
             'code' => $request['code'],
             'name' => $request['name'],
+            'image' => $filename
         ]);
         return response()->json(['success' => true]);
     }
@@ -73,10 +87,31 @@ class CategorieController extends BaseController
             'name' => 'required',
             'code' => 'required',
         ]);
+        $category=Category::findOrFail($id);
+        $currentImage = $category->image;
+        Log::debug($request->all());
+        if ($request->image != $currentImage) {
+            
+            $image = $request->file('image');
+            $filename = rand(11111111, 99999999) . $image->getClientOriginalName();
+            $path = public_path() . '/images/categorys';
 
+            $image_resize = Image::make($image->getRealPath());
+            $image_resize->resize(200, 200);
+            $image_resize->save(public_path('/images/categorys/' . $filename)); 
+            $BrandImage = $path . '/' . $currentImage;
+            if (file_exists($BrandImage)) {
+                if ($currentImage != 'no-image.png') {
+                    @unlink($BrandImage);
+                }
+            }
+        } else {
+            $filename = $currentImage;
+        }
         Category::whereId($id)->update([
             'code' => $request['code'],
             'name' => $request['name'],
+            'image' => $filename
         ]);
         return response()->json(['success' => true]);
 

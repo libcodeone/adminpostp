@@ -453,6 +453,7 @@ export default {
     PermissionsManager: "Administrador de permisos",
     BrandManager: "Gerente de marca",
     BrandImage: "Imagen de marca",
+    CategoryImage: "Imagen de categoría",
     BrandName: "Nombre de la marca",
     BrandDescription: "Descripción de marca",
     BaseUnit: "Unidad base",

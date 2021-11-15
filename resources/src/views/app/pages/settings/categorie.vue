@@ -53,13 +53,23 @@
               <i class="i-Close-Window text-25 text-danger"></i>
             </a>
           </span>
+          <span v-else-if="props.column.field == 'image'">
+            <b-img
+              thumbnail
+              height="50"
+              width="50"
+              fluid
+              :src="'/images/categorys/' + props.row.image"
+              alt="image"
+            ></b-img>
+          </span>
         </template>
       </vue-good-table>
     </b-card>
 
     <validation-observer ref="Create_Category">
       <b-modal hide-footer size="md" id="New_Category" :title="editmode?$t('Edit'):$t('Add')">
-        <b-form @submit.prevent="Submit_Category">
+        <b-form @submit.prevent="Submit_Category" enctype="multipart/form-data">
           <b-row>
             <!-- Code category -->
             <b-col md="12">
@@ -101,6 +111,22 @@
               </validation-provider>
             </b-col>
 
+            <!-- -Category Image -->
+            <b-col md="12">
+              <validation-provider name="Image" ref="Image" rules="mimes:image/*|size:200">
+                <b-form-group slot-scope="{validate, valid, errors }" :label="$t('CategoryImage')">
+                  <input
+                    :state="errors[0] ? false : (valid ? true : null)"
+                    :class="{'is-invalid': !!errors.length}"
+                    @change="onFileSelected"
+                    label="Choose Image"
+                    type="file"
+                  >
+                  <b-form-invalid-feedback id="Image-feedback">{{ errors[0] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+
             <b-col md="12" class="mt-3">
               <b-button variant="primary" type="submit">{{$t('submit')}}</b-button>
             </b-col>
@@ -134,20 +160,27 @@ export default {
       selectedIds: [],
       totalRows: "",
       search: "",
+      data: new FormData(),
       limit: "10",
       categories: [],
       editmode: false,
-
       category: {
         id: "",
         name: "",
-        code: ""
+        code: "",
+        image: null
       }
     };
   },
   computed: {
     columns() {
       return [
+        {
+          label: this.$t("CategoryImage"),
+          field: "image",
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
         {
           label: this.$t("Codecategorie"),
           field: "code",
@@ -254,7 +287,16 @@ export default {
         solid: true
       });
     },
+   //------------------------------ Event Upload Image -------------------------------\\
+    async onFileSelected(e) {
+      const { valid } = await this.$refs.Image.validate(e);
 
+      if (valid) {
+        this.category.image = e.target.files[0];
+      } else {
+        this.category.image = "";
+      }
+    },
     //------------------------------ Modal  (create category) -------------------------------\\
     New_category() {
       this.reset_Form();
@@ -309,11 +351,13 @@ export default {
 
     //----------------------------------Create new Category ----------------\\
     Create_Category() {
+      var self = this;
+      self.data.append("name", self.category.name);
+      self.data.append("code", self.category.code);
+      self.data.append("image", self.category.image);
+      console.log(self.category.image);
       axios
-        .post("categories", {
-          name: this.category.name,
-          code: this.category.code
-        })
+        .post("categories",self.data)
         .then(response => {
           Fire.$emit("Event_Category");
           this.makeToast(
@@ -329,11 +373,13 @@ export default {
 
     //---------------------------------- Update Category ----------------\\
     Update_Category() {
+      var self = this;
+      self.data.append("name", self.category.name);
+      self.data.append("code", self.category.code);
+      self.data.append("image", self.category.image);
+      self.data.append("_method", "put");
       axios
-        .put("categories/" + this.category.id, {
-          name: this.category.name,
-          code: this.category.code
-        })
+        .post("categories/" + this.category.id,self.data)
         .then(response => {
           Fire.$emit("Event_Category");
           this.makeToast(

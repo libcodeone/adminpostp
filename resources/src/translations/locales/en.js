@@ -455,6 +455,7 @@ export default {
     PermissionsManager: 'Permissions Management',
     BrandManager: 'Brand',
     BrandImage: 'Brand Image',
+    CategoryImage: 'Category Image',
     BrandName: 'Brand Name',
     BrandDescription: 'Brand Description',
     BaseUnit: 'Base Unit',

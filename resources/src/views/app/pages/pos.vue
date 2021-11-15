@@ -60,7 +60,7 @@
                   </b-dropdown>
                 </div>
 
-                <!-- User avatar dropdown 
+                <!-- User avatar dropdown -->
                 <div class="dropdown">
                   <b-dropdown
                     id="dropdown-1"
@@ -87,7 +87,7 @@
                         <i class="i-Lock-User mr-1"></i>
                         <span>{{currentUser.username}}</span>
                       </div>
-                      <router-link to="/app/profile" class="dropdown-item">{{$t('profil')}}</router-link>
+                      <!--<router-link to="/app/profile" class="dropdown-item">{{$t('profil')}}</router-link>-->
                       <router-link
                         v-if="currentUserPermissions && currentUserPermissions.includes('setting_system')"
                         to="/app/settings/System_settings"
@@ -96,7 +96,7 @@
                       <a class="dropdown-item" href="#" @click.prevent="logoutUser">{{$t('logout')}}</a>
                     </div>
                   </b-dropdown>
-                </div>-->
+                </div>
               </div>
             </div>
             
