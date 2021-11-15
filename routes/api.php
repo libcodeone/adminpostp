@@ -113,6 +113,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
 
     Route::resource('categories', 'CategorieController');
     Route::post('categories/delete/by_selection', 'CategorieController@delete_by_selection');
+    Route::get('categoriespos', 'CategorieController@indexPos');
 
     //------------------------------- Units --------------------------\\
     //------------------------------------------------------------------\\
@@ -124,6 +125,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     //------------------------------------------------------------------\\
     Route::resource('brands', 'BrandsController');
     Route::post('brands/delete/by_selection', 'BrandsController@delete_by_selection');
+    Route::get('brandspos', 'BrandsController@indexPos');
 
     //------------------------------- Currencies --------------------------\\
     //------------------------------------------------------------------\\

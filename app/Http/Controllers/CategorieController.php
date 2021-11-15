@@ -46,6 +46,37 @@ class CategorieController extends BaseController
             'totalRows' => $totalRows,
         ]);
     }
+    public function indexPos(Request $request)
+    {
+        // How many items do you want to display.
+        $perPage = $request->limit;
+        $pageStart = \Request::get('page', 1);
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage;
+        $order = $request->SortField;
+        $dir = $request->SortType;
+        $helpers = new helpers();
+
+        $categories = Category::where('deleted_at', '=', null)
+
+        // Search With Multiple Param
+            ->where(function ($query) use ($request) {
+                return $query->when($request->filled('search'), function ($query) use ($request) {
+                    return $query->where('name', 'LIKE', "%{$request->search}%")
+                        ->orWhere('code', 'LIKE', "%{$request->search}%");
+                });
+            });
+        $totalRows = $categories->count();
+        $categories = $categories->offset($offSet)
+            ->limit($perPage)
+            ->orderBy($order, $dir)
+            ->get();
+
+        return response()->json([
+            'categories' => $categories,
+            'totalRows' => $totalRows,
+        ]);
+    }
 
     //-------------- Store New Category ---------------\\
 

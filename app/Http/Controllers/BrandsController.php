@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Sale;
 use App\utils\helpers;
 use Carbon\Carbon;
 use DB;
@@ -13,6 +14,7 @@ class BrandsController extends Controller
 {
 
     //------------ GET ALL Brands -----------\\
+   
 
     public function index(Request $request)
     {
@@ -47,6 +49,40 @@ class BrandsController extends Controller
         ]);
 
     }
+    public function indexPos(Request $request)
+    {
+        // How many items do you want to display.
+        $perPage = $request->limit;
+        $pageStart = \Request::get('page', 1);
+        // Start displaying items from this number;
+        $offSet = ($pageStart * $perPage) - $perPage;
+        $order = $request->SortField;
+        $dir = $request->SortType;
+        $helpers = new helpers();
+
+        $brands = Brand::where('deleted_at', '=', null)
+
+        // Search With Multiple Param
+            ->where(function ($query) use ($request) {
+                return $query->when($request->filled('search'), function ($query) use ($request) {
+                    return $query->where('name', 'LIKE', "%{$request->search}%")
+                        ->orWhere('description', 'LIKE', "%{$request->search}%");
+                });
+            });
+        $totalRows = $brands->count();
+        $brands = $brands->offset($offSet)
+            ->limit($perPage)
+            ->orderBy($order, $dir)
+            ->get();
+
+        return response()->json([
+            'brands' => $brands,
+            'totalRows' => $totalRows,
+        ]);
+
+    }
+    
+
 
     //---------------- STORE NEW Brand -------------\\
 

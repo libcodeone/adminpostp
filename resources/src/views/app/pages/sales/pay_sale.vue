@@ -373,7 +373,7 @@
                       <span class="h5 text-uppercase">
                       {{
                         formatNumber(
-                          invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,
+                          invoice_pos.sale.GrandTotal,
                           2
                         )
                       }}
@@ -412,7 +412,7 @@
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
-                      {{ formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe, 2) }}
+                      {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
                       </span>
                       
                     </div>
@@ -1063,7 +1063,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["currentUser"]),
+    ...mapGetters(["currentUserPermissions", "currentUser"]),
   },
   methods: {
     ...mapActions(["changeThemeMode", "logout"]),

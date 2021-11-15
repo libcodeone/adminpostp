@@ -1129,7 +1129,7 @@ export default {
       NProgress.set(0.1);
       axios
         .get(
-          "categories?page=" +
+          "categoriespos?page=" +
             1 +
             "&SortField=" +
             "id" +
@@ -1166,7 +1166,7 @@ export default {
       NProgress.set(0.1);
       axios
         .get(
-           "brands?page=" +
+           "brandspos?page=" +
             1 +
             "&SortField=" +
             "id" +
