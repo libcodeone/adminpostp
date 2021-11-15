@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\PaymentWithCreditCard;
 use Twilio\Rest\Client as Client_Twilio;
+use Illuminate\Support\Facades\Log;
 use Stripe;
 use DB;
 use PDF;
@@ -79,13 +80,18 @@ class PaymentSalesController extends BaseController
                         });
                 });
             });
-
+        
         $totalRows = $Filtred->count();
+        $Sales = $Filtred->get();  
         $Payments = $Filtred->offset($offSet)
             ->limit($perPage)
             ->orderBy($order, $dir)
             ->get();
-
+        $totalSales=0.00;             
+        foreach($Sales as $Sale){
+            $totalSales = number_format($Sale->montant, 2, '.', '')+$totalSales;
+        }
+        Log::debug($totalSales); 
         foreach ($Payments as $Payment) {
 
             $item['date'] = $Payment->date;
@@ -100,12 +106,13 @@ class PaymentSalesController extends BaseController
 
         $clients = Client::where('deleted_at', '=', null)->get(['id', 'name']);
         $sales = Sale::get(['Ref', 'id']);
-
+        
         return response()->json([
             'totalRows' => $totalRows,
             'payments' => $data,
             'sales' => $sales,
             'clients' => $clients,
+            'totalSales' => $totalSales
         ]);
 
     }

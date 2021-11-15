@@ -4,6 +4,11 @@
 
     <div v-if="isLoading" class="loading_page spinner spinner-primary mr-3"></div>
     <b-card class="wrapper" v-if="!isLoading">
+      <ul class="nav justify-content-end">
+          <li class="nav-item" style="margin-right:5%;">
+            <a class="nav-link active" aria-current="page" >{{ $t("totalPay") }} {{totalMount.toLocaleString('en-US')}}</a>
+          </li>
+      </ul>
       <vue-good-table
         mode="remote"
         :columns="columns"
@@ -38,6 +43,11 @@
           </b-button>
         </div>
       </vue-good-table>
+      <ul class="nav justify-content-end">
+        <li class="nav-item" style="margin-right:5%;">
+          <a class="nav-link active" aria-current="page" >{{ $t("totalPay") }} {{totalMount.toLocaleString('en-US')}}</a>
+        </li>
+      </ul>
     </b-card>
 
     <!-- Sidebar Filter -->
@@ -147,6 +157,7 @@ export default {
       },
       limit: "10",
       search: "",
+      totalMount: "",
       totalRows: "",
       Filter_client: "",
       Filter_Ref: "",
@@ -349,6 +360,7 @@ export default {
           this.clients = response.data.clients;
           this.sale_returns = response.data.sale_returns;
           this.totalRows = response.data.totalRows;
+          this.totalMount=response.data.totalSales.toFixed(2);
           // Complete the animation of theprogress bar.
           NProgress.done();
           this.isLoading = false;

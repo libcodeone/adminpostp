@@ -638,4 +638,5 @@ export default {
     current_invoiceCF: "Correlativo actual de factura",
     initial_invoiceCCF: "Correlativo inicial de CCF",
     current_invoiceCCF: "Correlativo actual de CCF",
+    totalPay: "Total amount:",
 };

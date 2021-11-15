@@ -2,7 +2,7 @@
   <div class="main-content">
     <breadcumb :page="$t('CreateSaleReturn')" :folder="$t('ListReturns')"/>
     <div v-if="isLoading" class="loading_page spinner spinner-primary mr-3"></div>
-
+    
     <validation-observer ref="create_sale_return" v-if="!isLoading">
       <b-form @submit.prevent="Submit_sale_return">
         <b-row>

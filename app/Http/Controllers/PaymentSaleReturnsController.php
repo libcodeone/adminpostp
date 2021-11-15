@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
 use DB;
 use PDF;
 
@@ -80,11 +81,17 @@ class PaymentSaleReturnsController extends BaseController
             });
 
         $totalRows = $Filtred->count();
+        $Sales = $Filtred->get();  
         $Payments = $Filtred->offset($offSet)
             ->limit($perPage)
             ->orderBy($order, $dir)
             ->get();
-
+        $totalSales=0.00;             
+        foreach($Sales as $Sale){
+            $totalSales = number_format($Sale->montant, 2, '.', '')+$totalSales;
+        }
+        $totalSales=number_format($totalSales, 2);
+        Log::debug($totalSales); 
         foreach ($Payments as $Payment) {
 
             $item['date'] = $Payment->date;
@@ -105,6 +112,7 @@ class PaymentSaleReturnsController extends BaseController
             'payments' => $data,
             'sale_returns' => $sale_returns,
             'clients' => $clients,
+            'totalSales' => $totalSales
         ]);
     }
 

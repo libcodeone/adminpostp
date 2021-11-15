@@ -4,6 +4,11 @@
 
     <div v-if="isLoading" class="loading_page spinner spinner-primary mr-3"></div>
     <b-card class="wrapper" v-if="!isLoading">
+      <ul class="nav justify-content-end">
+          <li class="nav-item" style="margin-right:5%;">
+            <a class="nav-link active" aria-current="page" >{{ $t("totalPay") }} {{totalMount.toLocaleString('en-US')}}</a>
+          </li>
+      </ul>
       <vue-good-table
         mode="remote"
         :columns="columns"
@@ -16,7 +21,7 @@
         :search-options="{
         placeholder: $t('Search_this_table'),
         enabled: true,
-      }"
+        }"
         :pagination-options="{
         enabled: true,
         mode: 'records',
@@ -24,7 +29,13 @@
         prevLabel: 'prev',
       }"
         styleClass="table-hover tableOne vgt-table"
+        id="tableID"
       >
+        <template slot="column-filter" slot-scope="props">
+          <my-custom-filter
+            v-if="props.column.filterOptions.customFilter"       
+            @input="handleCustomFilter"/>
+        </template>
         <div slot="table-actions" class="mt-2 mb-3">
           <b-button variant="outline-info ripple m-1" size="sm" v-b-toggle.sidebar-right>
             <i class="i-Filter-2"></i>
@@ -36,10 +47,14 @@
           <b-button @click="Payment_Excel()" size="sm" variant="outline-danger ripple m-1">
             <i class="i-File-Excel"></i> EXCEL
           </b-button>
-        </div>
+        </div><br>
       </vue-good-table>
+      <ul class="nav justify-content-end">
+        <li class="nav-item" style="margin-right:5%;">
+          <a class="nav-link active" aria-current="page" >{{ $t("totalPay") }} {{totalMount.toLocaleString('en-US')}}</a>
+        </li>
+      </ul>
     </b-card>
-
     <!-- Sidebar Filter -->
     <b-sidebar id="sidebar-right" :title="$t('Filter')" bg-variant="white" right shadow>
       <div class="px-3 py-2">
@@ -147,6 +162,7 @@ export default {
       },
       limit: "10",
       search: "",
+      totalMount: "",
       totalRows: "",
       Filter_client: "",
       Filter_Ref: "",
@@ -351,6 +367,7 @@ export default {
           this.clients = response.data.clients;
           this.sales = response.data.sales;
           this.totalRows = response.data.totalRows;
+          this.totalMount=response.data.totalSales.toFixed(2);
           // Complete the animation of theprogress bar.
           NProgress.done();
           this.isLoading = false;
@@ -364,10 +381,10 @@ export default {
         });
     }
   },
-
   //----------------------------- Created function-------------------\\
   created: function() {
     this.Payments_Sales(1);
   }
 };
 </script>
+
