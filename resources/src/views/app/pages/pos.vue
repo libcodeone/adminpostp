@@ -768,7 +768,7 @@
                 <b-col md="6" sm="12">
                   <validation-provider
                     name="Phone Customer"
-                    :rules="{ required: false}"
+                    :rules="{ required: true}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('Phone')">
@@ -844,7 +844,7 @@
                   </validation-provider>
                 </b-col>
                 <!-- Customer NIT -->
-                <b-col md="6" sm="12">
+                <b-col md="6" sm="12" v-if="client.final_consumer == 0">
                   <validation-provider
                     name="NIT"
                     :rules="{ required: false}"
@@ -864,7 +864,7 @@
                   </validation-provider>
                 </b-col>
                 <!-- Customer NRC -->
-                <b-col md="6" sm="12">
+                <b-col md="6" sm="12" v-if="client.final_consumer == 0" >
                   <validation-provider
                     name="NRC"
                     :rules="{ required: false}"
@@ -884,7 +884,7 @@
                   </validation-provider>
                 </b-col>
                 <!-- Customer Giro -->
-                <b-col md="6" sm="12">
+                <b-col md="6" sm="12" v-if="client.final_consumer == 0">
                   <validation-provider
                     name="giro"
                     :rules="{ required: false}"

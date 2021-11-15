@@ -67,7 +67,6 @@ class ClientController extends BaseController
     public function store(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'create', Client::class);
-        $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
 
         
         Client::create([
@@ -89,8 +88,10 @@ class ClientController extends BaseController
     public function store_pos(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
-
-        
+        request()->validate([
+            'name' => 'required',
+            'phone' => 'required',
+        ]);
         Client::create([
             'name' => $request['name'],
             'code' => $this->getNumberOrder(),
@@ -113,7 +114,6 @@ class ClientController extends BaseController
     public function update(Request $request, $id)
     {
         $this->authorizeForUser($request->user('api'), 'update', Client::class);
-        $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
 
         Client::whereId($id)->update([
             'name' => $request['name'],
