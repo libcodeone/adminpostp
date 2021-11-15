@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\ClientsExport;
 use App\Models\Client;
+use App\Models\Sale;
 use App\utils\helpers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
@@ -66,34 +67,9 @@ class ClientController extends BaseController
     public function store(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'create', Client::class);
-        if($request['email'] != null){
-            $this->validate($request, [
-                'name' => 'required|min:4|max:30',
-                'adresse' => 'required',
-                'phone' => 'required|min:4',
-                'email' => 'unique:clients',
-                'country' => 'required',
-                'city' => 'required',
-                'NIT' => 'required',
-                'NRC' => 'required',
-                'giro' => 'required',
-            ], [
-                'email.unique' => 'This Email already taken.',
-            ]);
-        }
-        $this->validate($request, [
-            'name' => 'required|min:4|max:30',
-            'adresse' => 'required',
-            'phone' => 'required|min:4',
-            'country' => 'required',
-            'city' => 'required',
-            'NIT' => 'required',
-            'NRC' => 'required',
-            'giro' => 'required',
-        ], [
-            'email.unique' => 'This Email already taken.',
-        ]);
+        $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
 
+        
         Client::create([
             'name' => $request['name'],
             'code' => $this->getNumberOrder(),
@@ -105,6 +81,29 @@ class ClientController extends BaseController
             'NIT' => $request['NIT'],
             'NRC' => $request['NRC'],
             'giro' => $request['giro'],
+            'big_consumer' => $request['big_consumer'],
+            'final_consumer' => $request['final_consumer'],
+        ]);
+        return response()->json(['success' => true]);
+    }
+    public function store_pos(Request $request)
+    {
+        $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
+
+        
+        Client::create([
+            'name' => $request['name'],
+            'code' => $this->getNumberOrder(),
+            'adresse' => $request['adresse'],
+            'phone' => $request['phone'],
+            'email' => $request['email'],
+            'country' => $request['country'],
+            'city' => $request['city'],
+            'NIT' => $request['NIT'],
+            'NRC' => $request['NRC'],
+            'giro' => $request['giro'],
+            'big_consumer' => $request['big_consumer'],
+            'final_consumer' => $request['final_consumer'],
         ]);
         return response()->json(['success' => true]);
     }
@@ -114,34 +113,7 @@ class ClientController extends BaseController
     public function update(Request $request, $id)
     {
         $this->authorizeForUser($request->user('api'), 'update', Client::class);
-        if($request['email'] != null){
-            $this->validate($request, [
-                'email' => 'email|unique:clients',
-                'email' => Rule::unique('clients')->ignore($id),
-                'name' => 'required|min:4|max:30',
-                'adresse' => 'required',
-                'phone' => 'required|min:4',
-                'country' => 'required',
-                'city' => 'required',
-                'NIT' => 'required',
-                'NRC' => 'required',
-                'giro' => 'required',
-            ], [
-                'email.unique' => 'This Email already taken.',
-            ]);
-        }
-        $this->validate($request, [
-            'name' => 'required|min:4|max:30',
-            'adresse' => 'required',
-            'phone' => 'required|min:4',
-            'country' => 'required',
-            'city' => 'required',
-            'NIT' => 'required',
-            'NRC' => 'required',
-            'giro' => 'required',
-        ], [
-            'email.unique' => 'This Email already taken.',
-        ]);
+        $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
 
         Client::whereId($id)->update([
             'name' => $request['name'],
@@ -153,6 +125,8 @@ class ClientController extends BaseController
             'NIT' => $request['NIT'],
             'NRC' => $request['NRC'],
             'giro' => $request['giro'],
+            'big_consumer' => $request['big_consumer'],
+            'final_consumer' => $request['final_consumer'],
         ]);
         return response()->json(['success' => true]);
 
@@ -267,6 +241,8 @@ class ClientController extends BaseController
                         'NIT' => $value['NIT'] == '' ? null : $value['NIT'],
                         'NRC' => $value['NRC'] == '' ? null : $value['NRC'],
                         'giro' => $value['giro'] == '' ? null : $value['giro'],
+                        'big_consumer' => $value['big_consumer'] == '' ? null : $value['big_consumer'],
+                        'final_consumer' => $value['final_consumer'] == '' ? null : $value['final_consumer'],
                     ]);
                 // }
 

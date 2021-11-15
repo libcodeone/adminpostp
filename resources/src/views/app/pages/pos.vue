@@ -117,6 +117,24 @@
                             class="w-100"
                             :options="clients.map(clients => ({label: clients.name, value: clients.id}))"
                           />
+                       
+                <!-- <b-col lg="12" md="12" sm="12" class="w-100">
+                  <b-row>
+                  
+                  <autocomplete
+                    :search="search"
+                    :placeholder="$t('Choose_Customer')"
+                    aria-label="Choose_Customer"
+                    :get-result-value="getResultValueClient"
+                    @submit="SearchClient"
+                    ref="autocompletec"
+                  />
+                  </b-row>
+                  <b-row>
+                  <span class="badge badge-success" v-if="sale.client_id != ''">{{sale.client_name}}</span>
+                  <span class="badge badge-warning" v-if="sale.client_id == ''">{{$t('Choose_Customer')}}</span>
+                  </b-row>
+                </b-col> -->
                           <b-input-group-append>
                             <b-button variant="primary" @click="New_Client()">
                               <span>
@@ -176,7 +194,22 @@
                                   <span class="badge badge-success">{{detail.name}}</span>
                                   <i @click="Modal_Update_Detail(detail)" class="i-Edit"></i>
                                 </td>
-                                <td>{{formatNumber(detail.Total_price, 2)}} {{currentUser.currency}}</td>
+                                <!-- <td>{{formatNumber(detail.Total_price, 2)}} {{currentUser.currency}}</td> -->
+                                <td>
+                                  <div class="price">
+                                    <!-- <b-form-input
+                                      :state="getValidationState(validationContext)"
+                                      v-model.number="detail.Total_price"
+                                      @keyup="keyup_Price_Product()"
+                                    ></b-form-input> -->
+                                    <input
+                                        class="form-control"
+                                        @keyup="keyup_Price_Product(detail ,detail.detail_id)"
+                                        v-model.number="detail.Net_price"
+                                      >
+                                  </div>
+                                </td>
+                            
                                 <td>
                                   <div class="quantity">
                                     <b-input-group>
@@ -231,7 +264,7 @@
                       </b-col>
 
                       <!-- Order Tax  -->
-                      <b-col lg="4" md="4" sm="12">
+                      <!-- <b-col lg="4" md="4" sm="12" v-if="sale.client_id != ''">
                         <validation-provider
                           name="Order Tax"
                           :rules="{ regex: /^\d*\.?\d*$/}"
@@ -252,7 +285,7 @@
                             >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
                           </b-form-group>
                         </validation-provider>
-                      </b-col>
+                      </b-col> -->
 
                       <!-- Discount -->
                       <b-col lg="4" md="4" sm="12">
@@ -485,19 +518,13 @@
                 <div
                   @click="Check_Product_Exist(product , product.id)"
                   v-for="product in products"
-                  class="card bd-highlight m-1"
+                  class="card col-3"
                 >
-                  <div class="list-thumb d-flex">
-                    <img alt :src="'/images/products/'+product.image">
-                  </div>
-                  <div class="flex-grow-1 d-bock">
-                    <div
-                      class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center"
-                    >
-                      <div class="w-40 w-sm-100 item-title">{{product.category}} -  {{product.name}}</div>
-                      <p class="text-muted text-small w-15 w-sm-100 mb-2">{{product.code}}</p>
-
-                      <span
+                  <img class="card-img-top" alt :src="'/images/products/'+product.image">
+                  <div class="card-body">
+                    <h5 class="card-title">{{product.category}} -  {{product.name}}</h5>
+                    <p class="card-text text-muted text-small">{{product.code}}</p>
+                    <span
                         class="badge badge-primary w-15 w-sm-100 mb-2"
                       >{{formatNumber(product.Net_price , 2)}} {{currentUser.currency}}</span>
                       <p
@@ -507,7 +534,6 @@
                           class="badge badge-info"
                         >{{formatNumber(product.qte_sale , 2)}} {{product.unitSale}}</span>
                       </p>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -742,7 +768,7 @@
                 <b-col md="6" sm="12">
                   <validation-provider
                     name="Phone Customer"
-                    :rules="{ required: true}"
+                    :rules="{ required: false}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('Phone')">
@@ -761,7 +787,7 @@
                 <b-col md="6" sm="12">
                   <validation-provider
                     name="Country customer"
-                    :rules="{ required: true}"
+                    :rules="{ required: false}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('Country')">
@@ -782,7 +808,7 @@
                 <b-col md="6" sm="12">
                   <validation-provider
                     name="City Customer"
-                    :rules="{ required: true}"
+                    :rules="{ required: false}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('City')">
@@ -801,7 +827,7 @@
                 <b-col md="6" sm="12">
                   <validation-provider
                     name="Adress customer"
-                    :rules="{ required: true}"
+                    :rules="{ required: false}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('Adress')">
@@ -821,7 +847,7 @@
                 <b-col md="6" sm="12">
                   <validation-provider
                     name="NIT"
-                    :rules="{ required: true}"
+                    :rules="{ required: false}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('NIT')">
@@ -841,7 +867,7 @@
                 <b-col md="6" sm="12">
                   <validation-provider
                     name="NRC"
-                    :rules="{ required: true}"
+                    :rules="{ required: false}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('NRC')">
@@ -861,7 +887,7 @@
                 <b-col md="6" sm="12">
                   <validation-provider
                     name="giro"
-                    :rules="{ required: true}"
+                    :rules="{ required: false}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('Giro')">
@@ -877,6 +903,48 @@
                     </b-form-group>
                   </validation-provider>
                 </b-col>
+                <b-col md="6" sm="12" class="mt-2">
+                    <b-form-group
+                      :label="$t('TypeClient')"
+                      v-slot="{ ariaDescribedby }"
+                    >
+                      <b-form-radio
+                        v-model="client.final_consumer"
+                        :aria-describedby="ariaDescribedby"
+                        name="FinalConsumer"
+                        value="1"
+                        >{{$t('FinalConsumer')}}</b-form-radio
+                      >
+                      <b-form-radio
+                        v-model="client.final_consumer"
+                        :aria-describedby="ariaDescribedby"
+                        name="FiscalCredit"
+                        value="0"
+                        >{{$t('FiscalCredit')}}</b-form-radio
+                      >
+                    </b-form-group>
+                  </b-col>
+                  <b-col md="6" sm="12" class="mt-2" v-if="client.final_consumer == 0">
+                    <b-form-group
+                      :label="$t('BigConsumer')"
+                      v-slot="{ ariaDescribedby }"
+                    >
+                      <b-form-radio
+                        v-model="client.big_consumer"
+                        :aria-describedby="ariaDescribedby"
+                        name="Si"
+                        value="1"
+                        >{{$t('Yes')}}</b-form-radio
+                      >
+                      <b-form-radio
+                        v-model="client.big_consumer"
+                        :aria-describedby="ariaDescribedby"
+                        name="No"
+                        value="0"
+                        >No</b-form-radio
+                      >
+                    </b-form-group>
+                  </b-col>
 
                 <b-col md="12" class="mt-3">
                   <b-button variant="primary" type="submit">{{$t('submit')}}</b-button>
@@ -955,7 +1023,7 @@ export default {
           discount: "",
           taxe: "",
           date:"",
-          tax_rate: 13,
+          tax_rate: 0,
           shipping: "",
           GrandTotal: ""
         },
@@ -971,7 +1039,8 @@ export default {
       sale: {
         warehouse_id: "",
         client_id: "",
-        tax_rate: 13,
+        client_name: "",
+        tax_rate: 0,
         shipping: 0,
         discount: 0,
         TaxNet: 0
@@ -987,7 +1056,9 @@ export default {
         adresse: "",
         NIT: "",
         NRC: "",
-        giro: ""
+        giro: "",
+        final_consumer: 1,
+        big_consumer: 0
       },
       category_id: "",
       brand_id: "",
@@ -1041,7 +1112,16 @@ export default {
       this.$store.dispatch("logout");
     },
 
+    getResultValueClient(result) {
+      return result.name;
+    },
+    SearchClient(result) {
+      this.sale.client_id = result.id;
+      this.sale.client_name = result.name;
 
+      this.$refs.autocompletec.value = "";
+      
+    },
     
     Get_Categories() {
       // Start the progress bar.
@@ -1264,7 +1344,7 @@ export default {
     //---------------------------------------- Create new Customer -------------------------------\\
     Create_Client() {
       axios
-        .post("clients", {
+        .post("clients/pos", {
           name: this.client.name,
           email: this.client.email,
           phone: this.client.phone,
@@ -1273,7 +1353,10 @@ export default {
           adresse: this.client.adresse,
           NIT: this.client.NIT,
           NRC: this.client.NRC,
-          giro: this.client.giro
+          giro: this.client.giro,
+          final_consumer:  this.client.final_consumer,
+          big_consumer:  this.client.big_consumer
+
         })
         .then(response => {
           NProgress.done();
@@ -1309,7 +1392,9 @@ export default {
         adresse: "",
         NIT: "",
         giro: "",
-        NRC: ""
+        NRC: "",
+        final_consumer: 1,
+        big_consumer: 0
       };
     },
 
@@ -1622,7 +1707,7 @@ export default {
 
     keyup_OrderTax() {
       if (isNaN(this.sale.tax_rate)) {
-        this.sale.tax_rate = 13;
+        this.sale.tax_rate = 0;
       } else {
         this.CaclulTotal();
       }
@@ -1636,6 +1721,15 @@ export default {
       } else {
         this.CaclulTotal();
       }
+    },
+     keyup_Price_Product(detail,id) {
+       for (var i = 0; i < this.details.length; i++) {
+        if (this.details[i].detail_id == id) {
+          this.details[i].Net_price = detail.Net_price;
+        }
+      }
+      this.CaclulTotal();
+      this.$forceUpdate();
     },
 
     //---------- keyup Shipping
@@ -1661,6 +1755,7 @@ export default {
       //   this.payment.change = payment.amount-payment.cash;
       // }
     },
+  
 
     //-----------------------------------Delete Detail Product ------------------------------\\
     delete_Product_Detail(id) {
@@ -1677,7 +1772,7 @@ export default {
       this.details = [];
       this.product = {};
       this.sale.client_id = "";
-      this.sale.tax_rate = 13;
+      this.sale.tax_rate = 0;
       this.sale.TaxNet = 0;
       this.sale.shipping = 0;
       this.sale.discount = 0;

@@ -306,7 +306,7 @@
                     </div>
                     <div class="col-4">
                      <span >
-                      Efectivo
+                      {{ invoice_pos.sale.Reglement }}
                       </span>
                       </div>
                   </div>
@@ -505,7 +505,7 @@
                       </div>
                     <div class="col-4">
                       <span >
-                      Efectivo
+                      {{ invoice_pos.sale.Reglement }}
                       </span>
 
                     </div>
@@ -569,7 +569,7 @@
                     <div class="col-4"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
-                      {{ formatNumber(detail_invoice.total, 2) }}
+                      {{ formatNumber(detail_invoice.total - detail_invoice.TaxNet, 2) }}
                       </span>
                       </div>
                   </div>
@@ -579,7 +579,7 @@
                 <div class="col-1"></div>
                 <div class="col-1">
                   <span class="h5 text-uppercase">
-                  {{ formatNumber(detail_invoice.total, 2) }}
+                  {{ formatNumber(detail_invoice.total- detail_invoice.TaxNet, 2) }}
                       </span>
                 </div>
               </div>
@@ -618,13 +618,17 @@
                     <div class="col-8"></div>
                     <div class="col-4">
                       <span class="h5 text-uppercase">
-                      {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
+                      <!-- {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }} -->
                       </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-8"></div>
-                    <div class="col-4"></div>
+                    <div class="col-4">
+                      <span class="h5 text-uppercase" v-if="invoice_pos.big_consumer == 1">
+                      {{ formatNumber(invoice_pos.sale.TaxWithheld, 2) }}
+                      </span>
+                    </div>
                   </div>
                   <div class="row">
                     <div class="col-8"></div>
@@ -637,7 +641,10 @@
                   <div class="row align-items-end"  style="height:100px">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase">
+                      <span class="h5 text-uppercase" v-if="invoice_pos.big_consumer == 1">
+                      {{ formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.TaxWithheld, 2) }}
+                      </span>
+                      <span class="h5 text-uppercase" v-if="invoice_pos.big_consumer == 0">
                       {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
                       </span>
                     </div>
@@ -977,16 +984,21 @@ export default {
           client_adresse: "",
           client_country: "",
           client_city: "",
+          final_consumer:"",
+          big_consumer:"",
           discount: "",
           taxe: "",
           date: "",
           tax_rate: 13,
+          TaxWithheld:"",
           shipping: "",
           GrandTotal: "",
           RefTransfer: "",
           RefCreditCard: "",
           type_invoice: "",
           refInvoice: "",
+          Reglement: "",
+          
         },
         details: [],
         setting: {

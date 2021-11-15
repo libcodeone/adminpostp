@@ -76,7 +76,8 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::post('clients/import/csv', 'ClientController@import_clients');
     Route::get('Get_Clients_Without_Paginate', 'ClientController@Get_Clients_Without_Paginate');
     Route::post('clients/delete/by_selection', 'ClientController@delete_by_selection');
-
+    Route::post('clients/pos', 'ClientController@store_pos');
+    
 
     //------------------------------- Providers --------------------------\\
     //--------------------------------------------------------------------\\

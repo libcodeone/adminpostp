@@ -42,21 +42,32 @@ class PosController extends BaseController
             $role = Auth::user()->roles()->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $order = new Sale;
-
+            $client = Client::findOrFail($request->client_id);
+            $taxRate = 0;
+            $TaxNet = 0;
+            $TaxWithheld = 0;
+            $TaxNetDetail = 0;
+            $TaxMethod = 2;
+            if($client->final_consumer == 0){
+                $taxRate = 13;
+                $TaxNet = $request->GrandTotal * 0.13;
+                if($client->big_consumer == 1){
+                    $TaxWithheld = $request->GrandTotal * 0.01;
+                }
+            }
             $order->is_pos = 1;
             $order->date = Carbon::now();
             $order->Ref = app('App\Http\Controllers\SalesController')->getNumberOrder();
             $order->client_id = $request->client_id;
             $order->warehouse_id = $request->warehouse_id;
-            $order->tax_rate = $request->tax_rate;
-            $order->TaxNet = $request->TaxNet;
+            $order->tax_rate = $taxRate;
+            $order->TaxNet = $TaxNet;
+            $order->TaxWithheld = $TaxWithheld;
             $order->discount = $request->discount;
             $order->shipping = $request->shipping;
             $order->GrandTotal = $request->GrandTotal;
             $order->cash = 0;
             $order->change = 0;
-            // $order->cash = $request->payment['cash'];
-            // $order->change = $request->payment['change'];
             $order->payment_statut = 'unpaid';
 
             $order->statut = 'ordered';
@@ -65,7 +76,17 @@ class PosController extends BaseController
             $order->save();
 
             $data = $request['details'];
+
+
             foreach ($data as $key => $value) {
+                $price= $value['Unit_price'];
+                $TaxMethod = 2;
+                
+                if($client->final_consumer == 0){
+                    $TaxNetDetail = $value['Unit_price'] * 0.13;
+                    $price= $value['Unit_price'] - $TaxNetDetail;
+                    $TaxMethod = 1;
+                }
                 $orderDetails[] = [
                     'date' => Carbon::now(),
                     'sale_id' => $order->id,
@@ -73,9 +94,9 @@ class PosController extends BaseController
                     'product_id' => $value['product_id'],
                     'product_variant_id' => $value['product_variant_id'],
                     'total' => $value['subtotal'],
-                    'price' => $value['Unit_price'],
-                    'TaxNet' => $value['tax_percent'],
-                    'tax_method' => $value['tax_method'],
+                    'price' => $price,
+                    'TaxNet' => $TaxNetDetail,
+                    'tax_method' => $TaxMethod,
                     'discount' => $value['discount'],
                     'discount_method' => $value['discount_Method'],
                 ];

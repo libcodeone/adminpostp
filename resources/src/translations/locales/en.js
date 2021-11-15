@@ -258,8 +258,8 @@ export default {
     Email: 'Email',
     EditCustomer: 'Edit Customer',
     AddCustomer: 'Create Customer',
-    Country: 'Country',
-    City: 'City',
+    Country: 'Departament',
+    City: 'Municipio',
     Adress: 'Adress',
     CustomerDetails: 'Customer Details',
     CustomersList: 'Customer List',
@@ -637,4 +637,13 @@ export default {
     current_invoiceCF: "Correlativo actual de factura",
     initial_invoiceCCF: "Correlativo inicial de CCF",
     current_invoiceCCF: "Correlativo actual de CCF",
+    TypeClient: "Type customer",
+    FinalConsumer: "Final Consumer",
+    FiscalCredit: "Credito fiscal",
+    BigConsumer: "Big consumer",
+    Yes: "Yes",
+
+
+    
+
 };
