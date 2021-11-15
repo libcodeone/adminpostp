@@ -1,4 +1,8 @@
 {
+    "/js/bundle/vendors~barcode~detail_product~index_sale_dispatcher~index_sales~index_sales_pay~pay_sale.js": "/js/bundle/vendors~barcode~detail_product~index_sale_dispatcher~index_sales~index_sales_pay~pay_sale.js",
+    "/js/bundle/vendors~largeSidebar~pay_sale~pos.js": "/js/bundle/vendors~largeSidebar~pay_sale~pos.js",
+    "/js/bundle/vendors~dashboard~warehouse_report.js": "/js/bundle/vendors~dashboard~warehouse_report.js",
+    "/js/bundle/vendors~edit_product~store_product.js": "/js/bundle/vendors~edit_product~store_product.js",
     "/js//login.min.js": "/js//login.min.js",
     "/css/globals.css": "/css/globals.css",
     "/js//main.min.js": "/js//main.min.js",
@@ -85,12 +89,7 @@
     "/js/bundle/store_transfer.js": "/js/bundle/store_transfer.js",
     "/js/bundle/transfers.js": "/js/bundle/transfers.js",
     "/js/bundle/units.js": "/js/bundle/units.js",
-    "/js/bundle/vendors~barcode~detail_product~index_sale_dispatcher~index_sales~index_sales_pay~pay_sale.js": "/js/bundle/vendors~barcode~detail_product~index_sale_dispatcher~index_sales~index_sales_pay~pay_sale.js",
-    "/js/bundle/vendors~dashboard~warehouse_report.js": "/js/bundle/vendors~dashboard~warehouse_report.js",
-    "/js/bundle/vendors~edit_product~store_product.js": "/js/bundle/vendors~edit_product~store_product.js",
-    "/js/bundle/vendors~index_sale_dispatcher~index_sales~index_sales_pay~pay_sale.js": "/js/bundle/vendors~index_sale_dispatcher~index_sales~index_sales_pay~pay_sale.js",
     "/js/bundle/vendors~largeSidebar.js": "/js/bundle/vendors~largeSidebar.js",
-    "/js/bundle/vendors~largeSidebar~pay_sale~pos.js": "/js/bundle/vendors~largeSidebar~pay_sale~pos.js",
-    "/js/bundle/vendors~vue-perfect-scrollbar.js": "/js/bundle/vendors~vue-perfect-scrollbar.js",
+    "/js/bundle/vue-perfect-scrollbar.js": "/js/bundle/vue-perfect-scrollbar.js",
     "/js/bundle/warehouse_report.js": "/js/bundle/warehouse_report.js"
 }
