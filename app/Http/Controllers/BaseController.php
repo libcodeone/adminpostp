@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Config;
 use DB;
+use App\Models\Sale;
 
 class BaseController extends Controller
 {
@@ -100,6 +101,11 @@ class BaseController extends Controller
             );
             Config::set('mail', $config);
         }
+    }
+    // 
+    public function invoiceDetail($id){
+        $sale=Sale::findOrFail($id);
+        return $sale->type_invoice." ".$sale->refInvoice;
     }
 
 }

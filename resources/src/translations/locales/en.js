@@ -642,4 +642,5 @@ export default {
     InvoiceSaleReturn: "Choose invoice",
     dateInvoice:"Sales invoice date",
     SelectDateSales:"Select sales invoice date",
+    SalesOfInvoice:"Sales invoice",
 };

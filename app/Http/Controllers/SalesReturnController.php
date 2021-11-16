@@ -547,7 +547,6 @@ class SalesReturnController extends BaseController
             // Check If User->id === SaleReturn->id
             $this->authorizeForUser($request->user('api'), 'check_record', $Sale_Return);
         }
-
         $return_details['Ref'] = $Sale_Return->Ref;
         $return_details['date'] = $Sale_Return->date;
         $return_details['statut'] = $Sale_Return->statut;
@@ -560,11 +559,20 @@ class SalesReturnController extends BaseController
         $return_details['client_adr'] = $Sale_Return['client']->adresse;
         $return_details['client_email'] = $Sale_Return['client']->email;
         $return_details['warehouse'] = $Sale_Return['warehouse']->name;
+        
+        $return_details['client_NIT'] = "NIT :".$Sale_Return['client']->NIT;
+        $return_details['client_NRC'] = "NRC :".$Sale_Return['client']->NRC;
+        $return_details['client_giro'] = "GIRO :".$Sale_Return['client']->giro;
+
         $return_details['GrandTotal'] = $Sale_Return->GrandTotal;
         $return_details['paid_amount'] = $Sale_Return->paid_amount;
         $return_details['due'] = $Sale_Return->GrandTotal - $Sale_Return->paid_amount;
         $return_details['payment_status'] = $Sale_Return->payment_statut;
-
+        if($Sale_Return->ref_invoice){
+            $return_details['SalesOfInvoice'] = $this->invoiceDetail($Sale_Return->ref_invoice);
+        }else{
+            $return_details['SalesOfInvoice'] = "";
+        }
         foreach ($Sale_Return['details'] as $detail) {
             if ($detail->product_variant_id) {
 
@@ -748,7 +756,7 @@ class SalesReturnController extends BaseController
         } else {
             $Return_detail['warehouse_id'] = '';
         }
-
+        $Return_detail['idInvoice'] = $SaleReturn->date;
         $Return_detail['date'] = $SaleReturn->date;
         $Return_detail['tax_rate'] = $SaleReturn->tax_rate;
         $Return_detail['TaxNet'] = $SaleReturn->TaxNet;

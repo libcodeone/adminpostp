@@ -21,7 +21,7 @@
                         :state="getValidationState(validationContext)"
                         aria-describedby="date-feedback"
                         type="date"
-                        v-model="sale_return.date"
+                        
                       ></b-form-input>
                       <b-form-invalid-feedback
                         id="OrderTax-feedback"
@@ -58,7 +58,7 @@
                         :state="getValidationState(validationContext)"
                         aria-describedby="date-feedback"
                         type="date"
-                        v-model="saleDate"
+                        v-model="sale_return.date"
                       ></b-form-input>
                       <b-form-invalid-feedback
                         id="OrderTax-feedback"
@@ -72,7 +72,6 @@
                   <validation-provider name="warehouse" :rules="{ required: true}">
                     <b-form-group slot-scope="{ valid, errors }" :label="$t('warehouse')">
                       <v-select
-
                         :class="{'is-invalid': !!errors.length}"
                         :state="errors[0] ? false : (valid ? true : null)"
                         :disabled="details.length > 0"

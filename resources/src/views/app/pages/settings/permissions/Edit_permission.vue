@@ -40,6 +40,48 @@
               </b-row>
 
               <b-row class="mt-4">
+
+                <!--  dashboard -->
+                <b-col md="4">
+                  <b-card no-body class="ul-card__border-radius">
+                    <b-card-header header-tag="header" class="p-1" role="tab">
+                      <b-button
+                        class="card-title mb-0"
+                        block
+                        href="#"
+                        v-b-toggle.panel-Products
+                        variant="transparent"
+                      >{{$t('dashboard')}}</b-button>
+                    </b-card-header>
+                    <b-collapse
+                      id="panel-Products"
+                      :visible="true"
+                      accordion="my-accordion3"
+                      role="tabpanel"
+                    >
+                      <b-card-body>
+                        <b-card-text>
+                          <b-row>
+                            <!--Products View -->
+                            <b-col md="6">
+                              <label class="checkbox checkbox-outline-primary">
+                                <input
+                                  type="checkbox"
+                                  checked
+                                  v-model="permissions"
+                                  value="dashboard"
+                                >
+                                <span>{{$t('View')}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </b-col>
+                          </b-row>
+                        </b-card-text>
+                      </b-card-body>
+                    </b-collapse>
+                  </b-card>
+                </b-col>
+
                 <!--Users -->
                 <b-col md="4">
                   <b-card no-body class="ul-card__border-radius">
@@ -1428,6 +1470,110 @@
                   </b-card>
                 </b-col>
 
+               <!-- Settings -->
+                <b-col md="4">
+                  <b-card no-body class="ul-card__border-radius">
+                    <b-card-header header-tag="header" class="p-1" role="tab">
+                      <b-button
+                        class="card-title mb-0"
+                        block
+                        href="#"
+                        v-b-toggle.panel-Settings
+                        variant="transparent"
+                      >{{$t('Settings')}}</b-button>
+                    </b-card-header>
+                    <b-collapse
+                      id="panel-Settings"
+                      :visible="true"
+                      accordion="my-accordion18"
+                      role="tabpanel"
+                    >
+                      <b-card-body>
+                        <b-card-text>
+                          <b-row>
+                            <!--Settings System -->
+                            <b-col md="6">
+                              <label class="checkbox checkbox-outline-primary">
+                                <input
+                                  type="checkbox"
+                                  checked
+                                  v-model="permissions"
+                                  value="setting_system"
+                                >
+                                <span>{{$t('SystemSettings')}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </b-col>
+                            <!--Category -->
+                            <b-col md="6">
+                              <label class="checkbox checkbox-outline-primary">
+                                <input
+                                  type="checkbox"
+                                  checked
+                                  v-model="permissions"
+                                  value="category"
+                                >
+                                <span>{{$t('Categories')}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </b-col>
+                            <!--Brand  -->
+                            <b-col md="6">
+                              <label class="checkbox checkbox-outline-primary">
+                                <input type="checkbox" checked v-model="permissions" value="brand">
+                                <span>{{$t('Brand')}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </b-col>
+                            <!--Currency  -->
+                            <b-col md="6">
+                              <label class="checkbox checkbox-outline-primary">
+                                <input
+                                  type="checkbox"
+                                  checked
+                                  v-model="permissions"
+                                  value="currency"
+                                >
+                                <span>{{$t('Currencies')}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </b-col>
+                            <!--Warehouse  -->
+                            <b-col md="6">
+                              <label class="checkbox checkbox-outline-primary">
+                                <input
+                                  type="checkbox"
+                                  checked
+                                  v-model="permissions"
+                                  value="warehouse"
+                                >
+                                <span>{{$t('Warehouses')}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </b-col>
+                            <!--Unit  -->
+                            <b-col md="6">
+                              <label class="checkbox checkbox-outline-primary">
+                                <input type="checkbox" checked v-model="permissions" value="unit">
+                                <span>{{$t('Units')}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </b-col>
+                            <!--Backup-->
+                            <b-col md="6">
+                              <label class="checkbox checkbox-outline-primary">
+                                <input type="checkbox" checked v-model="permissions" value="backup">
+                                <span>{{$t('Backup')}}</span>
+                                <span class="checkmark"></span>
+                              </label>
+                            </b-col>
+                          </b-row>
+                        </b-card-text>
+                      </b-card-body>
+                    </b-collapse>
+                  </b-card>
+                </b-col>
+              </b-row>
                 <!-- Reports -->
                 <b-col md="4">
                   <b-card no-body class="ul-card__border-radius">
@@ -1600,110 +1746,7 @@
                   </b-card>
                 </b-col>
 
-                <!-- Settings -->
-                <b-col md="4">
-                  <b-card no-body class="ul-card__border-radius">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button
-                        class="card-title mb-0"
-                        block
-                        href="#"
-                        v-b-toggle.panel-Settings
-                        variant="transparent"
-                      >{{$t('Settings')}}</b-button>
-                    </b-card-header>
-                    <b-collapse
-                      id="panel-Settings"
-                      :visible="true"
-                      accordion="my-accordion18"
-                      role="tabpanel"
-                    >
-                      <b-card-body>
-                        <b-card-text>
-                          <b-row>
-                            <!--Settings System -->
-                            <b-col md="6">
-                              <label class="checkbox checkbox-outline-primary">
-                                <input
-                                  type="checkbox"
-                                  checked
-                                  v-model="permissions"
-                                  value="setting_system"
-                                >
-                                <span>{{$t('SystemSettings')}}</span>
-                                <span class="checkmark"></span>
-                              </label>
-                            </b-col>
-                            <!--Category -->
-                            <b-col md="6">
-                              <label class="checkbox checkbox-outline-primary">
-                                <input
-                                  type="checkbox"
-                                  checked
-                                  v-model="permissions"
-                                  value="category"
-                                >
-                                <span>{{$t('Categories')}}</span>
-                                <span class="checkmark"></span>
-                              </label>
-                            </b-col>
-                            <!--Brand  -->
-                            <b-col md="6">
-                              <label class="checkbox checkbox-outline-primary">
-                                <input type="checkbox" checked v-model="permissions" value="brand">
-                                <span>{{$t('Brand')}}</span>
-                                <span class="checkmark"></span>
-                              </label>
-                            </b-col>
-                            <!--Currency  -->
-                            <b-col md="6">
-                              <label class="checkbox checkbox-outline-primary">
-                                <input
-                                  type="checkbox"
-                                  checked
-                                  v-model="permissions"
-                                  value="currency"
-                                >
-                                <span>{{$t('Currencies')}}</span>
-                                <span class="checkmark"></span>
-                              </label>
-                            </b-col>
-                            <!--Warehouse  -->
-                            <b-col md="6">
-                              <label class="checkbox checkbox-outline-primary">
-                                <input
-                                  type="checkbox"
-                                  checked
-                                  v-model="permissions"
-                                  value="warehouse"
-                                >
-                                <span>{{$t('Warehouses')}}</span>
-                                <span class="checkmark"></span>
-                              </label>
-                            </b-col>
-                            <!--Unit  -->
-                            <b-col md="6">
-                              <label class="checkbox checkbox-outline-primary">
-                                <input type="checkbox" checked v-model="permissions" value="unit">
-                                <span>{{$t('Units')}}</span>
-                                <span class="checkmark"></span>
-                              </label>
-                            </b-col>
-                            <!--Backup-->
-                            <b-col md="6">
-                              <label class="checkbox checkbox-outline-primary">
-                                <input type="checkbox" checked v-model="permissions" value="backup">
-                                <span>{{$t('Backup')}}</span>
-                                <span class="checkmark"></span>
-                              </label>
-                            </b-col>
-                          </b-row>
-                        </b-card-text>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </b-col>
-              </b-row>
+ 
               <!-- End row -->
               <b-col md="12">
                 <b-form-group>

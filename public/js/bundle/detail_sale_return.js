@@ -4157,7 +4157,15 @@ _c(
 {
 staticClass:"badge badge-outline-info"},
 
-[_vm._v(_vm._s(_vm.$t("Pending")))])])])],
+[_vm._v(_vm._s(_vm.$t("Pending")))])]),
+
+
+_vm._v(" "),
+_c("div",[
+_vm._v(
+_vm._s(_vm.$t("SalesOfInvoice"))+
+" : "+
+_vm._s(_vm.sale_return.SalesOfInvoice))])])],
 
 
 

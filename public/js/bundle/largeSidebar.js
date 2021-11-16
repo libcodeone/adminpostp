@@ -2622,6 +2622,7 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
 
 
 
@@ -3174,6 +3175,17 @@ _c("ul",{staticClass:"navigation-left"},[
 _c(
 "li",
 {
+directives:[
+{
+name:"show",
+rawName:"v-show",
+value:
+_vm.currentUserPermissions&&
+_vm.currentUserPermissions.includes("dashboard"),
+expression:
+"currentUserPermissions && (currentUserPermissions.includes('dashboard'))"}],
+
+
 staticClass:"nav-item",
 class:{active:_vm.selectedParentMenu=="dashboard"},
 attrs:{"data-item":"dashboard"},

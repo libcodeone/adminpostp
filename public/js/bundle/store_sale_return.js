@@ -2536,7 +2536,6 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
-//
 
 
 /* harmony default export */__webpack_exports__["default"]={
@@ -3086,23 +3085,7 @@ validationContext),
 
 "aria-describedby":
 "date-feedback",
-type:"date"},
-
-model:{
-value:
-_vm.sale_return.
-date,
-callback:function callback(
-$$v)
-{
-_vm.$set(
-_vm.sale_return,
-"date",
-$$v);
-
-},
-expression:
-"sale_return.date"}}),
+type:"date"}}),
 
 
 _vm._v(" "),
@@ -3132,7 +3115,7 @@ errors[0]))])],
 
 null,
 false,
-3294755613)})],
+2123941201)})],
 
 
 
@@ -3273,13 +3256,20 @@ validationContext),
 type:"date"},
 
 model:{
-value:_vm.saleDate,
+value:
+_vm.sale_return.
+date,
 callback:function callback(
 $$v)
 {
-_vm.saleDate=$$v;
+_vm.$set(
+_vm.sale_return,
+"date",
+$$v);
+
 },
-expression:"saleDate"}}),
+expression:
+"sale_return.date"}}),
 
 
 _vm._v(" "),
@@ -3309,7 +3299,7 @@ errors[0]))])],
 
 null,
 false,
-237214787)})],
+2048211820)})],
 
 
 

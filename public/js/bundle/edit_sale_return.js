@@ -2470,6 +2470,39 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */__webpack_exports__["default"]={
@@ -2482,8 +2515,11 @@ isLoading:true,
 warehouses:[],
 clients:[],
 products:[],
+invoices:[],
+saleDate:"",
 details:[],
 detail:{},
+idInvoice:null,
 sale_return:{
 id:"",
 date:"",
@@ -2518,7 +2554,12 @@ taxe:"",
 tax_percent:"",
 tax_method:"",
 product_variant_id:"",
-del:""}};
+del:""},
+
+invoice:{
+id:"",
+refInvoice:"",
+type_invoice:""}};
 
 
 },
@@ -2627,9 +2668,27 @@ return product.name.toLowerCase().startsWith(input.toLowerCase())||product.code.
 this.makeToast("warning",this.$t("SelectWarehouse"),this.$t("Warning"));
 }
 },
+//------ Search Invoice
+searchInvoice:function searchInvoice(input){
+if(input.length<1){
+return [];
+}
+
+if(this.sale_return.warehouse_id!=""){
+return this.invoices.filter(function(invoice){
+return invoice.type_invoice.toLowerCase().startsWith(input.toLowerCase())||invoice.refInvoice.toLowerCase().startsWith(input.toLowerCase());
+});
+}else {
+this.makeToast("warning",this.$t("SelectWarehouse"),this.$t("Warning"));
+}
+},
 // get Result Value Search Product
 getResultValue:function getResultValue(result){
 return result.code+" "+"("+result.name+")";
+},
+//------ get Result Value Search Product
+getResultValueIvoice:function getResultValueIvoice(result){
+return result.type_invoice+" "+"("+result.refInvoice+")";
 },
 // Submit Search Product
 SearchProduct:function SearchProduct(result){
@@ -2655,9 +2714,13 @@ this.Get_Product_Details(result.id);
 
 this.$refs.autocomplete.value="";
 },
+searchInvoiceI:function searchInvoiceI(result){
+this.idInvoice=result.id;
+},
 //---------------------- Event Select Warehouse ------------------------------\\
 Selected_Warehouse:function Selected_Warehouse(value){
 this.Get_Products_By_Warehouse(value);
+this.Get_Invoice_By_Warehouse(value);
 },
 //------------------------------------ Get Products By Warehouse -------------------------\\
 Get_Products_By_Warehouse:function Get_Products_By_Warehouse(id){
@@ -2666,6 +2729,14 @@ var _this3=this;
 axios.get("Products/Warehouse/"+id+"?stock="+0).then(function(_ref2){
 var data=_ref2.data;
 return _this3.products=data;
+});
+},
+Get_Invoice_By_Warehouse:function Get_Invoice_By_Warehouse(id){
+var _this4=this;
+
+axios.get("returns/invoice/Warehouse/"+id+"/"+this.saleDate+"?stock="+0).then(function(_ref3){
+var data=_ref3.data;
+return _this4.invoices=data;
 });
 },
 //----------------------------------------- Add Product -------------------------\\
@@ -2799,7 +2870,7 @@ return true;
 },
 //--------------------------------- Update Return -------------------------\\
 Update_Return:function Update_Return(){
-var _this4=this;
+var _this5=this;
 
 if(this.verifiedForm()){
 nprogress__WEBPACK_IMPORTED_MODULE_1___default.a.start();
@@ -2820,15 +2891,15 @@ details:this.details}).
 then(function(response){
 nprogress__WEBPACK_IMPORTED_MODULE_1___default.a.done();
 
-_this4.makeToast("success",_this4.$t("Update.TitleReturn"),_this4.$t("Success"));
+_this5.makeToast("success",_this5.$t("Update.TitleReturn"),_this5.$t("Success"));
 
-_this4.$router.push({
+_this5.$router.push({
 name:"index_sale_return"});
 
 })["catch"](function(error){
 nprogress__WEBPACK_IMPORTED_MODULE_1___default.a.done();
 
-_this4.makeToast("danger",_this4.$t("InvalidData"),_this4.$t("Failed"));
+_this5.makeToast("danger",_this5.$t("InvalidData"),_this5.$t("Failed"));
 });
 }
 },
@@ -2840,47 +2911,50 @@ this.product.detail_id=this.details[len-1].detail_id+1;
 },
 //---------------------------------get Product Details ------------------------\\
 Get_Product_Details:function Get_Product_Details(product_id){
-var _this5=this;
+var _this6=this;
 
 axios.get("Products/"+product_id).then(function(response){
-_this5.product.del=0;
-_this5.product.id=0;
-_this5.product.discount=0;
-_this5.product.DiscountNet=0;
-_this5.product.discount_Method="2";
-_this5.product.product_id=response.data.id;
-_this5.product.name=response.data.name;
-_this5.product.Net_price=response.data.Net_price;
-_this5.product.Unit_price=response.data.Unit_price;
-_this5.product.taxe=response.data.tax_price;
-_this5.product.tax_method=response.data.tax_method;
-_this5.product.tax_percent=response.data.tax_percent;
-_this5.product.unitSale=response.data.unitSale;
+_this6.product.del=0;
+_this6.product.id=0;
+_this6.product.discount=0;
+_this6.product.DiscountNet=0;
+_this6.product.discount_Method="2";
+_this6.product.product_id=response.data.id;
+_this6.product.name=response.data.name;
+_this6.product.Net_price=response.data.Net_price;
+_this6.product.Unit_price=response.data.Unit_price;
+_this6.product.taxe=response.data.tax_price;
+_this6.product.tax_method=response.data.tax_method;
+_this6.product.tax_percent=response.data.tax_percent;
+_this6.product.unitSale=response.data.unitSale;
 
-_this5.add_product();
+_this6.add_product();
 
-_this5.Calcul_Total();
+_this6.Calcul_Total();
 });
 },
 //---------------------------------------Get Elements ------------------------------\\
 GetElements:function GetElements(){
-var _this6=this;
+var _this7=this;
 
 var id=this.$route.params.id;
 axios.get("returns/sale/".concat(id,"/edit")).then(function(response){
-_this6.sale_return=response.data.sale_return;
-_this6.details=response.data.details;
-_this6.clients=response.data.clients;
-_this6.warehouses=response.data.warehouses;
+_this7.sale_return=response.data.sale_return;
+_this7.details=response.data.details;
+_this7.clients=response.data.clients;
+_this7.warehouses=response.data.warehouses;
+_this7.saleDate=_this7.sale_return.date;
 
-_this6.Get_Products_By_Warehouse(_this6.sale_return.warehouse_id);
+_this7.Get_Products_By_Warehouse(_this7.sale_return.warehouse_id);
 
-_this6.Calcul_Total();
+_this7.Get_Invoice_By_Warehouse(_this7.sale_return.warehouse_id);
 
-_this6.isLoading=false;
+_this7.Calcul_Total();
+
+_this7.isLoading=false;
 })["catch"](function(response){
 setTimeout(function(){
-_this6.isLoading=false;
+_this7.isLoading=false;
 },500);
 });
 }},
@@ -3140,6 +3214,87 @@ attrs:{lg:"4",md:"4",sm:"12"}},
 [
 _c("validation-provider",{
 attrs:{
+name:"date",
+rules:{required:true}},
+
+scopedSlots:_vm._u(
+[
+{
+key:"default",
+fn:function fn(validationContext){
+return [
+_c(
+"b-form-group",
+{
+attrs:{
+label:_vm.$t(
+"dateInvoice")}},
+
+
+
+[
+_c("b-form-input",{
+attrs:{
+state:_vm.getValidationState(
+validationContext),
+
+"aria-describedby":
+"date-feedback",
+type:"date"},
+
+model:{
+value:_vm.saleDate,
+callback:function callback(
+$$v)
+{
+_vm.saleDate=$$v;
+},
+expression:"saleDate"}}),
+
+
+_vm._v(" "),
+_c(
+"b-form-invalid-feedback",
+{
+attrs:{
+id:
+"OrderTax-feedback"}},
+
+
+[
+_vm._v(
+_vm._s(
+validationContext.
+errors[0]))])],
+
+
+
+
+
+1)];
+
+
+}}],
+
+
+null,
+false,
+237214787)})],
+
+
+
+1),
+
+_vm._v(" "),
+_c(
+"b-col",
+{
+staticClass:"mb-3",
+attrs:{lg:"4",md:"4",sm:"12"}},
+
+[
+_c("validation-provider",{
+attrs:{
 name:"warehouse",
 rules:{required:true}},
 
@@ -3239,7 +3394,35 @@ _c(
 "b-col",
 {
 staticClass:"mb-5",
-attrs:{md:"12"}},
+attrs:{md:"4",lg:"4"}},
+
+[
+_c("h6",[
+_vm._v(_vm._s(_vm.$t("Invoice")))]),
+
+_vm._v(" "),
+_c("autocomplete",{
+ref:"autocompleteInvoice",
+attrs:{
+search:_vm.searchInvoice,
+placeholder:_vm.$t(
+"Search_Product_by_Code_Name"),
+
+"aria-label":"Search for a Product",
+"get-result-value":
+_vm.getResultValueIvoice},
+
+on:{submit:_vm.searchInvoiceI}})],
+
+
+1),
+
+_vm._v(" "),
+_c(
+"b-col",
+{
+staticClass:"mb-5",
+attrs:{md:"4",lg:"4"}},
 
 [
 _c("h6",[

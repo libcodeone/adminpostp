@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use DB;
 
 class ReportController extends BaseController
@@ -129,8 +130,10 @@ class ReportController extends BaseController
 
     //----------------- report dashboard with_echart -----------------------\\
 
-    public function report_with_echart()
+    public function report_with_echart(Request $request)
     {
+       $this->authorizeForUser($request->user('api'), 'dashboard' ,Client::class);
+
         $dataSales = $this->SalesChart();
         $datapurchases = $this->PurchasesChart();
         $Payment_chart = $this->Payment_chart();
@@ -318,6 +321,8 @@ class ReportController extends BaseController
 
     public function report_dashboard()
     {
+
+
         $products = SaleDetail::whereBetween('date', [
             Carbon::now()->startOfMonth(),
             Carbon::now()->endOfMonth(),

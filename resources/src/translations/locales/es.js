@@ -642,4 +642,6 @@ export default {
     totalPay: "Monto total:",
     dateInvoice:"Fecha de factura de venta",
     SelectDateSales:"Seleccione fecha de factura de venta",
+    SalesOfInvoice:"Factura de venta",
+
 };
