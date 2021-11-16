@@ -167,8 +167,8 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::resource('sales', 'SalesController');
     Route::get('sales/Change_to_Sale/{id}', 'SalesController@Elemens_Change_To_Sale');
     Route::get('sales/payments/{id}', 'SalesController@Payments_Sale');
-    Route::post('sales/send/email', 'SalesController@Send_Email');
-    Route::post('sales/send/sms', 'SalesController@Send_SMS');
+    // Route::post('sales/send/email', 'SalesController@Send_Email');
+    // Route::post('sales/send/sms', 'SalesController@Send_SMS');
     Route::get('sales/export/Excel', 'SalesController@exportExcel');
     Route::post('sales/delete/by_selection', 'SalesController@delete_by_selection');
     Route::put('sales/change_status/{id}', 'SalesController@update_status');

@@ -167,9 +167,11 @@ import { mapActions, mapGetters } from "vuex";
 import NProgress from "nprogress";
 
 export default {
-  computed: mapGetters(["currentUserPermissions", "currentUser"]),
+  computed: {
+    ...mapGetters(["currentUser"]),
+  },
   metaInfo: {
-    title: "Detail Sale"
+    title: "Dispatcher Sale"
   },
 
   data() {

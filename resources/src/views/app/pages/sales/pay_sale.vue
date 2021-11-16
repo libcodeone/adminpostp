@@ -989,7 +989,7 @@ export default {
           discount: "",
           taxe: "",
           date: "",
-          tax_rate: 13,
+          tax_rate: 0,
           TaxWithheld:"",
           shipping: "",
           GrandTotal: "",
@@ -1013,7 +1013,7 @@ export default {
       sale: {
         warehouse_id: "",
         client_id: "",
-        tax_rate: 13,
+        tax_rate: 0,
         shipping: 0,
         discount: 0,
         TaxNet: 0,
@@ -1063,11 +1063,10 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["currentUserPermissions", "currentUser"]),
+    ...mapGetters(["currentUser"]),
+    ...mapActions(["changeThemeMode", "logout"]),
   },
   methods: {
-    ...mapActions(["changeThemeMode", "logout"]),
-    ...mapGetters(["currentUser"]),
     logoutUser() {
       this.$store.dispatch("logout");
     },
@@ -1316,7 +1315,7 @@ export default {
 
     keyup_OrderTax() {
       if (isNaN(this.sale.tax_rate)) {
-        this.sale.tax_rate = 13;
+        this.sale.tax_rate = 0;
       } else {
         this.CaclulTotal();
       }

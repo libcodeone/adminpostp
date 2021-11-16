@@ -152,6 +152,7 @@ class SalesController extends BaseController
             $helpers = new helpers();
             $order = new Sale;
             $client = Client::findOrFail($request->client_id);
+            $company = Setting::where('deleted_at', '=', null)->first();
             $taxRate = 0;
             $TaxNet = 0;
             $TaxWithheld = 0;
@@ -180,7 +181,20 @@ class SalesController extends BaseController
             $order->statut = $request->statut;
             $order->payment_statut = 'unpaid';
             $order->notes = $request->notes;
+            $order->refCreditCard = $request->refCreditCard;
+            $order->refTrasnsferedBank = $request->refTrasnsferedBank;
+            $order->type_invoice = $request->type_invoice;
+            $order->refInvoice = $request->type_invoice =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
             $order->user_id = Auth::user()->id;
+            if($request['type_invoice']=='CF'){
+                $company->update([
+                    'current_invoiceCF' =>  $order->refInvoice
+                ]);    
+            }else{
+                $company->update([
+                    'current_invoiceCCF' =>  $order->refInvoice
+                ]);
+            }
 
             $order->save();
 
@@ -315,6 +329,8 @@ class SalesController extends BaseController
                         $sale->update([
                             'paid_amount' => $total_paid,
                             'payment_statut' => $payment_statut,
+                        'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
                         ]);
 
                         $PaymentCard['customer_id'] = $request->client_id;
@@ -337,6 +353,8 @@ class SalesController extends BaseController
                         $sale->update([
                             'paid_amount' => $total_paid,
                             'payment_statut' => $payment_statut,
+                        'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
                         ]);
                     }
                 } catch (Exception $e) {
@@ -523,6 +541,7 @@ class SalesController extends BaseController
             } else if ($due == $request['GrandTotal']) {
                 $payment_statut = 'unpaid';
             }
+
 
             $current_Sale->update([
                 'date' => $request['date'],

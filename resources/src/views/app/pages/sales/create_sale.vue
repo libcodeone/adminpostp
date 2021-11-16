@@ -275,7 +275,6 @@
                         :placeholder="$t('Choose_Status')"
                         :options="
                                 [
-                                  {label: 'completed', value: 'completed'},
                                   {label: 'Pending', value: 'pending'},
                                   {label: 'ordered', value: 'ordered'}
                                 ]"
@@ -319,8 +318,6 @@
                                   [
                                   {label: 'Cash', value: 'Cash'},
                                   {label: 'credit card', value: 'credit card'},
-                                  {label: 'cheque', value: 'cheque'},
-                                  {label: 'Western Union', value: 'Western Union'},
                                   {label: 'bank transfer', value: 'bank transfer'},
                                   ]"
                       ></v-select>
@@ -328,6 +325,47 @@
                     </b-form-group>
                   </validation-provider>
                 </b-col>
+
+                <b-col md="4" v-if="payment.Reglement == 'credit card'">
+                    <validation-provider
+                      name="RefCreditCard"
+                      :rules="{ required: true, regex: /^\d*\.?\d*$/ }"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('RefCreditCard')">
+                        <b-form-input
+                          :state="getValidationState(validationContext)"
+                          label="RefCreditCard"
+                          :placeholder="$t('RefCreditCard')"
+                          v-model="sale.RefCreditCard"
+                          aria-describedby="RefCreditCard-feedback"
+                        ></b-form-input>
+                        <b-form-invalid-feedback id="RefCreditCard-feedback">{{
+                          validationContext.errors[0]
+                        }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+                  <b-col md="4" v-if="payment.Reglement == 'bank transfer'">
+                    <validation-provider
+                      name="RefTransfer"
+                      :rules="{ required: true, regex: /^\d*\.?\d*$/ }"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('RefTransfer')">
+                        <b-form-input
+                          :state="getValidationState(validationContext)"
+                          label="RefTransfer"
+                          :placeholder="$t('RefTransfer')"
+                          v-model="sale.RefTransfer"
+                          aria-describedby="RefTransfer-feedback"
+                        ></b-form-input>
+                        <b-form-invalid-feedback id="RefTransfer-feedback">{{
+                          validationContext.errors[0]
+                        }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
 
                 <!-- Amount  -->
                 <b-col md="4" v-if="payment.status != 'pending'">
@@ -350,25 +388,6 @@
                     </b-form-group>
                   </validation-provider>
                 </b-col>
-
-                 <b-col
-                  md="12"
-                  class="mt-3"
-                  v-if="payment.status != 'pending' && payment.Reglement == 'credit card'"
-                >
-                  <form id="payment-form">
-                    <label
-                      for="card-element"
-                      class="leading-7 text-sm text-gray-600"
-                    >{{$t('Credit_Card_Info')}}</label>
-                    <div id="card-element">
-                      <!-- Elements will create input elements here -->
-                    </div>
-                    <!-- We'll put the error messages in this element -->
-                    <div id="card-errors" role="alert"></div>
-                  </form>
-                </b-col>
-
                 <b-col md="12" class="mt-3">
                   <b-form-group :label="$t('Note')">
                     <textarea
@@ -379,6 +398,29 @@
                     ></textarea>
                   </b-form-group>
                 </b-col>
+                <b-col lg="12" md="12" sm="12" class="mt-2">
+                    <b-form-group
+                      :label="$t('BillingMethod')"
+                      v-slot="{ ariaDescribedby }"
+                    >
+                      <b-form-radio
+                        v-model="BillingMethod"
+                        :aria-describedby="ariaDescribedby"
+                        name="factura"
+                        value="0"
+                        >Factura</b-form-radio
+                      >
+                      <b-form-radio
+                        v-model="BillingMethod"
+                        :aria-describedby="ariaDescribedby"
+                        name="ticket"
+                        value="1"
+                        >CCF</b-form-radio
+                      >
+                    </b-form-group>
+                  </b-col>
+
+                
 
                 <b-col md="12">
                   <b-form-group>
@@ -534,6 +576,7 @@ export default {
       cardElement: {},
       paymentProcessing: false,
       isLoading: true,
+      BillingMethod: 0,
       warehouses: [],
       clients: [],
       client: {},
@@ -542,14 +585,14 @@ export default {
       detail: {},
       sales: [],
       payment: {
-        status: "paid",
+        status: "unpaid",
         Reglement: "Cash",
         amount: ""
       },
       sale: {
         id: "",
         date: new Date().toISOString().slice(0, 10),
-        statut: "completed",
+        statut: "ordered",
         notes: "",
         client_id: "",
         warehouse_id: "",
@@ -964,14 +1007,9 @@ export default {
 
     async processPayment() {
       this.paymentProcessing = true;
-      const { token, error } = await this.stripe.createToken(
-        this.cardElement
-      );
-      if (error) {
-        this.paymentProcessing = false;
-        NProgress.done();
-        this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
-      } else {
+      if (this.payment.Reglement == "") {
+        this.payment.Reglement = "Cash";
+          }
         axios
           .post("sales", {
             date: this.sale.date,
@@ -983,6 +1021,9 @@ export default {
             TaxNet: this.sale.TaxNet,
             discount: this.sale.discount,
             shipping: this.sale.shipping,
+            refCreditCard: this.sale.refCreditCard,
+            refTrasnsferedBank: this.sale.refTrasnsferedBank,
+            type_invoice: this.BillingMethod == 0 ? "CF" : "CCF",
             GrandTotal: this.GrandTotal,
             details: this.details,
             payment: this.payment,
@@ -1003,7 +1044,7 @@ export default {
             NProgress.done();
             this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
           });
-      }
+      
     },
     //--------------------------------- Create Sale -------------------------\\
     Create_Sale() {
@@ -1011,14 +1052,9 @@ export default {
         // Start the progress bar.
         NProgress.start();
         NProgress.set(0.1);
-         if(this.payment.Reglement  == 'credit card'){
-          if(this.stripe_key != ''){
-            this.processPayment();
-          }else{
-            this.makeToast("danger", this.$t("credit_card_account_not_available"), this.$t("Failed"));
-            NProgress.done();
+        if (this.payment.Reglement == "") {
+        this.payment.Reglement = "Cash";
           }
-        }else{
           axios
             .post("sales", {
               date: this.sale.date,
@@ -1030,6 +1066,9 @@ export default {
               TaxNet: this.sale.TaxNet,
               discount: this.sale.discount,
               shipping: this.sale.shipping,
+              refCreditCard: this.sale.refCreditCard,
+              refTrasnsferedBank: this.sale.refTrasnsferedBank,
+              type_invoice: this.BillingMethod == 0 ? "CF" : "CCF",
               GrandTotal: this.GrandTotal,
               details: this.details,
               payment: this.payment
@@ -1051,7 +1090,6 @@ export default {
                 this.$t("Failed")
               );
             });
-        }
       }
     },
 

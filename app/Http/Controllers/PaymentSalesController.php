@@ -188,6 +188,7 @@ class PaymentSalesController extends BaseController
                     $sale->update([
                         'paid_amount' => $total_paid,
                         'payment_statut' => $payment_statut,
+                        'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
                     ]);
 
                     $PaymentCard['customer_id'] = $request->client_id;
@@ -211,6 +212,8 @@ class PaymentSalesController extends BaseController
                     $sale->update([
                         'paid_amount' => $total_paid,
                         'payment_statut' => $payment_statut,
+                        'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
                     ]);
 
                 }
@@ -286,6 +289,8 @@ class PaymentSalesController extends BaseController
                         $sale->update([
                             'paid_amount' => $new_total_paid,
                             'payment_statut' => $payment_statut,
+                            'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
                         ]);
 
                         $PaymentWithCreditCard->charge_id = $charge->id;
@@ -331,6 +336,8 @@ class PaymentSalesController extends BaseController
                         $sale->update([
                             'paid_amount' => $new_total_paid,
                             'payment_statut' => $payment_statut,
+                        'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
                         ]);
 
                         $PaymentCard['customer_id'] = $request->client_id;
@@ -352,6 +359,8 @@ class PaymentSalesController extends BaseController
                     $sale->update([
                         'paid_amount' => $new_total_paid,
                         'payment_statut' => $payment_statut,
+                        'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
                     ]);
                 }
 
@@ -412,6 +421,8 @@ class PaymentSalesController extends BaseController
             $sale->update([
                 'paid_amount' => $total_paid,
                 'payment_statut' => $payment_statut,
+                'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
             ]);
 
         }, 10);
