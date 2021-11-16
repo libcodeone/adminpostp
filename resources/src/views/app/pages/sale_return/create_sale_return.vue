@@ -58,7 +58,7 @@
                         :state="getValidationState(validationContext)"
                         aria-describedby="date-feedback"
                         type="date"
-                        
+                        v-model="saleDate"
                       ></b-form-input>
                       <b-form-invalid-feedback
                         id="OrderTax-feedback"
