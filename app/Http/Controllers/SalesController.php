@@ -113,6 +113,8 @@ class SalesController extends BaseController
             $item['client_email'] = $Sale['client']['email'];
             $item['client_tele'] = $Sale['client']['phone'];
             $item['client_code'] = $Sale['client']['code'];
+            $item['final_consumer'] = $Sale['client']['final_consumer'];
+            $item['big_consumer'] = $Sale['client']['big_consumer'];
             $item['client_adr'] = substr($Sale['client']['adresse'], 0, 30);
             $item['GrandTotal'] = number_format($Sale['GrandTotal'], 2, '.', '');
             $item['paid_amount'] = number_format($Sale['paid_amount'], 2, '.', '');
@@ -149,33 +151,70 @@ class SalesController extends BaseController
         \DB::transaction(function () use ($request) {
             $helpers = new helpers();
             $order = new Sale;
+            $client = Client::findOrFail($request->client_id);
+            $company = Setting::where('deleted_at', '=', null)->first();
+            $taxRate = 0;
+            $TaxNet = 0;
+            $TaxWithheld = 0;
+            $TaxNetDetail = 0;
+            $TaxMethod = 2;
+            if($client->final_consumer == 0){
+                $taxRate = 13;
+                $TaxNet = $request->GrandTotal * 0.13;
+                if($client->big_consumer == 1){
+                    $TaxWithheld = $request->GrandTotal * 0.01;
+                }
+            }
+
 
             $order->is_pos = 0;
             $order->date = $request->date;
-            $order->Ref = $this->getNumberOrder();
             $order->client_id = $request->client_id;
             $order->GrandTotal = $request->GrandTotal;
             $order->warehouse_id = $request->warehouse_id;
-            $order->tax_rate = $request->tax_rate;
-            $order->TaxNet = $request->TaxNet;
+            $order->tax_rate = $taxRate;
+            $order->TaxNet = $TaxNet;
+            $order->TaxWithheld = $TaxWithheld;
             $order->discount = $request->discount;
             $order->shipping = $request->shipping;
             $order->statut = $request->statut;
             $order->payment_statut = 'unpaid';
             $order->notes = $request->notes;
+            $order->refCreditCard = $request->refCreditCard;
+            $order->refTrasnsferedBank = $request->refTrasnsferedBank;
+            $order->type_invoice = $request->type_invoice;
+            $order->Ref = $request->type_invoice =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
+            $order->refInvoice = $request->type_invoice =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
             $order->user_id = Auth::user()->id;
+            if($request['type_invoice']=='CF'){
+                $company->update([
+                    'current_invoiceCF' =>  $order->refInvoice
+                ]);    
+            }else{
+                $company->update([
+                    'current_invoiceCCF' =>  $order->refInvoice
+                ]);
+            }
 
             $order->save();
 
             $data = $request['details'];
             foreach ($data as $key => $value) {
+                $price= $value['Unit_price'];
+                $TaxMethod = 2;
+                
+                if($client->final_consumer == 0){
+                    $TaxNetDetail = $value['Unit_price'] * 0.13;
+                    $price= $value['Unit_price'] - $TaxNetDetail;
+                    $TaxMethod = 1;
+                }
                 $orderDetails[] = [
                     'date' => $request->date,
                     'sale_id' => $order->id,
                     'quantity' => $value['quantity'],
-                    'price' => $value['Unit_price'],
-                    'TaxNet' => $value['tax_percent'],
-                    'tax_method' => $value['tax_method'],
+                    'price' => $price,
+                    'TaxNet' => $TaxNetDetail,
+                    'tax_method' => $TaxMethod,
                     'discount' => $value['discount'],
                     'discount_method' => $value['discount_Method'],
                     'product_id' => $value['product_id'],
@@ -280,7 +319,7 @@ class SalesController extends BaseController
 
                         $PaymentSale = new PaymentSale();
                         $PaymentSale->sale_id = $order->id;
-                        $PaymentSale->Ref = app('App\Http\Controllers\PaymentSalesController')->getNumberOrder();
+                        $PaymentSale->Ref = $order->Ref;
                         $PaymentSale->date = Carbon::now();
                         $PaymentSale->Reglement = $request->payment['Reglement'];
                         $PaymentSale->montant = $request->payment['amount'];
@@ -290,6 +329,8 @@ class SalesController extends BaseController
                         $sale->update([
                             'paid_amount' => $total_paid,
                             'payment_statut' => $payment_statut,
+                        'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
                         ]);
 
                         $PaymentCard['customer_id'] = $request->client_id;
@@ -302,7 +343,7 @@ class SalesController extends BaseController
 
                         PaymentSale::create([
                             'sale_id' => $order->id,
-                            'Ref' => app('App\Http\Controllers\PaymentSalesController')->getNumberOrder(),
+                            'Ref' => $order->Ref,
                             'date' => Carbon::now(),
                             'Reglement' => $request->payment['Reglement'],
                             'montant' => $request->payment['amount'],
@@ -312,6 +353,8 @@ class SalesController extends BaseController
                         $sale->update([
                             'paid_amount' => $total_paid,
                             'payment_statut' => $payment_statut,
+                        'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
                         ]);
                     }
                 } catch (Exception $e) {
@@ -342,6 +385,19 @@ class SalesController extends BaseController
             $role = Auth::user()->roles()->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $current_Sale = Sale::findOrFail($id);
+            $client = Client::findOrFail($request->client_id);
+            $taxRate = 0;
+            $TaxNet = 0;
+            $TaxWithheld = 0;
+            $TaxNetDetail = 0;
+            $TaxMethod = 2;
+            if($client->final_consumer == 0){
+                $taxRate = 13;
+                $TaxNet = $request->GrandTotal * 0.13;
+                if($client->big_consumer == 1){
+                    $TaxWithheld = $request->GrandTotal * 0.01;
+                }
+            }
 
             // Check If User Has Permission view All Records
             if (!$view_records) {
@@ -449,11 +505,19 @@ class SalesController extends BaseController
                     }
 
                 }
+                $price= $value['Unit_price'];
+                $TaxMethod = 2;
+                
+                if($client->final_consumer == 0){
+                    $TaxNetDetail = $value['Unit_price'] * 0.13;
+                    $price= $value['Unit_price'] - $TaxNetDetail;
+                    $TaxMethod = 1;
+                }
 
                 $orderDetails['sale_id'] = $id;
-                $orderDetails['price'] = $prod_detail['Unit_price'];
-                $orderDetails['TaxNet'] = $prod_detail['tax_percent'];
-                $orderDetails['tax_method'] = $prod_detail['tax_method'];
+                $orderDetails['price'] = $price;
+                $orderDetails['TaxNet'] = $TaxNetDetail;
+                $orderDetails['tax_method'] = $TaxMethod;
                 $orderDetails['discount'] = $prod_detail['discount'];
                 $orderDetails['discount_method'] = $prod_detail['discount_Method'];
                 $orderDetails['quantity'] = $prod_detail['quantity'];
@@ -478,14 +542,16 @@ class SalesController extends BaseController
                 $payment_statut = 'unpaid';
             }
 
+
             $current_Sale->update([
                 'date' => $request['date'],
                 'client_id' => $request['client_id'],
                 'warehouse_id' => $request['warehouse_id'],
                 'notes' => $request['notes'],
                 'statut' => $request['statut'],
-                'tax_rate' => $request['tax_rate'],
-                'TaxNet' => $request['TaxNet'],
+                'tax_rate' => $taxRate,
+                'TaxNet' => $TaxNet,
+                'TaxWithheld' => $TaxWithheld,
                 'discount' => $request['discount'],
                 'shipping' => $request['shipping'],
                 'GrandTotal' => $request['GrandTotal'],
@@ -508,7 +574,7 @@ class SalesController extends BaseController
          
                     $PaymentSale = new PaymentSale();
                         $PaymentSale->sale_id = $id;
-                        $PaymentSale->Ref = app('App\Http\Controllers\PaymentSalesController')->getNumberOrder();
+                        $PaymentSale->Ref = $request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
                         $PaymentSale->date = Carbon::now();
                         $PaymentSale->Reglement = $request['Reglement'];
                         $PaymentSale->montant = $request['GrandTotal'];
@@ -527,6 +593,7 @@ class SalesController extends BaseController
                         'refTrasnsferedBank' => $request['RefTransfer'],
                         'refCreditCard' => $request['RefCreditCard'],
                         'type_invoice' => $request['type_invoice'],
+                        'Ref' => $request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1,
                         'refInvoice' =>$request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1,
                     ]);
                     if($request['type_invoice']=='CF'){
@@ -672,11 +739,13 @@ class SalesController extends BaseController
         $sale_details['client_phone'] = $sale_data['client']->phone;
         $sale_details['client_adr'] = $sale_data['client']->adresse;
         $sale_details['client_email'] = $sale_data['client']->email;
+        $sale_details['big_consumer'] = $sale_data['client']->big_consumer;
+        $sale_details['final_consumer'] = $sale_data['client']->final_consumer;
         $sale_details['GrandTotal'] = $sale_data->GrandTotal;
         $sale_details['paid_amount'] = $sale_data->paid_amount;
         $sale_details['due'] = $sale_data->GrandTotal - $sale_data->paid_amount;
         $sale_details['payment_status'] = $sale_data->payment_statut;
-
+       
         foreach ($sale_data['details'] as $detail) {
             if ($detail->product_variant_id) {
 
@@ -741,6 +810,7 @@ class SalesController extends BaseController
         $sale = Sale::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
+        $Payment_Sale = PaymentSale::findOrFail($sale->id);
 
         $item['id'] = $sale->id;
         $item['Ref'] = $sale->Ref;
@@ -749,16 +819,21 @@ class SalesController extends BaseController
         $item['shipping'] = $sale->shipping;
         $item['taxe'] = $sale->TaxNet;
         $item['tax_rate'] = $sale->tax_rate;
+        $item['TaxWithheld'] = $sale->TaxWithheld;
         $item['client_name'] = $sale['client']->name;
         $item['client_NIT'] = $sale['client']->NIT;
         $item['client_NRC'] = $sale['client']->NRC;
         $item['client_giro'] = $sale['client']->giro;
+        $item['final_consumer'] = $sale['client']->final_consumer;
+        $item['big_consumer'] = $sale['client']->big_consumer;
         $item['client_adresse'] = $sale['client']->adresse;
         $item['client_country'] = $sale['client']->country;
         $item['client_city'] = $sale['client']->city;
         $item['GrandTotal'] = $sale->GrandTotal;
         $item['type_invoice'] = $sale->type_invoice;
         $item['refInvoice'] = $sale->refInvoice;
+        $item['Reglement'] = $Payment_Sale->Reglement;
+        
         foreach ($sale['details'] as $detail) {
             if ($detail->product_variant_id) {
 
@@ -767,6 +842,7 @@ class SalesController extends BaseController
 
                 $data['quantity'] = $detail->quantity;
                 $data['total'] = $detail->total;
+                $data['TaxNet'] = $detail->TaxNet;
                 $data['code'] = $productsVariants->name . '-' . $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
                 $data['unit_sale'] = $detail['product']['unitSale']->ShortName;
@@ -775,6 +851,7 @@ class SalesController extends BaseController
 
                 $data['quantity'] = $detail->quantity;
                 $data['total'] = $detail->total;
+                $data['TaxNet'] = $detail->TaxNet;
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
                 $data['unit_sale'] = $detail['product']['unitSale']->ShortName;

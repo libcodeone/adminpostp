@@ -167,9 +167,11 @@ import { mapActions, mapGetters } from "vuex";
 import NProgress from "nprogress";
 
 export default {
-  computed: mapGetters(["currentUserPermissions", "currentUser"]),
+  computed: {
+    ...mapGetters(["currentUser"]),
+  },
   metaInfo: {
-    title: "Detail Sale"
+    title: "Dispatcher Sale"
   },
 
   data() {
@@ -254,67 +256,6 @@ export default {
       return `${value[0]}.${formated}`;
     },
 
-    //--------------------------------- Send Sale in Email ------------------------------\\
-    Sale_Email() {
-      this.email.to = this.sale.client_email;
-      this.email.Sale_Ref = this.sale.Ref;
-      this.email.client_name = this.sale.client_name;
-      this.Send_Email();
-    },
-
-    Send_Email() {
-      // Start the progress bar.
-      NProgress.start();
-      NProgress.set(0.1);
-      let id = this.$route.params.id;
-      axios
-        .post("sales/send/email", {
-          id: id,
-          to: this.email.to,
-          client_name: this.email.client_name,
-          Ref: this.email.Sale_Ref
-        })
-        .then(response => {
-          // Complete the animation of the  progress bar.
-          setTimeout(() => NProgress.done(), 500);
-          this.makeToast(
-            "success",
-            this.$t("Send.TitleEmail"),
-            this.$t("Success")
-          );
-        })
-        .catch(error => {
-          // Complete the animation of the  progress bar.
-          setTimeout(() => NProgress.done(), 500);
-          this.makeToast("danger", this.$t("SMTPIncorrect"), this.$t("Failed"));
-        });
-    },
-
-    //---------SMS notification
-     Sale_SMS() {
-      // Start the progress bar.
-      NProgress.start();
-      NProgress.set(0.1);
-      let id = this.$route.params.id;
-      axios
-        .post("sales/send/sms", {
-          id: id,
-        })
-        .then(response => {
-          // Complete the animation of the  progress bar.
-          setTimeout(() => NProgress.done(), 500);
-          this.makeToast(
-            "success",
-            this.$t("Send_SMS"),
-            this.$t("Success")
-          );
-        })
-        .catch(error => {
-          // Complete the animation of the  progress bar.
-          setTimeout(() => NProgress.done(), 500);
-          this.makeToast("danger", this.$t("sms_config_invalid"), this.$t("Failed"));
-        });
-    },
      //--------------------------------- Update Sale -------------------------\\
     Update_Sale() {
         // Start the progress bar.
@@ -357,40 +298,7 @@ export default {
         });
     },
 
-    //------------------------------------------ DELETE Sale ------------------------------\\
-    Delete_Sale() {
-      let id = this.$route.params.id;
-      this.$swal({
-        title: this.$t("Delete.Title"),
-        text: this.$t("Delete.Text"),
-        type: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        cancelButtonText: this.$t("Delete.cancelButtonText"),
-        confirmButtonText: this.$t("Delete.confirmButtonText")
-      }).then(result => {
-        if (result.value) {
-          axios
-            .delete("sales/" + id)
-            .then(() => {
-              this.$swal(
-                this.$t("Delete.Deleted"),
-                this.$t("Delete.SaleDeleted"),
-                "success"
-              );
-              this.$router.push({ name: "index_sales" });
-            })
-            .catch(() => {
-              this.$swal(
-                this.$t("Delete.Failed"),
-                this.$t("Delete.Therewassomethingwronge"),
-                "warning"
-              );
-            });
-        }
-      });
-    }
+    
   }, //end Methods
 
   //----------------------------- Created function-------------------

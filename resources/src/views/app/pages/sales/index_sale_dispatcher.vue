@@ -47,7 +47,7 @@
             <div>
               <router-link
                 class="btn-sm btn btn-primary ripple btn-icon m-1"
-                v-if="currentUserPermissions && currentUserPermissions.includes('Sales_edit')"
+                v-if="currentUserPermissions && currentUserPermissions.includes('Dispatchers')"
                 :to="{ name:'dispatcher_sale', params: { id: props.row.id } }"
               >
                 <span class="ul-btn__icon">

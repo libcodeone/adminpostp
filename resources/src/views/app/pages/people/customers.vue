@@ -210,7 +210,7 @@
             <b-col md="6" sm="12">
               <validation-provider
                 name="Phone Customer"
-                :rules="{ required: true}"
+                :rules="{ required: false}"
                 v-slot="validationContext"
               >
                 <b-form-group :label="$t('Phone')">
@@ -229,7 +229,7 @@
             <b-col md="6" sm="12">
               <validation-provider
                 name="Country customer"
-                :rules="{ required: true}"
+                :rules="{ required: false}"
                 v-slot="validationContext"
               >
                 <b-form-group :label="$t('Country')">
@@ -248,7 +248,7 @@
             <b-col md="6" sm="12">
               <validation-provider
                 name="City Customer"
-                :rules="{ required: true}"
+                :rules="{ required: false}"
                 v-slot="validationContext"
               >
                 <b-form-group :label="$t('City')">
@@ -267,7 +267,7 @@
             <b-col md="6" sm="12">
               <validation-provider
                 name="Adress customer"
-                :rules="{ required: true}"
+                :rules="{ required: false}"
                 v-slot="validationContext"
               >
                 <b-form-group :label="$t('Adress')">
@@ -285,7 +285,7 @@
             <b-col md="6" sm="12">
               <validation-provider
                 name="NIT"
-                :rules="{ required: true}"
+                :rules="{ required: false}"
                 v-slot="validationContext"
               >
                 <b-form-group :label="$t('NIT')">
@@ -303,7 +303,7 @@
             <b-col md="6" sm="12">
               <validation-provider
                 name="NRC"
-                :rules="{ required: true}"
+                :rules="{ required: false}"
                 v-slot="validationContext"
               >
                 <b-form-group :label="$t('NRC')">
@@ -322,7 +322,7 @@
                 <b-col md="6" sm="12">
                   <validation-provider
                     name="giro"
-                    :rules="{ required: true}"
+                    :rules="{ required: false}"
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('Giro')">
@@ -338,6 +338,48 @@
                     </b-form-group>
                   </validation-provider>
                 </b-col>
+                <b-col md="6" sm="12" class="mt-2">
+                    <b-form-group
+                      :label="$t('TypeClient')"
+                      v-slot="{ ariaDescribedby }"
+                    >
+                      <b-form-radio
+                        v-model="client.final_consumer"
+                        :aria-describedby="ariaDescribedby"
+                        name="FinalConsumer"
+                        value="1"
+                        >{{$t('FinalConsumer')}}</b-form-radio
+                      >
+                      <b-form-radio
+                        v-model="client.final_consumer"
+                        :aria-describedby="ariaDescribedby"
+                        name="FiscalCredit"
+                        value="0"
+                        >{{$t('FiscalCredit')}}</b-form-radio
+                      >
+                    </b-form-group>
+                  </b-col>
+                  <b-col md="6" sm="12" class="mt-2" v-if="client.final_consumer == 0">
+                    <b-form-group
+                      :label="$t('BigConsumer')"
+                      v-slot="{ ariaDescribedby }"
+                    >
+                      <b-form-radio
+                        v-model="client.big_consumer"
+                        :aria-describedby="ariaDescribedby"
+                        name="Si"
+                        value="1"
+                        >{{$t('Yes')}}</b-form-radio
+                      >
+                      <b-form-radio
+                        v-model="client.big_consumer"
+                        :aria-describedby="ariaDescribedby"
+                        name="No"
+                        value="0"
+                        >No</b-form-radio
+                      >
+                    </b-form-group>
+                  </b-col>
 
             <b-col md="12" class="mt-3">
               <b-button variant="primary" type="submit">{{$t('submit')}}</b-button>
@@ -558,7 +600,9 @@ export default {
         adresse: "",
         NIT: "",
         NRC: "",
-        giro: ""
+        giro: "",
+        final_consumer: 1,
+        big_consumer: 0
       }
     };
   },
@@ -928,7 +972,9 @@ export default {
           adresse: this.client.adresse,
           NIT: this.client.NIT,
           NRC: this.client.NRC,
-          giro: this.client.giro
+          giro: this.client.giro,
+          final_consumer:  this.client.final_consumer,
+          big_consumer:  this.client.big_consumer
         })
         .then(response => {
           Fire.$emit("Event_Customer");
@@ -959,7 +1005,9 @@ export default {
           adresse: this.client.adresse,
           NIT: this.client.NIT,
           NRC: this.client.NRC,
-          giro: this.client.giro
+          giro: this.client.giro,
+          final_consumer:  this.client.final_consumer,
+          big_consumer:  this.client.big_consumer
         })
         .then(response => {
           Fire.$emit("Event_Customer");
@@ -990,7 +1038,9 @@ export default {
         adresse: "",
         NIT: "",
         NRC: "",
-        giro: ""
+        giro: "",
+        final_consumer: 1,
+        big_consumer: 0
         
       };
     },
