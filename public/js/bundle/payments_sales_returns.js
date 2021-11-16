@@ -3181,145 +3181,6 @@ _export({ target: 'Array', proto: true, forced: FORCED }, {
   }
 });
 
-// `thisNumberValue` abstract operation
-// https://tc39.es/ecma262/#sec-thisnumbervalue
-var thisNumberValue = function (value) {
-  if (typeof value != 'number' && classofRaw(value) != 'Number') {
-    throw TypeError('Incorrect invocation');
-  }
-  return +value;
-};
-
-// `String.prototype.repeat` method implementation
-// https://tc39.es/ecma262/#sec-string.prototype.repeat
-var stringRepeat = function repeat(count) {
-  var str = String(requireObjectCoercible(this));
-  var result = '';
-  var n = toInteger(count);
-  if (n < 0 || n == Infinity) throw RangeError('Wrong number of repetitions');
-  for (;n > 0; (n >>>= 1) && (str += str)) if (n & 1) result += str;
-  return result;
-};
-
-var nativeToFixed = 1.0.toFixed;
-var floor$3 = Math.floor;
-
-var pow$1 = function (x, n, acc) {
-  return n === 0 ? acc : n % 2 === 1 ? pow$1(x, n - 1, acc * x) : pow$1(x * x, n / 2, acc);
-};
-
-var log = function (x) {
-  var n = 0;
-  var x2 = x;
-  while (x2 >= 4096) {
-    n += 12;
-    x2 /= 4096;
-  }
-  while (x2 >= 2) {
-    n += 1;
-    x2 /= 2;
-  } return n;
-};
-
-var multiply = function (data, n, c) {
-  var index = -1;
-  var c2 = c;
-  while (++index < 6) {
-    c2 += n * data[index];
-    data[index] = c2 % 1e7;
-    c2 = floor$3(c2 / 1e7);
-  }
-};
-
-var divide = function (data, n) {
-  var index = 6;
-  var c = 0;
-  while (--index >= 0) {
-    c += data[index];
-    data[index] = floor$3(c / n);
-    c = (c % n) * 1e7;
-  }
-};
-
-var dataToString = function (data) {
-  var index = 6;
-  var s = '';
-  while (--index >= 0) {
-    if (s !== '' || index === 0 || data[index] !== 0) {
-      var t = String(data[index]);
-      s = s === '' ? t : s + stringRepeat.call('0', 7 - t.length) + t;
-    }
-  } return s;
-};
-
-var FORCED$1 = nativeToFixed && (
-  0.00008.toFixed(3) !== '0.000' ||
-  0.9.toFixed(0) !== '1' ||
-  1.255.toFixed(2) !== '1.25' ||
-  1000000000000000128.0.toFixed(0) !== '1000000000000000128'
-) || !fails(function () {
-  // V8 ~ Android 4.3-
-  nativeToFixed.call({});
-});
-
-// `Number.prototype.toFixed` method
-// https://tc39.es/ecma262/#sec-number.prototype.tofixed
-_export({ target: 'Number', proto: true, forced: FORCED$1 }, {
-  toFixed: function toFixed(fractionDigits) {
-    var number = thisNumberValue(this);
-    var fractDigits = toInteger(fractionDigits);
-    var data = [0, 0, 0, 0, 0, 0];
-    var sign = '';
-    var result = '0';
-    var e, z, j, k;
-
-    if (fractDigits < 0 || fractDigits > 20) throw RangeError('Incorrect fraction digits');
-    // eslint-disable-next-line no-self-compare -- NaN check
-    if (number != number) return 'NaN';
-    if (number <= -1e21 || number >= 1e21) return String(number);
-    if (number < 0) {
-      sign = '-';
-      number = -number;
-    }
-    if (number > 1e-21) {
-      e = log(number * pow$1(2, 69, 1)) - 69;
-      z = e < 0 ? number * pow$1(2, -e, 1) : number / pow$1(2, e, 1);
-      z *= 0x10000000000000;
-      e = 52 - e;
-      if (e > 0) {
-        multiply(data, 0, z);
-        j = fractDigits;
-        while (j >= 7) {
-          multiply(data, 1e7, 0);
-          j -= 7;
-        }
-        multiply(data, pow$1(10, j, 1), 0);
-        j = e - 1;
-        while (j >= 23) {
-          divide(data, 1 << 23);
-          j -= 23;
-        }
-        divide(data, 1 << j);
-        multiply(data, 1, 1);
-        divide(data, 2);
-        result = dataToString(data);
-      } else {
-        multiply(data, 0, z);
-        multiply(data, 1 << -e, 0);
-        result = dataToString(data) + stringRepeat.call('0', fractDigits);
-      }
-    }
-    if (fractDigits > 0) {
-      k = result.length;
-      result = sign + (k <= fractDigits
-        ? '0.' + stringRepeat.call('0', fractDigits - k) + result
-        : result.slice(0, k - fractDigits) + '.' + result.slice(k - fractDigits));
-    } else {
-      result = sign + result;
-    } return result;
-  }
-});
-
 // `IsArray` abstract operation
 // https://tc39.es/ecma262/#sec-isarray
 // eslint-disable-next-line es/no-array-isarray -- safe
@@ -3633,7 +3494,7 @@ perPage:10},
 
 limit:"10",
 search:"",
-totalMount:"",
+totalMount:0,
 totalRows:"",
 Filter_client:"",
 Filter_Ref:"",
@@ -3817,7 +3678,7 @@ _this.payments=response.data.payments;
 _this.clients=response.data.clients;
 _this.sale_returns=response.data.sale_returns;
 _this.totalRows=response.data.totalRows;
-_this.totalMount=response.data.totalSales.toFixed(2);// Complete the animation of theprogress bar.
+_this.totalMount=response.data.totalSales;// Complete the animation of theprogress bar.
 
 nprogress__WEBPACK_IMPORTED_MODULE_0___default.a.done();
 _this.isLoading=false;

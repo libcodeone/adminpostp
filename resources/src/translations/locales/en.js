@@ -639,4 +639,7 @@ export default {
     initial_invoiceCCF: "Correlativo inicial de CCF",
     current_invoiceCCF: "Correlativo actual de CCF",
     totalPay: "Total amount:",
+    InvoiceSaleReturn: "Choose invoice",
+    dateInvoice:"Sales invoice date",
+    SelectDateSales:"Select sales invoice date",
 };

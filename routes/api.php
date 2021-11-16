@@ -170,9 +170,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::post('sales/delete/by_selection', 'SalesController@delete_by_selection');
     Route::put('sales/change_status/{id}', 'SalesController@update_status');
     Route::put('sales/update_to_payment/{id}', 'SalesController@update_to_payment');
-    
-
-    
+   
 
     //------------------------------- Payments  Sales --------------------------\\
     //------------------------------------------------------------------\\
@@ -215,6 +213,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::get('returns/sale/export/Excel', 'SalesReturnController@exportExcel');
     Route::get('returns/sale/payment/{id}', 'SalesReturnController@Payment_Returns');
     Route::post('returns/sale/delete/by_selection', 'SalesReturnController@delete_by_selection');
+    Route::get('returns/invoice/Warehouse/{warehouse}/{date}', 'SalesReturnController@Invoice_by_Warehouse');
 
     //------------------------------- Purchases Return --------------------------\\
     //------------------------------------------------------------------\\

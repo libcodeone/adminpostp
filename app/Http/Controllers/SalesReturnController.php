@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Sale;
 use App\Exports\Sale_Return;
 use App\Mail\ReturnMail;
 use App\Models\Client;
@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use PDF;
+use Illuminate\Support\Facades\Log;
 
 class SalesReturnController extends BaseController
 {
@@ -159,10 +160,10 @@ class SalesReturnController extends BaseController
             $order->shipping = $request->shipping;
             $order->GrandTotal = $request->GrandTotal;
             $order->statut = $request->statut;
+            $order->ref_invoice = $request->idInvoice;
             $order->payment_statut = 'unpaid';
             $order->notes = $request->notes;
             $order->user_id = Auth::user()->id;
-
             $order->save();
 
             $data = $request['details'];
@@ -877,5 +878,25 @@ class SalesReturnController extends BaseController
              return response()->json(['message' => $e->getMessage()], 500);
          }
      }
+    //-------------------get invoice for return sales----------\\
+    public function Invoice_by_Warehouse($warehouse,$date){
+        $data = [];
+        Log::debug($date);
+        $sales = Sale::where('date','LIKE',"%$date%")
+                    ->where('deleted_at', '=', null)
+                    ->where('warehouse_id',$warehouse)
+                    ->get(['id','refInvoice','type_invoice']);
+        Log::debug($sales);
+        foreach($sales as $sale){
 
+            if($sale->refInvoice){
+                $item['id']=$sale->id;
+                $item['refInvoice']=$sale->refInvoice;
+                $item['type_invoice']=$sale->type_invoice;
+                $data[] = $item;
+            }
+        }
+        Log::debug($data);
+        return response()->json($data);
+    }
 }
