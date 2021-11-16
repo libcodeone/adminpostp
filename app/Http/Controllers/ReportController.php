@@ -132,7 +132,7 @@ class ReportController extends BaseController
 
     public function report_with_echart(Request $request)
     {
-       $this->authorizeForUser($request->user('api'), 'dashboard' ,Client::class);
+       //$this->authorizeForUser($request->user('api'), 'dashboard' ,Client::class);
 
         $dataSales = $this->SalesChart();
         $datapurchases = $this->PurchasesChart();
