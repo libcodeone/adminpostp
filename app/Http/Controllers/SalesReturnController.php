@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Sale;
 use App\Exports\Sale_Return;
 use App\Mail\ReturnMail;
 use App\Models\Client;
@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
 use DB;
 use PDF;
+use Illuminate\Support\Facades\Log;
 
 class SalesReturnController extends BaseController
 {
@@ -159,10 +160,10 @@ class SalesReturnController extends BaseController
             $order->shipping = $request->shipping;
             $order->GrandTotal = $request->GrandTotal;
             $order->statut = $request->statut;
+            $order->ref_invoice = $request->idInvoice;
             $order->payment_statut = 'unpaid';
             $order->notes = $request->notes;
             $order->user_id = Auth::user()->id;
-
             $order->save();
 
             $data = $request['details'];
@@ -546,7 +547,6 @@ class SalesReturnController extends BaseController
             // Check If User->id === SaleReturn->id
             $this->authorizeForUser($request->user('api'), 'check_record', $Sale_Return);
         }
-
         $return_details['Ref'] = $Sale_Return->Ref;
         $return_details['date'] = $Sale_Return->date;
         $return_details['statut'] = $Sale_Return->statut;
@@ -559,11 +559,20 @@ class SalesReturnController extends BaseController
         $return_details['client_adr'] = $Sale_Return['client']->adresse;
         $return_details['client_email'] = $Sale_Return['client']->email;
         $return_details['warehouse'] = $Sale_Return['warehouse']->name;
+        
+        $return_details['client_NIT'] = "NIT :".$Sale_Return['client']->NIT;
+        $return_details['client_NRC'] = "NRC :".$Sale_Return['client']->NRC;
+        $return_details['client_giro'] = "GIRO :".$Sale_Return['client']->giro;
+
         $return_details['GrandTotal'] = $Sale_Return->GrandTotal;
         $return_details['paid_amount'] = $Sale_Return->paid_amount;
         $return_details['due'] = $Sale_Return->GrandTotal - $Sale_Return->paid_amount;
         $return_details['payment_status'] = $Sale_Return->payment_statut;
-
+        if($Sale_Return->ref_invoice){
+            $return_details['SalesOfInvoice'] = $this->invoiceDetail($Sale_Return->ref_invoice);
+        }else{
+            $return_details['SalesOfInvoice'] = "";
+        }
         foreach ($Sale_Return['details'] as $detail) {
             if ($detail->product_variant_id) {
 
@@ -747,7 +756,7 @@ class SalesReturnController extends BaseController
         } else {
             $Return_detail['warehouse_id'] = '';
         }
-
+        $Return_detail['idInvoice'] = $SaleReturn->date;
         $Return_detail['date'] = $SaleReturn->date;
         $Return_detail['tax_rate'] = $SaleReturn->tax_rate;
         $Return_detail['TaxNet'] = $SaleReturn->TaxNet;
@@ -877,5 +886,25 @@ class SalesReturnController extends BaseController
              return response()->json(['message' => $e->getMessage()], 500);
          }
      }
+    //-------------------get invoice for return sales----------\\
+    public function Invoice_by_Warehouse($warehouse,$date){
+        $data = [];
+        Log::debug($date);
+        $sales = Sale::where('date','LIKE',"%$date%")
+                    ->where('deleted_at', '=', null)
+                    ->where('warehouse_id',$warehouse)
+                    ->get(['id','refInvoice','type_invoice']);
+        Log::debug($sales);
+        foreach($sales as $sale){
 
+            if($sale->refInvoice){
+                $item['id']=$sale->id;
+                $item['refInvoice']=$sale->refInvoice;
+                $item['type_invoice']=$sale->type_invoice;
+                $data[] = $item;
+            }
+        }
+        Log::debug($data);
+        return response()->json($data);
+    }
 }

@@ -45,6 +45,26 @@
                     </b-form-group>
                   </validation-provider>
                 </b-col>
+                <!-- date sale -->
+                <b-col lg="4" md="4" sm="12" class="mb-3">
+                  <validation-provider
+                    name="date"
+                    :rules="{ required: true}"
+                    v-slot="validationContext"
+                  >
+                    <b-form-group :label="$t('dateInvoice')">
+                      <b-form-input
+                        :state="getValidationState(validationContext)"
+                        aria-describedby="date-feedback"
+                        type="date"
+                        v-model="saleDate"
+                      ></b-form-input>
+                      <b-form-invalid-feedback
+                        id="OrderTax-feedback"
+                      >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                    </b-form-group>
+                  </validation-provider>
+                </b-col>
 
                 <!-- warehouse -->
                 <b-col lg="4" md="4" sm="12" class="mb-3">
@@ -65,8 +85,21 @@
                   </validation-provider>
                 </b-col>
 
+                <!-- invoice  -->
+                <b-col md="4" class="mb-5" lg="4">
+                  <h6>{{$t('Invoice')}}</h6>
+                  <autocomplete
+                    :search="searchInvoice"
+                    :placeholder="$t('Search_Product_by_Code_Name')"
+                    aria-label="Search for a Product"
+                    :get-result-value="getResultValueIvoice"
+                    @submit="searchInvoiceI"
+                    ref="autocompleteInvoice"
+                  />
+                </b-col>
+
                 <!-- Product -->
-                <b-col md="12" class="mb-5">
+                <b-col md="4" class="mb-5" lg="4">
                   <h6>{{$t('ProductName')}}</h6>
                   <autocomplete
                     :search="search"
@@ -436,8 +469,11 @@ export default {
       warehouses: [],
       clients: [],
       products: [],
+      invoices: [],
+      saleDate:"",
       details: [],
       detail: {},
+      idInvoice:null,
       sale_return: {
         id: "",
         date: "",
@@ -473,6 +509,11 @@ export default {
         tax_method: "",
         product_variant_id: "",
         del: ""
+      },
+      invoice:{
+        id: "",
+        refInvoice: "",
+        type_invoice: ""
       }
     };
   },
@@ -608,13 +649,36 @@ export default {
         );
       }
     },
+    //------ Search Invoice
 
+    searchInvoice(input) {
+      if (input.length < 1) {
+        return [];
+      }
+      if (this.sale_return.warehouse_id != "") {
+        return this.invoices.filter(invoice => {
+          return (
+            invoice.type_invoice.toLowerCase().startsWith(input.toLowerCase()) ||
+            invoice.refInvoice.toLowerCase().startsWith(input.toLowerCase())
+          );
+        });
+      } else {
+        this.makeToast(
+          "warning",
+          this.$t("SelectWarehouse"),
+          this.$t("Warning")
+        );
+      }
+    },
     // get Result Value Search Product
 
     getResultValue(result) {
       return result.code + " " + "(" + result.name + ")";
     },
-
+    //------ get Result Value Search Product
+    getResultValueIvoice(result) {
+      return result.type_invoice + " " + "(" + result.refInvoice + ")";
+    },
     // Submit Search Product
 
     SearchProduct(result) {
@@ -638,9 +702,13 @@ export default {
       this.$refs.autocomplete.value = "";
     },
 
+    searchInvoiceI(result) {
+      this.idInvoice=result.id;
+    },
     //---------------------- Event Select Warehouse ------------------------------\\
     Selected_Warehouse(value) {
       this.Get_Products_By_Warehouse(value);
+      this.Get_Invoice_By_Warehouse(value);
     },
 
     //------------------------------------ Get Products By Warehouse -------------------------\\
@@ -650,7 +718,11 @@ export default {
         .get("Products/Warehouse/" + id + "?stock=" + 0)
         .then(({ data }) => (this.products = data));
     },
-
+    Get_Invoice_By_Warehouse(id) {
+      axios
+        .get("returns/invoice/Warehouse/" + id + "/"+this.saleDate+"?stock=" + 0)
+        .then(({ data }) => (this.invoices = data));
+    },
     //----------------------------------------- Add Product -------------------------\\
     add_product() {
       if (this.details.length > 0) {
@@ -884,7 +956,9 @@ export default {
           this.details = response.data.details;
           this.clients = response.data.clients;
           this.warehouses = response.data.warehouses;
+          this.saleDate=this.sale_return.date;
           this.Get_Products_By_Warehouse(this.sale_return.warehouse_id);
+          this.Get_Invoice_By_Warehouse(this.sale_return.warehouse_id);
           this.Calcul_Total();
           this.isLoading = false;
         })

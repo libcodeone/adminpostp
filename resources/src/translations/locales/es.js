@@ -389,6 +389,7 @@ export default {
     ReturnsCustomers: "Devuelve ventas",
     ReturnsSuppliers: "Devoluciones de compras",
     FactureReturnCustomers: "facturas Ventas devolución",
+    InvoiceSaleReturn: "Elija factura",
     FactureReturnSuppliers: "facturas devoluciones compras",
     NodataAvailable: "Datos no disponibles",
     ProductImage: "Imagen del producto",
@@ -562,7 +563,7 @@ export default {
     EmailReturn: "Enviar retorno en correo electrónico",
     DeleteReturn: "Eliminar retorno",
     Retoursurcharge: "Recargo de retorno",
-    Laivrison: "entrega",
+    Laivrison: "Entrega",
     SelectSale: "Seleccionar venta",
     ZeroPardefault:
         "Puede eliminar el artículo o establecer la cantidad devuelta a cero si no se devuelve",
@@ -578,7 +579,7 @@ export default {
     Sent: "Expedido",
     ProductQuantityAlerts: "Alertas de cantidad de producto",
     ProductCode: "Código de producto",
-    ProductName: "nombre del producto",
+    ProductName: "Nombre del producto",
     AlertQuantity: "Cantidad de alerta",
     WarehouseStockChart: "Gráfico de acciones de almacén",
     TotalProducts: "Productos totales",
@@ -644,9 +645,8 @@ export default {
     FiscalCredit: "Credito fiscal",
     BigConsumer: "Gran consumidor",
     Yes: "Si",
-    
-    
+    dateInvoice:"Fecha de factura de venta",
+    SelectDateSales:"Seleccione fecha de factura de venta",
+    SalesOfInvoice:"Factura de venta",
 
-
-    
 };

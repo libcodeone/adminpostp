@@ -157,7 +157,7 @@ export default {
       },
       limit: "10",
       search: "",
-      totalMount: "",
+      totalMount: 0,
       totalRows: "",
       Filter_client: "",
       Filter_Ref: "",
@@ -360,7 +360,7 @@ export default {
           this.clients = response.data.clients;
           this.sale_returns = response.data.sale_returns;
           this.totalRows = response.data.totalRows;
-          this.totalMount=response.data.totalSales.toFixed(2);
+          this.totalMount=response.data.totalSales;
           // Complete the animation of theprogress bar.
           NProgress.done();
           this.isLoading = false;

@@ -4,6 +4,7 @@
 /public/images/vendor
 # /public/js/main.js
 /node_modules
+/public/images/categorys
 /public/images/brands
 /public/images/avatar
 /public/images/products

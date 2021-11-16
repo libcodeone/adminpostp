@@ -90,8 +90,7 @@ class PaymentSaleReturnsController extends BaseController
         foreach($Sales as $Sale){
             $totalSales = number_format($Sale->montant, 2, '.', '')+$totalSales;
         }
-        $totalSales=number_format($totalSales, 2);
-        Log::debug($totalSales); 
+        $totalSales=number_format($totalSales, 2); 
         foreach ($Payments as $Payment) {
 
             $item['date'] = $Payment->date;

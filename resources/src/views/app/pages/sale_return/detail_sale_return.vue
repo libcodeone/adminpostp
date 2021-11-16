@@ -49,7 +49,6 @@
           <b-row class="mt-5">
             <b-col lg="4" md="4" sm="12" class="mb-4">
               <h5 class="font-weight-bold">{{$t('Customer_Info')}}</h5>
-
               <div>{{sale_return.client_name}}</div>
               <div>{{sale_return.client_email}}</div>
               <div>{{sale_return.client_phone}}</div>
@@ -90,6 +89,7 @@
                 >{{$t('Received')}}</span>
                 <span v-else class="badge badge-outline-info">{{$t('Pending')}}</span>
               </div>
+              <div>{{$t('SalesOfInvoice')}} : {{sale_return.SalesOfInvoice}}</div>
             </b-col>
           </b-row>
           <b-row class="mt-3">
@@ -332,7 +332,6 @@ export default {
       while (formated.length < dec) formated += "0";
       return `${value[0]}.${formated}`;
     },
-
     //----------------------------------- Get Details Sale Return ------------------------------\\
     Get_Details() {
       let id = this.$route.params.id;

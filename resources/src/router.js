@@ -6,9 +6,7 @@ import authenticate from "./auth/authenticate";
 import IsConnected from "./auth/IsConnected";
 
 import NProgress from "nprogress";
-
 Vue.use(Router);
-
 // create new router
 
 const routes = [

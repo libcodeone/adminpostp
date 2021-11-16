@@ -14,6 +14,7 @@
       <div>
         <ul class="navigation-left">
           <li
+            v-show="currentUserPermissions && (currentUserPermissions.includes('dashboard'))"
             @mouseenter="toggleSubMenu"
             :class="{ active: selectedParentMenu == 'dashboard' }"
             class="nav-item"

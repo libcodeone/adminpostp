@@ -644,8 +644,8 @@ export default {
     FiscalCredit: "Credito fiscal",
     BigConsumer: "Big consumer",
     Yes: "Yes",
-
-
-    
-
+    InvoiceSaleReturn: "Choose invoice",
+    dateInvoice:"Sales invoice date",
+    SelectDateSales:"Select sales invoice date",
+    SalesOfInvoice:"Sales invoice",
 };
