@@ -169,7 +169,6 @@ class SalesController extends BaseController
 
             $order->is_pos = 0;
             $order->date = $request->date;
-            $order->Ref = $this->getNumberOrder();
             $order->client_id = $request->client_id;
             $order->GrandTotal = $request->GrandTotal;
             $order->warehouse_id = $request->warehouse_id;
@@ -184,6 +183,7 @@ class SalesController extends BaseController
             $order->refCreditCard = $request->refCreditCard;
             $order->refTrasnsferedBank = $request->refTrasnsferedBank;
             $order->type_invoice = $request->type_invoice;
+            $order->Ref = $request->type_invoice =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
             $order->refInvoice = $request->type_invoice =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
             $order->user_id = Auth::user()->id;
             if($request['type_invoice']=='CF'){
@@ -319,7 +319,7 @@ class SalesController extends BaseController
 
                         $PaymentSale = new PaymentSale();
                         $PaymentSale->sale_id = $order->id;
-                        $PaymentSale->Ref = app('App\Http\Controllers\PaymentSalesController')->getNumberOrder();
+                        $PaymentSale->Ref = $order->Ref;
                         $PaymentSale->date = Carbon::now();
                         $PaymentSale->Reglement = $request->payment['Reglement'];
                         $PaymentSale->montant = $request->payment['amount'];
@@ -343,7 +343,7 @@ class SalesController extends BaseController
 
                         PaymentSale::create([
                             'sale_id' => $order->id,
-                            'Ref' => app('App\Http\Controllers\PaymentSalesController')->getNumberOrder(),
+                            'Ref' => $order->Ref,
                             'date' => Carbon::now(),
                             'Reglement' => $request->payment['Reglement'],
                             'montant' => $request->payment['amount'],
@@ -574,7 +574,7 @@ class SalesController extends BaseController
          
                     $PaymentSale = new PaymentSale();
                         $PaymentSale->sale_id = $id;
-                        $PaymentSale->Ref = app('App\Http\Controllers\PaymentSalesController')->getNumberOrder();
+                        $PaymentSale->Ref = $request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
                         $PaymentSale->date = Carbon::now();
                         $PaymentSale->Reglement = $request['Reglement'];
                         $PaymentSale->montant = $request['GrandTotal'];
@@ -593,6 +593,7 @@ class SalesController extends BaseController
                         'refTrasnsferedBank' => $request['RefTransfer'],
                         'refCreditCard' => $request['RefCreditCard'],
                         'type_invoice' => $request['type_invoice'],
+                        'Ref' => $request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1,
                         'refInvoice' =>$request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1,
                     ]);
                     if($request['type_invoice']=='CF'){

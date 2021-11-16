@@ -57,7 +57,6 @@ class PosController extends BaseController
             }
             $order->is_pos = 1;
             $order->date = Carbon::now();
-            $order->Ref = app('App\Http\Controllers\SalesController')->getNumberOrder();
             $order->client_id = $request->client_id;
             $order->warehouse_id = $request->warehouse_id;
             $order->tax_rate = $taxRate;
