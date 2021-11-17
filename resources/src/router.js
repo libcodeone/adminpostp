@@ -14,7 +14,7 @@ const routes = [
         path: "/",
         component: () => import("./views/app"),
         // beforeEnter: authenticate,
-        redirect: "/app/dashboard",
+        redirect: "/app/sales/list_checkin",
 
         children: [
             {
