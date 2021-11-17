@@ -381,7 +381,7 @@ class PosController extends BaseController
         } else {
             $defaultClient = '';
         }
-        $categories = Category::where('deleted_at', '=', null)->get(['id', 'name']);
+        $categories = Category::where('deleted_at', '=', null)->get(['id', 'name','image']);
         $brands = Brand::where('deleted_at', '=', null)->get();
         $stripe_key = config('app.STRIPE_KEY');
 
