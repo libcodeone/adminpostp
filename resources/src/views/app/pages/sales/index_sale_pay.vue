@@ -901,6 +901,9 @@ export default {
     //----------------------------------------- Get all Sales ------------------------------\\
     Get_Sales(page) {
       // Start the progress bar.
+      if(this.currentUserPermissions.length ==1 && this.currentUserPermissions.includes('Pos_view')){
+      window.location= '/app/pos';
+      }
       NProgress.start();
       NProgress.set(0.1);
       this.setToStrings();

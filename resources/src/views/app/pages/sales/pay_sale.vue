@@ -584,7 +584,7 @@
                 </div>
               </div>
               </div>
-              <div class="row">
+              <div class="row" style="margin-top:-75px;">
                 <div class="col-9">
                   <div class="row rounded">
                     <span class="h5 text-uppercase">

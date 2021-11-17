@@ -135,7 +135,7 @@ class PosController extends BaseController
                     }
                 }
             }
-
+            
             SaleDetail::insert($orderDetails);
 
             $sale = Sale::findOrFail($order->id);
