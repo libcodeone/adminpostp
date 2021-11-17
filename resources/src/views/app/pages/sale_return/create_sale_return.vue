@@ -91,7 +91,7 @@
                   <h6>{{$t('Invoice')}}</h6>
                   <autocomplete
                     :search="searchInvoice"
-                    :placeholder="$t('Search_Product_by_Code_Name')"
+                    :placeholder="$t('Search_Invoice_by_Code')"
                     aria-label="Search for a Product"
                     :get-result-value="getResultValueIvoice"
                     @submit="searchInvoiceI"

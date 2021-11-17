@@ -58,6 +58,7 @@
                         aria-describedby="date-feedback"
                         type="date"
                         v-model="saleDate"
+                        @input="Get_Invoice_By_Date"
                       ></b-form-input>
                       <b-form-invalid-feedback
                         id="OrderTax-feedback"
@@ -90,7 +91,7 @@
                   <h6>{{$t('Invoice')}}</h6>
                   <autocomplete
                     :search="searchInvoice"
-                    :placeholder="$t('Search_Product_by_Code_Name')"
+                    :placeholder="$t('Search_Invoice_by_Code')"
                     aria-label="Search for a Product"
                     :get-result-value="getResultValueIvoice"
                     @submit="searchInvoiceI"
@@ -474,6 +475,7 @@ export default {
       details: [],
       detail: {},
       idInvoice:null,
+      nameInvoice:"Rene",
       sale_return: {
         id: "",
         date: "",
@@ -718,9 +720,17 @@ export default {
         .get("Products/Warehouse/" + id + "?stock=" + 0)
         .then(({ data }) => (this.products = data));
     },
+
+    //------------------------------------ Get Invoice By Warehouse -------------------------\\
     Get_Invoice_By_Warehouse(id) {
       axios
         .get("returns/invoice/Warehouse/" + id + "/"+this.saleDate+"?stock=" + 0)
+        .then(({ data }) => (this.invoices = data));
+    },
+    //------------------------------------ Get Invoice By date -------------------------\\
+    Get_Invoice_By_Date() {
+      axios
+        .get("returns/invoice/Warehouse/" + this.sale_return.warehouse_id + "/"+this.saleDate+"?stock=" + 0)
         .then(({ data }) => (this.invoices = data));
     },
     //----------------------------------------- Add Product -------------------------\\
@@ -899,7 +909,8 @@ export default {
             discount: this.sale_return.discount,
             shipping: this.sale_return.shipping,
             GrandTotal: this.GrandTotal,
-            details: this.details
+            details: this.details,
+            idInvoice: this.idInvoice
           })
           .then(response => {
             NProgress.done();
@@ -956,7 +967,9 @@ export default {
           this.details = response.data.details;
           this.clients = response.data.clients;
           this.warehouses = response.data.warehouses;
-          this.saleDate=this.sale_return.date;
+          this.saleDate= response.data.sale_return.ref_invoice_date;
+          this.idInvoice=response.data.sale_return.ref_invoice_id;
+          //this.nameInvoice=response.data.sale_return.ref_invoice;
           this.Get_Products_By_Warehouse(this.sale_return.warehouse_id);
           this.Get_Invoice_By_Warehouse(this.sale_return.warehouse_id);
           this.Calcul_Total();

@@ -21,6 +21,7 @@ use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Stripe;
+use Illuminate\Support\Facades\Log;
 
 class PosController extends BaseController
 {
@@ -48,11 +49,13 @@ class PosController extends BaseController
             $TaxWithheld = 0;
             $TaxNetDetail = 0;
             $TaxMethod = 2;
-            if($client->final_consumer == 0){
+            $GrandTotal=$request->GrandTotal;
+            if($client->final_consumer === 0){
                 $taxRate = 13;
-                $TaxNet = $request->GrandTotal * 0.13;
-                if($client->big_consumer == 1){
-                    $TaxWithheld = $request->GrandTotal * 0.01;
+                $TaxNet = round($request->GrandTotal-($request->GrandTotal / 1.13),2);
+                if($client->big_consumer == 1 and round($request->GrandTotal / 1.13,2)>=100){
+                    $TaxWithheld = round((($request->GrandTotal / 1.13)* 0.01),2) ;
+                    $GrandTotal=$GrandTotal-$TaxWithheld;
                 }
             }
             $order->is_pos = 1;
@@ -64,7 +67,8 @@ class PosController extends BaseController
             $order->TaxWithheld = $TaxWithheld;
             $order->discount = $request->discount;
             $order->shipping = $request->shipping;
-            $order->GrandTotal = $request->GrandTotal;
+            $order->subTotal=$request->GrandTotal;
+            $order->GrandTotal = $GrandTotal;
             $order->cash = 0;
             $order->change = 0;
             $order->payment_statut = 'unpaid';
@@ -75,14 +79,12 @@ class PosController extends BaseController
             $order->save();
 
             $data = $request['details'];
-
-
-            foreach ($data as $key => $value) {
+               foreach ($data as $key => $value) {
                 $price= $value['Unit_price'];
                 $TaxMethod = 2;
                 
-                if($client->final_consumer == 0){
-                    $TaxNetDetail = $value['Unit_price'] * 0.13;
+                if($client->final_consumer === 0){
+                    $TaxNetDetail = round($value['Unit_price'] -($value['Unit_price']/ 1.13), 2);
                     $price= $value['Unit_price'] - $TaxNetDetail;
                     $TaxMethod = 1;
                 }

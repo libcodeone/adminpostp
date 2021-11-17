@@ -389,6 +389,7 @@ class SalesReturnController extends BaseController
                 'shipping' => $request['shipping'],
                 'GrandTotal' => $request['GrandTotal'],
                 'payment_statut' => $payment_statut,
+                'ref_invoice' => $request['idInvoice']
             ]);
 
         }, 10);
@@ -758,6 +759,13 @@ class SalesReturnController extends BaseController
         }
         $Return_detail['idInvoice'] = $SaleReturn->date;
         $Return_detail['date'] = $SaleReturn->date;
+        if($SaleReturn->ref_invoice){
+            $Return_detail['ref_invoice_id']=$SaleReturn->ref_invoice;
+            $Return_detail['ref_invoice_date']=$this->invoiceDate($SaleReturn->ref_invoice);
+            $Return_detail['ref_invoice']=$this->invoiceNameSearch($SaleReturn->ref_invoice);
+        }else{
+            $Return_detail['ref_invoice_id']="";
+        }
         $Return_detail['tax_rate'] = $SaleReturn->tax_rate;
         $Return_detail['TaxNet'] = $SaleReturn->TaxNet;
         $Return_detail['discount'] = $SaleReturn->discount;
@@ -855,7 +863,7 @@ class SalesReturnController extends BaseController
 
         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
         $clients = Client::where('deleted_at', '=', null)->get(['id', 'name']);
-
+        Log::debug('edit ');
         return response()->json([
             'details' => $details,
             'sale_return' => $Return_detail,
@@ -889,12 +897,10 @@ class SalesReturnController extends BaseController
     //-------------------get invoice for return sales----------\\
     public function Invoice_by_Warehouse($warehouse,$date){
         $data = [];
-        Log::debug($date);
         $sales = Sale::where('date','LIKE',"%$date%")
                     ->where('deleted_at', '=', null)
                     ->where('warehouse_id',$warehouse)
                     ->get(['id','refInvoice','type_invoice']);
-        Log::debug($sales);
         foreach($sales as $sale){
 
             if($sale->refInvoice){
@@ -904,7 +910,6 @@ class SalesReturnController extends BaseController
                 $data[] = $item;
             }
         }
-        Log::debug($data);
         return response()->json($data);
     }
 }

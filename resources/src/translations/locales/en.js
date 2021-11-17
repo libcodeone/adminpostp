@@ -648,4 +648,5 @@ export default {
     dateInvoice:"Sales invoice date",
     SelectDateSales:"Select sales invoice date",
     SalesOfInvoice:"Sales invoice",
+    Search_Invoice_by_Code:"Search invoice by N °"
 };

@@ -7,7 +7,8 @@
         <b-col md="5">
           <b-card no-body class="card-order">
             <div class="main-header">
-              <div class="logo">
+              <div class="logo" 
+              v-show="currentUserPermissions && (currentUserPermissions.includes('dashboard'))">
                 <router-link to="/app/dashboard">
                   <img :src="'/images/'+currentUser.logo" alt width="60" height="60">
                 </router-link>
@@ -686,7 +687,7 @@
                   @click="Products_by_Category(category.id)"
                   :class="{ 'brand-Active' : category.id === category_id}"
                 >
-                  <img alt :src="'/images/no-image.png'">
+                  <img alt :src="'/images/categorys/'+category.image">
                   <div class="flex-grow-1 d-bock">
                     <div
                       class="card-body align-self-center d-flex flex-column justify-content-between align-items-lg-center"
@@ -1090,7 +1091,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(["currentUser"]),
+    ...mapGetters(["currentUser", "currentUserPermissions"]),
     
     brand_totalRows() {
       return this.brands.length;

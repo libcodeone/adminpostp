@@ -107,5 +107,12 @@ class BaseController extends Controller
         $sale=Sale::findOrFail($id);
         return $sale->type_invoice." ".$sale->refInvoice;
     }
-
+    public function invoiceDate($id){
+        $sale=Sale::findOrFail($id);
+        return $sale->date;
+    }
+    public function invoiceNameSearch($id){
+        $sale=Sale::findOrFail($id);
+        return $sale->type_invoice." (".$sale->refInvoice.")";
+    }
 }
