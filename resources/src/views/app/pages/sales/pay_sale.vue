@@ -165,6 +165,16 @@
                       >
                     </td>
                   </tr>
+                   <tr v-if="sale.big_consumer == 1">
+                    <td>(-) {{ $t("IVAwithholding") }}</td>
+                    <td>
+                      <span>
+                         {{ formatNumber(sale.TaxWithheld, 2) }}
+                         {{ currentUser.currency }}
+                         ( 1.00% )
+                      </span>
+                    </td>
+                  </tr>
                   <tr>
                     <td>{{ $t("Discount") }}</td>
                     <td>
@@ -472,19 +482,19 @@
                   </div>
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
-                      <span class="h5 text-uppercase">
+                      <span class="h5 text-uppercase" style="margin-top:10px;">
                       {{ invoice_pos.sale.client_adresse }}
                       </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-6 padding-top padding-bottom">
-                      <span class="h5 text-uppercase">
+                      <span class="h5 text-uppercase" style="margin-top:15px;">
                       {{ invoice_pos.sale.client_country }}
                       </span>
                     </div>
                     <div class="col-6 padding-top padding-bottom">
-                      <span class="h5 text-uppercase">
+                      <span class="h5 text-uppercase" style="margin-top:15px;">
                       {{ invoice_pos.sale.client_city }}
                       </span>
                     </div>
@@ -496,9 +506,9 @@
                     <div class="col-4"></div>
                     <div class="col-4"></div>
                   </div>
-                  <div class="row">
+                  <div class="row" style="margin-top:-10px;">
                     <div class="col-4"></div>
-                    <div class="col-4">
+                    <div class="col-4" >
                       <span >
                       {{ invoice_pos.sale.date }}
                       </span>
@@ -522,7 +532,7 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase">
+                      <span class="h5 text-uppercase" style="margin-top:10px;">
                       {{ invoice_pos.sale.client_NIT }}
                       </span>
 
@@ -534,7 +544,6 @@
                       <span class="h5 text-uppercase">
                       {{ sale.client_giro }}
                       </span>
-
                     </div>
                   </div>
                 </div>
@@ -618,33 +627,33 @@
                     <div class="col-8"></div>
                     <div class="col-4">
                       <span class="h5 text-uppercase">
-                      <!-- {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }} -->
+                       {{ formatNumber(invoice_pos.sale.GrandTotal + invoice_pos.sale.TaxWithheld, 2) }} 
                       </span>
                     </div>
+
                   </div>
-                  <div class="row">
+                  <div class="row" style="height:70px; margin-top:35px;">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase" v-if="invoice_pos.big_consumer == 1">
+                      <span class="h5 text-uppercase" v-if="sale.big_consumer == 1">
                       {{ formatNumber(invoice_pos.sale.TaxWithheld, 2) }}
                       </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-8"></div>
-                    <div class="col-4"></div>
+                    <div class="col-4">
+                    </div>
                   </div>
                   <div class="row">
                     <div class="col-8"></div>
-                    <div class="col-4"></div>
+                    <div class="col-4">
+                    </div>
                   </div>
-                  <div class="row align-items-end"  style="height:100px">
+                  <div class="row align-items-end" style="height:50px;">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase" v-if="invoice_pos.big_consumer == 1">
-                      {{ formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.TaxWithheld, 2) }}
-                      </span>
-                      <span class="h5 text-uppercase" v-if="invoice_pos.big_consumer == 0">
+                      <span class="h5 text-uppercase">
                       {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
                       </span>
                     </div>
@@ -872,6 +881,19 @@
                         {{ currentUser.currency }} ({{ sale.tax_rate }} %)</span
                       >
                     </b-list-group-item>
+
+                    <b-list-group-item
+                      class="d-flex justify-content-between align-items-center"
+                      v-if="sale.big_consumer == 1"
+                    >
+                     (-) {{ $t("IVAwithholding") }}
+                      <span class="font-weight-bold"
+                        >{{ formatNumber(sale.TaxWithheld, 2) }}
+                         {{ currentUser.currency }}
+                         ( 1.00% )</span
+                      >
+                    </b-list-group-item>
+
                     <b-list-group-item
                       class="d-flex justify-content-between align-items-center"
                     >
@@ -985,7 +1007,7 @@ export default {
           client_country: "",
           client_city: "",
           final_consumer:"",
-          big_consumer:"",
+          big_consumer:null,
           discount: "",
           taxe: "",
           date: "",
@@ -1173,7 +1195,6 @@ export default {
             // Complete the animation of the  progress bar.
             NProgress.done();
             this.$bvModal.show("Show_invoiceF");
-
             if (this.invoice_pos.sale.type_invoice == "CF") {
               this.$bvModal.show("Show_invoiceF");
             } else {

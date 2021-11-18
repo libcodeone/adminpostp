@@ -714,7 +714,6 @@ class SalesController extends BaseController
 
     public function show(Request $request, $id)
     {
-
         $this->authorizeForUser($request->user('api'), 'view', Sale::class);
         $role = Auth::user()->roles()->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
@@ -731,6 +730,7 @@ class SalesController extends BaseController
         }
 
         $sale_details['Ref'] = $sale_data->Ref;
+        $sale_details['TaxWithheld'] = $sale_data->TaxWithheld;
         $sale_details['date'] = $sale_data->date;
         $sale_details['statut'] = $sale_data->statut;
         $sale_details['warehouse'] = $sale_data['warehouse']->name;
@@ -1188,7 +1188,7 @@ class SalesController extends BaseController
 
     public function Elemens_Change_To_Sale(Request $request, $id)
     {
-
+        
         $this->authorizeForUser($request->user('api'), 'update', Quotation::class);
         $role = Auth::user()->roles()->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
@@ -1227,13 +1227,13 @@ class SalesController extends BaseController
         }
 
         $sale['date'] = $Quotation->date;
+        $sale['TaxWithheld'] = $Quotation->TaxWithheld;
         $sale['TaxNet'] = $Quotation->TaxNet;
         $sale['tax_rate'] = $Quotation->tax_rate;
         $sale['discount'] = $Quotation->discount;
         $sale['shipping'] = $Quotation->shipping;
         $sale['statut'] = 'pending';
         $sale['notes'] = $Quotation->notes;
-
         $detail_id = 0;
         foreach ($Quotation['details'] as $detail) {
             $unit = Product::with('unitSale')->where('id', $detail->product_id)

@@ -649,5 +649,6 @@ export default {
     SelectDateSales:"Seleccione fecha de factura de venta",
     SalesOfInvoice:"Factura de venta",
     Search_Invoice_by_Code:"Buscar factura por N°",
+    IVAwithholding:"Rentencion IVA",
 
 };
