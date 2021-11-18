@@ -650,5 +650,6 @@ export default {
     SalesOfInvoice:"Factura de venta",
     Search_Invoice_by_Code:"Buscar factura por N°",
     IVAwithholding:"Rentencion IVA",
-
+    credit_card:"Tarjeta de credito",
+    BankTransfer:"Transferencia Bancaria",
 };

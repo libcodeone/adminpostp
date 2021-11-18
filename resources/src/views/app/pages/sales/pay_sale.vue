@@ -487,15 +487,35 @@
                       </span>
                     </div>
                   </div>
+
                   <div class="row">
+                    <div class="col-6 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-top:25px;">
+                      {{ invoice_pos.sale.client_city }}
+                      </span>
+                    </div>
                     <div class="col-6 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-top:25px;">
                       {{ invoice_pos.sale.client_country }}
                       </span>
                     </div>
-                    <div class="col-6 padding-top padding-bottom">
-                      <span class="h5 text-uppercase" style="margin-top:25px;">
-                      {{ invoice_pos.sale.client_city }}
+                  </div>
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-top:35px;margin-left:38px;">
+                      {{ invoice_pos.sale.seller }}
                       </span>
                     </div>
                   </div>
@@ -721,13 +741,13 @@
                           :reduce="(label) => label.value"
                           :placeholder="$t('PleaseSelect')"
                           :options="[
-                            { label: 'Efectivo', value: 'Cash' },
+                            { label: $t('Cash'), value: 'Cash' },
                             {
-                              label: 'Tarjeta de credito',
+                              label: $t('credit_card'),
                               value: 'credit card',
                             },
                             {
-                              label: 'Transferencia Bancaria',
+                              label: $t('BankTransfer'),
                               value: 'bank transfer',
                             },
                           ]"
@@ -739,13 +759,13 @@
                     </validation-provider>
                   </b-col>
 
-                  <b-col md="12" v-if="payment.Reglement == 'credit card'">
+                  <b-col md="12" v-if="payment.Reglement == $t('credit_card')">
                     <validation-provider
                       name="RefCreditCard"
                       :rules="{ required: true, regex: /^\d*\.?\d*$/ }"
                       v-slot="validationContext"
                     >
-                      <b-form-group :label="$t('RefCreditCa')">
+                      <b-form-group :label="$t('RefCreditCar')">
                         <b-form-input
                           :state="getValidationState(validationContext)"
                           label="RefCreditCar"
@@ -759,7 +779,7 @@
                       </b-form-group>
                     </validation-provider>
                   </b-col>
-                  <b-col md="12" v-if="payment.Reglement == 'bank transfer'">
+                  <b-col md="12" v-if="payment.Reglement == $t('credit_card')">
                     <validation-provider
                       name="RefTransfer"
                       :rules="{ required: true, regex: /^\d*\.?\d*$/ }"

@@ -814,7 +814,6 @@ class SalesController extends BaseController
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
         $Payment_Sale = PaymentSale::findOrFail($sale->id);
-
         $item['id'] = $sale->id;
         $item['Ref'] = $sale->Ref;
         $item['date'] = $sale->date;
@@ -823,6 +822,7 @@ class SalesController extends BaseController
         $item['taxe'] = $sale->TaxNet;
         $item['tax_rate'] = $sale->tax_rate;
         $item['TaxWithheld'] = $sale->TaxWithheld;
+        $item['seller'] = $sale['user']->firstname." ".$sale['user']->lastname;
         $item['client_name'] = $sale['client']->name;
         $item['client_NIT'] = $sale['client']->NIT;
         $item['client_NRC'] = $sale['client']->NRC;

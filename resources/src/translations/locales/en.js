@@ -650,4 +650,6 @@ export default {
     SalesOfInvoice:"Sales invoice",
     Search_Invoice_by_Code:"Search invoice by N °",
     IVAwithholding:"IVA withholding",
+    credit_card:"Credit card",
+    BankTransfer:"Bank transfer",
 };
