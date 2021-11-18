@@ -327,7 +327,7 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row" style="margin-top:50px; margin-left:30px;">
                     <div class="col-2"> </div>
                     <div class="col-6">
                        <span>
@@ -497,13 +497,13 @@
                   </div>
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
-                      <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
+                      <span class="h5 text-uppercase" style="margin-top:15px;margin-left:10px;">
                       {{ invoice_pos.sale.client_adresse }}
                       </span>
                     </div>
                   </div>
 
-                  <div class="row" style="margin-top:25px;">
+                  <div class="row" style="margin-top:8px;margin-left:10px;">
                     <div class="col-6 padding-top padding-bottom">
                       <span class="h5 text-uppercase" >
                       {{ invoice_pos.sale.client_city }}
@@ -527,9 +527,9 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row" style="height:50px;">
                     <div class="col-12 padding-top padding-bottom">
-                      <span class="h5 text-uppercase" style="margin-top:85px;margin-left:38px;">
+                      <span class="h5 text-uppercase" >
                       {{ invoice_pos.sale.seller }}
                       </span>
                     </div>
@@ -558,7 +558,7 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase" style="margin-top:25px;">
+                      <span class="h5 text-uppercase" style="margin-top:35px;">
                       {{ invoice_pos.sale.client_NRC }}
                       </span>
 
@@ -653,7 +653,7 @@
                   <div class="row">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase" style="margin-top:6px;">                      
+                      <span class="h5 text-uppercase" style="margin-top:14px;">                      
                       {{ formatNumber(invoice_pos.sale.taxe, 2) }}
                       </span>
                     </div>
@@ -661,7 +661,7 @@
                   <div class="row">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase" style="margin-top:10px;">
+                      <span class="h5 text-uppercase" style="margin-top:15px;">
                        {{ formatNumber(invoice_pos.sale.GrandTotal + invoice_pos.sale.TaxWithheld, 2) }} 
                       </span>
                     </div>
