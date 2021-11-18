@@ -320,6 +320,21 @@
                       </span>
                       </div>
                   </div>
+                  <div class="row">
+                    <div class="col-2"> </div>
+                    <div class="col-6">
+                       <span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-2"> </div>
+                    <div class="col-6">
+                       <span>
+                      {{ invoice_pos.sale.seller }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="row" style="height:40px">
@@ -488,14 +503,14 @@
                     </div>
                   </div>
 
-                  <div class="row">
+                  <div class="row" style="margin-top:25px;">
                     <div class="col-6 padding-top padding-bottom">
-                      <span class="h5 text-uppercase" style="margin-top:25px;">
+                      <span class="h5 text-uppercase" >
                       {{ invoice_pos.sale.client_city }}
                       </span>
                     </div>
                     <div class="col-6 padding-top padding-bottom">
-                      <span class="h5 text-uppercase" style="margin-top:25px;">
+                      <span class="h5 text-uppercase">
                       {{ invoice_pos.sale.client_country }}
                       </span>
                     </div>
@@ -514,7 +529,7 @@
                   </div>
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
-                      <span class="h5 text-uppercase" style="margin-top:35px;margin-left:38px;">
+                      <span class="h5 text-uppercase" style="margin-top:85px;margin-left:38px;">
                       {{ invoice_pos.sale.seller }}
                       </span>
                     </div>
@@ -543,7 +558,7 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase" style="margin-top:10px;">
+                      <span class="h5 text-uppercase" style="margin-top:25px;">
                       {{ invoice_pos.sale.client_NRC }}
                       </span>
 
@@ -552,7 +567,7 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase" style="margin-top:25px;">
+                      <span class="h5 text-uppercase" style="margin-top:45px;">
                       {{ invoice_pos.sale.client_NIT }}
                       </span>
 
@@ -638,7 +653,7 @@
                   <div class="row">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase">                      
+                      <span class="h5 text-uppercase" style="margin-top:6px;">                      
                       {{ formatNumber(invoice_pos.sale.taxe, 2) }}
                       </span>
                     </div>
@@ -646,7 +661,7 @@
                   <div class="row">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase">
+                      <span class="h5 text-uppercase" style="margin-top:10px;">
                        {{ formatNumber(invoice_pos.sale.GrandTotal + invoice_pos.sale.TaxWithheld, 2) }} 
                       </span>
                     </div>
@@ -741,14 +756,14 @@
                           :reduce="(label) => label.value"
                           :placeholder="$t('PleaseSelect')"
                           :options="[
-                            { label: $t('Cash'), value: 'Cash' },
+                            { label: $t('Cash'), value: 'Efectivo' },
                             {
                               label: $t('credit_card'),
-                              value: 'credit card',
+                              value: 'Tarjeta de Credito',
                             },
                             {
                               label: $t('BankTransfer'),
-                              value: 'bank transfer',
+                              value: 'Transferencia bancaria',
                             },
                           ]"
                         ></v-select>
@@ -759,7 +774,7 @@
                     </validation-provider>
                   </b-col>
 
-                  <b-col md="12" v-if="payment.Reglement == $t('credit_card')">
+                  <b-col md="12" v-if="payment.Reglement == 'Tarjeta de Credito'">
                     <validation-provider
                       name="RefCreditCard"
                       :rules="{ required: true, regex: /^\d*\.?\d*$/ }"
@@ -779,7 +794,7 @@
                       </b-form-group>
                     </validation-provider>
                   </b-col>
-                  <b-col md="12" v-if="payment.Reglement == $t('credit_card')">
+                  <b-col md="12" v-if="payment.Reglement == 'Transferencia bancaria'">
                     <validation-provider
                       name="RefTransfer"
                       :rules="{ required: true, regex: /^\d*\.?\d*$/ }"
@@ -1124,7 +1139,7 @@ export default {
           this.isLoading = false;
           this.GrandTotal = this.formatNumber(this.sale.GrandTotal, 2);
           this.payment.amount = this.formatNumber(this.sale.GrandTotal, 2);
-          this.payment.Reglement = "Cash";
+          this.payment.Reglement = "Efectivo";
         })
         .catch((response) => {
           setTimeout(() => {
@@ -1143,7 +1158,7 @@ export default {
     //---------------------- Event Select Payment Method ------------------------------\\
 
     Selected_PaymentMethod(value) {
-      if (value == "credit card") {
+      if (value == "Tarjeta de Credito") {
         setTimeout(() => {
           this.loadStripe_payment();
         }, 500);
@@ -1235,7 +1250,7 @@ export default {
       NProgress.set(0.1);
       this.payment.amount = this.formatNumber(this.sale.GrandTotal, 2);
       if (this.payment.Reglement == "") {
-        this.payment.Reglement = "Cash";
+        this.payment.Reglement = "Efectivo";
       }
       let id = this.$route.params.id;
       axios
@@ -1408,7 +1423,7 @@ export default {
       setTimeout(() => {
         this.payment.amount = this.formatNumber(this.GrandTotal, 2);
         this.payment.cash = this.formatNumber(this.GrandTotal, 2);
-        this.payment.Reglement = "Cash";
+        this.payment.Reglement = "Efectivo";
         this.$bvModal.show("Add_Payment");
         // Complete the animation of theprogress bar.
         NProgress.done();
