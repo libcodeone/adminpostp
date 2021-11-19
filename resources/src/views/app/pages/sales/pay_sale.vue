@@ -460,7 +460,7 @@
         id="Show_invoiceCCF"
         :title="$t('Invoice')"
       >
-        <vue-easy-print table-show ref="Show_invoiceCCF">
+       <vue-easy-print table-show ref="Show_invoiceCCF">
           <div id="invoice-POSCCF">
             <div class="container" style="height:671px">
               <div class="row" style="height:150px">
@@ -527,9 +527,9 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row" style="height:50px;">
+                  <div class="row" style="height:75px;">
                     <div class="col-12 padding-top padding-bottom">
-                      <span class="h5 text-uppercase" >
+                      <span class="h5 text-uppercase" style="margin-left:40px;margin-top:30px;">
                       {{ invoice_pos.sale.seller }}
                       </span>
                     </div>

@@ -394,11 +394,12 @@ class SalesController extends BaseController
             $TaxWithheld = 0;
             $TaxNetDetail = 0;
             $TaxMethod = 2;
-            if($client->final_consumer == 0){
+            if($client->final_consumer === 0){
                 $taxRate = 13;
-                $TaxNet = $request->GrandTotal * 0.13;
-                if($client->big_consumer == 1){
-                    $TaxWithheld = $request->GrandTotal * 0.01;
+                $TaxNet = round($request->GrandTotal-($request->GrandTotal / 1.13),2);
+                if($client->big_consumer == 1 and round($request->GrandTotal / 1.13,2)>=100){
+                    $TaxWithheld = round((($request->GrandTotal / 1.13)* 0.01),2) ;
+                    $GrandTotal=$GrandTotal-$TaxWithheld;;
                 }
             }
 
@@ -511,8 +512,8 @@ class SalesController extends BaseController
                 $price= $value['Unit_price'];
                 $TaxMethod = 2;
                 
-                if($client->final_consumer == 0){
-                    $TaxNetDetail = $value['Unit_price'] * 0.13;
+                if($client->final_consumer === 0){
+                    $TaxNetDetail = round($value['Unit_price'] -($value['Unit_price']/ 1.13), 2);
                     $price= $value['Unit_price'] - $TaxNetDetail;
                     $TaxMethod = 1;
                 }

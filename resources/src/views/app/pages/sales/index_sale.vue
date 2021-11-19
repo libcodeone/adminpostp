@@ -605,6 +605,21 @@
                       </span>
                       </div>
                   </div>
+                  <div class="row">
+                    <div class="col-2"> </div>
+                    <div class="col-6">
+                       <span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row" style="margin-top:50px; margin-left:30px;">
+                    <div class="col-2"> </div>
+                    <div class="col-6">
+                       <span>
+                      {{ invoice_pos.sale.seller }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="row" style="height:40px">
@@ -730,7 +745,7 @@
         id="Show_invoiceCCF"
         :title="$t('Invoice')"
       >
-        <vue-easy-print table-show ref="Show_invoiceCCF">
+       <vue-easy-print table-show ref="Show_invoiceCCF">
           <div id="invoice-POSCCF">
             <div class="container" style="height:671px">
               <div class="row" style="height:150px">
@@ -767,20 +782,40 @@
                   </div>
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
-                      <span class="h5 text-uppercase">
+                      <span class="h5 text-uppercase" style="margin-top:15px;margin-left:10px;">
                       {{ invoice_pos.sale.client_adresse }}
                       </span>
                     </div>
                   </div>
-                  <div class="row">
+
+                  <div class="row" style="margin-top:8px;margin-left:10px;">
+                    <div class="col-6 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" >
+                      {{ invoice_pos.sale.client_city }}
+                      </span>
+                    </div>
                     <div class="col-6 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
                       {{ invoice_pos.sale.client_country }}
                       </span>
                     </div>
-                    <div class="col-6 padding-top padding-bottom">
-                      <span class="h5 text-uppercase">
-                      {{ invoice_pos.sale.client_city }}
+                  </div>
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row" style="height:75px;">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-left:40px;margin-top:30px;">
+                      {{ invoice_pos.sale.seller }}
                       </span>
                     </div>
                   </div>
@@ -791,9 +826,9 @@
                     <div class="col-4"></div>
                     <div class="col-4"></div>
                   </div>
-                  <div class="row">
+                  <div class="row" style="margin-top:-10px;">
                     <div class="col-4"></div>
-                    <div class="col-4">
+                    <div class="col-4" >
                       <span >
                       {{ invoice_pos.sale.date }}
                       </span>
@@ -808,7 +843,7 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase">
+                      <span class="h5 text-uppercase" style="margin-top:35px;">
                       {{ invoice_pos.sale.client_NRC }}
                       </span>
 
@@ -817,7 +852,7 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase">
+                      <span class="h5 text-uppercase" style="margin-top:45px;">
                       {{ invoice_pos.sale.client_NIT }}
                       </span>
 
@@ -829,7 +864,6 @@
                       <span class="h5 text-uppercase">
                       {{ sale.client_giro }}
                       </span>
-
                     </div>
                   </div>
                 </div>
@@ -879,7 +913,7 @@
                 </div>
               </div>
               </div>
-              <div class="row" style="margin-top:-75px;">
+              <div class="row" style="margin-top:-87px;">
                 <div class="col-9">
                   <div class="row rounded">
                     <span class="h5 text-uppercase">
@@ -894,7 +928,7 @@
                       <span class="h5 text-uppercase">
                       {{
                         formatNumber(
-                          invoice_pos.sale.GrandTotal - invoice_pos.sale.taxe,
+                          invoice_pos.sale.GrandTotal + invoice_pos.sale.TaxWithheld - invoice_pos.sale.taxe,
                           2
                         )
                       }}
@@ -904,7 +938,7 @@
                   <div class="row">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase">
+                      <span class="h5 text-uppercase" style="margin-top:14px;">                      
                       {{ formatNumber(invoice_pos.sale.taxe, 2) }}
                       </span>
                     </div>
@@ -912,34 +946,34 @@
                   <div class="row">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase">
-                      <!-- {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }} -->
+                      <span class="h5 text-uppercase" style="margin-top:15px;">
+                       {{ formatNumber(invoice_pos.sale.GrandTotal + invoice_pos.sale.TaxWithheld, 2) }} 
                       </span>
                     </div>
+
                   </div>
-                  <div class="row">
+                  <div class="row" style="height:70px; margin-top:35px;">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase" v-if="invoice_pos.big_consumer == 1">
+                      <span class="h5 text-uppercase" v-if="invoice_pos.sale.TaxWithheld != 0">
                       {{ formatNumber(invoice_pos.sale.TaxWithheld, 2) }}
                       </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-8"></div>
-                    <div class="col-4"></div>
+                    <div class="col-4">
+                    </div>
                   </div>
                   <div class="row">
                     <div class="col-8"></div>
-                    <div class="col-4"></div>
+                    <div class="col-4">
+                    </div>
                   </div>
-                  <div class="row align-items-end"  style="height:100px">
+                  <div class="row align-items-end" style="height:50px; margin-top:-25px;">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase" v-if="invoice_pos.big_consumer == 1">
-                      {{ formatNumber(invoice_pos.sale.GrandTotal - invoice_pos.sale.TaxWithheld, 2) }}
-                      </span>
-                      <span class="h5 text-uppercase" v-if="invoice_pos.big_consumer == 0">
+                      <span class="h5 text-uppercase">
                       {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
                       </span>
                     </div>

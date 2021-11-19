@@ -35,6 +35,7 @@
                     v-slot="validationContext"
                   >
                     <b-form-group :label="$t('password')" class="text-12">
+                    <!--<div class="input-group" id="show_hide_password">-->
                       <b-form-input
                         :state="getValidationState(validationContext)"
                         aria-describedby="Password-feedback"
@@ -42,6 +43,8 @@
                         type="password"
                         v-model="password"
                       ></b-form-input>
+                      <!--<a><i class="fa fa-eye-slash" aria-hidden="true"></i>hola</a>
+                      </div>-->
                       <b-form-invalid-feedback
                         id="Password-feedback"
                       >{{ validationContext.errors[0] }}</b-form-invalid-feedback>

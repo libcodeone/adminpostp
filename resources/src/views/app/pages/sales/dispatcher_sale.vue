@@ -114,6 +114,10 @@
                       <span>{{formatNumber(sale.TaxNet,2)}} {{currentUser.currency}} ({{formatNumber(sale.tax_rate,2)}} %)</span>
                     </td>
                   </tr>
+                  <tr v-if="sale.big_consumer == 1>
+                    <td>(-) {{$t('IVAwithholding')}}</td>
+                    <td>{{ formatNumber(sale.TaxWithheld, 2) }} {{ currentUser.currency }} ( 1.00% )</td>
+                  </tr>
                   <tr>
                     <td>{{$t('Discount')}}</td>
                     <td>{{formatNumber(sale.discount,2)}} {{currentUser.currency}}</td>

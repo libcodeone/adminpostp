@@ -136,6 +136,16 @@
                     </td>
                   </tr>
                   <tr>
+                   <tr v-if="sale.big_consumer == 1">
+                    <td>(-) {{ $t("IVAwithholding") }}</td>
+                    <td>
+                      <span>
+                         {{ formatNumber(sale.TaxWithheld, 2) }}
+                         {{ currentUser.currency }}
+                         ( 1.00% )
+                      </span>
+                    </td>
+                  </tr>
                     <td>{{$t('Discount')}}</td>
                     <td>{{formatNumber(sale.discount,2)}} {{currentUser.currency}}</td>
                   </tr>
