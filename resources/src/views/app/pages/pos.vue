@@ -681,7 +681,7 @@
                   </div>
                 </div>
                 <div
-                  class="card o-hidden bd-highlight m-1"
+                  class="card o-hidden bd-highlight m-1" style="height:300px !important;"
                   v-for="category in paginated_Category"
                   :key="category.id"
                   @click="Products_by_Category(category.id)"
