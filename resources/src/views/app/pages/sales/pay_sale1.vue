@@ -811,8 +811,8 @@ export default {
         });
     },
     Check_in() {
-      this.payment.amount = this.formatNumber(this.GrandTotal, 2);
-      this.payment.cash = this.formatNumber(this.GrandTotal, 2);
+      this.payment.amount = this.formatNumber(this.sale.due, 2);
+      this.payment.cash = this.formatNumber(this.sale.due, 2);
       this.payment.Reglement = "Cash";
       this.$bvModal.show("Add_Payment");
       // Complete the animation of theprogress bar.
@@ -887,7 +887,6 @@ export default {
     },
     Update_Sale() {
       // Start the progress bar.
-      this.payment.amount = this.formatNumber(this.sale.GrandTotal, 2);
       if (this.payment.Reglement == "") {
         this.payment.Reglement = "Cash";
       }
@@ -904,7 +903,8 @@ export default {
           Reglement: this.payment.Reglement,
           cash: this.payment.cash,
           shipping: this.sale.shipping,
-          GrandTotal: this.payment.amount,
+          GrandTotal: this.GrandTotal,
+          amount: this.payment.amount,
           statut: "pending",
         })
         .then((response) => {

@@ -5,6 +5,7 @@ use App\Models\Currency;
 use App\Models\Role;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class helpers
 {
@@ -24,9 +25,21 @@ class helpers
             $model->where(function ($query) use ($request, $field, $model) {
                 return $model->when($request->filled($field['value']),
                     function ($query) use ($request, $model, $field) {
-                        $field['param'] = 'like' ?
-                        $model->where($field['value'], 'like', "{$request[$field['value']]}")
-                        : $model->where($field['value'], $request[$field['value']]);
+
+                        if($field['param'] == 'like'){
+                            $model->where($field['value'], 'like', "{$request[$field['value']]}");
+                            Log::debug('like');
+                        }elseif($field['param'] == '<>'){
+                            $model->where($field['value'],'<>',$request[$field['value']]);
+                            Log::debug('<>');
+                        }elseif($field['param'] == 'null'){
+                            $model->where($field['value'],'');
+                            Log::debug('null');
+                        }else{
+                            $model->where($field['value'],$request[$field['value']]);
+                            Log::debug('=');
+                        }
+                        
                     });
             });
         }

@@ -518,10 +518,10 @@ export default {
       showDropdown: false,
       EditPaiementMode: false,
       Filter_Client: "",
-      Filter_Ref: "",
+      Filter_Ref: "null",
       Filter_date: "",
-      Filter_status: "",
-      Filter_Payment: "unpaid",
+      Filter_status: "unpaid_checkin",
+      Filter_Payment: "",
       Filter_warehouse: "",
       customers: [],
       warehouses: [],
@@ -748,9 +748,9 @@ export default {
     Reset_Filter() {
       this.search = "";
       this.Filter_Client = "";
-      this.Filter_status = "";
-      this.Filter_Payment = "unpaid";
-      this.Filter_Ref = "";
+      this.Filter_status = "unpaid_checkin";
+      this.Filter_Payment = "";
+      this.Filter_Ref = "null";
       this.Filter_date = "";
       (this.Filter_warehouse = ""), this.Get_Sales(this.serverParams.page);
     },

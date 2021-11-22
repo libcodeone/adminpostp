@@ -46,14 +46,25 @@ class SalesController extends BaseController
         $dir = $request->SortType;
         $helpers = new helpers();
         // Filter fields With Params to retrieve
-        $param = array(
-            0 => 'like',
-            1 => 'like',
-            2 => '=',
-            3 => 'like',
-            4 => '=',
-            5 => '=',
-        );
+        if($request->statut=='unpaid_checkin'){
+            $param = array(
+                0 => 'null',
+                1 => '<>',
+                2 => '=',
+                3 => 'like',
+                4 => '=',
+                5 => '=',
+            );
+        }else{
+            $param = array(
+                0 => 'like',
+                1 => 'like',
+                2 => '=',
+                3 => 'like',
+                4 => '=',
+                5 => '=',
+            );
+        }
         $columns = array(
             0 => 'Ref',
             1 => 'statut',
@@ -73,6 +84,7 @@ class SalesController extends BaseController
             //     }
             // });
         //Multiple Filter
+
         $Filtred = $helpers->filter($Sales, $columns, $param, $request)
         // Search With Multiple Param
             ->where(function ($query) use ($request) {
@@ -573,17 +585,19 @@ class SalesController extends BaseController
          $this->authorizeForUser($request->user('api'), 'update', Sale::class);
          $current_Sale = Sale::findOrFail($id);
          $company = Setting::where('deleted_at', '=', null)->first();
-
+        $payments_sale=PaymentSale::where('deleted_at', '=', null)->where('sale_id',$id)->get();
          $payment_statut = 'paid';
          
-                    $PaymentSale = new PaymentSale();
-                        $PaymentSale->sale_id = $id;
-                        $PaymentSale->Ref = $request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
-                        $PaymentSale->date = Carbon::now();
-                        $PaymentSale->Reglement = $request['Reglement'];
-                        $PaymentSale->montant = $request['GrandTotal'];
-                        $PaymentSale->user_id = Auth::user()->id;
-                        $PaymentSale->save();
+         if($request['amount']>0){
+            $PaymentSale = new PaymentSale();
+                $PaymentSale->sale_id = $id;
+                $PaymentSale->Ref = $request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
+                $PaymentSale->date = Carbon::now();
+                $PaymentSale->Reglement = $request['Reglement'];
+                $PaymentSale->montant = $request['amount'];
+                $PaymentSale->user_id = Auth::user()->id;
+                $PaymentSale->save();
+        }
                     $current_Sale->update([
                         'notes' => $request['notes'],
                         'statut' => 'pending',
@@ -600,6 +614,7 @@ class SalesController extends BaseController
                         'Ref' => $request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1,
                         'refInvoice' =>$request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1,
                     ]);
+                    $invoiceRef=$request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
                     if($request['type_invoice']=='CF'){
                         $company->update([
                             'current_invoiceCF' => $current_Sale['refInvoice']
@@ -610,7 +625,12 @@ class SalesController extends BaseController
                         ]);
                     }
                     
-         
+        if($payments_sale){
+             foreach($payments_sale as $paySale){
+                $paySale->Ref=$invoiceRef;
+                $paySale->update();
+            }
+         }
  
          return response()->json(['success' => true]);
      }

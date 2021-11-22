@@ -68,8 +68,7 @@ class ClientController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'create', Client::class);
 
-        
-        Client::create([
+        $client=Client::create([
             'name' => $request['name'],
             'code' => $this->getNumberOrder(),
             'adresse' => $request['adresse'],
@@ -83,7 +82,8 @@ class ClientController extends BaseController
             'big_consumer' => $request['big_consumer'],
             'final_consumer' => $request['final_consumer'],
         ]);
-        return response()->json(['success' => true]);
+        $id=$client->id;
+        return response()->json(['success' => true,'id_client'=> $id]);
     }
     public function store_pos(Request $request)
     {
@@ -92,7 +92,7 @@ class ClientController extends BaseController
             'name' => 'required',
             'phone' => 'required',
         ]);
-        Client::create([
+        $client=Client::create([
             'name' => $request['name'],
             'code' => $this->getNumberOrder(),
             'adresse' => $request['adresse'],
@@ -106,7 +106,8 @@ class ClientController extends BaseController
             'big_consumer' => $request['big_consumer'],
             'final_consumer' => $request['final_consumer'],
         ]);
-        return response()->json(['success' => true]);
+        $id=$client->id;
+        return response()->json(['success' => true,'id_client'=> $id]);
     }
 
     //------------- Update Customer -------------\\

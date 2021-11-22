@@ -1150,8 +1150,8 @@ export default {
     Check_in() {
       NProgress.start();
       NProgress.set(0.1);
-      this.payment.amount = this.formatNumber(this.GrandTotal, 2);
-      this.payment.cash = this.formatNumber(this.GrandTotal, 2);
+      this.payment.amount = this.formatNumber(this.sale.due, 2);
+      this.payment.cash = this.formatNumber(this.sale.due, 2);
       Fire.$emit("pay_now");
     },
 
@@ -1248,11 +1248,11 @@ export default {
     CreatePOS() {
       NProgress.start();
       NProgress.set(0.1);
-      this.payment.amount = this.formatNumber(this.sale.GrandTotal, 2);
       if (this.payment.Reglement == "") {
         this.payment.Reglement = "Efectivo";
       }
       let id = this.$route.params.id;
+
       axios
         .put(`sales/update_to_payment/${id}`, {
           notes: this.payment.notes,
@@ -1263,11 +1263,11 @@ export default {
           Reglement: this.payment.Reglement,
           cash: this.payment.cash,
           shipping: this.sale.shipping,
-          GrandTotal: this.payment.amount,
+          amount: this.payment.amount,
           RefTransfer: this.sale.RefTransfer,
           RefCreditCard: this.sale.RefCreditCard,
           type_invoice: this.BillingMethod == 0 ? "CF" : "CCF",
-          GrandTotal: this.payment.amount,
+          GrandTotal: this.GrandTotal,
           statut: "pending",
         })
         .then((response) => {
@@ -1421,8 +1421,8 @@ export default {
     this.Get_Details();
     Fire.$on("pay_now", () => {
       setTimeout(() => {
-        this.payment.amount = this.formatNumber(this.GrandTotal, 2);
-        this.payment.cash = this.formatNumber(this.GrandTotal, 2);
+        this.payment.amount = this.formatNumber(this.sale.due, 2);
+        this.payment.cash = this.formatNumber(this.sale.due, 2);
         this.payment.Reglement = "Efectivo";
         this.$bvModal.show("Add_Payment");
         // Complete the animation of theprogress bar.

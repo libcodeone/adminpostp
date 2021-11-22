@@ -1253,6 +1253,7 @@ export default {
             this.Create_Payment();
           } else {
             this.Update_Payment();
+            
           }
         }
       });
@@ -1622,8 +1623,12 @@ export default {
         this.EditPaiementMode = false;
         this.sale = sale;
         this.payment.date = new Date().toISOString().slice(0, 10);
+
         this.Number_Order_Payment();
+
+                
         this.payment.montant = sale.due;
+        
         setTimeout(() => {
           // Complete the animation of the  progress bar.
           NProgress.done();

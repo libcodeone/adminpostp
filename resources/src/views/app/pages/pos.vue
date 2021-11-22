@@ -501,6 +501,7 @@
               <b-col md="12 mt-2">
                 <div class="input-group">
                   <input
+                    ref="SearchProducts"
                     @keyup="getProducts()"
                     v-model="SearchProduct"
                     type="text"
@@ -1123,7 +1124,10 @@ export default {
       this.$refs.autocompletec.value = "";
       
     },
-    
+    //focus for search product
+    SearchProductFocus(){
+      this.$refs.SearchProducts.focus();
+    },
     Get_Categories() {
       // Start the progress bar.
       NProgress.start();
@@ -1367,6 +1371,7 @@ export default {
             this.$t("Success")
           );
           this.Get_Client_Without_Paginate();
+          this.sale.client_id=response.data.id_client;
           this.$bvModal.hide("New_Customer");
         })
         .catch(error => {
@@ -1898,12 +1903,13 @@ export default {
           this.categories = response.data.categories;
           this.brands = response.data.brands;
           this.sale.warehouse_id = response.data.defaultWarehouse;
-           this.sale.client_id = response.data.defaultClient;
+          this.sale.client_id = response.data.defaultClient;
           this.getProducts();
           this.paginate_Brands(this.brand_perPage, 0);
           this.paginate_Category(this.category_perPage, 0);
           this.stripe_key = response.data.stripe_key;
           this.isLoading = false;
+          this.SearchProductFocus();
         })
         .catch(response => {
           this.isLoading = false;

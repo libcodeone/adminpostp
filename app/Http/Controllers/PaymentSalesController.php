@@ -29,7 +29,6 @@ class PaymentSalesController extends BaseController
     public function index(request $request)
     {
         $this->authorizeForUser($request->user('api'), 'Reports_payments_Sales', PaymentSale::class);
-
         // How many items do you want to display.
         $perPage = $request->limit;
         $pageStart = \Request::get('page', 1);
@@ -92,7 +91,6 @@ class PaymentSalesController extends BaseController
             $totalSales = number_format($Sale->montant, 2, '.', '')+$totalSales;
         }
         $totalSales=number_format($totalSales, 2);
-        Log::debug($totalSales);
         foreach ($Payments as $Payment) {
 
             $item['date'] = $Payment->date;
@@ -123,6 +121,7 @@ class PaymentSalesController extends BaseController
     //----------- Store new Payment Sale --------------\\
 
     public function store(Request $request)
+        
     {
         $this->authorizeForUser($request->user('api'), 'create', PaymentSale::class);
 
@@ -131,13 +130,12 @@ class PaymentSalesController extends BaseController
             $role = Auth::user()->roles()->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $sale = Sale::findOrFail($request['sale_id']);
-
+            Log::debug('1');
             // Check If User Has Permission view All Records
             if (!$view_records) {
                 // Check If User->id === sale->id
                 $this->authorizeForUser($request->user('api'), 'check_record', $sale);
             }
-
             try {
 
                 $total_paid = $sale->paid_amount + $request['montant'];
@@ -150,7 +148,7 @@ class PaymentSalesController extends BaseController
                 } else if ($due === $sale->GrandTotal) {
                     $payment_statut = 'unpaid';
                 }
-
+                Log::debug(3);
                 // Paying Method credit card
                 if ($request['Reglement'] == 'credit card') {
                     Stripe\Stripe::setApiKey(config('app.STRIPE_SECRET'));
@@ -206,7 +204,7 @@ class PaymentSalesController extends BaseController
 
                     // Paying Method Cach
                 } else {
-
+                    Log::debug($this->getNumberOrder());
                     PaymentSale::create([
                         'sale_id' => $request['sale_id'],
                         'Ref' => $this->getNumberOrder(),
@@ -216,7 +214,7 @@ class PaymentSalesController extends BaseController
                         'notes' => $request['notes'],
                         'user_id' => Auth::user()->id,
                     ]);
-
+                    Log::debug(5);
                     $sale->update([
                         'paid_amount' => $total_paid,
                         'payment_statut' => $payment_statut,
@@ -231,7 +229,6 @@ class PaymentSalesController extends BaseController
             }
 
         }, 10);
-
         return response()->json(['success' => true, 'message' => 'Payment Create successfully'], 200);
     }
 
@@ -444,11 +441,11 @@ class PaymentSalesController extends BaseController
     public function getNumberOrder()
     {
         $last = DB::table('payment_sales')->latest('id')->first();
-
+        Log::debug(explode("_", $last->Ref));
         if ($last) {
             $item = $last->Ref;
             $nwMsg = explode("_", $item);
-            $inMsg = $nwMsg[1] + 1;
+            $inMsg = $nwMsg[0] + 1;
             $code = $nwMsg[0] . '_' . $inMsg;
 
         } else {
@@ -536,5 +533,4 @@ class PaymentSalesController extends BaseController
              return response()->json(['message' => $e->getMessage()], 500);
          }
      }
-
 }
