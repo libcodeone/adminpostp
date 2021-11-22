@@ -501,12 +501,13 @@
               <b-col md="12 mt-2">
                 <div class="input-group">
                   <input
-                    ref="SearchProducts"
+                    v-autofocus="focusSearchProduct"
                     @keyup="getProducts()"
                     v-model="SearchProduct"
                     type="text"
                     :placeholder="$t('Search_Product_by_Code_Name')"
                     class="form-control"
+                    ref="SearchProducts"  
                   >
                   <div class="input-group-append">
                     <span class="input-group-text">
@@ -565,7 +566,16 @@
         </b-col>
 
         <!-- Sidebar Brand -->
-        <b-sidebar id="sidebar-brand" :title="$t('ListofBrand')" bg-variant="white" right shadow>
+        <b-sidebar id="sidebar-brand" 
+        :title="$t('ListofBrand')" 
+        bg-variant="white" 
+        :backdrop-variant="variant" 
+        right shadow backdrop 
+        :visible="showSidebarBrands"
+        @show="showSidebarBrand"
+        @hidden="hiddenSidebarBrand"
+        ref="sidebar_brand"
+        >
           <div class="px-3 py-2">
             <b-row>
               <b-col md="12 mt-2">
@@ -576,6 +586,7 @@
                     type="text"
                     :placeholder="$t('Search_this_table')"
                     class="form-control"
+                    ref="focusSearchBrand"
                   >
                 </div>
               </b-col>
@@ -645,9 +656,14 @@
         <b-sidebar
           id="sidebar-category"
           :title="$t('ListofCategory')"
+          :visible="showSidebarCategorys"
+          backdrop
+          @show="showSidebarCategory"
+          @hidden="hiddenSidebarCategory"
           bg-variant="white"
           right
           shadow
+          ref="sidebar_category"
         >
           <div class="px-3 py-2">
             <b-row>
@@ -659,6 +675,7 @@
                     type="text"
                     :placeholder="$t('Search_this_table')"
                     class="form-control"
+                    ref="focusSearchCategory"
                   >
                 </div>
               </b-col>
@@ -965,7 +982,9 @@ import NProgress from "nprogress";
 import { mapActions, mapGetters } from "vuex";
 import FlagIcon from "vue-flag-icon";
 import Util from "../../../utils";
-
+import Vue from "vue";
+import autofocus from "vue-autofocus-directive";
+Vue.directive("autofocus", autofocus);
 
 export default {
   components: {
@@ -991,6 +1010,12 @@ export default {
         change: 0
       },
       isLoading: true,
+      focusSearchProduct:true,
+      showSidebarBrands:false,
+      showSidebarCategorys:false,
+      focusSearchBrand:true,
+      focusSearchCategory:true,
+      variant: 'dark',
       BillingMethod:0,
       GrandTotal: 0,
       GrandTotalText: "",
@@ -1125,9 +1150,6 @@ export default {
       
     },
     //focus for search product
-    SearchProductFocus(){
-      this.$refs.SearchProducts.focus();
-    },
     Get_Categories() {
       // Start the progress bar.
       NProgress.start();
@@ -1162,6 +1184,7 @@ export default {
             this.isLoading = false;
           }, 500);
         });
+      this.$refs.SearchProducts.focus();
     },
 
       //---------------------------------------- Get All brands-----------------\\
@@ -1197,6 +1220,7 @@ export default {
             this.isLoading = false;
           }, 500);
         });
+      this.$refs.SearchProducts.focus();
     },
 
   //---------------------- Event Select Payment Method ------------------------------\\
@@ -1246,6 +1270,24 @@ export default {
     BrandpaginatePerPage() {
       this.paginate_Brands(this.brand_perPage, 0);
     },
+    //------------------------ open and close modal category -----------------\\
+    showSidebarBrand(){
+      this.$refs.focusSearchBrand.focus();
+    },
+
+    hiddenSidebarBrand(){
+      this.$refs.SearchProducts.focus();
+    },
+    //------------------------ open and close modal category -----------------\\
+    showSidebarCategory(){
+      this.$refs.focusSearchCategory.focus();
+    },
+
+    hiddenSidebarCategory(){
+      this.$refs.SearchProducts.focus();
+    },
+
+
 
     paginate_Brands(pageSize, pageNumber) {
       let itemsToParse = this.brands;
@@ -1452,6 +1494,7 @@ export default {
           }
           this.details.push(this.product);
         }
+        this.$refs.SearchProducts.focus();
     },
 
     //-------------------------------- order detail id -------------------------\\
@@ -1597,6 +1640,7 @@ export default {
           NProgress.done();
           this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
         });
+        this.$refs.SearchProducts.focus();
     },
 
     //------------------------------Formetted Numbers -------------------------\\
@@ -1692,6 +1736,7 @@ export default {
       }
       this.CaclulTotal();
       this.$forceUpdate();
+      this.$refs.SearchProducts.focus();
     },
 
     //----------------------------------- decrement QTY ------------------------------\\
@@ -1771,6 +1816,7 @@ export default {
           this.CaclulTotal();
         }
       }
+      this.$refs.SearchProducts.focus();
     },
 
     //----------Reset Pos
@@ -1788,6 +1834,7 @@ export default {
       this.brand_id = "";
       this.search = "";
       this.getProducts(1);
+      this.$refs.SearchProducts.focus();
     },
 
   
@@ -1813,24 +1860,28 @@ export default {
     Products_by_Category(id) {
       this.category_id = id;
       this.getProducts(1);
+      this.$refs.sidebar_category.hide();
     },
 
     //--- Get Products by Brand
     Products_by_Brands(id) {
       this.brand_id = id;
       this.getProducts(1);
+      this.$refs.sidebar_brand.hide();
     },
 
     //--- Get All Category
     getAllCategory() {
       this.category_id = "";
       this.getProducts(1);
+      this.$refs.sidebar_category.hide();
     },
 
     //--- Get All Brands
     GetAllBrands() {
       this.brand_id = "";
       this.getProducts(1);
+      this.$refs.sidebar_brand.hide();
     },
     //------------------------- get Result Value Search Product
 
@@ -1909,7 +1960,7 @@ export default {
           this.paginate_Category(this.category_perPage, 0);
           this.stripe_key = response.data.stripe_key;
           this.isLoading = false;
-          this.SearchProductFocus();
+          this.$refs.SearchProducts.focus();
         })
         .catch(response => {
           this.isLoading = false;
@@ -1932,6 +1983,7 @@ export default {
         NProgress.done();
       }, 500);
     });
+    this.$refs.SearchProducts.focus();
   },
 
 
