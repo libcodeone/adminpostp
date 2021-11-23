@@ -1187,7 +1187,6 @@ export default {
             this.isLoading = false;
           }, 500);
         });
-      this.$refs.SearchProducts.focus();
     },
 
       //---------------------------------------- Get All brands-----------------\\
@@ -1223,7 +1222,6 @@ export default {
             this.isLoading = false;
           }, 500);
         });
-      this.$refs.SearchProducts.focus();
     },
 
   //---------------------- Event Select Payment Method ------------------------------\\
