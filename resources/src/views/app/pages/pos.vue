@@ -572,7 +572,7 @@
         :backdrop-variant="variant" 
         right shadow backdrop 
         :visible="showSidebarBrands"
-        @show="showSidebarBrand"
+        @shown="showSidebarBrand"
         @hidden="hiddenSidebarBrand"
         ref="sidebar_brand"
         >
@@ -588,6 +588,7 @@
                     :placeholder="$t('Search_this_table')"
                     class="form-control"
                     ref="searchBrand"
+                    id="searchBrand"
                   >
                 </div>
               </b-col>
@@ -659,7 +660,7 @@
           :title="$t('ListofCategory')"
           :visible="showSidebarCategorys"
           backdrop
-          @show="showSidebarCategory"
+          @shown="showSidebarCategory"
           @hidden="hiddenSidebarCategory"
           bg-variant="white"
           right
@@ -1274,15 +1275,14 @@ export default {
     },
     //------------------------ open and close modal category -----------------\\
     showSidebarBrand(){
-      //this.$refs.searchBrand.focus();
+      this.$refs.searchBrand.focus();
     },
-
     hiddenSidebarBrand(){
       this.$refs.SearchProducts.focus();
     },
     //------------------------ open and close modal category -----------------\\
     showSidebarCategory(){
-      //this.$refs.searchCategory.focus();
+      this.$refs.searchCategory.focus();
     },
 
     hiddenSidebarCategory(){
