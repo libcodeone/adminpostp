@@ -287,7 +287,7 @@ export default {
     //------------------------------------ Get Products By Warehouse -------------------------\\
     Get_Products_By_Warehouse(id) {
       axios
-        .get("Products/Warehouse/" + id + "?stock=" + 1)
+        .get("Products/Warehouse/" + id + "?stock=" + 0)
         .then(({ data }) => (this.products = data));
     },
 

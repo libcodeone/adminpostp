@@ -18,7 +18,6 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class AdjustmentController extends BaseController
 {
-
     //------------ Show All Adjustement  -----------\\
 
     public function index(request $request)
