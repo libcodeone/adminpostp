@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExpensesController extends BaseController
@@ -22,7 +23,6 @@ class ExpensesController extends BaseController
     public function index(request $request)
     {
         $this->authorizeForUser($request->user('api'), 'view', Expense::class);
-
         // How many items do you want to display.
         $perPage = $request->limit;
         $pageStart = \Request::get('page', 1);
@@ -68,10 +68,16 @@ class ExpensesController extends BaseController
                 });
             });
         $totalRows = $Filtred->count();
+        $expenses_total = $Filtred->get();
         $Expenses = $Filtred->offset($offSet)
             ->limit($perPage)
             ->orderBy($order, $dir)
             ->get();
+        $totalExpenseve=0.00;             
+        foreach($expenses_total as $total){
+            $totalExpenseve = number_format($total->amount, 2, '.', '')+$totalExpenseve;
+        }
+        $totalExpenseve=number_format($totalExpenseve, 2); 
 
         foreach ($Expenses as $Expense) {
 
@@ -84,15 +90,14 @@ class ExpensesController extends BaseController
             $item['category_name'] = $Expense['expense_category']->name;
             $data[] = $item;
         }
-
         $Expenses_category = ExpenseCategory::where('deleted_at', '=', null)->get(['id', 'name']);
         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
-
         return response()->json([
             'expenses' => $data,
             'Expenses_category' => $Expenses_category,
             'warehouses' => $warehouses,
             'totalRows' => $totalRows,
+            'totalExpenseve'=>$totalExpenseve
         ]);
 
     }

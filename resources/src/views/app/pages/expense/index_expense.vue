@@ -4,6 +4,11 @@
 
     <div v-if="isLoading" class="loading_page spinner spinner-primary mr-3"></div>
     <div v-else>
+      <ul class="nav justify-content-end">
+          <li class="nav-item" style="margin-right:5%;">
+            <a class="nav-link active" aria-current="page" >{{ $t("totalPay") }} {{totalMount.toLocaleString('en-US')}}</a>
+          </li>
+      </ul>
       <vue-good-table
         mode="remote"
         :columns="columns"
@@ -77,6 +82,11 @@
           </span>
         </template>
       </vue-good-table>
+      <ul class="nav justify-content-end">
+        <li class="nav-item" style="margin-right:5%;">
+          <a class="nav-link active" aria-current="page" >{{ $t("totalPay") }} {{totalMount.toLocaleString('en-US')}}</a>
+        </li>
+      </ul>
     </div>
 
     <!-- Multiple Filters -->
@@ -169,6 +179,7 @@ export default {
       selectedIds: [],
       totalRows: "",
       search: "",
+      totalMount: 0,
       limit: "10",
       Filter_date: "",
       Filter_Ref: "",
@@ -385,6 +396,7 @@ export default {
           this.expense_Category = response.data.Expenses_category;
           this.warehouses = response.data.warehouses;
           this.totalRows = response.data.totalRows;
+          this.totalMount=response.data.totalExpenseve;
 
           // Complete the animation of theprogress bar.
           NProgress.done();

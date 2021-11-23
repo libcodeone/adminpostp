@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Twilio\Rest\Client as Client_Twilio;
 use DB;
@@ -26,7 +27,7 @@ class PaymentPurchasesController extends BaseController
     public function index(request $request)
     {
         $this->authorizeForUser($request->user('api'), 'Reports_payments_Purchases', PaymentPurchase::class);
-
+        
         // How many items do you want to display.
         $perPage = $request->limit;
         $pageStart = \Request::get('page', 1);
@@ -79,10 +80,17 @@ class PaymentPurchasesController extends BaseController
             });
 
         $totalRows = $Filtred->count();
+        $purchases_total= $Filtred->get(); 
         $Payments = $Filtred->offset($offSet)
             ->limit($perPage)
             ->orderBy($order, $dir)
             ->get();
+
+        $totalPurchases=0.00;             
+        foreach($purchases_total as $totalP){
+            $totalPurchases = number_format($totalP->montant, 2, '.', '')+$totalPurchases;
+        }
+        $totalPurchases=number_format($totalPurchases, 2); 
 
         foreach ($Payments as $Payment) {
 
@@ -104,6 +112,7 @@ class PaymentPurchasesController extends BaseController
             'payments' => $data,
             'purchases' => $purchases,
             'suppliers' => $suppliers,
+            'totalPurchases'=>$totalPurchases
         ]);
 
     }

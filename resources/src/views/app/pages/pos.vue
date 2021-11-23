@@ -581,12 +581,13 @@
               <b-col md="12 mt-2">
                 <div class="input-group">
                   <input
+                    autofocus
                     @keyup="Get_Brands()"
                     v-model="search_brand"
                     type="text"
                     :placeholder="$t('Search_this_table')"
                     class="form-control"
-                    ref="focusSearchBrand"
+                    ref="searchBrand"
                   >
                 </div>
               </b-col>
@@ -670,12 +671,13 @@
               <b-col md="12 mt-2">
                 <div class="input-group">
                   <input
+                    v-autofocus="focusSearchCategory"
                     @keyup="Get_Categories()"
                     v-model="search_category"
                     type="text"
                     :placeholder="$t('Search_this_table')"
                     class="form-control"
-                    ref="focusSearchCategory"
+                    ref="searchCategory"
                   >
                 </div>
               </b-col>
@@ -1272,7 +1274,7 @@ export default {
     },
     //------------------------ open and close modal category -----------------\\
     showSidebarBrand(){
-      this.$refs.focusSearchBrand.focus();
+      //this.$refs.searchBrand.focus();
     },
 
     hiddenSidebarBrand(){
@@ -1280,7 +1282,7 @@ export default {
     },
     //------------------------ open and close modal category -----------------\\
     showSidebarCategory(){
-      this.$refs.focusSearchCategory.focus();
+      //this.$refs.searchCategory.focus();
     },
 
     hiddenSidebarCategory(){
