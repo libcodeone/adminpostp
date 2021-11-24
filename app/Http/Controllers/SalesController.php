@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Twilio\Rest\Client as Client_Twilio;
 use App\Exports\SalesExport;
+use App\Models\SaleReturn;
 use App\Mail\SaleMail;
 use App\Models\Client;
 use App\Models\PaymentSale;
@@ -177,7 +178,7 @@ class SalesController extends BaseController
                 $TaxNet = round($request->GrandTotal-($request->GrandTotal / 1.13),2);
                 if($client->big_consumer == 1 and round($request->GrandTotal / 1.13,2)>=100){
                     $TaxWithheld = round((($request->GrandTotal / 1.13)* 0.01),2) ;
-                    $GrandTotal=$GrandTotal-$TaxWithheld;;
+                    $GrandTotal=$GrandTotal-$TaxWithheld;
                 }
             }
 
@@ -815,13 +816,11 @@ class SalesController extends BaseController
         }
 
         $company = Setting::where('deleted_at', '=', null)->first();
-
         return response()->json([
             'details' => $details,
             'sale' => $sale_details,
             'company' => $company,
         ]);
-
     }
 
     //-------------- Print Invoice ---------------\\
@@ -1377,6 +1376,139 @@ class SalesController extends BaseController
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
+    }
+    public function SaleLessReturns(Request $request, $id){
+
+        $this->authorizeForUser($request->user('api'), 'view', Sale::class);
+        $role = Auth::user()->roles()->first();
+        $view_records = Role::findOrFail($role->id)->inRole('record_view');
+        $devoluciones=SaleReturn::where('ref_invoice',$id)->get();
+        $totalDevolucion=0;
+        $totalDevolucionPaidAmount=0;
+        $detallesDevolucion=[];
+        foreach($devoluciones as $devolucion){
+            foreach($devolucion['details'] as $detalle){
+                $devolucionData['product_id']=$detalle->product_id;
+                $devolucionData['price']=$detalle->price;
+                $devolucionData['total']=$detalle->total;
+                $devolucionData['TaxNet']=$detalle->TaxNet;
+                $devolucionData['quantity']=$detalle->quantity;
+                $detallesDevolucion[]=$devolucionData;
+            }
+            $totalDevolucion=$totalDevolucion+$devolucion->GrandTotal;
+            $totalDevolucionPaidAmount=$totalDevolucionPaidAmount+$devolucion->paid_amount;
+
+        } 
+        $sale_data = Sale::with('details.product.unitSale')
+            ->where('deleted_at', '=', null)
+            ->findOrFail($id);
+        $details = array();
+
+        // Check If User Has Permission view All Records
+        if (!$view_records) {
+            // Check If User->id === sale->id
+            $this->authorizeForUser($request->user('api'), 'check_record', $sale_data);
+        }
+        $TaxWithheld=$sale_data->TaxWithheld;
+        if($sale_data->TaxWithheld>0){
+            $TaxWithheld=$TaxWithheld-round((($totalDevolucion / 1.13)* 0.01),2) ;
+        }
+        $TaxNet=$sale_data->TaxNet;
+        $TaxNet=$TaxNet-round((($totalDevolucion / 1.13)* 0.01),2) ;
+
+        $sale_details['Ref'] = $sale_data->Ref;
+        $sale_details['TaxWithheld'] = $TaxWithheld;
+        $sale_details['date'] = $sale_data->date;
+        $sale_details['statut'] = $sale_data->statut;
+        $sale_details['warehouse'] = $sale_data['warehouse']->name;
+        $sale_details['discount'] = $sale_data->discount;
+        $sale_details['shipping'] = $sale_data->shipping;
+        $sale_details['tax_rate'] = $sale_data->tax_rate;
+        $sale_details['TaxNet'] = $TaxNet;
+        $sale_details['client_name'] = $sale_data['client']->name;
+        $sale_details['client_phone'] = $sale_data['client']->phone;
+        $sale_details['client_adr'] = $sale_data['client']->adresse;
+        $sale_details['client_email'] = $sale_data['client']->email;
+        $sale_details['big_consumer'] = $sale_data['client']->big_consumer;
+        $sale_details['final_consumer'] = $sale_data['client']->final_consumer;
+        $sale_details['GrandTotal'] = $sale_data->GrandTotal-$totalDevolucion;
+        $sale_details['paid_amount'] = $sale_data->paid_amount-$totalDevolucionPaidAmount;
+        $sale_details['due'] = $sale_details['GrandTotal'] - $sale_details['paid_amount'];
+        $sale_details['payment_status'] = $sale_data->payment_statut;
+       
+        foreach ($sale_data['details'] as $detail) {
+                $data['product_id']=$detail->product_id;
+            if ($detail->product_variant_id) {
+
+                $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+                    ->where('id', $detail->product_variant_id)->first();
+
+                $data['quantity'] = $detail->quantity;
+                $data['total'] = $detail->total;
+                $data['code'] = $productsVariants->name . '-' . $detail['product']['code'];
+                $data['name'] = $detail['product']['name'];
+                $data['price'] = $detail->price;
+                $data['unit_sale'] = $detail['product']['unitSale']->ShortName;
+
+            } else {
+
+                $data['quantity'] = $detail->quantity;
+                $data['total'] = $detail->total;
+                $data['code'] = $detail['product']['code'];
+                $data['name'] = $detail['product']['name'];
+                $data['price'] = $detail->price;
+                $data['unit_sale'] = $detail['product']['unitSale']->ShortName;
+            }
+
+            if ($detail->discount_method == '2') {
+                $data['DiscountNet'] = $detail->discount;
+            } else {
+                $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+            }
+
+            $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
+            $data['Unit_price'] = $detail->price;
+            $data['discount'] = $detail->discount;
+
+            if ($detail->tax_method == '1') {
+                $data['Net_price'] = $detail->price - $data['DiscountNet'];
+                $data['taxe'] = $tax_price;
+            } else {
+                $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
+                $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
+            }
+
+            $details[] = $data;
+        }
+        $company = Setting::where('deleted_at', '=', null)->first();
+        $varUnset=[];
+        $contador=0;
+        foreach ($details as $detailSales) {
+            foreach($detallesDevolucion as $detailLess){
+                if($detailLess['product_id']===$detailSales['product_id']){
+                    if($detailLess['quantity']===$detailSales['quantity']){
+                        $varUnset[]=$contador;
+                    }else{
+                        $details[$contador]['quantity']=$detailSales['quantity']-$detailLess['quantity'];
+                        $details[$contador]['total']=$detailSales['total']-$detailLess['total'];
+                        $details[$contador]['taxe']=$detailSales['taxe']-$detailLess['TaxNet'];
+                    }
+                }
+            }
+            $contador++;
+        }
+        //Log::debug($details);
+        //Log::debug($details);
+        foreach($varUnset as $unset){
+            unset($details[$unset]);
+        }
+        //Log::debug($details);
+        return response()->json([
+            'details' => $details,
+            'sale' => $sale_details,
+            'company' => $company,
+        ]);
+
     }
 
 }

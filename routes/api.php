@@ -169,6 +169,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::get('sales/payments/{id}', 'SalesController@Payments_Sale');
     // Route::post('sales/send/email', 'SalesController@Send_Email');
     // Route::post('sales/send/sms', 'SalesController@Send_SMS');
+    Route::get('sales/less-returns/{id}','SalesController@SaleLessReturns');
     Route::get('sales/export/Excel', 'SalesController@exportExcel');
     Route::post('sales/delete/by_selection', 'SalesController@delete_by_selection');
     Route::put('sales/change_status/{id}', 'SalesController@update_status');

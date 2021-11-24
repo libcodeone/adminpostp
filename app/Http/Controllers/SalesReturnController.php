@@ -146,10 +146,8 @@ class SalesReturnController extends BaseController
             'warehouse_id' => 'required',
             'statut' => 'required',
         ]);
-
         \DB::transaction(function () use ($request) {
             $order = new SaleReturn;
-
             $order->date = $request->date;
             $order->Ref = $this->getNumberOrder();
             $order->client_id = $request->client_id;
@@ -225,7 +223,6 @@ class SalesReturnController extends BaseController
             }
             SaleReturnDetails::insert($orderDetails);
         }, 10);
-
         return response()->json(['success' => true]);
     }
 

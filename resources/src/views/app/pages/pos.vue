@@ -116,7 +116,7 @@
                             :reduce="label => label.value"
                             :placeholder="$t('Choose_Customer')"
                             class="w-100"
-                            :options="clients.map(clients => ({label: clients.name, value: clients.id}))"
+                            :options="clients.map(clients => ({label: clients.name+'-'+clients.final_consumer+' ('+clients.phone+')', value: clients.id}))"
                           />
                        
                 <!-- <b-col lg="12" md="12" sm="12" class="w-100">
@@ -948,7 +948,7 @@
                   </b-col>
                   <b-col md="6" sm="12" class="mt-2" v-if="client.final_consumer == 0">
                     <b-form-group
-                      :label="$t('BigConsumer')"
+                      :label="$t('BigContributor')"
                       v-slot="{ ariaDescribedby }"
                     >
                       <b-form-radio
@@ -1451,6 +1451,7 @@ export default {
       axios
         .get("Get_Clients_Without_Paginate")
         .then(({ data }) => (this.clients = data));
+        console.log(this.clients);
     },
 
     //---Validate State Fields

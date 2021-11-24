@@ -652,4 +652,6 @@ export default {
     IVAwithholding:"IVA withholding",
     credit_card:"Credit card",
     BankTransfer:"Bank transfer",
+    BigContributor:"Great contributor",
+    LessReturns:"Less returns",
 };

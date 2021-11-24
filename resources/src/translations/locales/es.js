@@ -652,4 +652,6 @@ export default {
     IVAwithholding:"Rentencion IVA",
     credit_card:"Tarjeta de credito",
     BankTransfer:"Transferencia Bancaria",
+    BigContributor:"Gran contribuyente",
+    LessReturns:"Menos devoluciones",
 };

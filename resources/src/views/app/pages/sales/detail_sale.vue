@@ -31,6 +31,10 @@
             <i class="i-Billing"></i>
             {{$t('print')}}
           </button>
+         <!-- <button @click="Get_Details_Less_returns()" class="btn btn-info btn-icon ripple btn-sm">
+            <i class="i-Envelope-2"></i>
+            {{$t('LessReturns')}}
+          </button>-->
           <button
             v-if="currentUserPermissions && currentUserPermissions.includes('Sales_delete')"
             @click="Delete_Sale()"
@@ -346,7 +350,23 @@ export default {
           this.makeToast("danger", this.$t("sms_config_invalid"), this.$t("Failed"));
         });
     },
-
+    //----------------------------------- Get Details Sale ------------------------------\\
+    Get_Details_Less_returns() {
+      let id = this.$route.params.id;
+      axios
+        .get(`sales/less-returns/${id}`)
+        .then(response => {
+          this.sale = response.data.sale;
+          this.details = response.data.details;
+          this.company = response.data.company;
+          this.isLoading = false;
+        })
+        .catch(response => {
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 500);
+        });
+    },
     //----------------------------------- Get Details Sale ------------------------------\\
     Get_Details() {
       let id = this.$route.params.id;
