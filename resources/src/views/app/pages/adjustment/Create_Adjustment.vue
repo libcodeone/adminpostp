@@ -57,7 +57,6 @@
                     :placeholder="$t('Search_Product_by_Code_Name')"
                     aria-label="Search for a Product"
                     :get-result-value="getResultValue"
-                    v-model="SearchProduct"
                     @submit="Submit_Search_Product"
                     ref="autocomplete"
                   />
@@ -198,49 +197,17 @@ export default {
         product_variant_id: "",
         unit: ""
       },
-      category_id: "",
-      brand_id: "",
-      SearchProduct: "",
       symbol: ""
     };
   },
 
   methods: {
-    getProducts() {
-      // Start the progress bar.
-      NProgress.start();
-      NProgress.set(0.1);
-      axios
-        .get(
-          "GetProductsByParametre?page=" +
-            1 +
-            "&category_id=" +
-            this.category_id +
-            "&brand_id=" +
-            this.brand_id +
-            "&warehouse_id=" +
-            this.sale.warehouse_id +
-            "&search=" +
-            this.SearchProduct +
-            "&stock=" +
-            1
-        )
-        .then(response => {
-          // this.products = [];
-          this.products = response.data.products;
-        })
-        .catch(response => {
-          // Complete the animation of theprogress bar.
-          NProgress.done();
-        });
-    },
     //---------------- Search Product by code or name -----------------\\
     Search_Product(input) {
       if (input.length < 1) {
         return [];
       }
       if (this.adjustment.warehouse_id != "") {
-        getProducts();
         return this.products.filter(product => {
           return (
             product.name.toLowerCase().startsWith(input.toLowerCase()) ||
