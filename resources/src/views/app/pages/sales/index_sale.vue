@@ -652,7 +652,7 @@
                     <div class="col-4"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
-                      {{ formatNumber(detail_invoice.total, 2) }}
+                      {{ formatNumber(detail_invoice.Net_price, 2) }}
                       </span>
                       </div>
                   </div>
@@ -898,7 +898,7 @@
                     <div class="col-4"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
-                      {{ formatNumber(detail_invoice.total - detail_invoice.TaxNet, 2) }}
+                      {{ formatNumber(detail_invoice.Net_price, 2) }}
                       </span>
                       </div>
                   </div>

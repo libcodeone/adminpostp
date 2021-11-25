@@ -865,6 +865,7 @@ class SalesController extends BaseController
 
                 $data['quantity'] = $detail->quantity;
                 $data['total'] = $detail->total;
+                $data['Net_price'] = $detail->price;
                 $data['TaxNet'] = $detail->TaxNet;
                 $data['code'] = $productsVariants->name . '-' . $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
@@ -875,6 +876,7 @@ class SalesController extends BaseController
                 $data['quantity'] = $detail->quantity;
                 $data['total'] = $detail->total;
                 $data['TaxNet'] = $detail->TaxNet;
+                $data['Net_price'] = $detail->price;
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
                 $data['unit_sale'] = $detail['product']['unitSale']->ShortName;
@@ -885,7 +887,7 @@ class SalesController extends BaseController
 
         $settings = Setting::where('deleted_at', '=', null)->first();
         $symbol = $helpers->Get_Currency();
-
+        Log::debug($details);
         return response()->json([
             'symbol' => $symbol,
             'setting' => $settings,
