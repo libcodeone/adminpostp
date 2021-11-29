@@ -13,7 +13,6 @@ class SetupController extends Controller
 
     public function changeEnv($data = array())
     {
-        return false;
         if (count($data) > 0) {
 
             // Read .env-file
