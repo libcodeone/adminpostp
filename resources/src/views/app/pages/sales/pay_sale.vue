@@ -331,7 +331,7 @@
                     <div class="col-2"> </div>
                     <div class="col-6">
                        <span>
-                      {{ invoice_pos.sale.seller }}
+                      VENT. {{ invoice_pos.sale.seller }}
                       </span>
                     </div>
                   </div>
@@ -392,6 +392,19 @@
                   </div>
                 </div>
                 <div class="col-2">
+                  <div class="row align-items-start" v-if="invoice_pos.sale.discount != 0">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase">
+                      DESC. {{
+                        formatNumber(
+                          invoice_pos.sale.discount,
+                          2
+                        )
+                      }}
+                      </span>
+                    </div>
+                  </div>
                   <div class="row align-items-start">
                     <div class="col-6"></div>
                     <div class="col-6">
@@ -530,7 +543,7 @@
                   <div class="row" style="height:75px;">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-left:40px;margin-top:30px;">
-                      {{ invoice_pos.sale.seller }}
+                      VENT. {{ invoice_pos.sale.seller }}
                       </span>
                     </div>
                   </div>
@@ -637,6 +650,19 @@
                   </div>
                 </div>
                 <div class="col-3">
+                  <div class="row" v-if="invoice_pos.sale.discount != 0">
+                    <div class="col-8"></div>
+                    <div class="col-4">
+                      <span class="h5 text-uppercase">
+                      DESC. {{
+                        formatNumber(
+                          invoice_pos.sale.discount,
+                          2
+                        )
+                      }}
+                      </span>
+                    </div>
+                  </div>
                   <div class="row">
                     <div class="col-8"></div>
                     <div class="col-4">
