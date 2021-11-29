@@ -186,21 +186,23 @@ class SetupController extends Controller
 
     public function setupStep1(Request $request)
     {
-        $allow = 'false';
+        Storage::disk('public')->put('installed', 'Contents');
+        return view('setup.finishedSetup');
+        // $allow = 'false';
 
-        $request->session()->put('env.APP_ENV', $request->app_env);
-        $request->session()->put('env.APP_DEBUG', $request->app_debug);
+        // $request->session()->put('env.APP_ENV', $request->app_env);
+        // $request->session()->put('env.APP_DEBUG', $request->app_debug);
 
-        if (strlen($request->app_name) > 0) {
-            $request->session()->put('env.APP_NAME', '"' . $request->app_name . '"');
-        }
+        // if (strlen($request->app_name) > 0) {
+        //     $request->session()->put('env.APP_NAME', '"' . $request->app_name . '"');
+        // }
 
-        if (strlen($request->app_key) > 0) {
-            $request->session()->put('env.APP_KEY', $request->app_key);
-        }
+        // if (strlen($request->app_key) > 0) {
+        //     $request->session()->put('env.APP_KEY', $request->app_key);
+        // }
         
 
-        return $this->viewStep2();
+        // return $this->viewStep2();
     }
 
     public function setupStep2(Request $request)
