@@ -28,16 +28,12 @@ class helpers
 
                         if($field['param'] == 'like'){
                             $model->where($field['value'], 'like', "{$request[$field['value']]}");
-                            Log::debug('like');
                         }elseif($field['param'] == '<>'){
                             $model->where($field['value'],'<>',$request[$field['value']]);
-                            Log::debug('<>');
                         }elseif($field['param'] == 'null'){
                             $model->where($field['value'],'');
-                            Log::debug('null');
                         }else{
                             $model->where($field['value'],$request[$field['value']]);
-                            Log::debug('=');
                         }
                         
                     });

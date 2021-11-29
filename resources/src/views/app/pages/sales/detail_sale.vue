@@ -2,7 +2,6 @@
   <div class="main-content">
     <breadcumb :page="$t('SaleDetail')" :folder="$t('Sales')"/>
     <div v-if="isLoading" class="loading_page spinner spinner-primary mr-3"></div>
-
     <b-card v-if="!isLoading">
       <b-row>
         <b-col md="12" class="mb-5">
@@ -31,10 +30,13 @@
             <i class="i-Billing"></i>
             {{$t('print')}}
           </button>
-         <!-- <button @click="Get_Details_Less_returns()" class="btn btn-info btn-icon ripple btn-sm">
+          <button @click="Get_Details_Less_returns()" class="btn btn-info btn-icon ripple btn-sm">
             <i class="i-Envelope-2"></i>
             {{$t('LessReturns')}}
-          </button>-->
+          </button>
+          <button  v-if="is_return" @click="Check_in()" class="btn btn-success btn-icon ripple btn-sm"          >
+            {{ $t("Checkin") }}
+          </button>
           <button
             v-if="currentUserPermissions && currentUserPermissions.includes('Sales_delete')"
             @click="Delete_Sale()"
@@ -130,6 +132,466 @@
                 </table>
               </div>
             </b-col>
+
+
+
+      <!-- Modal Show Invoice-->
+      <b-modal
+        hide-footer
+        size="lg"
+        scrollable
+        id="Show_invoiceF"
+        :title="$t('Invoice')"
+      >
+        <vue-easy-print table-show ref="Show_invoiceF">
+          <div id="invoice-POSF">
+            <div class="container" style="height:671px">
+              <div class="row" style="height:180px">
+                <div class="col-9">
+                  <div class="row">
+                    <div class="info">
+                      <h3></h3>
+                    </div>
+                  </div>
+                  <div class="row"></div>
+                  <div class="row">
+                    <div class="col-3">
+                    </div>
+                    <div class="col-3">
+                    </div>
+                    <div class="col-3">
+                    </div>
+                    <div class="col-3">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-3 rounded">
+                  <span></span>
+                </div>
+              </div>
+              <div class="row" style="height:105px">
+                <div class="col-8">
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase">
+                      {{ invoice_pos.sale.client_name }}.
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase">
+                      {{ invoice_pos.sale.client_adresse }}.
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase">
+                      {{ invoice_pos.sale.client_NIT }}.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-2"> </div>
+                    <div class="col-6">
+                       <span>
+                      {{ invoice_pos.sale.date }}.
+                      </span>
+                    </div>
+                    <div class="col-4">
+                     <span >
+                      {{ invoice_pos.sale.Reglement }}.
+                      </span>
+                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-2"> </div>
+                    <div class="col-6">
+                       <span>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row" style="margin-top:30px; margin-left:55px;">
+                    <div class="col-2"> </div>
+                    <div class="col-6">
+                       <span>
+                      {{ invoice_pos.sale.seller }}.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="height:40px">
+                <div class="col-1"></div>
+                <div class="col-2"></div>
+                <div class="col-5"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+              </div>
+              <div style="height:360px">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details">
+                <div class="col-1">
+                  <span class="h5 text-uppercase">
+                  {{ formatNumber(detail_invoice.quantity, 2) }}
+                      </span>
+                </div>
+               
+                <div class="col-7">
+                   <span class="h5 text-uppercase">
+                  {{ detail_invoice.code }}
+                      </span> - 
+                  <span class="h5 text-uppercase">
+                  {{ detail_invoice.name }}
+                      </span>
+                  </div>
+                <div class="col-1">
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase">
+                      {{ formatNumber(detail_invoice.Net_price, 2) }}
+                      </span>
+                      </div>
+                  </div>
+                  
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <span class="h5 text-uppercase">
+                  {{ formatNumber(detail_invoice.total, 2) }}
+                      </span>
+                </div>
+              </div>
+              </div>
+              
+              <div class="row" >
+                <div class="col-10">
+                  <div class="row rounded">
+                    <span class="h5 text-uppercase">
+                    {{ GrandTotalText }}
+                      </span>
+                  </div>
+                </div>
+                <div class="col-2">
+                  <div class="row align-items-start">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase">
+                      {{
+                        formatNumber(
+                          invoice_pos.sale.GrandTotal,
+                          2
+                        )
+                      }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row align-items-start">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase">
+                    
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row align-items-start">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase">
+                     
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row align-items-start">
+                    <div class="col-6"></div>
+                    <div class="col-6"></div>
+                  </div>
+                  <div class="row align-items-start">
+                    <div class="col-6"></div>
+                    <div class="col-6"></div>
+                  </div>
+                  <div class="row align-items-start">
+                    <div class="col-6"></div>
+                    <div class="col-6"></div>
+                  </div> 
+                  <div class="row align-items-end " style="height:120px">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase">
+                      {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
+                      </span>
+                      
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </vue-easy-print>
+        <button @click="print_pos()" class="btn btn-outline-primary">
+          <i class="i-Billing"></i>
+          {{ $t("print") }}
+        </button>
+      </b-modal>
+      <!-- Modal Show Invoice-->
+      <b-modal
+        hide-footer
+        size="lg"
+        scrollable
+        id="Show_invoiceCCF"
+        :title="$t('Invoice')"
+      >
+       <vue-easy-print table-show ref="Show_invoiceCCF">
+          <div id="invoice-POSCCF">
+            <div class="container" style="height:671px">
+              <div class="row" style="height:150px">
+                <div class="col-9">
+                  <div class="row">
+                    <div class="info">
+                      <h3></h3>
+                    </div>
+                  </div>
+                  <div class="row"></div>
+                  <div class="row">
+                    <div class="col-3">
+                    </div>
+                    <div class="col-3">
+                    </div>
+                    <div class="col-3">
+                    </div>
+                    <div class="col-3">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-3 rounded">
+                  <span></span>
+                </div>
+              </div>
+              <div class="row" style="height:105px">
+                <div class="col-8">
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase">
+                      {{ invoice_pos.sale.client_name }}.
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-top:15px;margin-left:10px;">
+                      {{ invoice_pos.sale.client_adresse }}.
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="row" style="margin-top:8px;margin-left:10px;">
+                    <div class="col-6 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" >
+                      {{ invoice_pos.sale.client_city }}.
+                      </span>
+                    </div>
+                    <div class="col-6 padding-top padding-bottom">
+                      <span class="h5 text-uppercase">
+                      {{ invoice_pos.sale.client_country }}.
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row" style="height:75px;">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-left:60px;margin-top:50px;">
+                      {{ invoice_pos.sale.seller }}.
+                      </span>
+                    </div>
+                  </div>
+                  </div>
+                <div class="col-4">
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4"></div>
+                    <div class="col-4"></div>
+                  </div>
+                  <div class="row" style="margin-top:-10px;">
+                    <div class="col-4"></div>
+                    <div class="col-4" >
+                      <span >
+                      {{ invoice_pos.sale.date }}.
+                      </span>
+                      </div>
+                    <div class="col-4">
+                      <span >
+                      {{ invoice_pos.sale.Reglement }}.
+                      </span>
+
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase" style="margin-top:45px; height:40px;">
+                      {{ invoice_pos.sale.client_NRC }}.
+                      </span>
+
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase" style="margin-top:45px;height:40px;">
+                      {{ invoice_pos.sale.client_NIT }}.
+                      </span>
+
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase">
+                      {{ sale.client_giro }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row" style="height:80px">
+                <div class="col-1"></div>
+                <div class="col-2"></div>
+                <div class="col-5"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+              </div>
+              <div style="height:400px">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details">
+                <div class="col-1">
+                  <span class="h5 text-uppercase">
+                  {{ formatNumber(detail_invoice.quantity, 2) }}
+                      </span>
+                </div>
+               
+                <div class="col-7">
+                   <span class="h5 text-uppercase">
+                  {{ detail_invoice.code }}
+                      </span> - 
+                  <span class="h5 text-uppercase">
+                  {{ detail_invoice.name }}
+                      </span>
+                  </div>
+                <div class="col-1">
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase" style="margin-let:-20px;">
+                      {{ formatNumber(detail_invoice.Net_price, 2) }}
+                      </span>
+                      </div>
+                  </div>
+    
+                </div>
+                <div class="col-1"></div>
+                <div class="col-1"></div>
+                <div class="col-1">
+                  <span class="h5 text-uppercase">
+                  {{ formatNumber(detail_invoice.total- detail_invoice.TaxNet, 2) }}
+                      </span>
+                </div>
+              </div>
+              </div>
+              <div class="row" style="margin-top:-107px;">
+                <div class="col-9">
+                  <div class="row rounded">
+                    <span class="h5 text-uppercase">
+                    {{ GrandTotalText }}
+                      </span>
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="row">
+                    <div class="col-8"></div>
+                    <div class="col-4">
+                      <span class="h5 text-uppercase">
+                      {{
+                        formatNumber(
+                          invoice_pos.sale.GrandTotal + invoice_pos.sale.TaxWithheld - invoice_pos.sale.taxe,
+                          2
+                        )
+                      }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-8"></div>
+                    <div class="col-4">
+                      <span class="h5 text-uppercase" style="margin-top:14px;">                      
+                      {{ formatNumber(invoice_pos.sale.taxe, 2) }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-8"></div>
+                    <div class="col-4">
+                      <span class="h5 text-uppercase" style="margin-top:15px;">
+                       {{ formatNumber(invoice_pos.sale.GrandTotal + invoice_pos.sale.TaxWithheld, 2) }} 
+                      </span>
+                    </div>
+
+                  </div>
+                  <div class="row" style="height:70px; margin-top:35px;">
+                    <div class="col-8"></div>
+                    <div class="col-4">
+                      <span class="h5 text-uppercase" v-if="sale.big_consumer == 1">
+                      {{ formatNumber(invoice_pos.sale.TaxWithheld, 2) }}
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-8"></div>
+                    <div class="col-4">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-8"></div>
+                    <div class="col-4">
+                    </div>
+                  </div>
+                  <div class="row align-items-end" style="height:50px; margin-top:-25px;">
+                    <div class="col-8"></div>
+                    <div class="col-4">
+                      <span class="h5 text-uppercase">
+                      {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </vue-easy-print>
+        <button @click="print_pos()" class="btn btn-outline-primary">
+          <i class="i-Billing"></i>
+          {{ $t("print") }}
+        </button>
+      </b-modal>
+
+
             <div class="offset-md-9 col-md-3 mt-4">
               <table class="table table-striped table-sm">
                 <tbody>
@@ -200,27 +662,64 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import NProgress from "nprogress";
+import Util from "../../../../utils";
+import vueEasyPrint from "vue-easy-print";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import VueBarcode from "vue-barcode";
+import { loadStripe } from "@stripe/stripe-js";
 
 export default {
   computed: mapGetters(["currentUserPermissions", "currentUser"]),
   metaInfo: {
     title: "Detail Sale"
   },
+    components: {
+    vueEasyPrint,
+    barcode: VueBarcode
+  },
 
   data() {
     return {
       isLoading: true,
       sale: {},
+      is_return:false,
+      sale_less_return:0,
       details: [],
       variants: [],
       company: {},
+      invoice_pos: {
+        symbol: "",
+        sale: {
+          Ref: "",
+          client_name: "",
+          client_adresse: "",
+          client_country: "",
+          client_city: "",
+          final_consumer:"",
+          big_consumer:"",
+          discount: "",
+          taxe: "",
+          date: "",
+          tax_rate: 13,
+          TaxWithheld:"",
+          shipping: "",
+          GrandTotal: "",
+          RefTransfer: "",
+          RefCreditCard: "",
+          type_invoice: "",
+          refInvoice: "",
+          Reglement: "",
+        }
+      },
       email: {
         to: "",
         subject: "",
         message: "",
         client_name: "",
         Sale_Ref: ""
-      }
+      },
+      GrandTotalText:"",
     };
   },
 
@@ -237,6 +736,60 @@ export default {
       a.document.write("</body></html>");
       a.document.close();
       a.print();
+    },
+    //-------------------------------- Invoice POS ------------------------------\\
+    Invoice_POS(id) {
+      // Start the progress bar.
+      NProgress.start();
+      NProgress.set(0.1);
+      axios
+        .get("Sales/Print_Invoice/" + id)
+        .then((response) => {
+          console.log('respuesta');
+          this.invoice_pos = response.data;
+          console.log(this.invoice_pos);
+          this.GrandTotalText = Util.numeroALetras(
+            this.formatNumber(this.invoice_pos.sale.GrandTotal, 2)
+          );
+          console.log('respuesta2');
+
+          setTimeout(() => {
+            // Complete the animation of the  progress bar.
+            NProgress.done();
+            this.$bvModal.show("Show_invoiceF");
+
+            if (this.invoice_pos.sale.type_invoice == "CF") {
+              this.$bvModal.show("Show_invoiceF");
+            } else {
+              this.$bvModal.show("Show_invoiceCCF");
+            }
+          }, 500);
+          setTimeout(() => this.print_pos(), 1000);
+        })
+        .catch(() => {
+          // Complete the animation of the  progress bar.
+          setTimeout(() => NProgress.done(), 500);
+        });
+    },
+    //------------------------------Formetted Numbers -------------------------\\
+    formatNumber(number, dec) {
+      const value = (typeof number === "string"
+        ? number
+        : number.toString()
+      ).split(".");
+      if (dec <= 0) return value[0];
+      let formated = value[1] || "";
+      if (formated.length > dec)
+        return `${value[0]}.${formated.substr(0, dec)}`;
+      while (formated.length < dec) formated += "0";
+      return `${value[0]}.${formated}`;
+    },
+     print_pos() {
+      if (this.invoice_pos.sale.type_invoice == "CF") {
+        this.$refs.Show_invoiceF.print();
+      } else {
+        this.$refs.Show_invoiceCCF.print();
+      }
     },
 
     //----------------------------------- Invoice Sale PDF  -------------------------\\
@@ -356,9 +909,10 @@ export default {
       axios
         .get(`sales/less-returns/${id}`)
         .then(response => {
-          this.sale = response.data.sale;
-          this.details = response.data.details;
-          this.company = response.data.company;
+            this.sale = response.data.sale;
+            this.details = response.data.details;
+            this.company = response.data.company;
+            this.is_return=true;
           this.isLoading = false;
         })
         .catch(response => {
@@ -384,7 +938,39 @@ export default {
           }, 500);
         });
     },
-
+        //----------------------------------- Get Details Sale ------------------------------\\
+      Get_Detailss(id) {
+        axios
+          .get(`sales/${id}`)
+          .then(response => {
+            this.sale = response.data.sale;
+            this.details = response.data.details;
+            this.company = response.data.company;
+            this.isLoading = false;
+          })
+          .catch(response => {
+            setTimeout(() => {
+              this.isLoading = false;
+            }, 500);
+          });
+      },
+    //------------------------------------------save less return---------------------------\\
+    Check_in(){
+      let id = this.$route.params.id;
+      axios
+        .get(`sales/save/less_Return/${id}`)
+        .then(response => {
+            this.sale_less_return=response.data.newId;
+            this.Invoice_POS(this.sale_less_return);
+            this.Get_Detailss(this.sale_less_return);
+          this.isLoading = false;
+        })
+        .catch(response => {
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 500);
+        });
+    },
     //------------------------------------------ DELETE Sale ------------------------------\\
     Delete_Sale() {
       let id = this.$route.params.id;

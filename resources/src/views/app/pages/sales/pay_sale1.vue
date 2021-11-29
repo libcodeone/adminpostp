@@ -391,7 +391,7 @@
                   <div class="col-2">{{ detail_invoice.code }}</div>
                   <div class="col-5">{{ detail_invoice.name }}</div>
                   <div class="col-1">
-                    {{ formatNumber(detail_invoice.total, 2) }}
+                    {{ formatNumber(detail_invoice.Net_price, 2) }}
                   </div>
                   <div class="col-1"></div>
                   <div class="col-1"></div>

@@ -34,13 +34,18 @@
                     :rules="{ required: true}"
                     v-slot="validationContext"
                   >
-                    <b-form-group :label="$t('password')" class="text-12">
+
+                    <b-form-group class="text-12">
+                    <label for="pName">{{$t('password')}}</label>
+                    <button style="border:none; background-color:white; outline: none;" type="button" @click="showPassword">
+                    <i class="nav-icon i-Eye font-weight-bold mr-2" style="font-size:20px;"></i>
+                    </button>
                     <!--<div class="input-group" id="show_hide_password">-->
                       <b-form-input
                         :state="getValidationState(validationContext)"
                         aria-describedby="Password-feedback"
                         class="form-control-rounded"
-                        type="password"
+                        :type="type"
                         v-model="password"
                       ></b-form-input>
                       <!--<a><i class="fa fa-eye-slash" aria-hidden="true"></i>hola</a>
@@ -86,6 +91,7 @@ export default {
   },
   data() {
     return {
+      type: "password",
       email: "",
       password: "",
       userId: "",
@@ -112,7 +118,13 @@ export default {
         }
       });
     },
-
+    showPassword() {
+          if(this.type === "password") {
+              this.type = "text"
+          } else {
+              this.type = "password"
+          }
+    },
     getValidationState({ dirty, validated, valid = null }) {
       return dirty || validated ? valid : null;
     },

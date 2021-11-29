@@ -30,7 +30,6 @@ use Illuminate\Support\Facades\Log;
 
 class SalesController extends BaseController
 {
-
     //------------- GET ALL SALES -----------\\
 
     public function index(request $request)
@@ -156,12 +155,10 @@ class SalesController extends BaseController
     public function store(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'create', Sale::class);
-
         request()->validate([
             'client_id' => 'required',
             'warehouse_id' => 'required',
         ]);
-
         \DB::transaction(function () use ($request) {
             $helpers = new helpers();
             $order = new Sale;
@@ -211,9 +208,7 @@ class SalesController extends BaseController
                     'current_invoiceCCF' =>  $order->refInvoice
                 ]);
             }
-
             $order->save();
-
             $data = $request['details'];
             foreach ($data as $key => $value) {
                 $price= $value['Unit_price'];
@@ -278,7 +273,6 @@ class SalesController extends BaseController
                 }
             }
             SaleDetail::insert($orderDetails);
-
             $role = Auth::user()->roles()->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
 
@@ -289,10 +283,7 @@ class SalesController extends BaseController
                     // Check If User->id === sale->id
                     $this->authorizeForUser($request->user('api'), 'check_record', $sale);
                 }
-
-
                 try {
-
                     $total_paid = $sale->paid_amount + $request->payment['amount'];
                     $due = $sale->GrandTotal - $total_paid;
                     if ($due === 0.0 || $due < 0.0) {
@@ -302,7 +293,6 @@ class SalesController extends BaseController
                     } else if ($due == $sale->GrandTotal) {
                         $payment_statut = 'unpaid';
                     }
-                    
                     if($request->payment['Reglement'] == 'credit card'){
                         $Client = Client::whereId($request->client_id)->first();
                         Stripe\Stripe::setApiKey(config('app.STRIPE_SECRET'));
@@ -314,7 +304,6 @@ class SalesController extends BaseController
                                 'source' => $request->token,
                                 'email' => $Client->email, 
                             ]);
-
                             // Charge the Customer instead of the card:
                             $charge = \Stripe\Charge::create([
                                 'amount' => $request->payment['amount'] * 100,
@@ -865,6 +854,7 @@ class SalesController extends BaseController
 
                 $data['quantity'] = $detail->quantity;
                 $data['total'] = $detail->total;
+                $data['Net_price'] = $detail->price;
                 $data['TaxNet'] = $detail->TaxNet;
                 $data['code'] = $productsVariants->name . '-' . $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
@@ -875,6 +865,7 @@ class SalesController extends BaseController
                 $data['quantity'] = $detail->quantity;
                 $data['total'] = $detail->total;
                 $data['TaxNet'] = $detail->TaxNet;
+                $data['Net_price'] = $detail->price;
                 $data['code'] = $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
                 $data['unit_sale'] = $detail['product']['unitSale']->ShortName;
@@ -1377,9 +1368,166 @@ class SalesController extends BaseController
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
-    public function SaleLessReturns(Request $request, $id){
 
-        $this->authorizeForUser($request->user('api'), 'view', Sale::class);
+    public function SaleLessReturnsSave($id){
+        
+        $saleAll=$this->SaleLessReturnsNoJson($id);
+        $sale=$saleAll['sale'];
+        $saleDetails=$saleAll['details'];
+        $company = Setting::where('deleted_at', '=', null)->first();
+        $salePayment=PaymentSale::where('sale_id',$id)->first(); 
+        $order = new Sale;
+        $order->is_pos = 0;
+            $order->date = $sale['date'];
+            $order->client_id = $sale['client_id'];
+            $order->GrandTotal = $sale['GrandTotal'];
+            $order->subTotal=$sale['GrandTotal'];
+            $order->paid_amount=$sale['paid_amount'];
+            $order->warehouse_id = $sale['warehouse'];
+            $order->tax_rate = $sale['tax_rate'];
+            $order->TaxNet = $sale['TaxNet'];
+            $order->TaxWithheld = $sale['TaxWithheld'];
+            $order->discount = $sale['discount'];
+            $order->shipping = $sale['shipping'];
+            $order->statut = $sale['statut'];
+            $order->payment_statut = $sale['payment_status'];
+            $order->notes = $sale['notes'];
+            $order->refCreditCard = $sale['refCreditCard'];
+            $order->refTrasnsferedBank = $sale['refTrasnsferedBank'];
+            $order->type_invoice = $sale['type_invoice'];
+            $order->Ref = $sale['type_invoice'] =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
+            $order->refInvoice = $sale['type_invoice'] =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
+            $order->user_id = Auth::user()->id;
+            if($sale['type_invoice']=='CF'){
+                $company->update([
+                    'current_invoiceCF' =>  $order->refInvoice
+                ]);    
+            }else{
+                $company->update([
+                    'current_invoiceCCF' =>  $order->refInvoice
+                ]);
+            }
+            $order->save();
+            foreach($saleDetails as $orderDetail){
+                $orderDetails[] = [
+                    'date' => $orderDetail['date'],
+                    'sale_id' => $order->id,
+                    'quantity' => $orderDetail['quantity'],
+                    'price' => $orderDetail['price'],
+                    'TaxNet' => $orderDetail['unit_sale'],
+                    'tax_method' => $orderDetail['tax_method'],
+                    'discount' => $orderDetail['discount'],
+                    'discount_method' => $orderDetail['discount_method'],
+                    'product_id' => $orderDetail['product_id'],
+                    'product_variant_id' =>$orderDetail['product_variant_id'],
+                    'total' => $orderDetail['total'],
+                ];
+            }
+            SaleDetail::insert($orderDetails);
+
+                $sale = Sale::findOrFail($order->id);
+                // Check If User Has Permission view All Records
+                try {
+
+                    $total_paid = $sale->paid_amount;
+                    $due = $sale->GrandTotal - $total_paid;
+                    if ($due === 0.0 || $due < 0.0) {
+                        $payment_statut = 'paid';
+                    } else if ($due != $sale->GrandTotal) {
+                        $payment_statut = 'partial';
+                    } else if ($due == $sale->GrandTotal) {
+                        $payment_statut = 'unpaid';
+                    }
+                    
+                    if($salePayment->Reglement == 'Tarjeta de Credito'){
+                        $Client = Client::whereId($order->client_id)->first();
+                        Stripe\Stripe::setApiKey(config('app.STRIPE_SECRET'));
+
+                        $PaymentWithCreditCard = PaymentWithCreditCard::where('customer_id' ,$order->client_id)->first();
+                        if(!$PaymentWithCreditCard){
+                            // Create a Customer
+                            $customer = \Stripe\Customer::create([
+                                'source' => $request->token,
+                                'email' => $Client->email, 
+                            ]);
+
+                            // Charge the Customer instead of the card:
+                            $charge = \Stripe\Charge::create([
+                                'amount' => $sale->paid_amount * 100,
+                                'currency' => 'usd',
+                                'customer' => $customer->id,
+                            ]);
+                            $PaymentCard['customer_stripe_id'] =  $customer->id;
+
+                        }else{
+                            $customer_id = $PaymentWithCreditCard->customer_stripe_id;
+                            $charge = \Stripe\Charge::create([
+                                'amount' => $sale->paid_amount * 100,
+                                'currency' => 'usd',
+                                'customer' => $customer_id,
+                            ]);
+                            $PaymentCard['customer_stripe_id'] =  $customer_id;
+                        }
+
+                        $PaymentSale = new PaymentSale();
+                        $PaymentSale->sale_id = $order->id;
+                        $PaymentSale->Ref = $order->Ref;
+                        $PaymentSale->date = Carbon::now();
+                        $PaymentSale->Reglement = $salePayment->Reglement;
+                        $PaymentSale->montant = $sale->paid_amount;
+                        $PaymentSale->user_id = Auth::user()->id;
+                        $PaymentSale->save();
+    
+                        $sale->update([
+                            'paid_amount' => $total_paid,
+                            'payment_statut' => $payment_statut,
+                        'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
+                        ]);
+
+                        $PaymentCard['customer_id'] = $order->client_id;
+                        $PaymentCard['payment_id'] = $PaymentSale->id;
+                        $PaymentCard['charge_id'] = $charge->id;
+                        PaymentWithCreditCard::create($PaymentCard);
+
+                    // Paying Method Cash
+                    }else{
+
+                        PaymentSale::create([
+                            'sale_id' => $order->id,
+                            'Ref' => $order->Ref,
+                            'date' => Carbon::now(),
+                            'Reglement' => $salePayment->Reglement,
+                            'montant' => $sale->paid_amount,
+                            'user_id' => Auth::user()->id,
+                        ]);
+
+                        $sale->update([
+                            'paid_amount' => $total_paid,
+                            'payment_statut' => $payment_statut,
+                            'statut' => $payment_statut == 'paid' ? 'pending' : 'ordered',
+
+                        ]);
+                    }
+                } catch (Exception $e) {
+                    return response()->json(['message' => $e->getMessage()], 500);
+                }
+                $saleOriginal = Sale::findOrFail($id);
+                $saleOriginal->update([
+                    'deleted_at' => Carbon::now(),
+                    'statut' => $payment_statut,
+                    'statut'=>'nullByReturn'
+                ]);
+                $salePayment->update([
+                    'deleted_at' => Carbon::now(),
+                    'notes'=>'nullByReturn'
+                ]);
+        return response()->json(['success' => true,'newId'=>$order->id]);
+    }
+
+    public function SaleLessReturns($id){
+
+/*         $this->authorizeForUser($request->user('api'), 'view', Sale::class); */
         $role = Auth::user()->roles()->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $devoluciones=SaleReturn::where('ref_invoice',$id)->get();
@@ -1407,7 +1555,7 @@ class SalesController extends BaseController
         // Check If User Has Permission view All Records
         if (!$view_records) {
             // Check If User->id === sale->id
-            $this->authorizeForUser($request->user('api'), 'check_record', $sale_data);
+            /* $this->authorizeForUser($request->user('api'), 'check_record', $sale_data); */
         }
         $TaxWithheld=$sale_data->TaxWithheld;
         if($sale_data->TaxWithheld>0){
@@ -1506,9 +1654,141 @@ class SalesController extends BaseController
         return response()->json([
             'details' => $details,
             'sale' => $sale_details,
-            'company' => $company,
+            'company' => $company
         ]);
-
     }
+    public function SaleLessReturnsNoJson($id){
 
+        /*         $this->authorizeForUser($request->user('api'), 'view', Sale::class); */
+                $role = Auth::user()->roles()->first();
+                $view_records = Role::findOrFail($role->id)->inRole('record_view');
+                $devoluciones=SaleReturn::where('ref_invoice',$id)->get();
+                $totalDevolucion=0;
+                $totalDevolucionPaidAmount=0;
+                $detallesDevolucion=[];
+                foreach($devoluciones as $devolucion){
+                    foreach($devolucion['details'] as $detalle){
+                        $devolucionData['product_id']=$detalle->product_id;
+                        $devolucionData['price']=$detalle->price;
+                        $devolucionData['total']=$detalle->total;
+                        $devolucionData['TaxNet']=$detalle->TaxNet;
+                        $devolucionData['quantity']=$detalle->quantity;
+                        $detallesDevolucion[]=$devolucionData;
+                    }
+                    $totalDevolucion=$totalDevolucion+$devolucion->GrandTotal;
+                    $totalDevolucionPaidAmount=$totalDevolucionPaidAmount+$devolucion->paid_amount;
+        
+                } 
+                $sale_data = Sale::with('details.product.unitSale')
+                    ->where('deleted_at', '=', null)
+                    ->findOrFail($id);
+                $details = array();
+        
+                // Check If User Has Permission view All Records
+                if (!$view_records) {
+                    // Check If User->id === sale->id
+                    /* $this->authorizeForUser($request->user('api'), 'check_record', $sale_data); */
+                }
+                $TaxWithheld=$sale_data->TaxWithheld;
+                if($sale_data->TaxWithheld>0){
+                    $TaxWithheld=$TaxWithheld-round((($totalDevolucion / 1.13)* 0.01),2) ;
+                }
+                $TaxNet=$sale_data->TaxNet;
+                $TaxNet=$TaxNet-round((($totalDevolucion / 1.13)* 0.01),2) ;
+                $sale_details['Ref'] = $sale_data->Ref;
+                $sale_details['notes'] = $sale_data->notes;
+                $sale_details['TaxWithheld'] = $TaxWithheld;
+                $sale_details['date'] = $sale_data->date;
+                $sale_details['statut'] = $sale_data->statut;
+                $sale_details['warehouse'] = $sale_data->warehouse_id;
+                $sale_details['discount'] = $sale_data->discount;
+                $sale_details['shipping'] = $sale_data->shipping;
+                $sale_details['tax_rate'] = $sale_data->tax_rate;
+                $sale_details['TaxNet'] = $TaxNet;
+                $sale_details['refCreditCard'] = $sale_data->refCreditCard;
+                $sale_details['type_invoice'] = $sale_data->type_invoice;
+                $sale_details['refTrasnsferedBank'] = $sale_data->refTrasnsferedBank;
+                $sale_details['client_id'] = $sale_data->client_id;
+                $sale_details['GrandTotal'] = $sale_data->GrandTotal-$totalDevolucion;
+                $sale_details['paid_amount'] = $sale_data->paid_amount-$totalDevolucionPaidAmount;
+                $sale_details['due'] = $sale_details['GrandTotal'] - $sale_details['paid_amount'];
+                $sale_details['payment_status'] = $sale_data->payment_statut;    
+                foreach ($sale_data['details'] as $detail) {
+                        $data['product_id']=$detail->product_id;
+                    if ($detail->product_variant_id) {
+        
+                        $productsVariants = ProductVariant::where('product_id', $detail->product_id)
+                            ->where('id', $detail->product_variant_id)->first();
+        
+                        $data['quantity'] = $detail->quantity;
+                        $data['total'] = $detail->total;
+                        $data['code'] = $productsVariants->name . '-' . $detail['product']['code'];
+                        $data['name'] = $detail['product']['name'];
+                        $data['price'] = $detail->price;
+                        $data['unit_sale'] = $detail['product']['unitSale']->ShortName;
+                        $data['tax_method']=$detail->tax_method;
+                        $data['discount_method']=$detail->discount_method;
+                        $data['date']=$detail->date;
+
+                        $data['product_variant_id']=$detail->product_variant_id;        
+                    } else {
+                        $data['discount_method']=$detail->discount_method;
+                        $data['date']=$detail->date;
+                        $data['tax_method']=$detail['tax_method'];
+                        $data['quantity'] = $detail->quantity;
+                        $data['total'] = $detail->total;
+                        $data['code'] = $detail['product']['code'];
+                        $data['name'] = $detail['product']['name'];
+                        $data['price'] = $detail->price;
+                        $data['unit_sale'] = $detail['product']['unitSale']->ShortName;
+                        $data['product_variant_id']=$detail->product_variant_id;        
+
+                    }
+        
+                    if ($detail->discount_method == '2') {
+                        $data['DiscountNet'] = $detail->discount;
+                    } else {
+                        $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+                    }
+        
+                    $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
+                    $data['Unit_price'] = $detail->price;
+                    $data['discount'] = $detail->discount;
+        
+                    if ($detail->tax_method == '1') {
+                        $data['Net_price'] = $detail->price - $data['DiscountNet'];
+                        $data['taxe'] = $tax_price;
+                    } else {
+                        $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
+                        $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
+                    }
+        
+                    $details[] = $data;
+                }
+                $company = Setting::where('deleted_at', '=', null)->first();
+                $varUnset=[];
+                $contador=0;
+                foreach ($details as $detailSales) {
+                    foreach($detallesDevolucion as $detailLess){
+                        if($detailLess['product_id']===$detailSales['product_id']){
+                            if($detailLess['quantity']===$detailSales['quantity']){
+                                $varUnset[]=$contador;
+                            }else{
+                                $details[$contador]['quantity']=$detailSales['quantity']-$detailLess['quantity'];
+                                $details[$contador]['total']=$detailSales['total']-$detailLess['total'];
+                                $details[$contador]['taxe']=$detailSales['taxe']-$detailLess['TaxNet'];
+                            }
+                        }
+                    }
+                    $contador++;
+                }
+                foreach($varUnset as $unset){
+                    unset($details[$unset]);
+                }
+                return [
+                    'details' => $details,
+                    'sale' => $sale_details,
+                    'company' => $company,
+                ];
+            }
 }
