@@ -616,7 +616,7 @@
                     <div class="col-2"> </div>
                     <div class="col-6">
                        <span>
-                      VENT. {{ invoice_pos.sale.seller }}
+                      V. {{ invoice_pos.sale.seller }}
                       </span>
                     </div>
                   </div>
@@ -828,7 +828,7 @@
                   <div class="row" style="height:75px;">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-left:40px;margin-top:30px;">
-                      VENT. {{ invoice_pos.sale.seller }}
+                      V. {{ invoice_pos.sale.seller }}
                       </span>
                     </div>
                   </div>

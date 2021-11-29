@@ -331,11 +331,7 @@
                     <div class="col-2"> </div>
                     <div class="col-6">
                        <span>
-<<<<<<< HEAD
-                      {{ invoice_pos.sale.seller }}.
-=======
-                      VENT. {{ invoice_pos.sale.seller }}
->>>>>>> test
+                      V. {{ invoice_pos.sale.seller }}.
                       </span>
                     </div>
                   </div>
@@ -546,13 +542,8 @@
                   </div>
                   <div class="row" style="height:75px;">
                     <div class="col-12 padding-top padding-bottom">
-<<<<<<< HEAD
                       <span class="h5 text-uppercase" style="margin-left:60px;margin-top:50px;">
-                      {{ invoice_pos.sale.seller }}.
-=======
-                      <span class="h5 text-uppercase" style="margin-left:40px;margin-top:30px;">
-                      VENT. {{ invoice_pos.sale.seller }}
->>>>>>> test
+                      V. {{ invoice_pos.sale.seller }}.
                       </span>
                     </div>
                   </div>
