@@ -859,9 +859,7 @@ class SalesController extends BaseController
                 $data['code'] = $productsVariants->name . '-' . $detail['product']['code'];
                 $data['name'] = $detail['product']['name'];
                 $data['unit_sale'] = $detail['product']['unitSale']->ShortName;
-
             } else {
-
                 $data['quantity'] = $detail->quantity;
                 $data['total'] = $detail->total;
                 $data['TaxNet'] = $detail->TaxNet;
@@ -870,7 +868,6 @@ class SalesController extends BaseController
                 $data['name'] = $detail['product']['name'];
                 $data['unit_sale'] = $detail['product']['unitSale']->ShortName;
             }
-
             $details[] = $data;
         }
 
