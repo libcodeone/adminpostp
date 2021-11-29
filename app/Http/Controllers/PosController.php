@@ -80,12 +80,11 @@ class PosController extends BaseController
 
             $data = $request['details'];
                foreach ($data as $key => $value) {
-                $price= $value['Unit_price'];
+                $price= $value['Net_price'];
                 $TaxMethod = 2;
-                
                 if($client->final_consumer === 0){
-                    $TaxNetDetail = round($value['Unit_price'] -($value['Unit_price']/ 1.13), 2);
-                    $price= $value['Unit_price'] - $TaxNetDetail;
+                    $TaxNetDetail = round($value['Net_price'] -($value['Net_price']/ 1.13), 2);
+                    $price= $value['Net_price'] - $TaxNetDetail;
                     $TaxMethod = 1;
                 }
                 $orderDetails[] = [
@@ -101,7 +100,6 @@ class PosController extends BaseController
                     'discount' => $value['discount'],
                     'discount_method' => $value['discount_Method'],
                 ];
-
                 $unit = Product::with('unitSale')
                     ->where('id', $value['product_id'])
                     ->where('deleted_at', '=', null)
