@@ -358,10 +358,12 @@ class PosController extends BaseController
         $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
 
         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
-        $clients = Client::where('deleted_at', '=', null)->get(['id', 'name','phone','final_consumer']);
+        $clients = Client::where('deleted_at', '=', null)->get(['id', 'name','phone','final_consumer','NRC']);
         foreach($clients as &$client){
             $client->final_consumer=$client->final_consumer===0 ? 'CCF' :'CF';
+            $client->phone=$client->final_consumer==='CCF' ? $client->NRC :$client->phone;
         }
+        Log::debug($clients);
         $settings = Setting::where('deleted_at', '=', null)->first();
         if ($settings->warehouse_id) {
             if (Warehouse::where('id', $settings->warehouse_id)->where('deleted_at', '=', null)->first()) {

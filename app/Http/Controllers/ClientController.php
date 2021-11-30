@@ -8,6 +8,7 @@ use App\Models\Sale;
 use App\utils\helpers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use DB;
 use Illuminate\Http\Request;
@@ -187,9 +188,10 @@ class ClientController extends BaseController
 
     public function Get_Clients_Without_Paginate()
     {
-        $clients = Client::where('deleted_at', '=', null)->get(['id', 'name','phone','final_consumer']);
+        $clients = Client::where('deleted_at', '=', null)->get(['id', 'name','phone','final_consumer','NRC']);
         foreach($clients as &$client){
             $client->final_consumer=$client->final_consumer===0 ? 'CCF' :'CF';
+            $client->phone=$client->final_consumer==='CCF' ? $client->NRC :$client->phone;
         }
         return response()->json($clients);
     }
