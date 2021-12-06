@@ -305,6 +305,140 @@
                 </b-form-group>
               </validation-provider>
             </b-col>
+             <!-- Default Warehouse -->
+                  <b-col lg="12" md="12" sm="12">
+                    <b-form-group :label="$t('DefaultWarehouse')">
+                      <v-select
+                        v-model="user.warehouse_id"
+                        :reduce="label => label.value"
+                        :placeholder="$t('Choose_Warehouse')"
+                        :options="warehouses.map(warehouses => ({label: warehouses.name, value: warehouses.id}))"
+                      />
+                    </b-form-group>
+                  </b-col>
+
+                   <!-- Initial Invoice CF -->
+                  <b-col lg="4" md="4" sm="12">
+                    <validation-provider
+                      name="initCF"
+                      :rules="{ required: false}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('initCF')">
+                         <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="initCF-feedback"
+                          v-model="user.initCF"
+                          class="form-control"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="initCF-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+                  <!-- Current Invoice CF -->
+                  <b-col lg="4" md="4" sm="12">
+                    <validation-provider
+                      name="currentCF"
+                      :rules="{ required: false}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('currentCF')">
+                         <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="currentCF-feedback"
+                          v-model="user.currentCF"
+                          class="form-control"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="currentCF-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+                  <!-- Final Invoice CF -->
+                  <b-col lg="4" md="4" sm="12">
+                    <validation-provider
+                      name="finalCF"
+                      :rules="{ required: false}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('finalCF')">
+                         <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="finalCF-feedback"
+                          v-model="user.finalCF"
+                          class="form-control"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="finalCF-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+
+                  <!-- Initial Invoice CCF -->
+                  <b-col lg="4" md="4" sm="12">
+                    <validation-provider
+                      name="initCCF"
+                      :rules="{ required: false}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('initCCF')">
+                         <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="initCCF-feedback"
+                          v-model="user.initCCF"
+                          class="form-control"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="initCCF-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+                  <!-- Current Invoice CCF -->
+                  <b-col lg="4" md="4" sm="12">
+                    <validation-provider
+                      name="currentCCF"
+                      :rules="{ required: false}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('currentCCF')">
+                         <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="currentCCF-feedback"
+                          v-model="user.currentCCF"
+                          class="form-control"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="currentCCF-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+                   <!-- Final Invoice CCF -->
+                  <b-col lg="4" md="4" sm="12">
+                    <validation-provider
+                      name="finalCCF"
+                      :rules="{ required: false}"
+                      v-slot="validationContext"
+                    >
+                      <b-form-group :label="$t('finalCCF')">
+                         <b-form-input
+                          :state="getValidationState(validationContext)"
+                          aria-describedby="finalCCF-feedback"
+                          v-model="user.finalCCF"
+                          class="form-control"
+                        ></b-form-input>
+                        <b-form-invalid-feedback
+                          id="finalCCF-feedback"
+                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                      </b-form-group>
+                    </validation-provider>
+                  </b-col>
+
 
             <b-col md="12" class="mt-3">
               <b-button variant="primary" type="submit">{{$t('submit')}}</b-button>
@@ -350,6 +484,7 @@ export default {
       permissions: {},
       users: [],
       roles: [],
+      warehouses: [],
       data: new FormData(),
       user: {
         firstname: "",
@@ -361,7 +496,14 @@ export default {
         phone: "",
         statut: "",
         role_id: "",
-        avatar: ""
+        avatar: "",
+        initCCF: "",
+        currentCCF: "",
+        finalCCF: "",
+        initCF: "",
+        currentCF: "",
+        finalCF: "",
+        warehouse_id: ""
       }
     };
   },
@@ -630,6 +772,7 @@ export default {
         .then(response => {
           this.users = response.data.users;
           this.roles = response.data.roles;
+          this.warehouses = response.data.warehouses;
           this.totalRows = response.data.totalRows;
 
           // Complete the animation of theprogress bar.
@@ -684,6 +827,13 @@ export default {
       self.data.append("phone", self.user.phone);
       self.data.append("role", self.user.role_id);
       self.data.append("avatar", self.user.avatar);
+      self.data.append("initCCF", self.user.initCCF);
+      self.data.append("currentCCF", self.user.currentCCF);
+      self.data.append("finalCCF", self.user.finalCCF);
+      self.data.append("initCF", self.user.initCF);
+      self.data.append("currentCF", self.user.currentCF);
+      self.data.append("finalCF", self.user.finalCF);
+      self.data.append("warehouse_id", self.user.warehouse_id);
      
       axios
         .post("users", self.data)
@@ -716,6 +866,13 @@ export default {
       self.data.append("role", self.user.role_id);
       self.data.append("statut", self.user.statut);
       self.data.append("avatar", self.user.avatar);
+      self.data.append("initCCF", self.user.initCCF);
+      self.data.append("currentCCF", self.user.currentCCF);
+      self.data.append("finalCCF", self.user.finalCCF);
+      self.data.append("initCF", self.user.initCF);
+      self.data.append("currentCF", self.user.currentCF);
+      self.data.append("finalCF", self.user.finalCF);
+      self.data.append("warehouse_id", self.user.warehouse_id);
       self.data.append("_method", "put");
 
       axios
@@ -751,6 +908,13 @@ export default {
         statut: "",
         role_id: "",
         avatar: "",
+        initCCF: "",
+        currentCCF: "",
+        finalCCF: "",
+        initCF: "",
+        currentCF: "",
+        finalCF: "",
+        warehouse_id: ""
       };
       this.email_exist= "";
     },

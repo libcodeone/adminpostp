@@ -69,10 +69,12 @@ class UserController extends BaseController
             ->get();
 
         $roles = Role::where('deleted_at', null)->get(['id', 'name']);
+        $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
 
         return response()->json([
             'users' => $users,
             'roles' => $roles,
+            'warehouses' => $warehouses,
             'totalRows' => $totalRows,
         ]);
     }
@@ -160,8 +162,15 @@ class UserController extends BaseController
             $User->password  = Hash::make($request['password']);
             $User->avatar    = $filename;
             $User->role_id   = $request['role'];
-            $User->save();
+            $User->initCCF     = $request['initCCF'];
+            $User->currentCCF     = $request['currentCCF'];
+            $User->finalCCF     = $request['finalCCF'];
+            $User->initCF     = $request['initCF'];
+            $User->currentCF     = $request['currentCF'];
+            $User->finalCF     = $request['finalCF'];
+            $User->warehouse_id     = $request['warehouse_id'];
 
+            $User->save();
             $role_user = new role_user;
             $role_user->user_id = $User->id;
             $role_user->role_id = $request['role'];
@@ -231,6 +240,13 @@ class UserController extends BaseController
                 'avatar' => $filename,
                 'statut' => $request['statut'],
                 'role_id' => $request['role'],
+                'initCCF' => $request['initCCF'],
+                'currentCCF' => $request['currentCCF'],
+                'finalCCF' => $request['finalCCF'],
+                'initCF' => $request['initCF'],
+                'currentCF' => $request['currentCF'],
+                'finalCF' => $request['finalCF'],
+                'warehouse_id' => $request['warehouse_id'],
             ]);
 
             role_user::where('user_id' , $id)->update([
