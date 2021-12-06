@@ -1165,6 +1165,8 @@ export default {
           this.GrandTotal = this.formatNumber(this.sale.GrandTotal, 2);
           this.payment.amount = this.formatNumber(this.sale.GrandTotal, 2);
           this.payment.Reglement = "Efectivo";
+          this.BillingMethod = this.sale.final_consumer==0?1:0;
+          this.$forceUpdate();
         })
         .catch((response) => {
           setTimeout(() => {

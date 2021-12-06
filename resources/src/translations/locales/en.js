@@ -654,4 +654,11 @@ export default {
     BankTransfer:"Bank transfer",
     BigContributor:"Great contributor",
     LessReturns:"Less returns",
+    LessReturns:"Less returns",
+    initCCF: "Inicio de tiraje de CCF",
+    currentCCF: "Tiraje actual de CCF",
+    finalCCF: "Tiraje Final de CCF",
+    initCF: "Inicio de tiraje de Factura",
+    currentCF: "Tiraje actual de Factura",
+    finalCF: "Tiraje Final de Factura",
 };

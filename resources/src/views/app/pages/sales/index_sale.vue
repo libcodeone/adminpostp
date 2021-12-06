@@ -1060,7 +1060,7 @@ export default {
       Filter_date: "",
       Filter_status: "",
       Filter_Payment: "",
-      Filter_warehouse: "",
+      Filter_warehouse: this.currentUser.warehouse_id,
       customers: [],
       warehouses: [],
       sales: [],
@@ -1304,7 +1304,7 @@ export default {
       this.Filter_Payment = "";
       this.Filter_Ref = "";
       this.Filter_date = "";
-      (this.Filter_warehouse = ""), this.Get_Sales(this.serverParams.page);
+      (this.Filter_warehouse = this.currentUser.warehouse_id), this.Get_Sales(this.serverParams.page);
     },
     //------------------------------Formetted Numbers -------------------------\\
     formatNumber(number, dec) {

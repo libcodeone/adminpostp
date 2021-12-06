@@ -1829,6 +1829,7 @@ export default {
       this.sale.TaxNet = 0;
       this.sale.shipping = 0;
       this.sale.discount = 0;
+      this.sale.warehouse_id = this.currentUser.warehouse_id;
       this.GrandTotal = 0;
       this.total = 0;
       this.category_id = "";
@@ -1950,11 +1951,12 @@ export default {
       axios
         .get("pos/GetELementPos")
         .then(response => {
+          console.log(this.currentUser);
           this.clients = response.data.clients;
           this.warehouses = response.data.warehouses;
           this.categories = response.data.categories;
           this.brands = response.data.brands;
-          this.sale.warehouse_id = response.data.defaultWarehouse;
+          this.sale.warehouse_id = this.currentUser.warehouse_id;
           this.sale.client_id = response.data.defaultClient;
           this.getProducts();
           this.paginate_Brands(this.brand_perPage, 0);

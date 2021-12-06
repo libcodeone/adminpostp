@@ -18,8 +18,9 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'firstname', 'lastname', 'username', 'email', 'password', 'phone', 'statut', 'avatar', 'role_id',
+        'warehouse_id', 'initCCF', 'currentCCF', 'finalCCF','initCF', 'currentCF','finalCF'
     ];
-
+ 
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -61,6 +62,10 @@ class User extends Authenticatable
             return $this->roles->contains('name', $role);
         }
         return !!$role->intersect($this->roles)->count();
+    }
+    public function warehouse()
+    {
+        return $this->belongsTo('App\Models\Warehouse');
     }
 
 }

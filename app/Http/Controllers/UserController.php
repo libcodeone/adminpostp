@@ -8,6 +8,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Models\role_user;
 use App\Models\product_warehouse;
+use App\Models\Warehouse;
 use App\utils\helpers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -87,6 +88,13 @@ class UserController extends BaseController
         $user['logo'] = Setting::first()->logo;
         $user['footer'] = Setting::first()->footer;
         $user['developed_by'] = Setting::first()->developed_by;
+        $user['initCCF'] = Auth::user()->initCCF;
+        $user['currentCCF'] = Auth::user()->currentCCF;
+        $user['finalCCF'] = Auth::user()->finalCCF;
+        $user['initCF'] = Auth::user()->initCF;
+        $user['currentCF'] = Auth::user()->currentCF;
+        $user['finalCF'] = Auth::user()->finalCF;
+        $user['warehouse_id'] = Auth::user()->warehouse_id;
         $permissions = Auth::user()->roles()->first()->permissions->pluck('name');
         $products_alerts = product_warehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
             ->whereRaw('qte <= stock_alert')
@@ -294,6 +302,13 @@ class UserController extends BaseController
             'phone' => $request['phone'],
             'password' => $pass,
             'avatar' => $filename,
+            'initCCF' => $request['initCCF'],
+            'currentCCF' => $request['currentCCF'],
+            'finalCCF' => $request['finalCCF'],
+            'initCF' => $request['initCF'],
+            'finalCF' => $request['finalCF'],
+            'warehouse_id' => $request['warehouse_id'],
+
 
         ]);
 
@@ -344,7 +359,12 @@ class UserController extends BaseController
     public function GetInfoProfile(Request $request)
     {
         $data = Auth::user();
-        return response()->json(['success' => true, 'user' => $data]);
+        if (!$data->warehouse_id) {
+            $item['warehouse_id'] = '';
+        }
+        $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
+
+        return response()->json(['success' => true, 'user' => $data,'warehouses' => $warehouses]);
     }
 
 }

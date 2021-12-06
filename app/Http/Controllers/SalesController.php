@@ -164,6 +164,7 @@ class SalesController extends BaseController
             $order = new Sale;
             $client = Client::findOrFail($request->client_id);
             $company = Setting::where('deleted_at', '=', null)->first();
+            $user = Auth::user();
             $taxRate = 0;
             $TaxNet = 0;
             $TaxWithheld = 0;
@@ -196,16 +197,16 @@ class SalesController extends BaseController
             $order->refCreditCard = $request->refCreditCard;
             $order->refTrasnsferedBank = $request->refTrasnsferedBank;
             $order->type_invoice = $request->type_invoice;
-            $order->Ref = $request->type_invoice =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
-            $order->refInvoice = $request->type_invoice =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
+            $order->Ref = $request->type_invoice =='CF' ? $user['currentCF']+1 : $user['currentCCF']+1;
+            $order->refInvoice = $request->type_invoice =='CF' ? $user['currentCF']+1 : $user['currentCCF']+1;
             $order->user_id = Auth::user()->id;
             if($request['type_invoice']=='CF'){
-                $company->update([
-                    'current_invoiceCF' =>  $order->refInvoice
+                Auth::user()->update([
+                    'currentCF' =>  $order->refInvoice
                 ]);    
             }else{
                 $company->update([
-                    'current_invoiceCCF' =>  $order->refInvoice
+                    'currentCCF' =>  $order->refInvoice
                 ]);
             }
             $order->save();
@@ -575,13 +576,14 @@ class SalesController extends BaseController
          $this->authorizeForUser($request->user('api'), 'update', Sale::class);
          $current_Sale = Sale::findOrFail($id);
          $company = Setting::where('deleted_at', '=', null)->first();
+         $user = Auth::user();
         $payments_sale=PaymentSale::where('deleted_at', '=', null)->where('sale_id',$id)->get();
          $payment_statut = 'paid';
          
          if($request['amount']>0){
             $PaymentSale = new PaymentSale();
                 $PaymentSale->sale_id = $id;
-                $PaymentSale->Ref = $request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
+                $PaymentSale->Ref = $request['type_invoice']=='CF' ? $user['currentCF']+1 : $user['currentCCF']+1;
                 $PaymentSale->date = Carbon::now();
                 $PaymentSale->Reglement = $request['Reglement'];
                 $PaymentSale->montant = $request['amount'];
@@ -601,10 +603,10 @@ class SalesController extends BaseController
                         'refTrasnsferedBank' => $request['RefTransfer'],
                         'refCreditCard' => $request['RefCreditCard'],
                         'type_invoice' => $request['type_invoice'],
-                        'Ref' => $request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1,
-                        'refInvoice' =>$request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1,
+                        'Ref' => $request['type_invoice']=='CF' ? $user['currentCF']+1 : $user['currentCCF']+1,
+                        'refInvoice' =>$request['type_invoice']=='CF' ? $user['currentCF']+1 : $user['currentCCF']+1,
                     ]);
-                    $invoiceRef=$request['type_invoice']=='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
+                    $invoiceRef=$request['type_invoice']=='CF' ? $user['currentCF']+1 : $user['currentCCF']+1;
                     if($request['type_invoice']=='CF'){
                         $company->update([
                             'current_invoiceCF' => $current_Sale['refInvoice']
@@ -1372,6 +1374,7 @@ class SalesController extends BaseController
         $sale=$saleAll['sale'];
         $saleDetails=$saleAll['details'];
         $company = Setting::where('deleted_at', '=', null)->first();
+        $user = Auth::user();
         $salePayment=PaymentSale::where('sale_id',$id)->first(); 
         $order = new Sale;
         $order->is_pos = 0;
@@ -1392,8 +1395,8 @@ class SalesController extends BaseController
             $order->refCreditCard = $sale['refCreditCard'];
             $order->refTrasnsferedBank = $sale['refTrasnsferedBank'];
             $order->type_invoice = $sale['type_invoice'];
-            $order->Ref = $sale['type_invoice'] =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
-            $order->refInvoice = $sale['type_invoice'] =='CF' ? $company['current_invoiceCF']+1 : $company['current_invoiceCCF']+1;
+            $order->Ref = $sale['type_invoice'] =='CF' ? $user['currentCF']+1 : $user['currentCCF']+1;
+            $order->refInvoice = $sale['type_invoice'] =='CF' ? $user['currentCF']+1 : $user['currentCCF']+1;
             $order->user_id = Auth::user()->id;
             if($sale['type_invoice']=='CF'){
                 $company->update([
