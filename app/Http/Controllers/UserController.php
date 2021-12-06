@@ -306,6 +306,7 @@ class UserController extends BaseController
             'currentCCF' => $request['currentCCF'],
             'finalCCF' => $request['finalCCF'],
             'initCF' => $request['initCF'],
+            'currentCF' => $request['currentCF'],
             'finalCF' => $request['finalCF'],
             'warehouse_id' => $request['warehouse_id'],
 
