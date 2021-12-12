@@ -1488,7 +1488,7 @@ export default {
           // Complete the animation of theprogress bar.
           NProgress.done();
         }else{
-          if (this.details.length < 14) {
+          if (this.details.length < 13) {
             if (this.details.length > 0) {
               this.order_detail_id();
             } else if (this.details.length === 0) {
