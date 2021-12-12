@@ -1488,12 +1488,17 @@ export default {
           // Complete the animation of theprogress bar.
           NProgress.done();
         }else{
-          if (this.details.length > 0) {
-            this.order_detail_id();
-          } else if (this.details.length === 0) {
-            this.product.detail_id = 1;
+          if (this.details.length < 14) {
+            if (this.details.length > 0) {
+              this.order_detail_id();
+            } else if (this.details.length === 0) {
+              this.product.detail_id = 1;
+            }
+            this.details.push(this.product);
+          }else{
+            this.makeToast("warning", this.$t("max13"), this.$t("Warning"));
+            NProgress.done();
           }
-          this.details.push(this.product);
         }
         this.$refs.SearchProducts.focus();
     },
