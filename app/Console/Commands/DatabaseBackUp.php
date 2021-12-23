@@ -43,9 +43,9 @@ class DatabaseBackUp extends Command
             @unlink($path);
         } 
         
-        $filename = "backup-" . Carbon::now()->format('Y-m-d') . ".sql";  
-        $command = "".env('DUMP_PATH')." --user=" . env('DB_USERNAME') . " --password=" . env('DB_PASSWORD') . " " . env('DB_DATABASE') . "  > " . storage_path() . "/app/public/backup/" . $filename;
-        // //$command = "".env('DUMP_PATH')." --user=" . env('DB_USERNAME') . " --password=" . env('DB_PASSWORD') . " --host=" . env('DB_HOST') . " " . env('DB_DATABASE') . "  > " . storage_path() . "/app/public/backup/" . $filename;
+        $filename = "backup" . ".sql";  
+        $command = "".env('DUMP_PATH')." -u " . env('DB_USERNAME') . " -p " . env('DB_PASSWORD')  . " -h " . env('DB_HOST') . " " . env('DB_DATABASE') . "  > " . storage_path() . "/app/public/backup/" . $filename;
+        // $command = "".env('DUMP_PATH')." --user=" . env('DB_USERNAME') . " --password=" . env('DB_PASSWORD') . " --host=" . env('DB_HOST') . " " . env('DB_DATABASE') . "  > " . storage_path() . "/app/public/backup/" . $filename;
 
         $returnVar = NULL;
         $output = NULL;
