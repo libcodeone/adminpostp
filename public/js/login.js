@@ -41337,10 +41337,10 @@ if(pending.length==1)next();
 }();
 
 /**
-   * (Internal) Applies css properties to an element, similar to the jQuery 
+   * (Internal) Applies css properties to an element, similar to the jQuery
    * css method.
    *
-   * While this helper does assist with vendor prefixed property names, it 
+   * While this helper does assist with vendor prefixed property names, it
    * does not perform any manipulation of values prior to setting styles.
    */
 
@@ -41436,8 +41436,8 @@ element.className=newList.substring(1,newList.length-1);
 }
 
 /**
-   * (Internal) Gets a space separated list of the class names on the element. 
-   * The list is wrapped with a single space on each end to facilitate finding 
+   * (Internal) Gets a space separated list of the class names on the element.
+   * The list is wrapped with a single space on each end to facilitate finding
    * matches within the list.
    */
 
@@ -44095,15 +44095,15 @@ Popper.Defaults=Defaults;
 /*! no static exports found */
 /***/function node_modulesPortalVueDistPortalVueCommonJs(module,exports,__webpack_require__){
 
-/*! 
-  * portal-vue © Thorsten Lünborg, 2019 
-  * 
+/*!
+  * portal-vue © Thorsten Lünborg, 2019
+  *
   * Version: 2.1.7
-  * 
-  * LICENCE: MIT 
-  * 
+  *
+  * LICENCE: MIT
+  *
   * https://github.com/linusborg/portal-vue
-  * 
+  *
  */
 
 
@@ -48646,7 +48646,7 @@ var _e2=function e(){return (_e2=Object.assign||function(e){for(var t,r=1,s=argu
 /***/function node_modulesVueI18nDistVueI18nEsmJs(module,__webpack_exports__,__webpack_require__){
 __webpack_require__.r(__webpack_exports__);
 /*!
- * vue-i18n v8.24.3 
+ * vue-i18n v8.24.3
  * (c) 2021 kazuya kawaguchi
  * Released under the MIT License.
  */
@@ -71016,7 +71016,7 @@ return __webpack_require__.e(/*! import() | detail_purchase */"detail_purchase")
 
 //Sale
 {
-path:"/app/sales",
+ 
 component:function component(){
 return __webpack_require__.e(/*! import() | sales */"sales").then(__webpack_require__.bind(null,/*! ./views/app/pages/sales */"./resources/src/views/app/pages/sales/index.vue"));
 },

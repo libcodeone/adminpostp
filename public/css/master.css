@@ -44,3 +44,7 @@
       -webkit-transform: rotate(360deg);
     }
   }
+
+  .multiselect__content-wrapper{
+    z-index: 1000;
+  }

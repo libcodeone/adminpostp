@@ -133,7 +133,9 @@ class ProductsController extends BaseController
                 'code.required' => 'This field is required',
             ]);
 
+
             \DB::transaction(function () use ($request) {
+
 
                 //-- Create New Product
                 $Product = new Product;
@@ -143,7 +145,6 @@ class ProductsController extends BaseController
                 $Product->code = $request['code'];
                 $Product->Type_barcode = $request['Type_barcode'];
                 $Product->price = $request['price'];
-                $Product->category_id = $request['category_id'];
                 $Product->brand_id = $request['brand_id'];
                 $Product->TaxNet = $request['TaxNet'] ? $request['TaxNet'] : 0;
                 $Product->tax_method = $request['tax_method'];
@@ -172,6 +173,10 @@ class ProductsController extends BaseController
 
                 $Product->image = $filename;
                 $Product->save();
+
+                 if ($request->get('category_id')){
+                    $Product->categories()->sync($request['category_id']);
+                }
 
                 // Store Variants Product
                 if ($request['is_variant'] == 'true') {
@@ -780,7 +785,7 @@ class ProductsController extends BaseController
             })->where('product_warehouse.deleted_at', null)->get();
 
         $data = [];
-        
+
         if ($product_warehouse_data->isNotEmpty()) {
 
             foreach ($product_warehouse_data as $product_warehouse) {
@@ -992,7 +997,7 @@ class ProductsController extends BaseController
                 'status' => false,
             ]);
         } else {
-            $data = array(); 
+            $data = array();
             $rowcount = 0;
             if (($handle = fopen($file_upload, "r")) !== false) {
 
@@ -1031,7 +1036,7 @@ class ProductsController extends BaseController
                 } else {
                     $brand_id = null;
                 }
-                 
+
                 $Product = new Product;
                 $Product->name = $value['name'] == '' ? null : $value['name'];
                 $Product->code = $this->generate_random_code();
@@ -1068,7 +1073,7 @@ class ProductsController extends BaseController
                             // $order->items = 1;
                             // $order->user_id = Auth::user()->id;
                             // $order->save();
-                            
+
                             // //-- Add AdjustmentDetail
                             // $orderDetails[] = [
                             //     'adjustment_id' => $order->id,
@@ -1137,5 +1142,5 @@ class ProductsController extends BaseController
 
 
 
-   
+
 }

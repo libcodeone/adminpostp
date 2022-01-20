@@ -65,20 +65,16 @@
                 </b-col>
 
                 <!-- Category -->
-                <b-col md="6" class="mb-2">
-                  <validation-provider name="category" :rules="{ required: true}">
+                <b-col md="6" class="mb-2"><div>
+                  <validation-provider name="categories" :rules="{ required: true}">
                     <b-form-group slot-scope="{ valid, errors }" :label="$t('Categorie')">
-                      <v-select
-                        :class="{'is-invalid': !!errors.length}"
-                        :state="errors[0] ? false : (valid ? true : null)"
-                        :reduce="label => label.value"
-                        :placeholder="$t('Choose_Category')"
-                        v-model="product.category_id"
-                        :options="categories.map(categories => ({label: categories.name, value: categories.id}))"
-                      />
+
+                    <multiselect v-model="categories_id" tag-placeholder="Add this as new tag" placeholder="Search or add a tag" label="name" track-by="id" :options="categories" :multiple="true" :taggable="true" @tag="addTag"></multiselect>
+                    <pre class="language-json"><code>{{ categories_id }}</code></pre>
                       <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
                     </b-form-group>
                   </validation-provider>
+                  </div>
                 </b-col>
 
                 <!-- Brand  -->
@@ -366,9 +362,11 @@
 
 
 <script>
+
 import VueUploadMultipleImage from "vue-upload-multiple-image";
 import VueTagsInput from "@johmun/vue-tags-input";
 import NProgress from "nprogress";
+import Multiselect from 'vue-multiselect';
 
 export default {
   metaInfo: {
@@ -396,7 +394,7 @@ export default {
         cost: "",
         price: "",
         brand_id: "",
-        category_id: "",
+        category_id: [],
         TaxNet: "0",
         tax_method: "1",
         unit_id: "",
@@ -407,11 +405,13 @@ export default {
         note: "",
         is_variant: false
       },
+      categories_id: [] ,
       code_exist: ""
     };
   },
 
   components: {
+    Multiselect,
     VueUploadMultipleImage,
     VueTagsInput
   },
@@ -430,6 +430,16 @@ export default {
           this.Create_Product();
         }
       });
+    },
+
+    //--- Multiple select
+    addTag (newTag) {
+      const tag = {
+        name: newTag,
+        id: newTag.substring(0, 2) + Math.floor((Math.random() * 10000000))
+      }
+      this.categories.push(tag)
+      this.categories_id.push(tag)
     },
 
     //------ Toast
@@ -533,6 +543,7 @@ export default {
 
     //------------------------------ Create new Product ------------------------------\\
     Create_Product() {
+      console.log("creando producto")
       // Start the progress bar.
       NProgress.start();
       NProgress.set(0.1);
@@ -559,6 +570,13 @@ export default {
             self.data.append("images[" + k + "][" + key + "]", value);
           });
         }
+      }
+
+
+      let categories = self.categories_id;
+      for (let l = 0; l < categories.length ; l++){
+        self.data.append("category_id[" + l + "]", self.categories[l].id);
+        self.product.category_id.push(categories[l].id);
       }
 
       // Send Data with axios

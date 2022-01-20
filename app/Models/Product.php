@@ -50,10 +50,10 @@ class Product extends Model
         return $this->belongsTo('App\Models\QuotationDetail');
     }
 
-    public function category()
-    {
-        return $this->belongsTo('App\Models\Category');
+    public function categories(){
+        return $this->belongsToMany('App\Models\Category')->withTimestamps();
     }
+
 
     public function unit()
     {
