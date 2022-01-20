@@ -70,7 +70,6 @@
                     <b-form-group slot-scope="{ valid, errors }" :label="$t('Categorie')">
 
                     <multiselect v-model="categories_id" tag-placeholder="Add this as new tag" placeholder="Search or add a tag" label="name" track-by="id" :options="categories" :multiple="true" :taggable="true" @tag="addTag"></multiselect>
-                    <pre class="language-json"><code>{{ categories_id }}</code></pre>
                       <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
                     </b-form-group>
                   </validation-provider>
