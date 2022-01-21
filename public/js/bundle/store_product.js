@@ -2320,7 +2320,6 @@ function _arrayWithHoles(arr){if(Array.isArray(arr))return arr;}
 //
 //
 //
-//
 
 
 
@@ -2927,23 +2926,6 @@ expression:
 
 _vm._v(" "),
 _c(
-"pre",
-{
-staticClass:
-"language-json"},
-
-[
-_c("code",[
-_vm._v(
-_vm._s(
-_vm.categories_id))])]),
-
-
-
-
-
-_vm._v(" "),
-_c(
 "b-form-invalid-feedback",
 [
 _vm._v(
@@ -2959,7 +2941,7 @@ _vm._s(errors[0]))])],
 
 null,
 false,
-3398871795)})],
+3465678993)})],
 
 
 
