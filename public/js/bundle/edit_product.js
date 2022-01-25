@@ -2003,6 +2003,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */var _johmun_vue_tags_input__WEBPACK_IMPORTED_MODULE_1___default=/*#__PURE__*/__webpack_require__.n(_johmun_vue_tags_input__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */var nprogress__WEBPACK_IMPORTED_MODULE_2__=__webpack_require__(/*! nprogress */"./node_modules/nprogress/nprogress.js");
 /* harmony import */var nprogress__WEBPACK_IMPORTED_MODULE_2___default=/*#__PURE__*/__webpack_require__.n(nprogress__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */var vue_multiselect__WEBPACK_IMPORTED_MODULE_3__=__webpack_require__(/*! vue-multiselect */"./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
+/* harmony import */var vue_multiselect__WEBPACK_IMPORTED_MODULE_3___default=/*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_3__);
 function _slicedToArray(arr,i){return _arrayWithHoles(arr)||_iterableToArrayLimit(arr,i)||_unsupportedIterableToArray(arr,i)||_nonIterableRest();}
 
 function _nonIterableRest(){throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");}
@@ -2379,13 +2381,7 @@ function _arrayWithHoles(arr){if(Array.isArray(arr))return arr;}
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
+
 
 
 
@@ -2427,10 +2423,12 @@ image:"",
 note:"",
 is_variant:false},
 
+categories_id:[],
 code_exist:""};
 
 },
 components:{
+Multiselect:vue_multiselect__WEBPACK_IMPORTED_MODULE_3___default.a,
 VueUploadMultipleImage:vue_upload_multiple_image__WEBPACK_IMPORTED_MODULE_0__["default"],
 VueTagsInput:_johmun_vue_tags_input__WEBPACK_IMPORTED_MODULE_1___default.a},
 
@@ -2509,11 +2507,13 @@ var _this2=this;
 
 var id=this.$route.params.id;
 axios.get("Products/".concat(id,"/edit")).then(function(response){
+console.log(response);
 _this2.product=response.data.product;
 _this2.variants=response.data.product.ProductVariant;
 _this2.images=response.data.product.images;
 _this2.categories=response.data.categories;
 _this2.brands=response.data.brands;
+_this2.categories_id=response.data.categories_id;
 _this2.units=response.data.units;
 _this2.units_sub=response.data.units_sub;
 _this2.Subcategories=response.data.Subcategories;
@@ -2584,6 +2584,13 @@ value=_ref8[1];
 self.data.append("images["+k+"]["+key+"]",value);
 });
 }
+}
+
+var categories=self.categories_id;
+console.log(categories);
+
+for(var l=0;l<categories.length;l++){
+self.data.append("category_id["+l+"]",categories[l].id);
 }
 
 self.data.append("_method","put");//send Data with axios
@@ -2996,52 +3003,32 @@ label:_vm.$t(
 
 
 [
-_c("v-select",{
-class:{
-"is-invalid":!!errors.length},
-
+_c("multiselect",{
 attrs:{
-state:errors[0]?
-false:
-valid?
-true:
-null,
-reduce:function reduce(
-label)
-{
-return label.value;
-},
-placeholder:_vm.$t(
-"Choose_Category"),
+"tag-placeholder":
+"Add this as new tag",
+placeholder:
+"Search or add a tag",
+label:"name",
+"track-by":"id",
+options:
+_vm.categories,
+multiple:true,
+taggable:true},
 
-options:_vm.categories.map(
-function(
-categories)
-{
-return {
-label:
-categories.name,
-value:
-categories.id};
-
-})},
-
+on:{
+tag:_vm.addTag},
 
 model:{
 value:
-_vm.product.
-category_id,
+_vm.categories_id,
 callback:function callback(
 $$v)
 {
-_vm.$set(
-_vm.product,
-"category_id",
-$$v);
-
+_vm.categories_id=$$v;
 },
 expression:
-"product.category_id"}}),
+"categories_id"}}),
 
 
 _vm._v(" "),
@@ -3061,7 +3048,7 @@ _vm._s(errors[0]))])],
 
 null,
 false,
-442498797)})],
+3465678993)})],
 
 
 

@@ -30,7 +30,15 @@ class ProductsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEve
                 $qte = 0;
                 $item['code'] = $product->code;
                 $item['name'] = $product->name;
-                $item['category'] = $product['category']->name;
+                if(isset($product->categories[0])){
+                    $categoriesProduct = "";
+                    foreach ($product->categories as $itemCategory){
+                        $categoriesProduct .=  $itemCategory->name . ', ';
+                    }
+                    $item['category'] =  $categoriesProduct;
+                }else{
+                    $item['category'] =  "";
+                }
                 $item['brand'] = $product['brand'] ? $product['brand']->name : 'N/D';
                 foreach ($product_warehouse_data as $product_warehouse) {
                     $qte += $product_warehouse->qte;
