@@ -2900,9 +2900,9 @@ label:_vm.$t(
 _c("multiselect",{
 attrs:{
 "tag-placeholder":
-"Add this as new tag",
+"Agregar esta categoría",
 placeholder:
-"Search or add a tag",
+"Buscar o agregar categoría",
 label:"name",
 "track-by":"id",
 options:
@@ -2942,7 +2942,7 @@ _vm._s(errors[0]))])],
 
 null,
 false,
-3465678993)})],
+3334234547)})],
 
 
 
