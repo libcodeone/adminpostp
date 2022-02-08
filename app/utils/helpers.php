@@ -35,7 +35,7 @@ class helpers
                             $model->where($field['value'],'');
                         }elseif($field['param'] == 'many>1'){
                             $model->whereHas('categories', function (Builder $query)  use($request, $field){
-                                $query->where('category_id', '=', 70);
+                                $query->where($field['value'], '=', $request[$field['value']]);
                             }, '>=', 1)->get();
 
                         }else{

@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Stripe;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Builder;
 
 class PosController extends BaseController
 {
@@ -133,7 +134,7 @@ class PosController extends BaseController
                     }
                 }
             }
-            
+
             SaleDetail::insert($orderDetails);
 
             $sale = Sale::findOrFail($order->id);
@@ -261,13 +262,22 @@ class PosController extends BaseController
 
             // })
         // Filter
-            ->where(function ($query) use ($request) {
-                return $query->when($request->filled('category_id'), function ($query) use ($request) {
-                    return $query->whereHas('product', function ($q) use ($request) {
-                        $q->where('category_id', '=', $request->category_id);
+                ->where(function ($query) use ($request) {
+                    return $query->when($request->filled('category_id'), function ($query) use ($request) {
+                        return $query->whereHas('product', function ($q) use ($request) {
+                            $q->whereHas('categories', function (Builder $query)  use($request){
+                                $query->where('category_id', '=', $request->category_id);
+                            });
+                        });
                     });
-                });
-            })
+                })
+
+
+                    /* return $query->whereHas('product', function ($q) use ($request) {
+                        $q->whereHas('categories', function (Builder $query)  use($request){
+                            $query->where('category_id', '=', $request->category_id);
+                        }, '>=', 1)->get();
+                    }); */
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('brand_id'), function ($query) use ($request) {
                     return $query->whereHas('product', function ($q) use ($request) {
