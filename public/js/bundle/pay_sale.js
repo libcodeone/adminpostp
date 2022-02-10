@@ -4181,7 +4181,7 @@ _vm._s(detail_invoice.code)+
 
 
 
-_vm._v(" - \n                  "),
+_vm._v(" -\n                  "),
 _c(
 "span",
 {staticClass:"h5 text-uppercase"},
@@ -4812,8 +4812,10 @@ _c(
 {staticClass:"h5 text-uppercase"},
 [
 _vm._v(
-"\n                      "+
-_vm._s(_vm.sale.client_giro)+
+"\n                      Giro: "+
+_vm._s(
+_vm.invoice_pos.sale.client_giro)+
+
 "\n                      ")])])])])]),
 
 
@@ -4885,7 +4887,7 @@ _vm._s(detail_invoice.code)+
 
 
 
-_vm._v(" - \n                  "),
+_vm._v(" -\n                  "),
 _c(
 "span",
 {staticClass:"h5 text-uppercase"},
@@ -5049,7 +5051,7 @@ staticStyle:{"margin-top":"14px"}},
 
 [
 _vm._v(
-"                      \n                      "+
+"\n                      "+
 _vm._s(
 _vm.formatNumber(
 _vm.invoice_pos.sale.taxe,
@@ -5085,7 +5087,7 @@ TaxWithheld,
 2))+
 
 
-" \n                      ")])])]),
+"\n                      ")])])]),
 
 
 

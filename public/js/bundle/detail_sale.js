@@ -6190,7 +6190,7 @@ detail_invoice.code)+
 
 
 _vm._v(
-" - \n                "),
+" -\n                "),
 
 _c(
 "span",
@@ -7069,9 +7069,11 @@ staticClass:
 
 [
 _vm._v(
-"\n                    "+
+"\n                    Giro: "+
 _vm._s(
-_vm.sale.
+_vm.
+invoice_pos.
+sale.
 client_giro)+
 
 "\n                    ")])])])])]),
@@ -7183,7 +7185,7 @@ detail_invoice.code)+
 
 
 _vm._v(
-" - \n                "),
+" -\n                "),
 
 _c(
 "span",
@@ -7416,7 +7418,7 @@ staticStyle:{
 
 [
 _vm._v(
-"                      \n                    "+
+"\n                    "+
 _vm._s(
 _vm.formatNumber(
 _vm.
@@ -7475,7 +7477,7 @@ TaxWithheld,
 2))+
 
 
-" \n                    ")])])]),
+"\n                    ")])])]),
 
 
 

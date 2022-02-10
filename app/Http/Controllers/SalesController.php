@@ -133,10 +133,10 @@ class SalesController extends BaseController
             $item['paid_amount'] = number_format($Sale['paid_amount'], 2, '.', '');
             $item['due'] = number_format($Sale['GrandTotal'] - $Sale['paid_amount'], 2, '.', '');
             $item['payment_status'] = $Sale['payment_statut'];
-            
+
             $data[] = $item;
         }
-        
+
         $stripe_key = config('app.STRIPE_KEY');
         $customers = client::where('deleted_at', '=', null)->get(['id', 'name']);
         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
@@ -203,7 +203,7 @@ class SalesController extends BaseController
             if($request['type_invoice']=='CF'){
                 Auth::user()->update([
                     'currentCF' =>  $order->refInvoice
-                ]);    
+                ]);
             }else{
                 $company->update([
                     'currentCCF' =>  $order->refInvoice
@@ -214,7 +214,7 @@ class SalesController extends BaseController
             foreach ($data as $key => $value) {
                 $price= $value['Unit_price'];
                 $TaxMethod = 2;
-                
+
                 if($client->final_consumer === 0){
                     $TaxNetDetail = round($value['Unit_price'] -($value['Unit_price']/ 1.13), 2);
                     $price= $value['Unit_price'] - $TaxNetDetail;
@@ -303,7 +303,7 @@ class SalesController extends BaseController
                             // Create a Customer
                             $customer = \Stripe\Customer::create([
                                 'source' => $request->token,
-                                'email' => $Client->email, 
+                                'email' => $Client->email,
                             ]);
                             // Charge the Customer instead of the card:
                             $charge = \Stripe\Charge::create([
@@ -331,7 +331,7 @@ class SalesController extends BaseController
                         $PaymentSale->montant = $request->payment['amount'];
                         $PaymentSale->user_id = Auth::user()->id;
                         $PaymentSale->save();
-    
+
                         $sale->update([
                             'paid_amount' => $total_paid,
                             'payment_statut' => $payment_statut,
@@ -366,7 +366,7 @@ class SalesController extends BaseController
                 } catch (Exception $e) {
                     return response()->json(['message' => $e->getMessage()], 500);
                 }
-                
+
             }
 
         }, 10);
@@ -514,7 +514,7 @@ class SalesController extends BaseController
                 }
                 $price= $value['Unit_price'];
                 $TaxMethod = 2;
-                
+
                 if($client->final_consumer === 0){
                     $TaxNetDetail = round($value['Unit_price'] -($value['Unit_price']/ 1.13), 2);
                     $price= $value['Unit_price'] - $TaxNetDetail;
@@ -579,7 +579,7 @@ class SalesController extends BaseController
          $user = Auth::user();
         $payments_sale=PaymentSale::where('deleted_at', '=', null)->where('sale_id',$id)->get();
          $payment_statut = 'paid';
-         
+
          if($request['amount']>0){
             $PaymentSale = new PaymentSale();
                 $PaymentSale->sale_id = $id;
@@ -610,20 +610,20 @@ class SalesController extends BaseController
                     if($request['type_invoice']=='CF'){
                         $company->update([
                             'current_invoiceCF' => $current_Sale['refInvoice']
-                        ]);    
+                        ]);
                     }else{
                         $company->update([
                             'current_invoiceCCF' => $current_Sale['refInvoice']
                         ]);
                     }
-                    
+
         if($payments_sale){
              foreach($payments_sale as $paySale){
                 $paySale->Ref=$invoiceRef;
                 $paySale->update();
             }
          }
- 
+
          return response()->json(['success' => true]);
      }
     //------------- UPDATE STATUS SALE -----------
@@ -643,12 +643,12 @@ class SalesController extends BaseController
      public function destroy(Request $request, $id)
      {
          $this->authorizeForUser($request->user('api'), 'delete', Sale::class);
- 
+
          \DB::transaction(function () use ($id, $request) {
              $role = Auth::user()->roles()->first();
              $view_records = Role::findOrFail($role->id)->inRole('record_view');
              $Sale = Sale::findOrFail($id);
- 
+
              // Check If User Has Permission view All Records
              if (!$view_records) {
                  // Check If User->id === Sale->id
@@ -668,9 +668,9 @@ class SalesController extends BaseController
                  }
                  $Payment_Sale->delete();
              }
- 
+
          }, 10);
- 
+
          return response()->json(['success' => true]);
      }
 
@@ -761,7 +761,7 @@ class SalesController extends BaseController
         $sale_details['paid_amount'] = $sale_data->paid_amount;
         $sale_details['due'] = $sale_data->GrandTotal - $sale_data->paid_amount;
         $sale_details['payment_status'] = $sale_data->payment_statut;
-       
+
         foreach ($sale_data['details'] as $detail) {
             if ($detail->product_variant_id) {
 
@@ -1198,7 +1198,7 @@ class SalesController extends BaseController
 
     public function Elemens_Change_To_Sale(Request $request, $id)
     {
-        
+
         $this->authorizeForUser($request->user('api'), 'update', Quotation::class);
         $role = Auth::user()->roles()->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
@@ -1353,29 +1353,29 @@ class SalesController extends BaseController
         $receiverNumber = $sale['client']->phone;
         $message = "Dear" .' '.$sale['client']->name." \n We are contacting you in regard to a invoice #".$sale->Ref.' '.$url.' '. "that has been created on your account. \n We look forward to conducting future business with you.";
         try {
-  
+
             $account_sid = env("TWILIO_SID");
             $auth_token = env("TWILIO_TOKEN");
             $twilio_number = env("TWILIO_FROM");
-  
+
             $client = new Client_Twilio($account_sid, $auth_token);
             $client->messages->create($receiverNumber, [
-                'from' => $twilio_number, 
+                'from' => $twilio_number,
                 'body' => $message]);
-    
+
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
     public function SaleLessReturnsSave($id){
-        
+
         $saleAll=$this->SaleLessReturnsNoJson($id);
         $sale=$saleAll['sale'];
         $saleDetails=$saleAll['details'];
         $company = Setting::where('deleted_at', '=', null)->first();
         $user = Auth::user();
-        $salePayment=PaymentSale::where('sale_id',$id)->first(); 
+        $salePayment=PaymentSale::where('sale_id',$id)->first();
         $order = new Sale;
         $order->is_pos = 0;
             $order->date = $sale['date'];
@@ -1401,7 +1401,7 @@ class SalesController extends BaseController
             if($sale['type_invoice']=='CF'){
                 $company->update([
                     'current_invoiceCF' =>  $order->refInvoice
-                ]);    
+                ]);
             }else{
                 $company->update([
                     'current_invoiceCCF' =>  $order->refInvoice
@@ -1438,7 +1438,7 @@ class SalesController extends BaseController
                     } else if ($due == $sale->GrandTotal) {
                         $payment_statut = 'unpaid';
                     }
-                    
+
                     if($salePayment->Reglement == 'Tarjeta de Credito'){
                         $Client = Client::whereId($order->client_id)->first();
                         Stripe\Stripe::setApiKey(config('app.STRIPE_SECRET'));
@@ -1448,7 +1448,7 @@ class SalesController extends BaseController
                             // Create a Customer
                             $customer = \Stripe\Customer::create([
                                 'source' => $request->token,
-                                'email' => $Client->email, 
+                                'email' => $Client->email,
                             ]);
 
                             // Charge the Customer instead of the card:
@@ -1477,7 +1477,7 @@ class SalesController extends BaseController
                         $PaymentSale->montant = $sale->paid_amount;
                         $PaymentSale->user_id = Auth::user()->id;
                         $PaymentSale->save();
-    
+
                         $sale->update([
                             'paid_amount' => $total_paid,
                             'payment_statut' => $payment_statut,
@@ -1546,7 +1546,7 @@ class SalesController extends BaseController
             $totalDevolucion=$totalDevolucion+$devolucion->GrandTotal;
             $totalDevolucionPaidAmount=$totalDevolucionPaidAmount+$devolucion->paid_amount;
 
-        } 
+        }
         $sale_data = Sale::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
@@ -1583,7 +1583,7 @@ class SalesController extends BaseController
         $sale_details['paid_amount'] = $sale_data->paid_amount-$totalDevolucionPaidAmount;
         $sale_details['due'] = $sale_details['GrandTotal'] - $sale_details['paid_amount'];
         $sale_details['payment_status'] = $sale_data->payment_statut;
-       
+
         foreach ($sale_data['details'] as $detail) {
                 $data['product_id']=$detail->product_id;
             if ($detail->product_variant_id) {
@@ -1677,13 +1677,13 @@ class SalesController extends BaseController
                     }
                     $totalDevolucion=$totalDevolucion+$devolucion->GrandTotal;
                     $totalDevolucionPaidAmount=$totalDevolucionPaidAmount+$devolucion->paid_amount;
-        
-                } 
+
+                }
                 $sale_data = Sale::with('details.product.unitSale')
                     ->where('deleted_at', '=', null)
                     ->findOrFail($id);
                 $details = array();
-        
+
                 // Check If User Has Permission view All Records
                 if (!$view_records) {
                     // Check If User->id === sale->id
@@ -1712,14 +1712,14 @@ class SalesController extends BaseController
                 $sale_details['GrandTotal'] = $sale_data->GrandTotal-$totalDevolucion;
                 $sale_details['paid_amount'] = $sale_data->paid_amount-$totalDevolucionPaidAmount;
                 $sale_details['due'] = $sale_details['GrandTotal'] - $sale_details['paid_amount'];
-                $sale_details['payment_status'] = $sale_data->payment_statut;    
+                $sale_details['payment_status'] = $sale_data->payment_statut;
                 foreach ($sale_data['details'] as $detail) {
                         $data['product_id']=$detail->product_id;
                     if ($detail->product_variant_id) {
-        
+
                         $productsVariants = ProductVariant::where('product_id', $detail->product_id)
                             ->where('id', $detail->product_variant_id)->first();
-        
+
                         $data['quantity'] = $detail->quantity;
                         $data['total'] = $detail->total;
                         $data['code'] = $productsVariants->name . '-' . $detail['product']['code'];
@@ -1730,7 +1730,7 @@ class SalesController extends BaseController
                         $data['discount_method']=$detail->discount_method;
                         $data['date']=$detail->date;
 
-                        $data['product_variant_id']=$detail->product_variant_id;        
+                        $data['product_variant_id']=$detail->product_variant_id;
                     } else {
                         $data['discount_method']=$detail->discount_method;
                         $data['date']=$detail->date;
@@ -1741,20 +1741,20 @@ class SalesController extends BaseController
                         $data['name'] = $detail['product']['name'];
                         $data['price'] = $detail->price;
                         $data['unit_sale'] = $detail['product']['unitSale']->ShortName;
-                        $data['product_variant_id']=$detail->product_variant_id;        
+                        $data['product_variant_id']=$detail->product_variant_id;
 
                     }
-        
+
                     if ($detail->discount_method == '2') {
                         $data['DiscountNet'] = $detail->discount;
                     } else {
                         $data['DiscountNet'] = $detail->price * $detail->discount / 100;
                     }
-        
+
                     $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
                     $data['Unit_price'] = $detail->price;
                     $data['discount'] = $detail->discount;
-        
+
                     if ($detail->tax_method == '1') {
                         $data['Net_price'] = $detail->price - $data['DiscountNet'];
                         $data['taxe'] = $tax_price;
@@ -1762,7 +1762,7 @@ class SalesController extends BaseController
                         $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
                         $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
                     }
-        
+
                     $details[] = $data;
                 }
                 $company = Setting::where('deleted_at', '=', null)->first();

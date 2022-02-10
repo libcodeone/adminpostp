@@ -16,7 +16,7 @@
         placeholder: $t('Search_this_table'),
         enabled: true,
       }"
-        :select-options="{ 
+        :select-options="{
           enabled: true ,
           clearSelectionText: '',
         }"
@@ -114,7 +114,7 @@
                   {{$t('DownloadPdf')}}
                 </b-dropdown-item>
 
-               
+
 
                 <b-dropdown-item
                   title="Delete"
@@ -532,7 +532,7 @@
       </button>
     </b-modal>
 
-    
+
        <!-- Modal Show Invoice-->
       <b-modal
         hide-footer
@@ -638,11 +638,11 @@
                   {{ formatNumber(detail_invoice.quantity, 2) }}
                       </span>
                 </div>
-               
+
                 <div class="col-7">
                    <span class="h5 text-uppercase">
                   {{ detail_invoice.code }}
-                      </span> - 
+                      </span> -
                   <span class="h5 text-uppercase">
                   {{ detail_invoice.name }}
                       </span>
@@ -656,7 +656,7 @@
                       </span>
                       </div>
                   </div>
-                  
+
                 </div>
                 <div class="col-1"></div>
                 <div class="col-1"></div>
@@ -667,7 +667,7 @@
                 </div>
               </div>
               </div>
-              
+
               <div class="row" >
                 <div class="col-10">
                   <div class="row rounded">
@@ -707,7 +707,7 @@
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
-                    
+
                       </span>
                     </div>
                   </div>
@@ -715,7 +715,7 @@
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
-                     
+
                       </span>
                     </div>
                   </div>
@@ -730,14 +730,14 @@
                   <div class="row align-items-start">
                     <div class="col-6"></div>
                     <div class="col-6"></div>
-                  </div> 
+                  </div>
                   <div class="row align-items-end " style="height:120px">
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
                       {{ formatNumber(invoice_pos.sale.GrandTotal, 2) }}
                       </span>
-                      
+
                     </div>
                   </div>
                 </div>
@@ -874,8 +874,8 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase">
-                      {{ sale.client_giro }}
+                      <span class="h5 text-uppercase ml-2">
+                      Giro: {{ invoice_pos.sale.client_giro }}
                       </span>
                     </div>
                   </div>
@@ -897,11 +897,11 @@
                   {{ formatNumber(detail_invoice.quantity, 2) }}
                       </span>
                 </div>
-               
+
                 <div class="col-7">
                    <span class="h5 text-uppercase">
                   {{ detail_invoice.code }}
-                      </span> - 
+                      </span> -
                   <span class="h5 text-uppercase">
                   {{ detail_invoice.name }}
                       </span>
@@ -915,7 +915,7 @@
                       </span>
                       </div>
                   </div>
-                  
+
                 </div>
                 <div class="col-1"></div>
                 <div class="col-1"></div>
@@ -964,7 +964,7 @@
                   <div class="row">
                     <div class="col-8"></div>
                     <div class="col-4">
-                      <span class="h5 text-uppercase" style="margin-top:14px;">                      
+                      <span class="h5 text-uppercase" style="margin-top:14px;">
                       {{ formatNumber(invoice_pos.sale.taxe, 2) }}
                       </span>
                     </div>
@@ -973,7 +973,7 @@
                     <div class="col-8"></div>
                     <div class="col-4">
                       <span class="h5 text-uppercase" style="margin-top:15px;">
-                       {{ formatNumber(invoice_pos.sale.GrandTotal + invoice_pos.sale.TaxWithheld, 2) }} 
+                       {{ formatNumber(invoice_pos.sale.GrandTotal + invoice_pos.sale.TaxWithheld, 2) }}
                       </span>
                     </div>
 
@@ -1086,7 +1086,7 @@ export default {
           type_invoice: "",
           refInvoice: "",
           Reglement: "",
-          
+
         },
         details: [],
         setting: {
@@ -1279,7 +1279,7 @@ export default {
             this.Create_Payment();
           } else {
             this.Update_Payment();
-            
+
           }
         }
       });
@@ -1304,7 +1304,7 @@ export default {
       this.Filter_Payment = "";
       this.Filter_Ref = "";
       this.Filter_date = "";
-      // (this.Filter_warehouse = this.currentUser.warehouse_id), 
+      // (this.Filter_warehouse = this.currentUser.warehouse_id),
       this.Get_Sales(this.serverParams.page);
     },
     //------------------------------Formetted Numbers -------------------------\\
@@ -1653,9 +1653,9 @@ export default {
 
         this.Number_Order_Payment();
 
-                
+
         this.payment.montant = sale.due;
-        
+
         setTimeout(() => {
           // Complete the animation of the  progress bar.
           NProgress.done();

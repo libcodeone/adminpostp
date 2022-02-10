@@ -6221,7 +6221,7 @@ this.Filter_Client="";
 this.Filter_status="";
 this.Filter_Payment="";
 this.Filter_Ref="";
-this.Filter_date="";// (this.Filter_warehouse = this.currentUser.warehouse_id), 
+this.Filter_date="";// (this.Filter_warehouse = this.currentUser.warehouse_id),
 
 this.Get_Sales(this.serverParams.page);
 },
@@ -8841,7 +8841,7 @@ _vm._s(detail_invoice.code)+
 "\n                    ")]),
 
 
-_vm._v(" - \n                "),
+_vm._v(" -\n                "),
 _c("span",{staticClass:"h5 text-uppercase"},[
 _vm._v(
 "\n                "+
@@ -9373,11 +9373,15 @@ _c("div",{staticClass:"row"},[
 _c("div",{staticClass:"col-6"}),
 _vm._v(" "),
 _c("div",{staticClass:"col-6"},[
-_c("span",{staticClass:"h5 text-uppercase"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase ml-2"},
+[
 _vm._v(
-"\n                    "+
-_vm._s(_vm.sale.client_giro)+
+"\n                    Giro: "+
+_vm._s(_vm.invoice_pos.sale.client_giro)+
 "\n                    ")])])])])]),
+
 
 
 
@@ -9431,7 +9435,7 @@ _vm._s(detail_invoice.code)+
 "\n                    ")]),
 
 
-_vm._v(" - \n                "),
+_vm._v(" -\n                "),
 _c("span",{staticClass:"h5 text-uppercase"},[
 _vm._v(
 "\n                "+
@@ -9569,7 +9573,7 @@ staticStyle:{"margin-top":"14px"}},
 
 [
 _vm._v(
-"                      \n                    "+
+"\n                    "+
 _vm._s(
 _vm.formatNumber(
 _vm.invoice_pos.sale.taxe,
@@ -9603,7 +9607,7 @@ _vm.invoice_pos.sale.TaxWithheld,
 2))+
 
 
-" \n                    ")])])]),
+"\n                    ")])])]),
 
 
 

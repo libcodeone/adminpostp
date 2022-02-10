@@ -420,7 +420,7 @@
                     </b-form-group>
                   </b-col>
 
-                
+
 
                 <b-col md="12">
                   <b-form-group>
@@ -631,7 +631,7 @@ export default {
     ...mapGetters(["currentUser"])
   },
 
- 
+
 
   methods: {
 
@@ -660,7 +660,7 @@ export default {
     },
 
 
-  
+
     //--- Submit Validate Create Sale
     Submit_Sale() {
       this.$refs.create_sale.validate().then(success => {
@@ -1044,7 +1044,7 @@ export default {
             NProgress.done();
             this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
           });
-      
+
     },
     //--------------------------------- Create Sale -------------------------\\
     Create_Sale() {
