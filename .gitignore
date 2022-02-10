@@ -13,7 +13,6 @@
 /storage/*.key
 /storage/framework/sessions
 /vendor
-.env
 .env.backup
 composer.lock
 .phpunit.result.cache
