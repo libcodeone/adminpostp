@@ -7065,7 +7065,7 @@ _c(
 "span",
 {
 staticClass:
-"h5 text-uppercase"},
+"h5 text-uppercase ml-2"},
 
 [
 _vm._v(
