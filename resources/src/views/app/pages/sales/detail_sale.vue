@@ -463,7 +463,7 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase ml-2">
+                      <span class="h5 text-uppercase ml-1">
                       Giro: {{ invoice_pos.sale.client_giro }}
                       </span>
                     </div>
