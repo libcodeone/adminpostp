@@ -91,7 +91,6 @@
     "/js/bundle/vendors~edit_product~store_product.js": "/js/bundle/vendors~edit_product~store_product.js",
     "/js/bundle/vendors~largeSidebar.js": "/js/bundle/vendors~largeSidebar.js",
     "/js/bundle/vendors~largeSidebar~pay_sale~pos.js": "/js/bundle/vendors~largeSidebar~pay_sale~pos.js",
-    "/js/bundle/vendors~store_product.js": "/js/bundle/vendors~store_product.js",
     "/js/bundle/vendors~vue-perfect-scrollbar.js": "/js/bundle/vendors~vue-perfect-scrollbar.js",
     "/js/bundle/warehouse_report.js": "/js/bundle/warehouse_report.js"
 }

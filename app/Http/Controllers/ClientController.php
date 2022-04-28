@@ -31,8 +31,8 @@ class ClientController extends BaseController
         $dir = $request->SortType;
         $helpers = new helpers();
         // Filter fields With Params to retrieve
-        $columns = array(0 => 'name', 1 => 'code', 2 => 'phone', 3 => 'email', 4 => 'NIT', 5 => 'NRC', 6 => 'giro');
-        $param = array(0 => 'like', 1 => 'like', 2 => 'like', 3 => 'like', 4 => 'like', 5 => 'like', 6 => 'like');
+        $columns = array(0 => 'name', 1 => 'code', 2 => 'phone', 3 => 'email', 4 => 'NIT', 5 => 'DUI', 6 => 'NRC', 7 => 'giro');
+        $param = array(0 => 'like', 1 => 'like', 2 => 'like', 3 => 'like', 4 => 'like', 5 => 'like', 6 => 'like', 7 => 'like');
         $data = array();
 
         $clients = Client::where('deleted_at', '=', null);
@@ -46,6 +46,7 @@ class ClientController extends BaseController
                         ->orWhere('code', 'LIKE', "%{$request->search}%")
                         ->orWhere('phone', 'LIKE', "%{$request->search}%")
                         ->orWhere('NIT', 'LIKE', "%{$request->search}%")
+                        ->orWhere('DUI', 'LIKE', "%{$request->search}%")
                         ->orWhere('NRC', 'LIKE', "%{$request->search}%")
                         ->orWhere('giro', 'LIKE', "%{$request->search}%")
                         ->orWhere('email', 'LIKE', "%{$request->search}%");
@@ -78,6 +79,7 @@ class ClientController extends BaseController
             'country' => $request['country'],
             'city' => $request['city'],
             'NIT' => $request['NIT'],
+            'DUI' => $request['DUI'],
             'NRC' => $request['NRC'],
             'giro' => $request['giro'],
             'big_consumer' => $request['big_consumer'],
@@ -102,6 +104,7 @@ class ClientController extends BaseController
             'country' => $request['country'],
             'city' => $request['city'],
             'NIT' => $request['NIT'],
+            'DUI' => $request['DUI'],
             'NRC' => $request['NRC'],
             'giro' => $request['giro'],
             'big_consumer' => $request['big_consumer'],
@@ -125,6 +128,7 @@ class ClientController extends BaseController
             'country' => $request['country'],
             'city' => $request['city'],
             'NIT' => $request['NIT'],
+            'DUI' => $request['DUI'],
             'NRC' => $request['NRC'],
             'giro' => $request['giro'],
             'big_consumer' => $request['big_consumer'],
@@ -245,6 +249,7 @@ class ClientController extends BaseController
                         'country' => $value['country'] == '' ? null : $value['country'],
                         'city' => $value['city'] == '' ? null : $value['city'],
                         'NIT' => $value['NIT'] == '' ? null : $value['NIT'],
+                        'DUI' => $value['DUI'] == '' ? null : $value['DUI'],
                         'NRC' => $value['NRC'] == '' ? null : $value['NRC'],
                         'giro' => $value['giro'] == '' ? null : $value['giro'],
                         'big_consumer' => $value['big_consumer'] == '' ? null : $value['big_consumer'],

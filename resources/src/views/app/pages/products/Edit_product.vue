@@ -75,14 +75,8 @@
                   <b-col md="6" class="mb-2">
                     <validation-provider name="category" :rules="{ required: true}">
                       <b-form-group slot-scope="{ valid, errors }" :label="$t('Categorie')">
-                        <v-select
-                          :class="{'is-invalid': !!errors.length}"
-                          :state="errors[0] ? false : (valid ? true : null)"
-                          :reduce="label => label.value"
-                          :placeholder="$t('Choose_Category')"
-                          v-model="product.category_id"
-                          :options="categories.map(categories => ({label: categories.name, value: categories.id}))"
-                        />
+                         <multiselect v-model="categories_id" tag-placeholder="Agregar esta categoría" placeholder="Buscar o agregar categoría" label="name" track-by="id" :options="categories" :multiple="true" :taggable="true" @tag="addTag"></multiselect>
+
                         <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
                       </b-form-group>
                     </validation-provider>
@@ -373,6 +367,7 @@
 import VueUploadMultipleImage from "vue-upload-multiple-image";
 import VueTagsInput from "@johmun/vue-tags-input";
 import NProgress from "nprogress";
+import Multiselect from 'vue-multiselect';
 
 export default {
   metaInfo: {
@@ -412,11 +407,13 @@ export default {
         note: "",
         is_variant: false
       },
+       categories_id: [],
       code_exist: ""
     };
   },
 
   components: {
+    Multiselect,
     VueUploadMultipleImage,
     VueTagsInput
   },
@@ -515,6 +512,7 @@ export default {
           this.images = response.data.product.images;
           this.categories = response.data.categories;
           this.brands = response.data.brands;
+          this.categories_id = response.data.categories_id;
           this.units = response.data.units;
           this.units_sub = response.data.units_sub;
           this.Subcategories = response.data.Subcategories;
@@ -575,6 +573,13 @@ export default {
           });
         }
       }
+
+       let categories = self.categories_id;
+      console.log(categories)
+      for (let l = 0; l < categories.length ; l++){
+        self.data.append("category_id[" + l + "]", categories[l].id);
+      }
+
 
       self.data.append("_method", "put");
 

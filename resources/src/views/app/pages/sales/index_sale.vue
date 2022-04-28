@@ -269,7 +269,7 @@
                 <tr v-if="payments.length <= 0">
                   <td colspan="5">{{$t('NodataAvailable')}}</td>
                 </tr>
-                <tr v-for="payment in payments">
+                <tr v-for="payment in payments" :key="payment">
                   <td>{{payment.date}}</td>
                   <td>{{payment.Ref}}</td>
                   <td>{{formatNumber(payment.montant,2)}} {{currentUser.currency}}</td>
@@ -476,9 +476,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="detail_invoice in invoice_pos.details">
+              <tr v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <td>{{detail_invoice.name}}</td>
-                <td>{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</td>
+                <td>{{detail_invoice.quantity}} {{detail_invoice.unit_sale}}</td>
                 <td>{{formatNumber(detail_invoice.total,2)}} {{invoice_pos.symbol}}</td>
               </tr>
               <tr>
@@ -632,10 +632,10 @@
                 <div class="col-1"></div>
               </div>
               <div style="height:360px">
-                  <div class="row"  v-for="detail_invoice in invoice_pos.details">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <div class="col-1">
                   <span class="h5 text-uppercase">
-                  {{ formatNumber(detail_invoice.quantity, 2) }}
+                {{ detail_invoice.quantity }}
                       </span>
                 </div>
                
@@ -874,8 +874,8 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase">
-                      {{ sale.client_giro }}
+                      <span class="h6 text-uppercase">
+                      GIRO: {{ invoice_pos.sale.client_giro }}
                       </span>
                     </div>
                   </div>
@@ -891,10 +891,10 @@
                 <div class="col-1"></div>
               </div>
               <div style="height:400px">
-                  <div class="row"  v-for="detail_invoice in invoice_pos.details">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <div class="col-1">
                   <span class="h5 text-uppercase">
-                  {{ formatNumber(detail_invoice.quantity, 2) }}
+                  {{ detail_invoice.quantity }}
                       </span>
                 </div>
                

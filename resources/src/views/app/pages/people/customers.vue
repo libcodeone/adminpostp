@@ -128,6 +128,13 @@
             </b-form-group>
           </b-col>
 
+          <!-- DUI Customer   -->
+          <b-col md="12">
+            <b-form-group :label="$t('DUI')">
+              <b-form-input label="DUI" :placeholder="$t('SearchByDUI')" v-model="Filter_DUI"></b-form-input>
+            </b-form-group>
+          </b-col>
+
           <!-- NRC Customer   -->
           <b-col md="12">
             <b-form-group :label="$t('NRC')">
@@ -299,6 +306,24 @@
                 </b-form-group>
               </validation-provider>
             </b-col>
+            <!-- Customer DUI -->
+            <b-col md="6" sm="12">
+              <validation-provider
+                name="DUI"
+                :rules="{ required: false}"
+                v-slot="validationContext"
+              >
+                <b-form-group :label="$t('DUI')">
+                  <b-form-input
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="DUI-feedback"
+                    label="DUI"
+                    v-model="client.DUI"
+                  ></b-form-input>
+                  <b-form-invalid-feedback id="DUI-feedback">{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
             <!-- Customer NRC -->
             <b-col md="6" sm="12">
               <validation-provider
@@ -435,6 +460,11 @@
                 <td>{{$t('NIT')}}</td>
                 <th>{{client.NIT.substring(0, 24)}}</th>
               </tr>
+               <tr>
+                <!-- Customer DUI -->
+                <td>{{$t('DUI')}}</td>
+                <th>{{client.DUI.substring(0, 24)}}</th>
+              </tr>
               <tr>
                 <!-- Customer NRC -->
                 <td>{{$t('NRC')}}</td>
@@ -527,7 +557,13 @@
                 <tr>
                   <td>{{$t('NIT')}}</td>
                   <th>
-                    <span class="badge badge-outline-success">{{$t('Field_is_required')}}</span>
+                  
+                  </th>
+                </tr>
+                <tr>
+                  <td>{{$t('DUI')}}</td>
+                  <th>
+                 
                   </th>
                 </tr>
                 <tr>
@@ -583,6 +619,7 @@ export default {
       Filter_Phone: "",
       Filter_Email: "",
       Filter_NIT: "",
+      Filter_DUI: "",
       Filter_NRC: "",
       Filter_Giro: "",
       clients: [],
@@ -599,6 +636,7 @@ export default {
         city: "",
         adresse: "",
         NIT: "",
+        DUI: "",
         NRC: "",
         giro: "",
         final_consumer: 1,
@@ -651,6 +689,12 @@ export default {
         {
           label: this.$t("NIT"),
           field: "NIT",
+          tdClass: "text-left",
+          thClass: "text-left"
+        },
+        {
+          label: this.$t("DUI"),
+          field: "DUI",
           tdClass: "text-left",
           thClass: "text-left"
         },
@@ -759,6 +803,7 @@ export default {
       this.Filter_Phone = "";
       this.Filter_Email = "";
       this.Filter_NIT = "";
+      this.Filter_DUI = "";
       this.Filter_NRC = "";
       this.Filter_Giro = "";
       this.Get_Clients(this.serverParams.page);
@@ -786,6 +831,7 @@ export default {
         { title: "Country", dataKey: "country" },
         { title: "City", dataKey: "city" },
         { title: "NIT", dataKey: "NIT" },
+        { title: "DUI", dataKey: "DUI" },
         { title: "NRC", dataKey: "NRC" },
         { title: "Giro", dataKey: "giro" }
       ];
@@ -841,6 +887,8 @@ export default {
             this.Filter_Email +
             "&NIT=" +
             this.Filter_NIT +
+            "&DUI=" +
+            this.Filter_DUI +
             "&NRC=" +
             this.Filter_NRC +
             "&giro=" +
@@ -971,6 +1019,7 @@ export default {
           city: this.client.city,
           adresse: this.client.adresse,
           NIT: this.client.NIT,
+          DUI: this.client.DUI,
           NRC: this.client.NRC,
           giro: this.client.giro,
           final_consumer:  this.client.final_consumer,
@@ -1004,6 +1053,7 @@ export default {
           city: this.client.city,
           adresse: this.client.adresse,
           NIT: this.client.NIT,
+          DUI: this.client.DUI,
           NRC: this.client.NRC,
           giro: this.client.giro,
           final_consumer:  this.client.final_consumer,
