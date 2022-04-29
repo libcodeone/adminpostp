@@ -5070,7 +5070,7 @@ _c("td",[_vm._v(_vm._s(detail.code))]),
 _vm._v(" "),
 _c("td",[
 _vm._v(
-_vm._s(_vm.formatNumber(detail.quantity,2))+
+_vm._s(detail.quantity)+
 " "+
 _vm._s(detail.unit))]),
 

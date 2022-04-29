@@ -4225,7 +4225,7 @@ _vm._v(" "),
 _c(
 "tbody",
 _vm._l(_vm.details,function(detail){
-return _c("tr",[
+return _c("tr",{key:detail},[
 _c("td",[
 _vm._v(
 _vm._s(detail.code)+
@@ -4251,13 +4251,12 @@ _vm._v(" "),
 _c("td",[
 _vm._v(
 _vm._s(
-_vm.formatNumber(
-detail.quantity,
-2))+
-
+_vm.detail_invoice.quantity)+
 
 " "+
-_vm._s(detail.unit_purchase))]),
+_vm._s(
+_vm.detail_invoice.unit_sale))]),
+
 
 
 _vm._v(" "),

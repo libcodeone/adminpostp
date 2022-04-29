@@ -4949,6 +4949,8 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
+//
 
 
 
@@ -5717,7 +5719,7 @@ _vm._v(" "),
 _c(
 "tbody",
 _vm._l(_vm.details,function(detail){
-return _c("tr",[
+return _c("tr",{key:detail},[
 _c("td",[
 _vm._v(
 _vm._s(detail.code)+
@@ -5743,13 +5745,12 @@ _vm._v(" "),
 _c("td",[
 _vm._v(
 _vm._s(
-_vm.formatNumber(
-detail.quantity,
-2))+
-
+_vm.detail_invoice.quantity)+
 
 " "+
-_vm._s(detail.unit_sale))]),
+_vm._s(
+_vm.detail_invoice.unit_sale))]),
+
 
 
 _vm._v(" "),
@@ -6141,7 +6142,10 @@ _vm.invoice_pos.details,
 function(detail_invoice){
 return _c(
 "div",
-{staticClass:"row"},
+{
+key:_vm.detail,
+staticClass:"row"},
+
 [
 _c(
 "div",
@@ -6157,10 +6161,7 @@ staticClass:
 _vm._v(
 "\n                "+
 _vm._s(
-_vm.formatNumber(
-detail_invoice.quantity,
-2))+
-
+detail_invoice.quantity)+
 
 "\n                    ")])]),
 
@@ -7065,11 +7066,11 @@ _c(
 "span",
 {
 staticClass:
-"h5 text-uppercase ml-2"},
+"h5 text-uppercase ml-1"},
 
 [
 _vm._v(
-"\n                    Giro: "+
+"\n\n                    Giro: "+
 _vm._s(
 _vm.
 invoice_pos.
@@ -7136,7 +7137,10 @@ _vm.invoice_pos.details,
 function(detail_invoice){
 return _c(
 "div",
-{staticClass:"row"},
+{
+key:detail_invoice,
+staticClass:"row"},
+
 [
 _c(
 "div",
@@ -7152,10 +7156,7 @@ staticClass:
 _vm._v(
 "\n                "+
 _vm._s(
-_vm.formatNumber(
-detail_invoice.quantity,
-2))+
-
+detail_invoice.quantity)+
 
 "\n                    ")])]),
 

@@ -2382,7 +2382,7 @@ _c("td",[_vm._v(_vm._s(PROD_W.mag))]),
 _vm._v(" "),
 _c("td",[
 _vm._v(
-_vm._s(_vm.formatNumber(PROD_W.qte,2))+
+_vm._s(PROD_W.qte)+
 " "+
 _vm._s(_vm.product.unit))])]);
 
@@ -2436,9 +2436,7 @@ _vm._v(_vm._s(PROD_V.variant))]),
 _vm._v(" "),
 _c("td",[
 _vm._v(
-_vm._s(
-_vm.formatNumber(PROD_V.qte,2))+
-
+_vm._s(PROD_V.qte)+
 " "+
 _vm._s(_vm.product.unit))])]);
 

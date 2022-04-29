@@ -5248,7 +5248,7 @@ _vm._v(_vm._s(_vm.$t("NodataAvailable")))])]):
 _vm._e(),
 _vm._v(" "),
 _vm._l(_vm.payments,function(payment){
-return _c("tr",[
+return _c("tr",{key:payment},[
 _c("td",[_vm._v(_vm._s(payment.date))]),
 _vm._v(" "),
 _c("td",[_vm._v(_vm._s(payment.Ref))]),
@@ -5382,14 +5382,12 @@ _c(
 _vm._l(_vm.invoice_pos.details,function(
 detail_invoice)
 {
-return _c("tr",[
+return _c("tr",{key:detail_invoice},[
 _c("td",[_vm._v(_vm._s(detail_invoice.name))]),
 _vm._v(" "),
 _c("td",[
 _vm._v(
-_vm._s(
-_vm.formatNumber(detail_invoice.quantity,2))+
-
+_vm._s(detail_invoice.quantity)+
 " "+
 _vm._s(detail_invoice.unit_sale))]),
 

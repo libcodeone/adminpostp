@@ -7832,7 +7832,7 @@ _vm._v(_vm._s(_vm.$t("NodataAvailable")))])]):
 _vm._e(),
 _vm._v(" "),
 _vm._l(_vm.payments,function(payment){
-return _c("tr",[
+return _c("tr",{key:payment},[
 _c("td",[_vm._v(_vm._s(payment.date))]),
 _vm._v(" "),
 _c("td",[_vm._v(_vm._s(payment.Ref))]),
@@ -8444,14 +8444,12 @@ _c(
 _vm._l(_vm.invoice_pos.details,function(
 detail_invoice)
 {
-return _c("tr",[
+return _c("tr",{key:detail_invoice},[
 _c("td",[_vm._v(_vm._s(detail_invoice.name))]),
 _vm._v(" "),
 _c("td",[
 _vm._v(
-_vm._s(
-_vm.formatNumber(detail_invoice.quantity,2))+
-
+_vm._s(detail_invoice.quantity)+
 " "+
 _vm._s(detail_invoice.unit_sale))]),
 
@@ -8820,14 +8818,15 @@ _c(
 "div",
 {staticStyle:{height:"360px"}},
 _vm._l(_vm.invoice_pos.details,function(detail_invoice){
-return _c("div",{staticClass:"row"},[
+return _c(
+"div",
+{key:detail_invoice,staticClass:"row"},
+[
 _c("div",{staticClass:"col-1"},[
 _c("span",{staticClass:"h5 text-uppercase"},[
 _vm._v(
-"\n                "+
-_vm._s(
-_vm.formatNumber(detail_invoice.quantity,2))+
-
+"\n              "+
+_vm._s(detail_invoice.quantity)+
 "\n                    ")])]),
 
 
@@ -8889,6 +8888,7 @@ _vm._s(
 _vm.formatNumber(detail_invoice.total,2))+
 
 "\n                    ")])])]);
+
 
 
 
@@ -9373,15 +9373,11 @@ _c("div",{staticClass:"row"},[
 _c("div",{staticClass:"col-6"}),
 _vm._v(" "),
 _c("div",{staticClass:"col-6"},[
-_c(
-"span",
-{staticClass:"h5 text-uppercase ml-2"},
-[
+_c("span",{staticClass:"h6 text-uppercase"},[
 _vm._v(
-"\n                    Giro: "+
+"\n                    GIRO: "+
 _vm._s(_vm.invoice_pos.sale.client_giro)+
 "\n                    ")])])])])]),
-
 
 
 
@@ -9414,14 +9410,15 @@ _c(
 "div",
 {staticStyle:{height:"400px"}},
 _vm._l(_vm.invoice_pos.details,function(detail_invoice){
-return _c("div",{staticClass:"row"},[
+return _c(
+"div",
+{key:detail_invoice,staticClass:"row"},
+[
 _c("div",{staticClass:"col-1"},[
 _c("span",{staticClass:"h5 text-uppercase"},[
 _vm._v(
 "\n                "+
-_vm._s(
-_vm.formatNumber(detail_invoice.quantity,2))+
-
+_vm._s(detail_invoice.quantity)+
 "\n                    ")])]),
 
 
@@ -9487,6 +9484,7 @@ detail_invoice.quantity,
 
 
 "\n                    ")])])]);
+
 
 
 
