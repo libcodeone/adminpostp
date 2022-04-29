@@ -835,7 +835,9 @@ class SalesController extends BaseController
         $item['TaxWithheld'] = $sale->TaxWithheld;
         $item['seller'] = $sale['user']->firstname." ".$sale['user']->lastname;
         $item['client_name'] = $sale['client']->name;
+        $item['client_phone'] = $sale['client']->phone;
         $item['client_NIT'] = $sale['client']->NIT;
+        $item['client_DUI'] = $sale['client']->DUI;
         $item['client_NRC'] = $sale['client']->NRC;
         $item['client_giro'] = $sale['client']->giro;
         $item['final_consumer'] = $sale['client']->final_consumer;
@@ -968,7 +970,7 @@ class SalesController extends BaseController
             }
 
                 $data['detail_id'] = $detail_id += 1;
-                $data['quantity'] = number_format($detail->quantity, 2, '.', '');
+                $data['quantity'] = $detail->quantity ;
                 $data['total'] = number_format($detail->total, 2, '.', '');
                 $data['name'] = $detail['product']['name'];
                 $data['unitSale'] = $detail['product']['unitSale']->ShortName;

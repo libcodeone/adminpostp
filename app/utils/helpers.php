@@ -26,8 +26,8 @@ class helpers
             $model->where(function ($query) use ($request, $field, $model) {
                 return $model->when($request->filled($field['value']),
                     function ($query) use ($request, $model, $field) {
-
-                         if($field['param'] == 'like'){
+                      
+                        if($field['param'] == 'like'){
                             $model->where($field['value'], 'like', "%".$request[$field['value']]. "%");
                         }elseif($field['param'] == '<>'){
                             $model->where($field['value'],'<>',$request[$field['value']]);
@@ -41,7 +41,6 @@ class helpers
                         }else{
                             $model->where($field['value'],$request[$field['value']]);
                         }
-
                     });
             });
         }

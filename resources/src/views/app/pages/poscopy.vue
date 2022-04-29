@@ -560,7 +560,7 @@
                       >
                         <span
                           class="badge badge-info"
-                        >{{formatNumber(product.qte_sale , 2)}} {{product.unitSale}}</span>
+                        >{{product.qte_sale}} {{product.unitSale}}</span>
                       </p>
                     </div>
                   </div>
@@ -755,9 +755,9 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="detail_invoice in invoice_pos.details">
+                  <tr v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                     <td>{{detail_invoice.name}}</td>
-                    <td>{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</td>
+                    <td>{{detail_invoice.quantity}} {{detail_invoice.unit_sale}}</td>
                     <td>{{formatNumber(detail_invoice.total,2)}} {{invoice_pos.symbol}}</td>
                   </tr>
                   <tr>
@@ -915,8 +915,8 @@
                   <div class="col-1 border border-primary">VENTAS EXENTAS</div>
                   <div class="col-1 border border-primary">VENTAS GRAVADAS</div>
                 </div>
-                <div class="row"  v-for="detail_invoice in invoice_pos.details">
-                  <div class="col-1 border border-primary">{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</div>
+                <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
+                  <div class="col-1 border border-primary">{{detail_invoice.quantity}} {{detail_invoice.unit_sale}}</div>
                   <div class="col-2 border border-primary">{{detail_invoice.code}}</div>
                   <div class="col-5 border border-primary">{{detail_invoice.name}}</div>
                   <div class="col-1 border border-primary">{{formatNumber(detail_invoice.total,2)}}</div>

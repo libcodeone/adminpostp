@@ -114,10 +114,10 @@
             >
               <template slot="table-row" slot-scope="props">
                 <div v-if="props.column.field == 'quantity'">
-                  <span>{{formatNumber(props.row.quantity ,2)}} {{props.row.unit_product}}</span>
+                  <span>{{props.row.quantity }} {{props.row.unit_product}}</span>
                 </div>
                 <div v-else-if="props.column.field == 'total'">
-                  <span>{{formatNumber(props.row.total ,2)}} {{currentUser.currency}}</span>
+                  <span>{{props.row.total }} {{currentUser.currency}}</span>
                 </div>
               </template>
             </vue-good-table>

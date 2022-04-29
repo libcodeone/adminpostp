@@ -230,7 +230,7 @@
                 <tr v-for="detail in details">
                   <td>{{detail.name}}</td>
                   <td>{{detail.code}}</td>
-                  <td>{{formatNumber(detail.quantity ,2)}} {{detail.unit}}</td>
+                  <td>{{detail.quantity }} {{detail.unit}}</td>
                   <td>{{formatNumber(detail.total ,2)}} {{currentUser.currency}}</td>
                 </tr>
               </tbody>

@@ -75,7 +75,8 @@
                   <b-col md="6" class="mb-2">
                     <validation-provider name="category" :rules="{ required: true}">
                       <b-form-group slot-scope="{ valid, errors }" :label="$t('Categorie')">
-                        <multiselect v-model="categories_id" tag-placeholder="Agregar esta categoría" placeholder="Buscar o agregar categoría" label="name" track-by="id" :options="categories" :multiple="true" :taggable="true" @tag="addTag"></multiselect>
+                         <multiselect v-model="categories_id" tag-placeholder="Agregar esta categoría" placeholder="Buscar o agregar categoría" label="name" track-by="id" :options="categories" :multiple="true" :taggable="true" @tag="addTag"></multiselect>
+
                         <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
                       </b-form-group>
                     </validation-provider>
@@ -406,7 +407,7 @@ export default {
         note: "",
         is_variant: false
       },
-      categories_id: [],
+       categories_id: [],
       code_exist: ""
     };
   },
@@ -574,7 +575,7 @@ export default {
         }
       }
 
-      let categories = self.categories_id;
+       let categories = self.categories_id;
       console.log(categories)
       for (let l = 0; l < categories.length ; l++){
         self.data.append("category_id[" + l + "]", categories[l].id);

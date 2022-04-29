@@ -58,7 +58,7 @@ class ProductsController extends BaseController
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('products.name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('products.code', 'LIKE', "%{$request->search}%")
+                        ->orWhere('products.code', 'LIKE', "%{$request->search}%")                       
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('brand', function ($q) use ($request) {
                                 $q->where('name', 'LIKE', "%{$request->search}%");
@@ -101,7 +101,6 @@ class ProductsController extends BaseController
 
             $firstimage = explode(',', $product->image);
             $item['image'] = $firstimage[0];
-
             $data[] = $item;
         }
 
@@ -1041,9 +1040,10 @@ class ProductsController extends BaseController
                     $category_id = $category->id;
                 }
 
-                /* $unit = Unit::where(['ShortName' => $value['unit']])
+
+               /* $unit = Unit::where(['ShortName' => $value['unit']])
                     ->orWhere(['name' => $value['unit']])->first();
-                $unit_id = $unit->id; */
+                $unit_id = $unit->id;*/
 
                 if ($value['brand'] != 'N/A' && $value['brand'] != '') {
                     $brand = Brand::firstOrCreate(['name' => $value['brand']]);
@@ -1058,22 +1058,22 @@ class ProductsController extends BaseController
                 $Product->Type_barcode = 'CODE128';
                 $Product->price = $value['price'];
                 $Product->cost = $value['cost'];
-
+            
                 $Product->brand_id = $brand_id;
                 $Product->TaxNet = 0;
                 $Product->tax_method = 1;
                 $Product->note = $value['note'] ? $value['note'] : '';
-/*                 $Product->unit_id = $unit_id;
+               /* $Product->unit_id = $unit_id;
                 $Product->unit_sale_id = $unit_id;
-                $Product->unit_purchase_id = $unit_id; */
+                $Product->unit_purchase_id = $unit_id;*/
                 $Product->stock_alert = $value['stock_alert'] ? $value['stock_alert'] : 0;
                 $Product->is_variant = 0;
                 $Product->image = 'no-image.png';
-                /* if ($value['codeAN'] != 'N/A' && $value['codeAN'] != '') {
+              /*  if ($value['codeAN'] != 'N/A' && $value['codeAN'] != '') {
                     $Product->codeAN = $value['codeAN'];
                 } else {
                     $Product->codeAN = null;
-                } */
+                }*/
                 $Product->save();
 
                 if ($warehouses) {

@@ -663,7 +663,7 @@ class PurchasesController extends BaseController
             }
 
                 $data['detail_id'] = $detail_id += 1;
-                $data['quantity'] = number_format($detail->quantity, 2, '.', '');
+                $data['quantity'] = $detail->quantity;
                 $data['total'] = number_format($detail->total, 2, '.', '');
                 $data['name'] = $detail['product']['name'];
                 $data['unit_purchase'] = $detail['product']['unitPurchase']->ShortName;

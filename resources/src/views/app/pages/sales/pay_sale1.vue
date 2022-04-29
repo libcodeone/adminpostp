@@ -347,13 +347,13 @@
                   <div class="col-8">
                     <div class="row">
                       <div class="col-12 padding-top padding-bottom">
-                        {{ invoice_pos.sale.client_name }}
+                        {{ invoice_pos.sale.client_name }}.
                       </div>
                     </div>
                     <div class="row">
                       <div class="col-4"></div>
                       <div class="col-8">
-                        {{ sale.client_giro }}
+                         {{ invoice_pos.sale.client_giro }}
                       </div>
                     </div>
                   </div>
@@ -385,7 +385,7 @@
                 </div>
                 <div class="row" v-for="detail_invoice in invoice_pos.details">
                   <div class="col-1">
-                    {{ formatNumber(detail_invoice.quantity, 2) }}
+                    {{ detail_invoice.quantity }}
                     {{ detail_invoice.unit_sale }}
                   </div>
                   <div class="col-2">{{ detail_invoice.code }}</div>
@@ -547,7 +547,7 @@
                         {{ currentUser.currency }}
                       </td>
                       <td>
-                        {{ formatNumber(detail.quantity, 2) }}
+                        {{ detail.quantity }}
                         {{ detail.unit_sale }}
                       </td>
                       <td>

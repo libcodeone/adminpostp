@@ -217,7 +217,7 @@
                 <tr v-if="payments.length <= 0">
                   <td colspan="5">{{$t('NodataAvailable')}}</td>
                 </tr>
-                <tr v-for="payment in payments">
+                <tr v-for="payment in payments" :key="payment">
                   <td>{{payment.date}}</td>
                   <td>{{payment.Ref}}</td>
                   <td>{{formatNumber(payment.montant,2)}} {{currentUser.currency}}</td>
@@ -422,9 +422,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="detail_invoice in invoice_pos.details">
+              <tr v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <td>{{detail_invoice.name}}</td>
-                <td>{{formatNumber(detail_invoice.quantity,2)}} {{detail_invoice.unit_sale}}</td>
+                <td>{{detail_invoice.quantity}} {{detail_invoice.unit_sale}}</td>
                 <td>{{formatNumber(detail_invoice.total,2)}} {{invoice_pos.symbol}}</td>
               </tr>
               <tr>

@@ -234,7 +234,7 @@ export default {
     SubCategorie: "Subcategoría",
     Name_product: "Designacion",
     StockAlert: "Alerta de stock",
-    warehouse: "almacén",
+    warehouse: "Almacén",
     Tax: "Impuesto",
     BuyingPrice: "Precio de compra",
     SellPrice: "Precio de venta",

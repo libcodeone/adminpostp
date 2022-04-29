@@ -54,6 +54,7 @@
               <div>{{ sale.client_phone }}</div>
               <div>{{ sale.client_adr }}</div>
               <div>{{ sale.client_NIT }}</div>
+              <div>{{ sale.client_DUI }}</div>
               <div>{{ sale.client_NRC }}</div>
               <div>{{ sale.client_giro }}</div>
             </b-col>
@@ -100,6 +101,8 @@
                   $t("Ordered")
                 }}</span>
               </div>
+
+              <div>Fecha: {{ sale.date}}</div>
             </b-col>
           </b-row>
           <b-row class="mt-3">
@@ -119,14 +122,14 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="detail in details">
+                    <tr v-for="detail in details" :key="detail">
                       <td>{{ detail.code }} ({{ detail.name }})</td>
                       <td>
                         {{ formatNumber(detail.Net_price, 2) }}
                         {{ currentUser.currency }}
                       </td>
                       <td>
-                        {{ formatNumber(detail.quantity, 2) }}
+                        {{ detail.quantity }}
                         {{ detail.unit_sale }}
                       </td>
                       <td>
@@ -249,6 +252,7 @@
 421+50+40+160
  -->
       <!-- Modal Show Invoice-->
+            <!-- FACTURA-->
       <b-modal
         hide-footer
         size="lg"
@@ -287,7 +291,7 @@
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
-                      {{ invoice_pos.sale.client_name }}.
+                      {{ invoice_pos.sale.client_name }}.  Tel.: {{ invoice_pos.sale.client_phone }}
                       </span>
                     </div>
                   </div>
@@ -300,8 +304,14 @@
                   </div>
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
-                      <span class="h5 text-uppercase">
-                      {{ invoice_pos.sale.client_NIT }}.
+                    <span class="h5 text-uppercase" v-if="sale.big_consumer == 1">
+                      {{ formatNumber(invoice_pos.sale.TaxWithheld, 2) }}
+                      </span>
+                      <span class="h5 text-uppercase" v-if="invoice_pos.sale.client_DUI != null ">
+                      {{ invoice_pos.sale.client_DUI }}
+                      </span>
+                     <span class="h5 text-uppercase" v-else >
+                      {{ invoice_pos.sale.client_NIT }}
                       </span>
                     </div>
                   </div>
@@ -347,10 +357,10 @@
                 <div class="col-1"></div>
               </div>
               <div style="height:360px">
-                  <div class="row"  v-for="detail_invoice in invoice_pos.details">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <div class="col-1">
                   <span class="h5 text-uppercase">
-                  {{ formatNumber(detail_invoice.quantity, 2) }}
+                  {{detail_invoice.quantity }}
                       </span>
                 </div>
 
@@ -465,6 +475,7 @@
         </button>
       </b-modal>
       <!-- Modal Show Invoice-->
+            <!-- CREDITO FISCAL-->
       <b-modal
         hide-footer
         size="lg"
@@ -503,7 +514,7 @@
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
-                      {{ invoice_pos.sale.client_name }}.
+                      {{ invoice_pos.sale.client_name }}.  Tel.: {{ invoice_pos.sale.client_phone }}
                       </span>
                     </div>
                   </div>
@@ -579,8 +590,11 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase" style="margin-top:45px;height:40px;">
-                      {{ invoice_pos.sale.client_NIT }}.
+                      <span class="h5 text-uppercase" style="margin-top:45px;height:40px;" v-if="invoice_pos.sale.client_DUI != null ">
+                      {{ invoice_pos.sale.client_DUI }}
+                      </span>
+                     <span class="h5 text-uppercase" style="margin-top:45px;height:40px;" v-else >
+                      {{ invoice_pos.sale.client_NIT }}
                       </span>
 
                     </div>
@@ -588,8 +602,8 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="h5 text-uppercase">
-                      Giro: {{ invoice_pos.sale.client_giro }}
+                      <span class="h6 text-uppercase ml-1" style="margin-top:45px;height:40px;">
+                     GIRO: {{ invoice_pos.sale.client_giro }}
                       </span>
                     </div>
                   </div>
@@ -605,13 +619,13 @@
                 <div class="col-1"></div>
               </div>
               <div style="height:400px">
-                  <div class="row"  v-for="detail_invoice in invoice_pos.details">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <div class="col-1">
                   <span class="h5 text-uppercase">
-                  {{ formatNumber(detail_invoice.quantity, 2) }}
+                  {{ detail_invoice.quantity }}
                       </span>
-                </div>
-
+                </div>        
+               
                 <div class="col-7">
                    <span class="h5 text-uppercase">
                   {{ detail_invoice.code }}
@@ -1114,6 +1128,7 @@ export default {
         city: "",
         adresse: "",
         NIT: "",
+        DUI: "",
         NRC: "",
         giro: "",
       },
