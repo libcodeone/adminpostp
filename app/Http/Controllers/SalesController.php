@@ -884,7 +884,6 @@ class SalesController extends BaseController
             'sale' => $item,
             'details' => $details,
         ]);
-
     }
 
     //------------- GET PAYMENTS SALE -----------\\
