@@ -4162,7 +4162,6 @@ thClass:"text-left"},
 {
 label:this.$t("Quantity"),
 field:"quantity",
-type:"decimal",
 tdClass:"text-left",
 thClass:"text-left"},
 {

@@ -2900,6 +2900,20 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -3004,6 +3018,7 @@ country:"",
 city:"",
 adresse:"",
 NIT:"",
+DUI:"",
 NRC:"",
 giro:""},
 
@@ -3416,6 +3431,8 @@ _c("div",[_vm._v(_vm._s(_vm.sale.client_adr))]),
 _vm._v(" "),
 _c("div",[_vm._v(_vm._s(_vm.sale.client_NIT))]),
 _vm._v(" "),
+_c("div",[_vm._v(_vm._s(_vm.sale.client_DUI))]),
+_vm._v(" "),
 _c("div",[_vm._v(_vm._s(_vm.sale.client_NRC))]),
 _vm._v(" "),
 _c("div",[_vm._v(_vm._s(_vm.sale.client_giro))])]),
@@ -3539,8 +3556,12 @@ _c(
 staticClass:
 "badge badge-outline-warning"},
 
-[_vm._v(_vm._s(_vm.$t("Ordered")))])])])],
+[_vm._v(_vm._s(_vm.$t("Ordered")))])]),
 
+
+_vm._v(" "),
+_c("div",[
+_vm._v("Fecha: "+_vm._s(_vm.sale.date))])])],
 
 
 
@@ -3597,7 +3618,7 @@ _vm._v(" "),
 _c(
 "tbody",
 _vm._l(_vm.details,function(detail){
-return _c("tr",[
+return _c("tr",{key:detail},[
 _c("td",[
 _vm._v(
 _vm._s(detail.code)+
@@ -3625,12 +3646,7 @@ _vm._v(" "),
 _c("td",[
 _vm._v(
 "\n                        "+
-_vm._s(
-_vm.formatNumber(
-detail.quantity,
-2))+
-
-
+_vm._s(detail.quantity)+
 "\n                        "+
 _vm._s(detail.unit_sale)+
 "\n                      ")]),
@@ -3995,7 +4011,12 @@ _vm._s(
 _vm.invoice_pos.sale.
 client_name)+
 
-".\n                      ")])])]),
+".  Tel.: "+
+_vm._s(
+_vm.invoice_pos.sale.
+client_phone)+
+
+"\n                      ")])])]),
 
 
 
@@ -4037,9 +4058,50 @@ staticClass:
 "col-12 padding-top padding-bottom"},
 
 [
+_vm.sale.big_consumer==1?
 _c(
 "span",
-{staticClass:"h5 text-uppercase"},
+{
+staticClass:"h5 text-uppercase"},
+
+[
+_vm._v(
+"\n                      "+
+_vm._s(
+_vm.formatNumber(
+_vm.invoice_pos.sale.
+TaxWithheld,
+2))+
+
+
+"\n                      ")]):
+
+
+
+_vm._e(),
+_vm._v(" "),
+_vm.invoice_pos.sale.client_DUI!=null?
+_c(
+"span",
+{
+staticClass:"h5 text-uppercase"},
+
+[
+_vm._v(
+"\n                      "+
+_vm._s(
+_vm.invoice_pos.sale.
+client_DUI)+
+
+"\n                      ")]):
+
+
+
+_c(
+"span",
+{
+staticClass:"h5 text-uppercase"},
+
 [
 _vm._v(
 "\n                      "+
@@ -4047,7 +4109,7 @@ _vm._s(
 _vm.invoice_pos.sale.
 client_NIT)+
 
-".\n                      ")])])])]),
+"\n                      ")])])])]),
 
 
 
@@ -4149,7 +4211,10 @@ _c(
 _vm._l(_vm.invoice_pos.details,function(
 detail_invoice)
 {
-return _c("div",{staticClass:"row"},[
+return _c(
+"div",
+{key:detail_invoice,staticClass:"row"},
+[
 _c("div",{staticClass:"col-1"},[
 _c(
 "span",
@@ -4157,12 +4222,7 @@ _c(
 [
 _vm._v(
 "\n                  "+
-_vm._s(
-_vm.formatNumber(
-detail_invoice.quantity,
-2))+
-
-
+_vm._s(detail_invoice.quantity)+
 "\n                      ")])]),
 
 
@@ -4202,7 +4262,9 @@ _vm._v(" "),
 _c("div",{staticClass:"col-6"},[
 _c(
 "span",
-{staticClass:"h5 text-uppercase"},
+{
+staticClass:"h5 text-uppercase"},
+
 [
 _vm._v(
 "\n                      "+
@@ -4239,6 +4301,7 @@ detail_invoice.total,
 
 
 "\n                      ")])])]);
+
 
 
 
@@ -4526,7 +4589,12 @@ _vm._s(
 _vm.invoice_pos.sale.
 client_name)+
 
-".\n                      ")])])]),
+".  Tel.: "+
+_vm._s(
+_vm.invoice_pos.sale.
+client_phone)+
+
+"\n                      ")])])]),
 
 
 
@@ -4781,6 +4849,7 @@ _c("div",{staticClass:"row"},[
 _c("div",{staticClass:"col-6"}),
 _vm._v(" "),
 _c("div",{staticClass:"col-6"},[
+_vm.invoice_pos.sale.client_DUI!=null?
 _c(
 "span",
 {
@@ -4794,9 +4863,30 @@ height:"40px"}},
 _vm._v(
 "\n                      "+
 _vm._s(
-_vm.invoice_pos.sale.client_NIT)+
+_vm.invoice_pos.sale.
+client_DUI)+
 
-".\n                      ")])])]),
+"\n                      ")]):
+
+
+
+_c(
+"span",
+{
+staticClass:"h5 text-uppercase",
+staticStyle:{
+"margin-top":"45px",
+height:"40px"}},
+
+
+[
+_vm._v(
+"\n                      "+
+_vm._s(
+_vm.invoice_pos.sale.
+client_NIT)+
+
+"\n                      ")])])]),
 
 
 
@@ -4809,10 +4899,16 @@ _vm._v(" "),
 _c("div",{staticClass:"col-6"},[
 _c(
 "span",
-{staticClass:"h5 text-uppercase"},
+{
+staticClass:"h6 text-uppercase ml-1",
+staticStyle:{
+"margin-top":"45px",
+height:"40px"}},
+
+
 [
 _vm._v(
-"\n                      Giro: "+
+"\n                     GIRO: "+
 _vm._s(
 _vm.invoice_pos.sale.client_giro)+
 
@@ -4855,7 +4951,10 @@ _c(
 _vm._l(_vm.invoice_pos.details,function(
 detail_invoice)
 {
-return _c("div",{staticClass:"row"},[
+return _c(
+"div",
+{key:detail_invoice,staticClass:"row"},
+[
 _c("div",{staticClass:"col-1"},[
 _c(
 "span",
@@ -4863,12 +4962,7 @@ _c(
 [
 _vm._v(
 "\n                  "+
-_vm._s(
-_vm.formatNumber(
-detail_invoice.quantity,
-2))+
-
-
+_vm._s(detail_invoice.quantity)+
 "\n                      ")])]),
 
 
@@ -4951,6 +5045,7 @@ detail_invoice.quantity,
 
 
 "\n                      ")])])]);
+
 
 
 

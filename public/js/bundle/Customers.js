@@ -4333,6 +4333,42 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -4363,6 +4399,7 @@ Filter_Code:"",
 Filter_Phone:"",
 Filter_Email:"",
 Filter_NIT:"",
+Filter_DUI:"",
 Filter_NRC:"",
 Filter_Giro:"",
 clients:[],
@@ -4379,6 +4416,7 @@ country:"",
 city:"",
 adresse:"",
 NIT:"",
+DUI:"",
 NRC:"",
 giro:"",
 final_consumer:1,
@@ -4421,6 +4459,11 @@ thClass:"text-left"},
 {
 label:this.$t("NIT"),
 field:"NIT",
+tdClass:"text-left",
+thClass:"text-left"},
+{
+label:this.$t("DUI"),
+field:"DUI",
 tdClass:"text-left",
 thClass:"text-left"},
 {
@@ -4529,6 +4572,7 @@ this.Filter_Code="";
 this.Filter_Phone="";
 this.Filter_Email="";
 this.Filter_NIT="";
+this.Filter_DUI="";
 this.Filter_NRC="";
 this.Filter_Giro="";
 this.Get_Clients(this.serverParams.page);
@@ -4566,6 +4610,9 @@ dataKey:"city"},
 {
 title:"NIT",
 dataKey:"NIT"},
+{
+title:"DUI",
+dataKey:"DUI"},
 {
 title:"NRC",
 dataKey:"NRC"},
@@ -4613,7 +4660,7 @@ var _this3=this;
 // Start the progress bar.
 nprogress__WEBPACK_IMPORTED_MODULE_1___default.a.start();
 nprogress__WEBPACK_IMPORTED_MODULE_1___default.a.set(0.1);
-axios.get("clients?page="+page+"&name="+this.Filter_Name+"&code="+this.Filter_Code+"&phone="+this.Filter_Phone+"&email="+this.Filter_Email+"&NIT="+this.Filter_NIT+"&NRC="+this.Filter_NRC+"&giro="+this.Filter_Giro+"&SortField="+this.serverParams.sort.field+"&SortType="+this.serverParams.sort.type+"&search="+this.search+"&limit="+this.limit).then(function(response){
+axios.get("clients?page="+page+"&name="+this.Filter_Name+"&code="+this.Filter_Code+"&phone="+this.Filter_Phone+"&email="+this.Filter_Email+"&NIT="+this.Filter_NIT+"&DUI="+this.Filter_DUI+"&NRC="+this.Filter_NRC+"&giro="+this.Filter_Giro+"&SortField="+this.serverParams.sort.field+"&SortType="+this.serverParams.sort.type+"&search="+this.search+"&limit="+this.limit).then(function(response){
 _this3.clients=response.data.clients;
 _this3.totalRows=response.data.totalRows;// Complete the animation of theprogress bar.
 
@@ -4708,6 +4755,7 @@ country:this.client.country,
 city:this.client.city,
 adresse:this.client.adresse,
 NIT:this.client.NIT,
+DUI:this.client.DUI,
 NRC:this.client.NRC,
 giro:this.client.giro,
 final_consumer:this.client.final_consumer,
@@ -4736,6 +4784,7 @@ country:this.client.country,
 city:this.client.city,
 adresse:this.client.adresse,
 NIT:this.client.NIT,
+DUI:this.client.DUI,
 NRC:this.client.NRC,
 giro:this.client.giro,
 final_consumer:this.client.final_consumer,
@@ -5337,6 +5386,34 @@ _c(
 [
 _c(
 "b-form-group",
+{attrs:{label:_vm.$t("DUI")}},
+[
+_c("b-form-input",{
+attrs:{
+label:"DUI",
+placeholder:_vm.$t("SearchByDUI")},
+
+model:{
+value:_vm.Filter_DUI,
+callback:function callback($$v){
+_vm.Filter_DUI=$$v;
+},
+expression:"Filter_DUI"}})],
+
+
+
+1)],
+
+
+1),
+
+_vm._v(" "),
+_c(
+"b-col",
+{attrs:{md:"12"}},
+[
+_c(
+"b-form-group",
 {attrs:{label:_vm.$t("NRC")}},
 [
 _c("b-form-input",{
@@ -5922,6 +5999,61 @@ _c(
 {attrs:{md:"6",sm:"12"}},
 [
 _c("validation-provider",{
+attrs:{name:"DUI",rules:{required:false}},
+scopedSlots:_vm._u([
+{
+key:"default",
+fn:function fn(validationContext){
+return [
+_c(
+"b-form-group",
+{attrs:{label:_vm.$t("DUI")}},
+[
+_c("b-form-input",{
+attrs:{
+state:_vm.getValidationState(
+validationContext),
+
+"aria-describedby":"DUI-feedback",
+label:"DUI"},
+
+model:{
+value:_vm.client.DUI,
+callback:function callback($$v){
+_vm.$set(_vm.client,"DUI",$$v);
+},
+expression:"client.DUI"}}),
+
+
+_vm._v(" "),
+_c(
+"b-form-invalid-feedback",
+{attrs:{id:"DUI-feedback"}},
+[
+_vm._v(
+_vm._s(
+validationContext.errors[0]))])],
+
+
+
+
+
+1)];
+
+
+}}])})],
+
+
+
+
+1),
+
+_vm._v(" "),
+_c(
+"b-col",
+{attrs:{md:"6",sm:"12"}},
+[
+_c("validation-provider",{
 attrs:{name:"NRC",rules:{required:false}},
 scopedSlots:_vm._u([
 {
@@ -6273,6 +6405,14 @@ _vm._v(_vm._s(_vm.client.NIT.substring(0,24)))])]),
 
 _vm._v(" "),
 _c("tr",[
+_c("td",[_vm._v(_vm._s(_vm.$t("DUI")))]),
+_vm._v(" "),
+_c("th",[
+_vm._v(_vm._s(_vm.client.DUI.substring(0,24)))])]),
+
+
+_vm._v(" "),
+_c("tr",[
 _c("td",[_vm._v(_vm._s(_vm.$t("NRC")))]),
 _vm._v(" "),
 _c("th",[
@@ -6477,13 +6617,13 @@ _vm._v(" "),
 _c("tr",[
 _c("td",[_vm._v(_vm._s(_vm.$t("NIT")))]),
 _vm._v(" "),
-_c("th",[
-_c(
-"span",
-{staticClass:"badge badge-outline-success"},
-[_vm._v(_vm._s(_vm.$t("Field_is_required")))])])]),
+_c("th")]),
 
-
+_vm._v(" "),
+_c("tr",[
+_c("td",[_vm._v(_vm._s(_vm.$t("DUI")))]),
+_vm._v(" "),
+_c("th")]),
 
 _vm._v(" "),
 _c("tr",[

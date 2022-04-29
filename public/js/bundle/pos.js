@@ -3136,6 +3136,84 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -3153,6 +3231,7 @@ title:"POS"},
 data:function data(){
 return {
 langs:["es","en"],
+imageList:[],
 cardElement:{},
 paymentProcessing:false,
 payment:{
@@ -3235,6 +3314,7 @@ country:"",
 city:"",
 adresse:"",
 NIT:"",
+DUI:"",
 NRC:"",
 giro:"",
 final_consumer:1,
@@ -3262,7 +3342,8 @@ detail_id:"",
 taxe:"",
 tax_percent:"",
 tax_method:"",
-product_variant_id:""},
+product_variant_id:"",
+image:""},
 
 sound:"/audio/Beep.wav",
 audio:new Audio("/audio/Beep.wav")};
@@ -3337,6 +3418,11 @@ setTimeout(function(){
 _this2.isLoading=false;
 },500);
 });
+},
+// ----------------------- visor de imagenes ---------------------\\....................................................................
+showImages:function showImages(imagen){
+this.imageList=imagen;
+this.$bvModal.show("form_visor");
 },
 //---------------------- Event Select Payment Method ------------------------------\\
 Selected_PaymentMethod:function Selected_PaymentMethod(value){
@@ -3446,6 +3532,7 @@ country:this.client.country,
 city:this.client.city,
 adresse:this.client.adresse,
 NIT:this.client.NIT,
+DUI:this.client.DUI,
 NRC:this.client.NRC,
 giro:this.client.giro,
 final_consumer:this.client.final_consumer,
@@ -3478,6 +3565,7 @@ country:"",
 city:"",
 adresse:"",
 NIT:"",
+DUI:"",
 giro:"",
 NRC:"",
 final_consumer:1,
@@ -3667,6 +3755,7 @@ _this10.product.tax_percent=response.data.tax_percent;
 _this10.product.unitSale=response.data.unitSale;
 _this10.product.product_variant_id=product.product_variant_id;
 _this10.product.code=product.code;
+_this10.product.imageList=product.imageList;
 
 _this10.add_product(product.code);
 
@@ -4108,7 +4197,7 @@ staticClass:
 attrs:{title:"en"}}),
 
 _vm._v(
-" English\n                      ")])])])],
+" English\n                        ")])])])],
 
 
 
@@ -5276,11 +5365,11 @@ _c("i",{
 staticClass:"i-Power-2"}),
 
 _vm._v(
-"\n                        "+
+"\n                          "+
 _vm._s(
 _vm.$t("Reset"))+
 
-"\n                      ")])],
+"\n                        ")])],
 
 
 
@@ -5306,11 +5395,11 @@ _c("i",{
 staticClass:"i-Checkout"}),
 
 _vm._v(
-"\n                        "+
+"\n                          "+
 _vm._s(
 _vm.$t("sendtobox"))+
 
-"\n                      ")])],
+"\n                        ")])],
 
 
 
@@ -5559,7 +5648,7 @@ errors[0]))])],
 
 null,
 false,
-3596778309)})],
+196551621)})],
 
 
 
@@ -5777,7 +5866,7 @@ errors[0]))])],
 
 null,
 false,
-1993049096)})],
+1724974344)})],
 
 
 
@@ -5955,9 +6044,9 @@ staticClass:
 [
 _c("i",{staticClass:"i-Two-Windows"}),
 _vm._v(
-"\n                "+
+"\n                  "+
 _vm._s(_vm.$t("ListofCategory"))+
-"\n              ")])]),
+"\n                ")])]),
 
 
 
@@ -5980,9 +6069,9 @@ staticClass:
 [
 _c("i",{staticClass:"i-Library"}),
 _vm._v(
-"\n                "+
+"\n                  "+
 _vm._s(_vm.$t("ListofBrand"))+
-"\n              ")])]),
+"\n                ")])]),
 
 
 
@@ -6050,8 +6139,50 @@ staticClass:
 _vm._l(_vm.products,function(product){
 return _c(
 "div",
+{key:product,staticClass:"card col-3"},
+[
+_c(
+"span",
 {
-staticClass:"card col-3",
+staticStyle:{
+left:"210px",
+position:"absolute"}},
+
+
+[
+_c(
+"a",
+{
+directives:[
+{
+name:"b-tooltip",
+rawName:"v-b-tooltip.hover",
+modifiers:{hover:true}}],
+
+
+attrs:{title:"Ver Imagen"},
+on:{
+click:function click($event){
+return _vm.showImages(
+product.imageList);
+
+}}},
+
+
+[
+_c("i",{
+staticClass:
+"i-Eye text-25 text-info",
+staticStyle:{cursor:"pointer"}})])]),
+
+
+
+
+
+_vm._v(" "),
+_c(
+"div",
+{
 on:{
 click:function click($event){
 return _vm.Check_Product_Exist(
@@ -6066,16 +6197,25 @@ _c("img",{
 staticClass:"card-img-top",
 attrs:{
 alt:"",
-src:"/images/products/"+product.image}}),
+src:
+"/images/products/"+
+product.image}}),
 
 
 _vm._v(" "),
-_c("div",{staticClass:"card-body"},[
-_c("h5",{staticClass:"card-title"},[
+_c(
+"div",
+{staticClass:"card-body"},
+[
+_c(
+"h5",
+{staticClass:"card-title"},
+[
 _vm._v(
 _vm._s(product.category)+
 " -  "+
 _vm._s(product.name))]),
+
 
 
 _vm._v(" "),
@@ -6103,7 +6243,9 @@ product.Net_price,
 
 
 " "+
-_vm._s(_vm.currentUser.currency))]),
+_vm._s(
+_vm.currentUser.currency))]),
+
 
 
 
@@ -6117,17 +6259,18 @@ staticClass:
 [
 _c(
 "span",
-{staticClass:"badge badge-info"},
+{
+staticClass:
+"badge badge-info"},
+
 [
 _vm._v(
-_vm._s(
-_vm.formatNumber(
-product.qte_sale,
-2))+
-
-
+_vm._s(product.qte_sale)+
 " "+
-_vm._s(product.unitSale))])])])]);
+_vm._s(product.unitSale))])])])])]);
+
+
+
 
 
 
@@ -6459,6 +6602,73 @@ staticClass:"i-Arrow-Right text-40"})])])],
 1)]),
 
 
+
+_vm._v(" "),
+_c(
+"b-modal",
+{
+attrs:{
+"hide-footer":"",
+size:"lg",
+id:"form_visor",
+title:_vm.Imagenes}},
+
+
+[
+_c(
+"b-form",
+[
+_c(
+"b-row",
+[
+_c("b-col",{attrs:{md:"12",sm:"12"}},[
+_c(
+"div",
+{staticClass:"carousel_wrap"},
+[
+_c(
+"b-carousel",
+{
+staticStyle:{
+"text-shadow":"1px 1px 2px #333"},
+
+attrs:{
+id:"carousel-1",
+interval:2000,
+controls:"",
+indicators:"",
+background:"#ababab"},
+
+on:{
+"sliding-start":_vm.onSlideStart,
+"sliding-end":_vm.onSlideEnd}},
+
+
+_vm._l(this.imageList,function(
+image,
+index)
+{
+return _c("b-carousel-slide",{
+key:index,
+attrs:{
+"img-src":"/images/products/"+image}});
+
+
+}),
+1)],
+
+
+1)])],
+
+
+
+1)],
+
+
+1)],
+
+
+1),
 
 _vm._v(" "),
 _c(
@@ -7311,6 +7521,91 @@ errors[0]))])],
 null,
 false,
 674790180)})],
+
+
+
+1):
+
+_vm._e(),
+_vm._v(" "),
+_vm.client.final_consumer==0?
+_c(
+"b-col",
+{attrs:{md:"6",sm:"12"}},
+[
+_c("validation-provider",{
+attrs:{
+name:"DUI",
+rules:{required:false}},
+
+scopedSlots:_vm._u(
+[
+{
+key:"default",
+fn:function fn(
+validationContext)
+{
+return [
+_c(
+"b-form-group",
+{
+attrs:{
+label:_vm.$t("DUI")}},
+
+
+[
+_c("b-form-input",{
+attrs:{
+state:_vm.getValidationState(
+validationContext),
+
+"aria-describedby":
+"DUI-feedback",
+label:"DUI"},
+
+model:{
+value:
+_vm.client.DUI,
+callback:function callback(
+$$v)
+{
+_vm.$set(
+_vm.client,
+"DUI",
+$$v);
+
+},
+expression:
+"client.DUI"}}),
+
+
+_vm._v(" "),
+_c(
+"b-form-invalid-feedback",
+{
+attrs:{
+id:"DUI-feedback"}},
+
+
+[
+_vm._v(
+_vm._s(
+validationContext.
+errors[0]))])],
+
+
+
+
+
+1)];
+
+
+}}],
+
+
+null,
+false,
+3384542959)})],
 
 
 

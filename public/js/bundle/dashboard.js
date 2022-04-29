@@ -3623,9 +3623,7 @@ props.column.field=="quantity"?
 _c("div",[
 _c("span",[
 _vm._v(
-_vm._s(
-_vm.formatNumber(props.row.quantity,2))+
-
+_vm._s(props.row.quantity)+
 " "+
 _vm._s(props.row.unit_product))])]):
 
@@ -3635,9 +3633,7 @@ props.column.field=="total"?
 _c("div",[
 _c("span",[
 _vm._v(
-_vm._s(
-_vm.formatNumber(props.row.total,2))+
-
+_vm._s(props.row.total)+
 " "+
 _vm._s(_vm.currentUser.currency))])]):
 
