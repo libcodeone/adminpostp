@@ -3212,8 +3212,6 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
-//
-//
 
 
 
@@ -5074,7 +5072,12 @@ _c(
 [
 _c(
 "div",
-{staticClass:"grandtotal"},
+{
+staticClass:"grandtotal",
+staticStyle:{
+color:"#000 !important"}},
+
+
 [
 _c("span",[
 _vm._v(
@@ -6141,15 +6144,7 @@ return _c(
 "div",
 {key:product,staticClass:"card col-3"},
 [
-_c(
-"span",
-{
-staticStyle:{
-left:"210px",
-position:"absolute"}},
-
-
-[
+_c("span",[
 _c(
 "a",
 {
@@ -6174,7 +6169,6 @@ _c("i",{
 staticClass:
 "i-Eye text-25 text-info",
 staticStyle:{cursor:"pointer"}})])]),
-
 
 
 
@@ -6232,7 +6226,11 @@ _c(
 "span",
 {
 staticClass:
-"badge badge-primary w-15 w-sm-100 mb-2"},
+"badge w-15 w-sm-100 mb-2",
+staticStyle:{
+color:"#fff",
+"background-color":"#020202"}},
+
 
 [
 _vm._v(
@@ -6260,8 +6258,12 @@ staticClass:
 _c(
 "span",
 {
-staticClass:
-"badge badge-info"},
+staticClass:"badge",
+staticStyle:{
+color:"#020202",
+"background-color":
+"#f5ba16"}},
+
 
 [
 _vm._v(

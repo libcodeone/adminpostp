@@ -259,7 +259,7 @@
                   <div class="footer_panel">
                     <b-row>
                       <b-col md="12">
-                        <div class="grandtotal">
+                        <div class="grandtotal" style="color: #000 !important;">
                           <span>{{$t("Total")}} : {{formatNumber(GrandTotal , 2)}} {{currentUser.currency}}</span>
                         </div>
                       </b-col>
@@ -526,11 +526,9 @@
                   v-for="product in products" :key="product"
                   class="card col-3"
                 >
-                 <span
-                         style="left: 210px;position: absolute;"
-                        >
+                 <span >
                            <a title="Ver Imagen" v-b-tooltip.hover @click="showImages(product.imageList)">
-                     <i class="i-Eye text-25 text-info" style="cursor: pointer;"></i>
+                           <i class="i-Eye text-25 text-info" style="cursor: pointer;"></i>
                         </a>
                         
                         </span>
@@ -544,13 +542,13 @@
                     <h5 class="card-title">{{product.category}} -  {{product.name}}</h5>
                     <p class="card-text text-muted text-small">{{product.code}}</p>
                     <span
-                        class="badge badge-primary w-15 w-sm-100 mb-2"
+                        class="badge w-15 w-sm-100 mb-2" style="color: #fff;background-color: #020202;"
                       >{{formatNumber(product.Net_price , 2)}} {{currentUser.currency}}</span>
                       <p
                         class="m-0 text-muted text-small w-15 w-sm-100 d-none d-lg-block item-badges"
                       >
                         <span
-                          class="badge badge-info"
+                          class="badge" style="color: #020202; background-color: #f5ba16;"
                         >{{product.qte_sale }} {{product.unitSale}}</span>
                        
 
@@ -559,7 +557,7 @@
                   </div>
                 </div>
               </div>
-                     </div>
+                      </div>
             </b-row>
 
             <b-row>

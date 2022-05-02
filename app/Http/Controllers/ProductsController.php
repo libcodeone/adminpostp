@@ -164,7 +164,7 @@ class ProductsController extends BaseController
                     $files = $request['images'];
                     foreach ($files as $file) {
                         $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
-                        $fileData->resize(200, 200);
+                        $fileData->resize(800, 800);
                         $name = rand(11111111, 99999999) . $file['name'];
                         $path = public_path() . '/images/products/';
                         $success = file_put_contents($path . $name, $fileData);
@@ -452,7 +452,7 @@ class ProductsController extends BaseController
                     $files = $request['images'];
                     foreach ($files as $file) {
                         $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
-                        $fileData->resize(200, 200);
+                        $fileData->resize(800, 800);
                         $name = rand(11111111, 99999999) . $file['name'];
                         $path = public_path() . '/images/products/';
                         $success = file_put_contents($path . $name, $fileData);
@@ -676,7 +676,13 @@ class ProductsController extends BaseController
             $item['name'] = $product_warehouse['product']->name;
             $firstimage = explode(',', $product_warehouse['product']->image);
             $item['image'] = $firstimage[0];
+            $item['imageList'] = [];
 
+            if ($product_warehouse['product']->image != '') {
+                foreach (explode(',', $product_warehouse['product']->image) as $img) {
+                    $item['imageList'][] = $img;
+                }
+            }
             if ($product_warehouse['product']['unitSale']->operator == '/') {
                 $item['qte_sale'] = $product_warehouse->qte * $product_warehouse['product']['unitSale']->operator_value;
                 $price = $product_warehouse['product']->price / $product_warehouse['product']['unitSale']->operator_value;

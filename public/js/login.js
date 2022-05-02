@@ -50880,7 +50880,7 @@ _c(
 {staticClass:"p-4"},
 [
 _c("div",{staticClass:"auth-logo text-center mb-30"},[
-_c("img",{attrs:{src:"/images/logo.png",alt:""}})]),
+_c("img",{attrs:{src:"/images/shadai_logo.png",alt:""}})]),
 
 _vm._v(" "),
 _c("h1",{staticClass:"mb-3 text-18"},[
@@ -51029,7 +51029,7 @@ _c(
 {staticClass:"p-4"},
 [
 _c("div",{staticClass:"auth-logo text-center mb-30"},[
-_c("img",{attrs:{src:"/images/logo.png",alt:""}})]),
+_c("img",{attrs:{src:"/images/shadai_logo.png",alt:""}})]),
 
 _vm._v(" "),
 _c("h1",{staticClass:"mb-3 text-18"},[
@@ -51290,7 +51290,7 @@ _c(
 {staticClass:"p-4"},
 [
 _c("div",{staticClass:"auth-logo text-center mb-30"},[
-_c("img",{attrs:{src:"/images/logo.png"}})]),
+_c("img",{attrs:{src:"/images/shadai_logo.png"}})]),
 
 _vm._v(" "),
 _c("h1",{staticClass:"mb-3 text-18"},[
