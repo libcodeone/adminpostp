@@ -2914,6 +2914,27 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -3561,7 +3582,9 @@ staticClass:
 
 _vm._v(" "),
 _c("div",[
-_vm._v("Fecha: "+_vm._s(_vm.sale.date))])])],
+_vm._v(
+"Fecha y hora: "+_vm._s(_vm.sale.created_at))])])],
+
 
 
 
@@ -4006,7 +4029,7 @@ _c(
 {staticClass:"h5 text-uppercase"},
 [
 _vm._v(
-"\n                      "+
+"\n                        "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_name)+
@@ -4037,7 +4060,7 @@ _c(
 {staticClass:"h5 text-uppercase"},
 [
 _vm._v(
-"\n                      "+
+"\n                         "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_adresse)+
@@ -4088,7 +4111,7 @@ staticClass:"h5 text-uppercase"},
 
 [
 _vm._v(
-"\n                      "+
+"\n                        "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_DUI)+
@@ -4104,7 +4127,7 @@ staticClass:"h5 text-uppercase"},
 
 [
 _vm._v(
-"\n                      "+
+"\n                        "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_NIT)+
@@ -4125,7 +4148,7 @@ _vm._v(" "),
 _c("div",{staticClass:"col-6"},[
 _c("span",[
 _vm._v(
-"\n                      "+
+"\n                        "+
 _vm._s(_vm.invoice_pos.sale.date)+
 ".\n                      ")])]),
 
@@ -4168,7 +4191,7 @@ _vm._v(" "),
 _c("div",{staticClass:"col-6"},[
 _c("span",[
 _vm._v(
-"\n                      V. "+
+"\n                              V. "+
 _vm._s(
 _vm.invoice_pos.sale.seller)+
 
@@ -4312,6 +4335,20 @@ detail_invoice.total,
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-12"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
+_vm._v(
+"\n                    \n                      ")])])]),
+
+
+
+
+
+_vm._v(" "),
+_c("div",{staticClass:"row"},[
 _c("div",{staticClass:"col-10"},[
 _c("div",{staticClass:"row rounded"},[
 _c(
@@ -4319,7 +4356,7 @@ _c(
 {staticClass:"h5 text-uppercase"},
 [
 _vm._v(
-"\n                    "+
+"\n                     "+
 _vm._s(_vm.GrandTotalText)+
 "\n                      ")])])]),
 
@@ -4584,7 +4621,7 @@ _c(
 {staticClass:"h5 text-uppercase"},
 [
 _vm._v(
-"\n                      "+
+"\n                         "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_name)+
@@ -4621,7 +4658,7 @@ staticStyle:{
 
 [
 _vm._v(
-"\n                      "+
+"\n                         "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_adresse)+
@@ -4658,7 +4695,7 @@ staticClass:"h5 text-uppercase"},
 
 [
 _vm._v(
-"\n                      "+
+"\n                        "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_city)+
@@ -4684,7 +4721,7 @@ staticClass:"h5 text-uppercase"},
 
 [
 _vm._v(
-"\n                      "+
+"\n                        "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_country)+
@@ -4706,30 +4743,19 @@ staticClass:
 "col-12 padding-top padding-bottom"},
 
 [
-_c("span",{
+_c(
+"span",
+{
 staticClass:"h5 text-uppercase",
 staticStyle:{
 "margin-top":"10px",
-"margin-left":"10px"}})])]),
+"margin-left":"10px"}},
 
-
-
-
-
-_vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c(
-"div",
-{
-staticClass:
-"col-12 padding-top padding-bottom"},
 
 [
-_c("span",{
-staticClass:"h5 text-uppercase",
-staticStyle:{
-"margin-top":"10px",
-"margin-left":"10px"}})])]),
+_vm._v(
+"\n                           \n                      ")])])]),
+
 
 
 
@@ -4761,7 +4787,7 @@ staticStyle:{
 
 [
 _vm._v(
-"\n                      V. "+
+"\n                          V. "+
 _vm._s(
 _vm.invoice_pos.sale.seller)+
 
@@ -4849,6 +4875,28 @@ _c("div",{staticClass:"row"},[
 _c("div",{staticClass:"col-6"}),
 _vm._v(" "),
 _c("div",{staticClass:"col-6"},[
+_c(
+"span",
+{
+staticClass:"h5 text-uppercase",
+staticStyle:{
+"margin-top":"45px",
+height:"40px"}},
+
+
+[
+_vm._v(
+"\n                       \n                      ")])])]),
+
+
+
+
+
+_vm._v(" "),
+_c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-6"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-6"},[
 _vm.invoice_pos.sale.client_DUI!=null?
 _c(
 "span",
@@ -4894,9 +4942,9 @@ client_NIT)+
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c("div",{staticClass:"col-4"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"},[
+_c("div",{staticClass:"col-8"},[
 _c(
 "span",
 {
@@ -5055,6 +5103,20 @@ detail_invoice.quantity,
 0),
 
 _vm._v(" "),
+_c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-12"},[
+_c(
+"span",
+{staticClass:"h5 text-uppercase"},
+[
+_vm._v(
+"\n                    \n                      ")])])]),
+
+
+
+
+
+_vm._v(" "),
 _c(
 "div",
 {
@@ -5069,7 +5131,7 @@ _c(
 {staticClass:"h5 text-uppercase"},
 [
 _vm._v(
-"\n                    "+
+"\n                      "+
 _vm._s(_vm.GrandTotalText)+
 "\n                      ")])])]),
 

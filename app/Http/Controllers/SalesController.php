@@ -132,7 +132,8 @@ class SalesController extends BaseController
             $item['GrandTotal'] = number_format($Sale['GrandTotal'], 2, '.', '');
             $item['paid_amount'] = number_format($Sale['paid_amount'], 2, '.', '');
             $item['due'] = number_format($Sale['GrandTotal'] - $Sale['paid_amount'], 2, '.', '');
-            $item['payment_status'] = $Sale['payment_statut'];
+
+            
 
             $data[] = $item;
         }
@@ -232,6 +233,7 @@ class SalesController extends BaseController
                     'product_id' => $value['product_id'],
                     'product_variant_id' => $value['product_variant_id'],
                     'total' => $value['subtotal'],
+
                 ];
 
                 $unit = Product::with('unitSale')
@@ -761,7 +763,7 @@ class SalesController extends BaseController
         $sale_details['paid_amount'] = $sale_data->paid_amount;
         $sale_details['due'] = $sale_data->GrandTotal - $sale_data->paid_amount;
         $sale_details['payment_status'] = $sale_data->payment_statut;
-
+        $sale_details['created_at'] = date_format($sale_data['created_at'],'Y-m-d H:i a');
         foreach ($sale_data['details'] as $detail) {
             if ($detail->product_variant_id) {
 
@@ -828,6 +830,7 @@ class SalesController extends BaseController
         $item['id'] = $sale->id;
         $item['Ref'] = $sale->Ref;
         $item['date'] = $sale->date;
+        $item['created_at'] = $sale->created_at;
         $item['discount'] = $sale->discount;
         $item['shipping'] = $sale->shipping;
         $item['taxe'] = $sale->TaxNet;
@@ -954,7 +957,6 @@ class SalesController extends BaseController
         $sale['date'] = $sale_data->date;
         $sale['GrandTotal'] = number_format($sale_data->GrandTotal, 2, '.', '');
         $sale['payment_status'] = $sale_data->payment_statut;
-
         $detail_id = 0;
         foreach ($sale_data['details'] as $detail) {
 
@@ -1380,6 +1382,7 @@ class SalesController extends BaseController
         $order = new Sale;
         $order->is_pos = 0;
             $order->date = $sale['date'];
+            
             $order->client_id = $sale['client_id'];
             $order->GrandTotal = $sale['GrandTotal'];
             $order->subTotal=$sale['GrandTotal'];
@@ -1585,6 +1588,7 @@ class SalesController extends BaseController
         $sale_details['due'] = $sale_details['GrandTotal'] - $sale_details['paid_amount'];
         $sale_details['payment_status'] = $sale_data->payment_statut;
 
+        $sale_details['created_at'] = date_format($sale_data['created_at'],'Y-m-d H:i a');
         foreach ($sale_data['details'] as $detail) {
                 $data['product_id']=$detail->product_id;
             if ($detail->product_variant_id) {

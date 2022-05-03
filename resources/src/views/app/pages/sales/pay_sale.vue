@@ -102,7 +102,7 @@
                 }}</span>
               </div>
 
-              <div>Fecha: {{ sale.date}}</div>
+              <div>Fecha y hora: {{ sale.created_at}}</div>
             </b-col>
           </b-row>
           <b-row class="mt-3">
@@ -291,14 +291,14 @@
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
-                      {{ invoice_pos.sale.client_name }}.  Tel.: {{ invoice_pos.sale.client_phone }}
+                       &nbsp;{{ invoice_pos.sale.client_name }}.  Tel.: {{ invoice_pos.sale.client_phone }}
                       </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
-                      {{ invoice_pos.sale.client_adresse }}.
+                        &nbsp;{{ invoice_pos.sale.client_adresse }}.
                       </span>
                     </div>
                   </div>
@@ -308,10 +308,10 @@
                       {{ formatNumber(invoice_pos.sale.TaxWithheld, 2) }}
                       </span>
                       <span class="h5 text-uppercase" v-if="invoice_pos.sale.client_DUI != null ">
-                      {{ invoice_pos.sale.client_DUI }}
+                      &nbsp; {{ invoice_pos.sale.client_DUI }}
                       </span>
                      <span class="h5 text-uppercase" v-else >
-                      {{ invoice_pos.sale.client_NIT }}
+                      &nbsp; {{ invoice_pos.sale.client_NIT }}
                       </span>
                     </div>
                   </div>
@@ -321,7 +321,7 @@
                     <div class="col-2"> </div>
                     <div class="col-6">
                        <span>
-                      {{ invoice_pos.sale.date }}.
+                      &nbsp; {{ invoice_pos.sale.date }}.
                       </span>
                     </div>
                     <div class="col-4">
@@ -341,7 +341,7 @@
                     <div class="col-2"> </div>
                     <div class="col-6">
                        <span>
-                      V. {{ invoice_pos.sale.seller }}.
+                      &nbsp;  &nbsp;  &nbsp; V. {{ invoice_pos.sale.seller }}.
                       </span>
                     </div>
                   </div>
@@ -391,12 +391,18 @@
                 </div>
               </div>
               </div>
-
+               <div class="row">
+                <div class="col-12">
+                  <span class="h5 text-uppercase">
+                   &nbsp;
+                      </span>
+                </div>
+                </div>
               <div class="row" >
                 <div class="col-10">
                   <div class="row rounded">
                     <span class="h5 text-uppercase">
-                    {{ GrandTotalText }}
+                     {{ GrandTotalText }}
                       </span>
                   </div>
                 </div>
@@ -514,14 +520,15 @@
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
-                      {{ invoice_pos.sale.client_name }}.  Tel.: {{ invoice_pos.sale.client_phone }}
+                       &nbsp; {{ invoice_pos.sale.client_name }}.  Tel.: {{ invoice_pos.sale.client_phone }}
                       </span>
                     </div>
                   </div>
+                  
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-top:15px;margin-left:10px;">
-                      {{ invoice_pos.sale.client_adresse }}.
+                        &nbsp;{{ invoice_pos.sale.client_adresse }}.
                       </span>
                     </div>
                   </div>
@@ -529,31 +536,27 @@
                   <div class="row" style="margin-top:8px;margin-left:10px;">
                     <div class="col-6 padding-top padding-bottom">
                       <span class="h5 text-uppercase" >
-                      {{ invoice_pos.sale.client_city }}.
+                      &nbsp; {{ invoice_pos.sale.client_city }}.
                       </span>
                     </div>
                     <div class="col-6 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
-                      {{ invoice_pos.sale.client_country }}.
+                      &nbsp; {{ invoice_pos.sale.client_country }}.
                       </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
+                         &nbsp; 
                       </span>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-12 padding-top padding-bottom">
-                      <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
-                      </span>
-                    </div>
-                  </div>
+                 
                   <div class="row" style="height:75px;">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-left:60px;margin-top:50px;">
-                      V. {{ invoice_pos.sale.seller }}.
+                      &nbsp; &nbsp; V. {{ invoice_pos.sale.seller }}.
                       </span>
                     </div>
                   </div>
@@ -587,6 +590,16 @@
 
                     </div>
                   </div>
+
+                  <div class="row">
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                      <span class="h5 text-uppercase" style="margin-top:45px; height:40px;">
+                      &nbsp;
+                      </span>
+
+                    </div>
+                  </div>
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
@@ -599,9 +612,10 @@
 
                     </div>
                   </div>
+                 
                   <div class="row">
-                    <div class="col-6"></div>
-                    <div class="col-6">
+                     <div class="col-4"></div>
+                    <div class="col-8">
                       <span class="h6 text-uppercase ml-1" style="margin-top:45px;height:40px;">
                      GIRO: {{ invoice_pos.sale.client_giro }}
                       </span>
@@ -654,11 +668,18 @@
                 </div>
               </div>
               </div>
+              <div class="row">
+                <div class="col-12">
+                  <span class="h5 text-uppercase">
+                   &nbsp;
+                      </span>
+                </div>
+                </div>
               <div class="row" style="margin-top:-107px;">
                 <div class="col-9">
                   <div class="row rounded">
                     <span class="h5 text-uppercase">
-                    {{ GrandTotalText }}
+                    &nbsp; {{ GrandTotalText }}
                       </span>
                   </div>
                 </div>
