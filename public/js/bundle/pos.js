@@ -3212,6 +3212,11 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -3239,6 +3244,7 @@ notes:"",
 cash:0,
 change:0},
 
+loading:false,
 isLoading:true,
 focusSearchProduct:true,
 showSidebarBrands:false,
@@ -3488,6 +3494,7 @@ _this3.makeToast("danger",_this3.$t("Please_fill_the_form_correctly"),_this3.$t(
 }
 }else {
 if(_this3.verifiedForm()){
+_this3.loading=true;
 Fire.$emit("pay_now");
 }else {
 nprogress__WEBPACK_IMPORTED_MODULE_0___default.a.done();
@@ -3693,9 +3700,17 @@ return false;
 return true;
 }
 }
+}),_defineProperty(_objectSpread2,"showPreLoader",function showPreLoader(){
+setTimeout(function(){
+swal.fire({
+icon:'success',
+html:'<h4>Success!</h4>'});
+
+},1000);
 }),_defineProperty(_objectSpread2,"CreatePOS",function CreatePOS(){
 var _this9=this;
 
+this.loading=true;
 nprogress__WEBPACK_IMPORTED_MODULE_0___default.a.start();
 nprogress__WEBPACK_IMPORTED_MODULE_0___default.a.set(0.1);
 axios.post("pos/CreatePOS",{
@@ -3716,12 +3731,16 @@ nprogress__WEBPACK_IMPORTED_MODULE_0___default.a.done();
 _this9.Reset_Pos();
 
 _this9.makeToast("success",_this9.$t("sendtocheckin"),_this9.$t("Success"));
+
+_this9.loading=false;
 }
 })["catch"](function(error){
 // Complete the animation of theprogress bar.
 nprogress__WEBPACK_IMPORTED_MODULE_0___default.a.done();
 
 _this9.makeToast("danger",_this9.$t("InvalidData"),_this9.$t("Failed"));
+
+_this9.loading=false;
 });
 this.$refs.SearchProducts.focus();
 }),_defineProperty(_objectSpread2,"formatNumber",function formatNumber(number,dec){
@@ -3995,8 +4014,9 @@ _this13.payment.amount=_this13.formatNumber(_this13.GrandTotal,2);
 _this13.payment.cash=_this13.formatNumber(_this13.GrandTotal,2);
 _this13.payment.Reglement="Cash";// this.$bvModal.show("Add_Payment");
 
-_this13.CreatePOS();// Complete the animation of theprogress bar.
+_this13.CreatePOS();
 
+_this13.loading=false;// Complete the animation of theprogress bar.
 
 nprogress__WEBPACK_IMPORTED_MODULE_0___default.a.done();
 },500);
@@ -5389,8 +5409,10 @@ _c(
 {
 attrs:{
 type:"submit",
+tag:"button",
 variant:
-"primary ripple mt-1 btn-rounded btn-block"}},
+"primary ripple mt-1 btn-rounded btn-block",
+disabled:_vm.loading}},
 
 
 [
@@ -5402,10 +5424,14 @@ _vm._v(
 _vm._s(
 _vm.$t("sendtobox"))+
 
-"\n                        ")])],
+"\n                        ")]),
 
 
 
+_vm._v(" "),
+_vm.loading?
+_vm._m(0):
+_vm._e()],
 
 1)],
 
@@ -8010,7 +8036,16 @@ _vm._e()],
 
 
 };
-var staticRenderFns=[];
+var staticRenderFns=[
+function(){
+var _vm=this;
+var _h=_vm.$createElement;
+var _c=_vm._self._c||_h;
+return _c("div",{staticClass:"typo__p"},[
+_c("div",{staticClass:"spinner sm spinner-primary mt-3"})]);
+
+}];
+
 render._withStripped=true;
 
 

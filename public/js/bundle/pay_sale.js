@@ -2935,6 +2935,37 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -4017,11 +4048,13 @@ staticStyle:{height:"105px"}},
 [
 _c("div",{staticClass:"col-8"},[
 _c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-12"}),
+_vm._v(" "),
 _c(
 "div",
 {
 staticClass:
-"col-12 padding-top padding-bottom"},
+"col-8 padding-top padding-bottom"},
 
 [
 _c(
@@ -4029,7 +4062,7 @@ _c(
 {staticClass:"h5 text-uppercase"},
 [
 _vm._v(
-"\n                        "+
+"\n                         "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_name)+
@@ -4052,7 +4085,7 @@ _c(
 "div",
 {
 staticClass:
-"col-12 padding-top padding-bottom"},
+"col-8 padding-top padding-bottom"},
 
 [
 _c(
@@ -4060,7 +4093,7 @@ _c(
 {staticClass:"h5 text-uppercase"},
 [
 _vm._v(
-"\n                         "+
+"\n                           "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_adresse)+
@@ -4074,11 +4107,13 @@ client_adresse)+
 
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-2"}),
+_vm._v(" "),
 _c(
 "div",
 {
 staticClass:
-"col-12 padding-top padding-bottom"},
+"col-8 padding-top padding-bottom"},
 
 [
 _vm.sale.big_consumer==1?
@@ -4111,7 +4146,7 @@ staticClass:"h5 text-uppercase"},
 
 [
 _vm._v(
-"\n                        "+
+"\n                       "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_DUI)+
@@ -4127,7 +4162,7 @@ staticClass:"h5 text-uppercase"},
 
 [
 _vm._v(
-"\n                        "+
+"\n                       "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_NIT)+
@@ -4145,17 +4180,26 @@ _c("div",{staticClass:"col-4"},[
 _c("div",{staticClass:"row"},[
 _c("div",{staticClass:"col-2"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"},[
+_c(
+"div",
+{
+staticClass:"col-4",
+staticStyle:{padding:"0px"}},
+
+[
 _c("span",[
 _vm._v(
-"\n                        "+
-_vm._s(_vm.invoice_pos.sale.date)+
+"\n                       "+
+_vm._s(
+_vm.invoice_pos.sale.date)+
+
 ".\n                      ")])]),
 
 
 
+
 _vm._v(" "),
-_c("div",{staticClass:"col-4"},[
+_c("div",{staticClass:"col-6"},[
 _c("span",[
 _vm._v(
 "\n                      "+
@@ -4188,10 +4232,10 @@ staticStyle:{
 [
 _c("div",{staticClass:"col-2"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"},[
+_c("div",{staticClass:"col-10"},[
 _c("span",[
 _vm._v(
-"\n                              V. "+
+"\n                                 V. "+
 _vm._s(
 _vm.invoice_pos.sale.seller)+
 
@@ -4762,6 +4806,33 @@ _vm._v(
 
 
 _vm._v(" "),
+_c("div",{staticClass:"row"},[
+_c(
+"div",
+{
+staticClass:
+"col-12 padding-top padding-bottom"},
+
+[
+_c(
+"span",
+{
+staticClass:"h5 text-uppercase",
+staticStyle:{
+"margin-top":"10px",
+"margin-left":"10px"}},
+
+
+[
+_vm._v(
+"\n                           \n                      ")])])]),
+
+
+
+
+
+
+_vm._v(" "),
 _c(
 "div",
 {
@@ -4817,12 +4888,18 @@ staticClass:"row",
 staticStyle:{"margin-top":"-10px"}},
 
 [
-_c("div",{staticClass:"col-4"}),
+_c("div",{staticClass:"col-2"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-4"},[
+_c(
+"div",
+{
+staticClass:"col-4",
+staticStyle:{padding:"0px"}},
+
+[
 _c("span",[
 _vm._v(
-"\n                      "+
+"\n                             "+
 _vm._s(
 _vm.invoice_pos.sale.date)+
 
@@ -4830,8 +4907,9 @@ _vm.invoice_pos.sale.date)+
 
 
 
+
 _vm._v(" "),
-_c("div",{staticClass:"col-4"},[
+_c("div",{staticClass:"col-6"},[
 _c("span",[
 _vm._v(
 "\n                      "+
@@ -4845,10 +4923,40 @@ _vm.invoice_pos.sale.Reglement)+
 
 
 _vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c(
+"div",
+{
+staticClass:"row",
+staticStyle:{height:"10px"}},
+
+[
+_c("div",{staticClass:"col-3"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"},[
+_c("div",{staticClass:"col-9"},[
+_c(
+"span",
+{
+staticClass:
+"h5 text-uppercase ml-1",
+staticStyle:{
+"margin-top":"45px",
+height:"40px"}},
+
+
+[
+_vm._v(
+"\n                       \n                      ")])])]),
+
+
+
+
+
+
+_vm._v(" "),
+_c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-3"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-9"},[
 _c(
 "span",
 {
@@ -4871,14 +4979,21 @@ _vm.invoice_pos.sale.client_NRC)+
 
 
 _vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c(
+"div",
+{
+staticClass:"row",
+staticStyle:{height:"10px"}},
+
+[
+_c("div",{staticClass:"col-3"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"},[
+_c("div",{staticClass:"col-9"},[
 _c(
 "span",
 {
-staticClass:"h5 text-uppercase",
+staticClass:
+"h5 text-uppercase ml-1",
 staticStyle:{
 "margin-top":"45px",
 height:"40px"}},
@@ -4892,11 +5007,12 @@ _vm._v(
 
 
 
+
 _vm._v(" "),
 _c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-6"}),
+_c("div",{staticClass:"col-3"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-6"},[
+_c("div",{staticClass:"col-9"},[
 _vm.invoice_pos.sale.client_DUI!=null?
 _c(
 "span",
@@ -4909,7 +5025,7 @@ height:"40px"}},
 
 [
 _vm._v(
-"\n                      "+
+"\n                      DUI: "+
 _vm._s(
 _vm.invoice_pos.sale.
 client_DUI)+
@@ -4941,10 +5057,40 @@ client_NIT)+
 
 
 _vm._v(" "),
-_c("div",{staticClass:"row"},[
-_c("div",{staticClass:"col-4"}),
+_c(
+"div",
+{
+staticClass:"row",
+staticStyle:{height:"10px"}},
+
+[
+_c("div",{staticClass:"col-3"}),
 _vm._v(" "),
-_c("div",{staticClass:"col-8"},[
+_c("div",{staticClass:"col-9"},[
+_c(
+"span",
+{
+staticClass:
+"h6 text-uppercase ml-1",
+staticStyle:{
+"margin-top":"45px",
+height:"40px"}},
+
+
+[
+_vm._v(
+"\n                     \n                      ")])])]),
+
+
+
+
+
+
+_vm._v(" "),
+_c("div",{staticClass:"row"},[
+_c("div",{staticClass:"col-3"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-9"},[
 _c(
 "span",
 {
@@ -5124,7 +5270,9 @@ staticClass:"row",
 staticStyle:{"margin-top":"-107px"}},
 
 [
-_c("div",{staticClass:"col-9"},[
+_c("div",{staticClass:"col-1"}),
+_vm._v(" "),
+_c("div",{staticClass:"col-8"},[
 _c("div",{staticClass:"row rounded"},[
 _c(
 "span",

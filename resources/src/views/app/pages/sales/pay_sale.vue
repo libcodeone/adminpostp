@@ -289,29 +289,33 @@
               <div class="row" style="height:105px">
                 <div class="col-8">
                   <div class="row">
-                    <div class="col-12 padding-top padding-bottom">
+                     <div class="col-12" >
+                    </div>
+                    <div class="col-8 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
-                       &nbsp;{{ invoice_pos.sale.client_name }}.  Tel.: {{ invoice_pos.sale.client_phone }}
+                       &nbsp;&nbsp;{{ invoice_pos.sale.client_name }}.  Tel.: {{ invoice_pos.sale.client_phone }}
                       </span>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-12 padding-top padding-bottom">
+                   
+                    <div class="col-8 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
-                        &nbsp;{{ invoice_pos.sale.client_adresse }}.
+                       &nbsp;&nbsp;&nbsp;&nbsp;{{ invoice_pos.sale.client_adresse }}.
                       </span>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-12 padding-top padding-bottom">
+                      <div class="col-2"> </div>
+                    <div class="col-8 padding-top padding-bottom">
                     <span class="h5 text-uppercase" v-if="sale.big_consumer == 1">
                       {{ formatNumber(invoice_pos.sale.TaxWithheld, 2) }}
                       </span>
                       <span class="h5 text-uppercase" v-if="invoice_pos.sale.client_DUI != null ">
-                      &nbsp; {{ invoice_pos.sale.client_DUI }}
+                      &nbsp;{{ invoice_pos.sale.client_DUI }}
                       </span>
                      <span class="h5 text-uppercase" v-else >
-                      &nbsp; {{ invoice_pos.sale.client_NIT }}
+                      &nbsp;{{ invoice_pos.sale.client_NIT }}
                       </span>
                     </div>
                   </div>
@@ -319,12 +323,14 @@
                 <div class="col-4">
                   <div class="row">
                     <div class="col-2"> </div>
-                    <div class="col-6">
+                    <div class="col-4" style="
+    padding: 0px;
+">
                        <span>
-                      &nbsp; {{ invoice_pos.sale.date }}.
+                    &nbsp;&nbsp; {{ invoice_pos.sale.date }}.
                       </span>
                     </div>
-                    <div class="col-4">
+                    <div class="col-6">
                      <span >
                       {{ invoice_pos.sale.Reglement }}.
                       </span>
@@ -339,9 +345,9 @@
                   </div>
                   <div class="row" style="margin-top:30px; margin-left:55px;">
                     <div class="col-2"> </div>
-                    <div class="col-6">
+                    <div class="col-10">
                        <span>
-                      &nbsp;  &nbsp;  &nbsp; V. {{ invoice_pos.sale.seller }}.
+                      &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; V. {{ invoice_pos.sale.seller }}.
                       </span>
                     </div>
                   </div>
@@ -552,7 +558,13 @@
                       </span>
                     </div>
                   </div>
-                 
+                  <div class="row">
+                    <div class="col-12 padding-top padding-bottom">
+                      <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
+                         &nbsp; 
+                      </span>
+                    </div>
+                  </div>
                   <div class="row" style="height:75px;">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-left:60px;margin-top:50px;">
@@ -568,22 +580,33 @@
                     <div class="col-4"></div>
                   </div>
                   <div class="row" style="margin-top:-10px;">
-                    <div class="col-4"></div>
-                    <div class="col-4" >
+                    <div class="col-2"></div>
+                    <div class="col-4" style="
+    padding: 0px;
+">
                       <span >
-                      {{ invoice_pos.sale.date }}.
+                      &nbsp; &nbsp; &nbsp; &nbsp;{{ invoice_pos.sale.date }}.
                       </span>
                       </div>
-                    <div class="col-4">
+                    <div class="col-6">
                       <span >
                       {{ invoice_pos.sale.Reglement }}.
                       </span>
 
                     </div>
                   </div>
+                  <div class="row" style="height: 10px;">
+                    <div class="col-3"></div>
+                    <div class="col-9">
+                      <span class="h5 text-uppercase ml-1" style="margin-top:45px; height:40px;">
+                      &nbsp;
+                      </span>
+
+                    </div>
+                  </div>
                   <div class="row">
-                    <div class="col-6"></div>
-                    <div class="col-6">
+                    <div class="col-3"></div>
+                    <div class="col-9">
                       <span class="h5 text-uppercase" style="margin-top:45px; height:40px;">
                       {{ invoice_pos.sale.client_NRC }}.
                       </span>
@@ -591,20 +614,20 @@
                     </div>
                   </div>
 
-                  <div class="row">
-                    <div class="col-6"></div>
-                    <div class="col-6">
-                      <span class="h5 text-uppercase" style="margin-top:45px; height:40px;">
+                  <div class="row" style="height: 10px;">
+                    <div class="col-3"></div>
+                    <div class="col-9">
+                      <span class="h5 text-uppercase ml-1" style="margin-top:45px; height:40px;">
                       &nbsp;
                       </span>
 
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-6"></div>
-                    <div class="col-6">
+                    <div class="col-3"></div>
+                    <div class="col-9">
                       <span class="h5 text-uppercase" style="margin-top:45px;height:40px;" v-if="invoice_pos.sale.client_DUI != null ">
-                      {{ invoice_pos.sale.client_DUI }}
+                      DUI: {{ invoice_pos.sale.client_DUI }}
                       </span>
                      <span class="h5 text-uppercase" style="margin-top:45px;height:40px;" v-else >
                       {{ invoice_pos.sale.client_NIT }}
@@ -612,10 +635,17 @@
 
                     </div>
                   </div>
-                 
+                  <div class="row" style="height: 10px;">
+                     <div class="col-3"></div>
+                    <div class="col-9">
+                      <span class="h6 text-uppercase ml-1" style="margin-top:45px;height:40px;">
+                    &nbsp;
+                      </span>
+                    </div>
+                  </div>
                   <div class="row">
-                     <div class="col-4"></div>
-                    <div class="col-8">
+                     <div class="col-3"></div>
+                    <div class="col-9">
                       <span class="h6 text-uppercase ml-1" style="margin-top:45px;height:40px;">
                      GIRO: {{ invoice_pos.sale.client_giro }}
                       </span>
@@ -676,7 +706,8 @@
                 </div>
                 </div>
               <div class="row" style="margin-top:-107px;">
-                <div class="col-9">
+                <div class="col-1"></div>
+                <div class="col-8">
                   <div class="row rounded">
                     <span class="h5 text-uppercase">
                     &nbsp; {{ GrandTotalText }}

@@ -347,10 +347,15 @@
                         </b-button>
                       </b-col>
                       <b-col md="6" sm="12">
-                        <b-button type="submit" variant="primary ripple mt-1 btn-rounded btn-block">
+                      <b-button type="submit" 
+                    tag="button" variant="primary ripple mt-1 btn-rounded btn-block" 
+                    :disabled="loading" >
                           <i class="i-Checkout"></i>
                           {{ $t("sendtobox") }}
                         </b-button>
+                        <div v-once class="typo__p" v-if="loading">
+                    <div class="spinner sm spinner-primary mt-3"></div>
+                  </div>
                       </b-col>
                     </b-row>
                   </div>
@@ -1088,6 +1093,7 @@ export default {
         cash: 0,
         change: 0
       },
+      loading : false,
       isLoading: true,
       focusSearchProduct:true,
       showSidebarBrands:false,
@@ -1437,6 +1443,7 @@ export default {
           }
         } else {
           if (this.verifiedForm()) {
+            this.loading = true;
             Fire.$emit("pay_now");
           } else {
             NProgress.done();
@@ -1703,13 +1710,24 @@ export default {
         }
       }
     },
-    //----------------------------------Create POS ------------------------------\\
-    CreatePOS() {
-      
+
+
+ showPreLoader(){
+setTimeout(function() {
+			swal.fire({
+				icon: 'success',
+				html: '<h4>Success!</h4>'
+			});
+		}, 1000);
+},
+      //----------------------------------Create POS ------------------------------\\
+    CreatePOS() {      
+      this.loading = true;
       NProgress.start();
       NProgress.set(0.1);
         axios
         .post("pos/CreatePOS", {
+
           client_id: this.sale.client_id,
           warehouse_id: this.sale.warehouse_id,
           tax_rate: this.sale.tax_rate,
@@ -1725,16 +1743,18 @@ export default {
             // Complete the animation of theprogress bar.
             NProgress.done();
             this.Reset_Pos();
-            this.makeToast("success", this.$t("sendtocheckin"), this.$t("Success"));
-
+            this.makeToast("success", this.$t("sendtocheckin"), this.$t("Success"));           
+             this.loading = false;
           }
         })
         .catch(error => {
           // Complete the animation of theprogress bar.
           NProgress.done();
           this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
+           this.loading = false;
         });
-        this.$refs.SearchProducts.focus();
+       
+         this.$refs.SearchProducts.focus();
     },
 
     //------------------------------Formetted Numbers -------------------------\\
@@ -2069,13 +2089,14 @@ export default {
 
   created() {
     this.GetElementsPos();
-    Fire.$on("pay_now", () => {
+     Fire.$on("pay_now", () => {
       setTimeout(() => {
         this.payment.amount = this.formatNumber(this.GrandTotal , 2);
         this.payment.cash = this.formatNumber(this.GrandTotal , 2);
         this.payment.Reglement = "Cash";
         // this.$bvModal.show("Add_Payment");
         this.CreatePOS();
+        this.loading = false;
         // Complete the animation of theprogress bar.
         NProgress.done();
       }, 500);
