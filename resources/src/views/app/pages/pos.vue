@@ -259,7 +259,7 @@
                   <div class="footer_panel">
                     <b-row>
                       <b-col md="12">
-                        <div class="grandtotal">
+                        <div class="grandtotal" style="color: #000 !important;">
                           <span>{{$t("Total")}} : {{formatNumber(GrandTotal , 2)}} {{currentUser.currency}}</span>
                         </div>
                       </b-col>
@@ -347,10 +347,15 @@
                         </b-button>
                       </b-col>
                       <b-col md="6" sm="12">
-                        <b-button type="submit" variant="primary ripple mt-1 btn-rounded btn-block">
+                      <b-button type="submit" 
+                    tag="button" variant="primary ripple mt-1 btn-rounded btn-block" 
+                    :disabled="loading" >
                           <i class="i-Checkout"></i>
                           {{ $t("sendtobox") }}
                         </b-button>
+                        <div v-once class="typo__p" v-if="loading">
+                    <div class="spinner sm spinner-primary mt-3"></div>
+                  </div>
                       </b-col>
                     </b-row>
                   </div>
@@ -526,11 +531,9 @@
                   v-for="product in products" :key="product"
                   class="card col-3"
                 >
-                 <span
-                         style="left: 210px;position: absolute;"
-                        >
+                 <span >
                            <a title="Ver Imagen" v-b-tooltip.hover @click="showImages(product.imageList)">
-                     <i class="i-Eye text-25 text-info" style="cursor: pointer;"></i>
+                           <i class="i-Eye text-25 text-info" style="cursor: pointer;"></i>
                         </a>
                         
                         </span>
@@ -544,13 +547,13 @@
                     <h5 class="card-title">{{product.category}} -  {{product.name}}</h5>
                     <p class="card-text text-muted text-small">{{product.code}}</p>
                     <span
-                        class="badge badge-primary w-15 w-sm-100 mb-2"
+                        class="badge w-15 w-sm-100 mb-2" style="color: #fff;background-color: #020202;"
                       >{{formatNumber(product.Net_price , 2)}} {{currentUser.currency}}</span>
                       <p
                         class="m-0 text-muted text-small w-15 w-sm-100 d-none d-lg-block item-badges"
                       >
                         <span
-                          class="badge badge-info"
+                          class="badge" style="color: #020202; background-color: #f5ba16;"
                         >{{product.qte_sale }} {{product.unitSale}}</span>
                        
 
@@ -559,7 +562,7 @@
                   </div>
                 </div>
               </div>
-                     </div>
+                      </div>
             </b-row>
 
             <b-row>
@@ -1090,6 +1093,7 @@ export default {
         cash: 0,
         change: 0
       },
+      loading : false,
       isLoading: true,
       focusSearchProduct:true,
       showSidebarBrands:false,
@@ -1439,6 +1443,7 @@ export default {
           }
         } else {
           if (this.verifiedForm()) {
+            this.loading = true;
             Fire.$emit("pay_now");
           } else {
             NProgress.done();
@@ -1705,13 +1710,24 @@ export default {
         }
       }
     },
-    //----------------------------------Create POS ------------------------------\\
-    CreatePOS() {
-      
+
+
+ showPreLoader(){
+setTimeout(function() {
+			swal.fire({
+				icon: 'success',
+				html: '<h4>Success!</h4>'
+			});
+		}, 1000);
+},
+      //----------------------------------Create POS ------------------------------\\
+    CreatePOS() {      
+      this.loading = true;
       NProgress.start();
       NProgress.set(0.1);
         axios
         .post("pos/CreatePOS", {
+
           client_id: this.sale.client_id,
           warehouse_id: this.sale.warehouse_id,
           tax_rate: this.sale.tax_rate,
@@ -1727,16 +1743,18 @@ export default {
             // Complete the animation of theprogress bar.
             NProgress.done();
             this.Reset_Pos();
-            this.makeToast("success", this.$t("sendtocheckin"), this.$t("Success"));
-
+            this.makeToast("success", this.$t("sendtocheckin"), this.$t("Success"));           
+             this.loading = false;
           }
         })
         .catch(error => {
           // Complete the animation of theprogress bar.
           NProgress.done();
           this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
+           this.loading = false;
         });
-        this.$refs.SearchProducts.focus();
+       
+         this.$refs.SearchProducts.focus();
     },
 
     //------------------------------Formetted Numbers -------------------------\\
@@ -2071,13 +2089,14 @@ export default {
 
   created() {
     this.GetElementsPos();
-    Fire.$on("pay_now", () => {
+     Fire.$on("pay_now", () => {
       setTimeout(() => {
         this.payment.amount = this.formatNumber(this.GrandTotal , 2);
         this.payment.cash = this.formatNumber(this.GrandTotal , 2);
         this.payment.Reglement = "Cash";
         // this.$bvModal.show("Add_Payment");
         this.CreatePOS();
+        this.loading = false;
         // Complete the animation of theprogress bar.
         NProgress.done();
       }, 500);

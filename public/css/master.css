@@ -21,14 +21,14 @@
   }
 
   .loading {
-    border: 3px solid rgba(102, 51, 153, 0.45);
+    border: 3px solid rgba(153, 51, 51, 0.45);
     position: absolute;
     left: calc(50% - 40px);
     top: 50%;
     width: 55px;
     height: 55px;
     border-radius: 50%;
-    border-top-color: #8b5cf6;
+    border-top-color: #ff0000;
     animation: loader 1s ease-in-out infinite;
     -webkit-animation: loader 1s ease-in-out infinite;
   }
@@ -59,7 +59,7 @@
 }
 
 .styled-table thead tr {
-    background-color: #8b5cf6;
+    background-color: #ff0000;
     color: #ffffff;
     text-align: left;
 }
@@ -78,5 +78,26 @@
 }
 
 .styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #8b5cf6;
+    border-bottom: 2px solid #ff0000;
+}
+
+.style-yellow {
+  background-color: #ffee00 !important;
+  color: #000000 !important;
+}
+
+.style-black {
+  background-color: #000000 !important;
+  color: #ffee00 !important;
+}
+
+.style-red {
+  background-color: #ff0000 
+  !important;
+  color: #000000 !important;
+}
+
+.style-border-red {
+  
+  border-top-color: #ff0000 !important;
 }
