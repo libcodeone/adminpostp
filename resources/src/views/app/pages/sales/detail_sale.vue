@@ -234,7 +234,7 @@
                 <div class="col-1"></div>
               </div>
               <div style="height:360px">
-                  <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <div class="col-1">
                   <span class="h5 text-uppercase">
                   {{ detail_invoice.quantity }}
@@ -614,6 +614,7 @@
                       </span>
                     </td>
                   </tr>
+                   <tr>
                     <td>{{$t('Discount')}}</td>
                     <td>{{formatNumber(sale.discount,2)}} {{currentUser.currency}}</td>
                   </tr>
