@@ -106,10 +106,10 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="detail in details">
+                    <tr v-for="detail in details" :key="detail">
                       <td>{{detail.code}} ({{detail.name}})</td>
                       <td>{{formatNumber(detail.Net_cost ,2)}} {{currentUser.currency}}</td>
-                      <td>{{formatNumber(detail.quantity,2)}} {{detail.unit_purchase}}</td>
+                      <td>{{detail_invoice.quantity}} {{detail_invoice.unit_sale}}</td>
                       <td>{{formatNumber(detail.cost,2)}} {{currentUser.currency}}</td>
                       <td>{{formatNumber(detail.DiscountNet,2)}} {{currentUser.currency}}</td>
                       <td>{{formatNumber(detail.taxe,2)}} {{currentUser.currency}}</td>

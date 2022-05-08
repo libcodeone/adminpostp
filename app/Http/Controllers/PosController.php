@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Stripe;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Builder;
 
 class PosController extends BaseController
 {
@@ -133,7 +134,7 @@ class PosController extends BaseController
                     }
                 }
             }
-            
+
             SaleDetail::insert($orderDetails);
 
             $sale = Sale::findOrFail($order->id);
@@ -245,7 +246,7 @@ class PosController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
         // How many items do you want to display.
-        $perPage = 20;
+        $perPage = 30;
         $pageStart = \Request::get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
@@ -261,13 +262,15 @@ class PosController extends BaseController
 
             // })
         // Filter
-            ->where(function ($query) use ($request) {
-                return $query->when($request->filled('category_id'), function ($query) use ($request) {
-                    return $query->whereHas('product', function ($q) use ($request) {
-                        $q->where('category_id', '=', $request->category_id);
+        ->where(function ($query) use ($request) {
+            return $query->when($request->filled('category_id'), function ($query) use ($request) {
+                return $query->whereHas('product', function ($q) use ($request) {
+                    $q->whereHas('categories', function (Builder $query)  use($request){
+                        $query->where('category_id', '=', $request->category_id);
                     });
                 });
-            })
+            });
+        })
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('brand_id'), function ($query) use ($request) {
                     return $query->whereHas('product', function ($q) use ($request) {
@@ -314,7 +317,16 @@ class PosController extends BaseController
             $item['name'] = $product_warehouse['product']->name;
             $firstimage = explode(',', $product_warehouse['product']->image);
             $item['image'] = $firstimage[0];
+            $item['imageList'] = [];
 
+            if ($product_warehouse['product']->image != '') {
+                foreach (explode(',', $product_warehouse['product']->image) as $img) {
+                    $item['imageList'][] = $img;
+                }
+            }
+
+
+           
             if ($product_warehouse['product']['unitSale']->operator == '/') {
                 $item['qte_sale'] = $product_warehouse->qte * $product_warehouse['product']['unitSale']->operator_value;
                 $price = $product_warehouse['product']->price / $product_warehouse['product']['unitSale']->operator_value;

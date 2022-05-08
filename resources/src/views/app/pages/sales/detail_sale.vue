@@ -119,10 +119,10 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="detail in details">
+                    <tr v-for="detail in details" :key="detail">
                       <td>{{detail.code}} ({{detail.name}})</td>
                       <td>{{formatNumber(detail.Net_price,2)}} {{currentUser.currency}}</td>
-                      <td>{{formatNumber(detail.quantity,2)}} {{detail.unit_sale}}</td>
+                      <td>{{detail_invoice.quantity}} {{detail_invoice.unit_sale}}</td>
                       <td>{{formatNumber(detail.price,2)}} {{currentUser.currency}}</td>
                       <td>{{formatNumber(detail.DiscountNet,2)}} {{currentUser.currency}}</td>
                       <td>{{formatNumber(detail.taxe,2)}} {{currentUser.currency}}</td>
@@ -234,10 +234,10 @@
                 <div class="col-1"></div>
               </div>
               <div style="height:360px">
-                  <div class="row"  v-for="detail_invoice in invoice_pos.details">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <div class="col-1">
                   <span class="h5 text-uppercase">
-                  {{ formatNumber(detail_invoice.quantity, 2) }}
+                  {{ detail_invoice.quantity }}
                       </span>
                 </div>
 
@@ -463,8 +463,8 @@
                   <div class="row">
                     <div class="col-6"></div>
                     <div class="col-6">
-                      <span class="text-uppercase" style="font-size:0.8rem">
-                      {{ invoice_pos.sale.client_giro }}
+                      <span class="h5 text-uppercase ml-1">
+                      Giro: {{ invoice_pos.sale.client_giro }}
                       </span>
                     </div>
                   </div>
@@ -480,10 +480,10 @@
                 <div class="col-1"></div>
               </div>
               <div style="height:400px">
-                  <div class="row"  v-for="detail_invoice in invoice_pos.details">
+                  <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <div class="col-1">
                   <span class="h5 text-uppercase">
-                  {{ formatNumber(detail_invoice.quantity, 2) }}
+                  {{ detail_invoice.quantity }}
                       </span>
                 </div>
 
@@ -612,6 +612,7 @@
                       </span>
                     </td>
                   </tr>
+                   <tr>
                     <td>{{$t('Discount')}}</td>
                     <td>{{formatNumber(sale.discount,2)}} {{currentUser.currency}}</td>
                   </tr>

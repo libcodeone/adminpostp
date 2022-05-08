@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Builder;
 
 class helpers
 {
@@ -25,17 +26,21 @@ class helpers
             $model->where(function ($query) use ($request, $field, $model) {
                 return $model->when($request->filled($field['value']),
                     function ($query) use ($request, $model, $field) {
-
+                      
                         if($field['param'] == 'like'){
-                            $model->where($field['value'], 'like', "{$request[$field['value']]}");
+                            $model->where($field['value'], 'like', "%".$request[$field['value']]. "%");
                         }elseif($field['param'] == '<>'){
                             $model->where($field['value'],'<>',$request[$field['value']]);
                         }elseif($field['param'] == 'null'){
                             $model->where($field['value'],'');
+                        }elseif($field['param'] == 'many>1'){
+                            $model->whereHas('categories', function (Builder $query)  use($request, $field){
+                                $query->where($field['value'], '=', $request[$field['value']]);
+                            }, '>=', 1)->get();
+
                         }else{
                             $model->where($field['value'],$request[$field['value']]);
                         }
-                        
                     });
             });
         }

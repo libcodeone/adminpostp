@@ -302,7 +302,6 @@ class PaymentSalesController extends BaseController
                         $PaymentWithCreditCard->save();
 
                     } else {
-
                         $PaymentWithCreditCard = PaymentWithCreditCard::where('customer_id', $request->client_id)->first();
                         if (!$PaymentWithCreditCard) {
                             // Create a Customer
@@ -467,6 +466,7 @@ class PaymentSalesController extends BaseController
         $payment_data['client_adr'] = $payment['sale']['client']->adresse;
         $payment_data['client_email'] = $payment['sale']['client']->email;
         $payment_data['client_NIT'] = $payment['sale']['client']->NIT;
+        $payment_data['client_DUI'] = $payment['sale']['client']->DUI;
         $payment_data['client_NRC'] = $payment['sale']['client']->NRC;
         $payment_data['client_giro'] = $payment['sale']['client']->giro;
         $payment_data['montant'] = $payment->montant;

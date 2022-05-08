@@ -802,9 +802,9 @@ export default {
 
           if (detail.quantity > detail.stock) {
             this.makeToast("warning", this.$t("LowStock"), this.$t("Warning"));
-            this.details[i].quantity = this.formatNumber(detail.stock, 2);
+            this.details[i].quantity = detail.stock;
           } else {
-            this.details[i].quantity = this.formatNumber(detail.quantity, 2);
+            this.details[i].quantity = detail.quantity;
           }
         }
       }

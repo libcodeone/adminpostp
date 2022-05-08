@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
     <link rel=icon href=/images/favicon.ico>
     <link rel="stylesheet" href="/css/master.css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
 
     <title>Stocky | Ultimate Inventory With POS</title>
   </head>
@@ -22,7 +23,7 @@
     <!-- built files will be auto injected -->
     <div class="loading_wrap" id="loading_wrap">
       <div class="loader_logo">
-      <img src="/images/logo.png" class="" alt="logo" />
+      <img src="/images/shadai_logo.png" class="" alt="logo" />
 
       </div>
 
@@ -32,5 +33,7 @@
     </div>
 
     <script src="/js/main.min.js"></script>
+
+
   </body>
 </html>

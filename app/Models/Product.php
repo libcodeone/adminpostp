@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Product extends Model
 {
 
+    use SoftDeletes;
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
@@ -50,10 +53,10 @@ class Product extends Model
         return $this->belongsTo('App\Models\QuotationDetail');
     }
 
-    public function category()
-    {
-        return $this->belongsTo('App\Models\Category');
+    public function categories(){
+        return $this->belongsToMany('App\Models\Category')->withTimestamps();
     }
+
 
     public function unit()
     {

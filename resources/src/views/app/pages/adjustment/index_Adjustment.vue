@@ -171,7 +171,7 @@
                 <tr v-for="detail in details">
                   <td>{{detail.name}}</td>
                   <td>{{detail.code}}</td>
-                  <td>{{formatNumber(detail.quantity ,2)}} {{detail.unit}}</td>
+                  <td>{{detail.quantity }} {{detail.unit}}</td>
                   <td v-if="detail.type == 'add'">{{$t('Addition')}}</td>
                   <td v-else-if="detail.type == 'sub'">{{$t('Subtraction')}}</td>
                 </tr>

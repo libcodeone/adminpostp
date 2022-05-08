@@ -3,9 +3,15 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import Auth from './auth/index.js';
+import Viewer from 'viewerjs';
+import 'viewerjs/dist/viewer.css';
 window.auth = new Auth();
 import { ValidationObserver, ValidationProvider, extend, localize } from 'vee-validate';
 import * as rules from "vee-validate/dist/rules";
+import VueSweetalert2 from 'vue-sweetalert2';
+
+Vue.use(VueSweetalert2);
+
 
 localize({
   en: {

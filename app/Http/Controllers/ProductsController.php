@@ -45,11 +45,12 @@ class ProductsController extends BaseController
         $helpers = new helpers();
         // Filter fields With Params to retrieve
         $columns = array(0 => 'name', 1 => 'category_id', 2 => 'brand_id', 3 => 'code');
-        $param = array(0 => 'like', 1 => '=', 2 => '=', 3 => 'like');
+        $param = array(0 => 'like', 1 => 'many>1', 2 => '=', 3 => 'like');
         $data = array();
 
-        $products = Product::with('unit', 'category', 'brand')
+        $products = Product::with('unit', 'categories', 'brand')
             ->where('deleted_at', '=', null);
+
 
         //Multiple Filter
         $Filtred = $helpers->filter($products, $columns, $param, $request)
@@ -57,16 +58,11 @@ class ProductsController extends BaseController
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('products.name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('products.code', 'LIKE', "%{$request->search}%")
-                        ->orWhere(function ($query) use ($request) {
-                            return $query->whereHas('category', function ($q) use ($request) {
-                                $q->where('name', 'LIKE', "%{$request->search}%");
-                            });
-                        })
+                        ->orWhere('products.code', 'LIKE', "%{$request->search}%")                       
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('brand', function ($q) use ($request) {
                                 $q->where('name', 'LIKE', "%{$request->search}%");
-                            });
+                            }, '>=', 1);
                         });
                 });
             });
@@ -80,7 +76,16 @@ class ProductsController extends BaseController
             $item['id'] = $product->id;
             $item['code'] = $product->code;
             $item['name'] = $product->name;
-            $item['category'] = $product['category']->name;
+            if(isset($product->categories[0])){
+                $categoriesProduct = "";
+                foreach ($product->categories as $itemCategory){
+                    $categoriesProduct .=  $itemCategory->name . ', ';
+                }
+                $item['category'] =  $categoriesProduct;
+            }else{
+                $item['category'] =  "";
+            }
+
             $item['brand'] = $product['brand'] ? $product['brand']->name : 'N/D';
             $item['unit'] = $product['unit']->ShortName;
             $item['price'] = $product->price;
@@ -96,7 +101,6 @@ class ProductsController extends BaseController
 
             $firstimage = explode(',', $product->image);
             $item['image'] = $firstimage[0];
-
             $data[] = $item;
         }
 
@@ -133,7 +137,9 @@ class ProductsController extends BaseController
                 'code.required' => 'This field is required',
             ]);
 
+
             \DB::transaction(function () use ($request) {
+
 
                 //-- Create New Product
                 $Product = new Product;
@@ -143,7 +149,6 @@ class ProductsController extends BaseController
                 $Product->code = $request['code'];
                 $Product->Type_barcode = $request['Type_barcode'];
                 $Product->price = $request['price'];
-                $Product->category_id = $request['category_id'];
                 $Product->brand_id = $request['brand_id'];
                 $Product->TaxNet = $request['TaxNet'] ? $request['TaxNet'] : 0;
                 $Product->tax_method = $request['tax_method'];
@@ -159,7 +164,7 @@ class ProductsController extends BaseController
                     $files = $request['images'];
                     foreach ($files as $file) {
                         $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
-                        $fileData->resize(200, 200);
+                        $fileData->resize(800, 800);
                         $name = rand(11111111, 99999999) . $file['name'];
                         $path = public_path() . '/images/products/';
                         $success = file_put_contents($path . $name, $fileData);
@@ -172,6 +177,10 @@ class ProductsController extends BaseController
 
                 $Product->image = $filename;
                 $Product->save();
+
+                if ($request->get('category_id')){
+                    $Product->categories()->sync($request['category_id']);
+                }
 
                 // Store Variants Product
                 if ($request['is_variant'] == 'true') {
@@ -256,7 +265,6 @@ class ProductsController extends BaseController
                 $Product->code = $request['code'];
                 $Product->Type_barcode = $request['Type_barcode'];
                 $Product->price = $request['price'];
-                $Product->category_id = $request['category_id'];
                 $Product->brand_id = $request['brand_id'];
                 $Product->TaxNet = $request['TaxNet'];
                 $Product->tax_method = $request['tax_method'];
@@ -267,6 +275,11 @@ class ProductsController extends BaseController
                 $Product->unit_purchase_id = $request['unit_purchase_id'] ? $request['unit_purchase_id'] : $request['unit_id'];
                 $Product->stock_alert = $request['stock_alert'];
                 $Product->is_variant = $request['is_variant'] == 'true' ? 1 : 0;
+
+                //categories
+                if ($request->get('category_id')){
+                    $Product->categories()->sync($request['category_id']);
+                }
 
                 // Store Variants Product
                 $oldVariants = ProductVariant::where('product_id', $id)
@@ -439,7 +452,7 @@ class ProductsController extends BaseController
                     $files = $request['images'];
                     foreach ($files as $file) {
                         $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
-                        $fileData->resize(200, 200);
+                        $fileData->resize(800, 800);
                         $name = rand(11111111, 99999999) . $file['name'];
                         $path = public_path() . '/images/products/';
                         $success = file_put_contents($path . $name, $fileData);
@@ -562,7 +575,15 @@ class ProductsController extends BaseController
         $item['code'] = $Product->code;
         $item['Type_barcode'] = $Product->Type_barcode;
         $item['name'] = $Product->name;
-        $item['category'] = $Product['category']->name;
+        if(isset($Product->categories[0])){
+            $categoriesProduct = "";
+            foreach ($Product->categories as $itemCategory){
+                $categoriesProduct .=  $itemCategory->name . ', ';
+            }
+            $item['category'] =  $categoriesProduct;
+        }else{
+            $item['category'] =  "";
+        }
         $item['brand'] = $Product['brand'] ? $Product['brand']->name : 'N/D';
         $item['unit'] = $Product['unit']->ShortName;
         $item['price'] = $Product->price;
@@ -655,7 +676,13 @@ class ProductsController extends BaseController
             $item['name'] = $product_warehouse['product']->name;
             $firstimage = explode(',', $product_warehouse['product']->image);
             $item['image'] = $firstimage[0];
+            $item['imageList'] = [];
 
+            if ($product_warehouse['product']->image != '') {
+                foreach (explode(',', $product_warehouse['product']->image) as $img) {
+                    $item['imageList'][] = $img;
+                }
+            }
             if ($product_warehouse['product']['unitSale']->operator == '/') {
                 $item['qte_sale'] = $product_warehouse->qte * $product_warehouse['product']['unitSale']->operator_value;
                 $price = $product_warehouse['product']->price / $product_warehouse['product']['unitSale']->operator_value;
@@ -780,7 +807,7 @@ class ProductsController extends BaseController
             })->where('product_warehouse.deleted_at', null)->get();
 
         $data = [];
-        
+
         if ($product_warehouse_data->isNotEmpty()) {
 
             foreach ($product_warehouse_data as $product_warehouse) {
@@ -859,17 +886,7 @@ class ProductsController extends BaseController
         $item['code'] = $Product->code;
         $item['Type_barcode'] = $Product->Type_barcode;
         $item['name'] = $Product->name;
-        if ($Product->category_id) {
-            if (Category::where('id', $Product->category_id)
-                ->where('deleted_at', '=', null)
-                ->first()) {
-                $item['category_id'] = $Product->category_id;
-            } else {
-                $item['category_id'] = '';
-            }
-        } else {
-            $item['category_id'] = '';
-        }
+        $item['categories_id'] = $Product->categories;
 
         if ($Product->brand_id) {
             if (Brand::where('id', $Product->brand_id)
@@ -974,6 +991,7 @@ class ProductsController extends BaseController
         return response()->json([
             'product' => $data,
             'categories' => $categories,
+            'categories_id' => $item['categories_id'],
             'brands' => $brands,
             'units' => $units,
             'units_sub' => $units_sub,
@@ -992,7 +1010,7 @@ class ProductsController extends BaseController
                 'status' => false,
             ]);
         } else {
-            $data = array(); 
+            $data = array();
             $rowcount = 0;
             if (($handle = fopen($file_upload, "r")) !== false) {
 
@@ -1018,12 +1036,20 @@ class ProductsController extends BaseController
 
             //-- Create New Product
             foreach ($data as $key => $value) {
-                $category = Category::firstOrCreate(['name' => $value['category']]);
-                $category_id = $category->id;
+                $category = Category::where('name', '=', $value['category'])->get();
+                if(isset($category[0])){
+                    $category_id = $category[0]->id;
+                }else{
+                    $category = new Category;
+                    $category->name =  $value['category'];
+                    $category->save();
+                    $category_id = $category->id;
+                }
 
-                $unit = Unit::where(['ShortName' => $value['unit']])
+
+               /* $unit = Unit::where(['ShortName' => $value['unit']])
                     ->orWhere(['name' => $value['unit']])->first();
-                $unit_id = $unit->id;
+                $unit_id = $unit->id;*/
 
                 if ($value['brand'] != 'N/A' && $value['brand'] != '') {
                     $brand = Brand::firstOrCreate(['name' => $value['brand']]);
@@ -1031,29 +1057,29 @@ class ProductsController extends BaseController
                 } else {
                     $brand_id = null;
                 }
-                 
+
                 $Product = new Product;
                 $Product->name = $value['name'] == '' ? null : $value['name'];
                 $Product->code = $this->generate_random_code();
                 $Product->Type_barcode = 'CODE128';
                 $Product->price = $value['price'];
                 $Product->cost = $value['cost'];
-                $Product->category_id = $category_id;
+            
                 $Product->brand_id = $brand_id;
                 $Product->TaxNet = 0;
                 $Product->tax_method = 1;
                 $Product->note = $value['note'] ? $value['note'] : '';
-                $Product->unit_id = $unit_id;
+               /* $Product->unit_id = $unit_id;
                 $Product->unit_sale_id = $unit_id;
-                $Product->unit_purchase_id = $unit_id;
+                $Product->unit_purchase_id = $unit_id;*/
                 $Product->stock_alert = $value['stock_alert'] ? $value['stock_alert'] : 0;
                 $Product->is_variant = 0;
                 $Product->image = 'no-image.png';
-                if ($value['codeAN'] != 'N/A' && $value['codeAN'] != '') {
+              /*  if ($value['codeAN'] != 'N/A' && $value['codeAN'] != '') {
                     $Product->codeAN = $value['codeAN'];
                 } else {
                     $Product->codeAN = null;
-                }
+                }*/
                 $Product->save();
 
                 if ($warehouses) {
@@ -1068,7 +1094,7 @@ class ProductsController extends BaseController
                             // $order->items = 1;
                             // $order->user_id = Auth::user()->id;
                             // $order->save();
-                            
+
                             // //-- Add AdjustmentDetail
                             // $orderDetails[] = [
                             //     'adjustment_id' => $order->id,
@@ -1101,7 +1127,6 @@ class ProductsController extends BaseController
 
     }
     // //------------ Reference Number of Adjustement  -----------\\
-
     public function getNumberOrder()
     {
 
@@ -1137,5 +1162,5 @@ class ProductsController extends BaseController
 
 
 
-   
+
 }
