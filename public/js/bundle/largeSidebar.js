@@ -5030,7 +5030,7 @@ _c(
 _c("router-link",{attrs:{to:"/app/dashboard"}},[
 _c("img",{
 attrs:{
-src:"/images/"+_vm.currentUser.logo,
+src:"/images/shadai_logo.png",
 alt:"",
 width:"60",
 height:"60"}})])],
