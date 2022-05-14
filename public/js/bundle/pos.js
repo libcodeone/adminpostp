@@ -6637,7 +6637,7 @@ _c(
 {
 attrs:{
 "hide-footer":"",
-size:"lg",
+size:"md",
 id:"form_visor",
 title:_vm.Imagenes}},
 

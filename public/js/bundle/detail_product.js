@@ -2304,7 +2304,7 @@ _c(
 _vm._l(
 _vm.product.ProductVariant,
 function(variant){
-return _c("span",[
+return _c("span",{key:variant},[
 _vm._v(_vm._s(variant)+",")]);
 
 }),
@@ -2377,7 +2377,7 @@ _vm._v(" "),
 _c(
 "tbody",
 _vm._l(_vm.product.CountQTY,function(PROD_W){
-return _c("tr",[
+return _c("tr",{key:PROD_W},[
 _c("td",[_vm._v(_vm._s(PROD_W.mag))]),
 _vm._v(" "),
 _c("td",[
@@ -2425,7 +2425,7 @@ _c(
 _vm._l(
 _vm.product.CountQTY_variants,
 function(PROD_V){
-return _c("tr",[
+return _c("tr",{key:PROD_V},[
 _c("td",[
 _vm._v(_vm._s(PROD_V.mag))]),
 

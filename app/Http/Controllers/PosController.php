@@ -50,13 +50,17 @@ class PosController extends BaseController
             $TaxWithheld = 0;
             $TaxNetDetail = 0;
             $TaxMethod = 2;
+            $TotalConDescuento = $request->GrandTotal - $request->shipping;
+          
             $GrandTotal=$request->GrandTotal;
+           
             if($client->final_consumer === 0){
                 $taxRate = 13;
-                $TaxNet = round($request->GrandTotal-($request->GrandTotal / 1.13),2);
-                if($client->big_consumer == 1 and round($request->GrandTotal / 1.13,2)>=100){
-                    $TaxWithheld = round((($request->GrandTotal / 1.13)* 0.01),2) ;
-                    $GrandTotal=$GrandTotal-$TaxWithheld;
+                $TaxNet = round($TotalConDescuento-($TotalConDescuento / 1.13),2);
+               
+                if($client->big_consumer == 1 and round($TotalConDescuento / 1.13,2)>=100){
+                    $TaxWithheld = round((($TotalConDescuento / 1.13)* 0.01),2) ;
+                    $GrandTotal=$TotalConDescuento-$TaxWithheld;
                 }
             }
             $order->is_pos = 1;

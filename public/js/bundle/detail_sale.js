@@ -4951,6 +4951,9 @@ function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj
 //
 //
 //
+//
+//
+//
 
 
 
@@ -5661,7 +5664,13 @@ _c(
 staticClass:
 "badge badge-outline-warning"},
 
-[_vm._v(_vm._s(_vm.$t("Ordered")))])])])],
+[_vm._v(_vm._s(_vm.$t("Ordered")))])]),
+
+
+_vm._v(" "),
+_c("div",[
+_vm._v(
+"Fecha y hora: "+_vm._s(_vm.sale.created_at))])])],
 
 
 
@@ -5744,13 +5753,9 @@ _vm._s(_vm.currentUser.currency))]),
 _vm._v(" "),
 _c("td",[
 _vm._v(
-_vm._s(
-_vm.detail_invoice.quantity)+
-
+_vm._s(detail.quantity)+
 " "+
-_vm._s(
-_vm.detail_invoice.unit_sale))]),
-
+_vm._s(detail.unit_sale))]),
 
 
 _vm._v(" "),
@@ -6143,7 +6148,7 @@ function(detail_invoice){
 return _c(
 "div",
 {
-key:_vm.detail,
+key:detail_invoice,
 staticClass:"row"},
 
 [
@@ -6159,11 +6164,11 @@ staticClass:
 
 [
 _vm._v(
-"\n                "+
+"\n                 "+
 _vm._s(
 detail_invoice.quantity)+
 
-"\n                    ")])]),
+"\n               \n                    ")])]),
 
 
 
@@ -7154,7 +7159,7 @@ staticClass:
 
 [
 _vm._v(
-"\n                "+
+"\n                  "+
 _vm._s(
 detail_invoice.quantity)+
 
@@ -7715,6 +7720,7 @@ _vm.currentUser.currency)+
 
 _vm._e(),
 _vm._v(" "),
+_c("tr",[
 _c("td",[
 _vm._v(_vm._s(_vm.$t("Discount")))]),
 
@@ -7722,10 +7728,14 @@ _vm._v(" "),
 _c("td",[
 _vm._v(
 _vm._s(
-_vm.formatNumber(_vm.sale.discount,2))+
+_vm.formatNumber(
+_vm.sale.discount,
+2))+
+
 
 " "+
-_vm._s(_vm.currentUser.currency))]),
+_vm._s(_vm.currentUser.currency))])]),
+
 
 
 _vm._v(" "),

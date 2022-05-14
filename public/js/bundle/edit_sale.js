@@ -2510,7 +2510,7 @@ product:{
 id:"",
 code:"",
 stock:"",
-quantity:1,
+quantity:"",
 discount:"",
 DiscountNet:"",
 discount_Method:"",
@@ -2794,8 +2794,8 @@ this.total=parseFloat(this.total+this.details[i].subtotal);
 }
 
 var total_without_discount=parseFloat(this.total-this.sale.discount);
-this.sale.TaxNet=parseFloat(total_without_discount*this.sale.tax_rate/100);
-this.GrandTotal=parseFloat(total_without_discount+this.sale.TaxNet+this.sale.shipping);
+this.sale.TaxNet=total_without_discount-total_without_discount/(1+this.sale.tax_rate/100);
+this.GrandTotal=parseFloat(total_without_discount+this.sale.shipping);
 },
 //-----------------------------------Delete Detail Product ------------------------------\\
 delete_Product_Detail:function delete_Product_Detail(id){
@@ -3506,7 +3506,7 @@ _vm._v(
 _vm._s(
 _vm.formatNumber(
 detail.Net_price,
-3))+
+2))+
 
 
 " "+

@@ -114,7 +114,7 @@
                             <span class="badge badge-success">{{detail.name}}</span>
                             <i @click="Modal_Updat_Detail(detail)" class="i-Edit"></i>
                           </td>
-                          <td>{{formatNumber(detail.Net_price, 3)}} {{currentUser.currency}}</td>
+                          <td>{{formatNumber(detail.Net_price, 2)}} {{currentUser.currency}}</td>
                           <td>
                             <span
                               class="badge badge-outline-warning"
@@ -464,7 +464,7 @@ export default {
         id: "",
         code: "",
         stock: "",
-        quantity: 1,
+        quantity: "",
         discount: "",
         DiscountNet: "",
         discount_Method: "",
@@ -808,11 +808,11 @@ export default {
       const total_without_discount = parseFloat(
         this.total - this.sale.discount
       );
-      this.sale.TaxNet = parseFloat(
-        (total_without_discount * this.sale.tax_rate) / 100
-      );
+      this.sale.TaxNet = 
+        (total_without_discount - ( total_without_discount / (1 +(this.sale.tax_rate/100))) )
+      ;
       this.GrandTotal = parseFloat(
-        total_without_discount + this.sale.TaxNet + this.sale.shipping
+        total_without_discount  + this.sale.shipping
       );
     },
 

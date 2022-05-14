@@ -681,7 +681,7 @@
 
   <!-- visor imagenes -->
           
-              <b-modal hide-footer size="lg" id="form_visor" :title="Imagenes">
+              <b-modal hide-footer size="md" id="form_visor" :title="Imagenes">
                 <b-form >
                   <b-row>
                                         
