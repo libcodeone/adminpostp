@@ -20,7 +20,7 @@ class Authenticate extends Middleware
     {
         $installed = Storage::disk('public')->exists('installed');
         if ($installed === false) {
-            return route('setup');
+            return route('login');
         } else {
             if (! $request->expectsJson()) {
                 return route('login');
