@@ -192,7 +192,6 @@ class ProductsController extends BaseController
                     }
                     ProductVariant::insert($Product_variants_data);
                 }
-
                 //--Store Product Warehouse
                 $warehouses = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
                 if ($warehouses) {
