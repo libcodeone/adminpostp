@@ -95,7 +95,7 @@
                     <tr v-for="detail in details" :key="detail">
                       <td>{{detail.code}} ({{detail.name}})</td>
                       <td>{{formatNumber(detail.Net_price,2)}} {{currentUser.currency}}</td>
-                     <td>{{detail_invoice.quantity}} {{detail_invoice.unit_sale}}</td>
+                     <td>{{detail.quantity}} {{detail.unit_sale}}</td>
                       <td>{{formatNumber(detail.price,2)}} {{currentUser.currency}}</td>
                       <td>{{formatNumber(detail.DiscountNet,2)}} {{currentUser.currency}}</td>
                       <td>{{formatNumber(detail.taxe,2)}} {{currentUser.currency}}</td>
@@ -114,7 +114,7 @@
                       <span>{{formatNumber(sale.TaxNet,2)}} {{currentUser.currency}} ({{formatNumber(sale.tax_rate,2)}} %)</span>
                     </td>
                   </tr>
-                  <tr v-if="sale.big_consumer == 1>
+                  <tr v-if="sale.big_consumer == 1">
                     <td>(-) {{$t('IVAwithholding')}}</td>
                     <td>{{ formatNumber(sale.TaxWithheld, 2) }} {{ currentUser.currency }} ( 1.00% )</td>
                   </tr>
