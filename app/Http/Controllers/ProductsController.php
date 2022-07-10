@@ -164,7 +164,7 @@ class ProductsController extends BaseController
                     $files = $request['images'];
                     foreach ($files as $file) {
                         $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
-                        $fileData->resize(800, 800);
+                        $fileData->resize(500, 500);
                         $name = rand(11111111, 99999999) . $file['name'];
                         $path = public_path() . '/images/products/';
                         $success = file_put_contents($path . $name, $fileData);
@@ -192,7 +192,6 @@ class ProductsController extends BaseController
                     }
                     ProductVariant::insert($Product_variants_data);
                 }
-
                 //--Store Product Warehouse
                 $warehouses = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
                 if ($warehouses) {
@@ -452,7 +451,7 @@ class ProductsController extends BaseController
                     $files = $request['images'];
                     foreach ($files as $file) {
                         $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
-                        $fileData->resize(800, 800);
+                        $fileData->resize(500, 500);
                         $name = rand(11111111, 99999999) . $file['name'];
                         $path = public_path() . '/images/products/';
                         $success = file_put_contents($path . $name, $fileData);
