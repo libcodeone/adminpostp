@@ -100,6 +100,7 @@
                 >{{$t('Pending')}}</span>
                 <span v-else class="badge badge-outline-warning">{{$t('Ordered')}}</span>
               </div>
+               <div>Fecha y hora: {{sale.created_at}}</div>
             </b-col>
           </b-row>
           <b-row class="mt-3">
@@ -122,7 +123,7 @@
                     <tr v-for="detail in details" :key="detail">
                       <td>{{detail.code}} ({{detail.name}})</td>
                       <td>{{formatNumber(detail.Net_price,2)}} {{currentUser.currency}}</td>
-                      <td>{{detail_invoice.quantity}} {{detail_invoice.unit_sale}}</td>
+                      <td>{{detail.quantity}} {{detail.unit_sale}}</td>
                       <td>{{formatNumber(detail.price,2)}} {{currentUser.currency}}</td>
                       <td>{{formatNumber(detail.DiscountNet,2)}} {{currentUser.currency}}</td>
                       <td>{{formatNumber(detail.taxe,2)}} {{currentUser.currency}}</td>
@@ -237,7 +238,8 @@
                   <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <div class="col-1">
                   <span class="h5 text-uppercase">
-                  {{ detail_invoice.quantity }}
+                   {{ detail_invoice.quantity }}
+                 
                       </span>
                 </div>
 
@@ -483,7 +485,7 @@
                   <div class="row"  v-for="detail_invoice in invoice_pos.details" :key="detail_invoice">
                 <div class="col-1">
                   <span class="h5 text-uppercase">
-                  {{ detail_invoice.quantity }}
+                    {{ detail_invoice.quantity }}
                       </span>
                 </div>
 
@@ -612,7 +614,7 @@
                       </span>
                     </td>
                   </tr>
-                   <tr>
+                  <tr>
                     <td>{{$t('Discount')}}</td>
                     <td>{{formatNumber(sale.discount,2)}} {{currentUser.currency}}</td>
                   </tr>

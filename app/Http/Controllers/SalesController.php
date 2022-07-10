@@ -155,6 +155,7 @@ class SalesController extends BaseController
 
     public function store(Request $request)
     {
+       
         $this->authorizeForUser($request->user('api'), 'create', Sale::class);
         request()->validate([
             'client_id' => 'required',
@@ -170,14 +171,17 @@ class SalesController extends BaseController
             $TaxNet = 0;
             $TaxWithheld = 0;
             $TaxNetDetail = 0;
+            $TotalConDescuento = $request->GrandTotal - $request->discount - $request->shipping;
             $GrandTotal=$request->GrandTotal;
+           
             $TaxMethod = 2;
             if($client->final_consumer === 0){
                 $taxRate = 13;
-                $TaxNet = round($request->GrandTotal-($request->GrandTotal / 1.13),2);
-                if($client->big_consumer == 1 and round($request->GrandTotal / 1.13,2)>=100){
-                    $TaxWithheld = round((($request->GrandTotal / 1.13)* 0.01),2) ;
-                    $GrandTotal=$GrandTotal-$TaxWithheld;
+                $TaxNet = round($TotalConDescuento-($TotalConDescuento / 1.13),2);
+              
+                if($client->big_consumer == 1 and round($TotalConDescuento / 1.13,2)>=100){
+                    $TaxWithheld = round((($TotalConDescuento / 1.13)* 0.01),2) ;
+                    $GrandTotal=$TotalConDescuento-$TaxWithheld;
                 }
             }
 
@@ -389,7 +393,6 @@ class SalesController extends BaseController
         ]);
 
         \DB::transaction(function () use ($request, $id) {
-
             $role = Auth::user()->roles()->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $current_Sale = Sale::findOrFail($id);
@@ -399,12 +402,15 @@ class SalesController extends BaseController
             $TaxWithheld = 0;
             $TaxNetDetail = 0;
             $TaxMethod = 2;
+            $GrandTotal = $request['GrandTotal'];
+            $TotalFinal = $request['GrandTotal'] - $request['shipping'];
+            
             if($client->final_consumer === 0){
                 $taxRate = 13;
-                $TaxNet = round($request->GrandTotal-($request->GrandTotal / 1.13),2);
-                if($client->big_consumer == 1 and round($request->GrandTotal / 1.13,2)>=100){
-                    $TaxWithheld = round((($request->GrandTotal / 1.13)* 0.01),2) ;
-                    $GrandTotal=$GrandTotal-$TaxWithheld;;
+                $TaxNet = round($TotalFinal-($TotalFinal / 1.13),2);
+                if($client->big_consumer == 1 and round($TotalFinal / 1.13,2)>=100){
+                    $TaxWithheld = round((($TotalFinal / 1.13)* 0.01),2) ;
+                    $GrandTotal=$TotalFinal-$TaxWithheld;
                 }
             }
 
@@ -474,6 +480,7 @@ class SalesController extends BaseController
 
             // Update Data with New request
             foreach ($new_sale_details as $key => $prod_detail) {
+                
                 $unit_prod = Product::with('unitSale')
                     ->where('id', $prod_detail['product_id'])
                     ->where('deleted_at', '=', null)
@@ -514,12 +521,11 @@ class SalesController extends BaseController
                     }
 
                 }
-                $price= $value['Unit_price'];
+                $price= $prod_detail['Unit_price'] + $prod_detail['tax_percent'];
                 $TaxMethod = 2;
-
                 if($client->final_consumer === 0){
-                    $TaxNetDetail = round($value['Unit_price'] -($value['Unit_price']/ 1.13), 2);
-                    $price= $value['Unit_price'] - $TaxNetDetail;
+                    $TaxNetDetail = round($price -($price/ 1.13), 2);
+                    $price= $price - $TaxNetDetail;
                     $TaxMethod = 1;
                 }
 
@@ -550,8 +556,12 @@ class SalesController extends BaseController
             } else if ($due == $request['GrandTotal']) {
                 $payment_statut = 'unpaid';
             }
-
-
+            if($request['discount'] == ".00" || $request['discount'] == ""){
+            $request['discount'] = 0;
+             }
+            if($request['shipping'] == ".00" || $request['shipping'] == ""){
+            $request['shipping'] = 0;
+            }
             $current_Sale->update([
                 'date' => $request['date'],
                 'client_id' => $request['client_id'],
@@ -563,7 +573,7 @@ class SalesController extends BaseController
                 'TaxWithheld' => $TaxWithheld,
                 'discount' => $request['discount'],
                 'shipping' => $request['shipping'],
-                'GrandTotal' => $request['GrandTotal'],
+                'GrandTotal' => $GrandTotal,
                 'payment_statut' => $payment_statut,
             ]);
 
@@ -795,16 +805,16 @@ class SalesController extends BaseController
 
             $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
             $data['Unit_price'] = $detail->price;
-            $data['discount'] = $detail->discount;
+            $data['discount'] = $detail->discount ;
 
             if ($detail->tax_method == '1') {
                 $data['Net_price'] = $detail->price - $data['DiscountNet'];
-                $data['taxe'] = $tax_price;
+                $data['taxe'] = $detail->TaxNet * $detail->quantity;
             } else {
                 $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
-                $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
+                $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'] * $detail->quantity;;
             }
-
+           
             $details[] = $data;
         }
 
@@ -1035,6 +1045,7 @@ class SalesController extends BaseController
     public function edit(Request $request, $id)
     {
 
+
         $this->authorizeForUser($request->user('api'), 'update', Sale::class);
         $role = Auth::user()->roles()->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
@@ -1151,7 +1162,7 @@ class SalesController extends BaseController
             } else {
                 $data['DiscountNet'] = $detail->price * $detail->discount / 100;
             }
-
+            
             $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
             $data['Unit_price'] = $detail->price;
             $data['tax_percent'] = $detail->TaxNet;
@@ -1161,11 +1172,11 @@ class SalesController extends BaseController
 
             if ($detail->tax_method == '1') {
                 $data['Net_price'] = $detail->price - $data['DiscountNet'];
-                $data['taxe'] = $tax_price;
+                $data['taxe'] = $detail->TaxNet;
                 $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
             } else {
                 $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
-                $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
+                $data['taxe'] = $detail->TaxNet;
                 $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
             }
 

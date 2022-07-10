@@ -543,7 +543,6 @@ export default {
 
     //------------------------------ Create new Product ------------------------------\\
     Create_Product() {
-      console.log("creando producto")
       // Start the progress bar.
       NProgress.start();
       NProgress.set(0.1);
@@ -573,11 +572,11 @@ export default {
       }
 
 
-      let categories = self.categories_id;
+       let categories = self.categories_id;
       for (let l = 0; l < categories.length ; l++){
-        self.data.append("category_id[" + l + "]", self.categories[l].id);
-        self.product.category_id.push(categories[l].id);
+        self.data.append("category_id[" + l + "]", categories[l].id);
       }
+
 
       // Send Data with axios
       axios

@@ -507,7 +507,6 @@ export default {
       axios
         .get(`Products/${id}/edit`)
         .then(response => {
-          console.log(response);
           this.product = response.data.product;
           this.variants = response.data.product.ProductVariant;
           this.images = response.data.product.images;
@@ -576,7 +575,6 @@ export default {
       }
 
        let categories = self.categories_id;
-      console.log(categories)
       for (let l = 0; l < categories.length ; l++){
         self.data.append("category_id[" + l + "]", categories[l].id);
       }
