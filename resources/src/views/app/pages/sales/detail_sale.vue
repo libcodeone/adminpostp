@@ -616,7 +616,7 @@
                       </span>
                     </td>
                   </tr>
-                   <tr>
+                  <tr>
                     <td>{{$t('Discount')}}</td>
                     <td>{{formatNumber(sale.discount,2)}} {{currentUser.currency}}</td>
                   </tr>
