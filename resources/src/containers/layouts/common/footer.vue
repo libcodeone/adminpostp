@@ -12,7 +12,9 @@
         class="footer-bottom border-top pt-3 d-flex flex-column flex-sm-row align-items-center"
       >
         <div class="d-flex align-items-center">
-          <img class="logo" :src="'/images/'+currentUser.logo" alt width="60" height="60">
+          <a href="https://tecnoipsv.com/">
+          <img class="logo" :src="'/images/logo_tecnoip.png'" alt width="60" height="60">
+          </a>
           <div>
             <div>
               <p class="m-0">&copy; 2021 {{$t('developed_by')}} {{currentUser.developed_by}}</p>

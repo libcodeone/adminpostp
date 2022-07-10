@@ -10,7 +10,7 @@
               <div class="logo" 
               v-show="currentUserPermissions && (currentUserPermissions.includes('dashboard'))">
                 <router-link to="/app/dashboard">
-                  <img :src="'/images/'+currentUser.logo" alt width="60" height="60">
+                  <img :src="'/images/shadai_logo.png'" alt width="60" height="60">
                 </router-link>
               </div>
               <div class="mx-auto"></div>
@@ -197,18 +197,31 @@
                                 </td>
                                 <!-- <td>{{formatNumber(detail.Total_price, 2)}} {{currentUser.currency}}</td> -->
                                 <td>
-                                  <div class="price">
-                                    <!-- <b-form-input
+                                  <!-- <div class="price">
+                                    <b-form-input
                                       :state="getValidationState(validationContext)"
                                       v-model.number="detail.Total_price"
                                       @keyup="keyup_Price_Product()"
-                                    ></b-form-input> -->
+                                    ></b-form-input>
                                     <input
                                         class="form-control"
                                         @keyup="keyup_Price_Product(detail ,detail.detail_id)"
-                                        v-model.number="detail.Net_price"
+                                        v-model.number="detail.Net_price" :disabled="currentUserPermissions && (currentUserPermissions.includes('Sales_edit'))"
                                       >
-                                  </div>
+                                  </div>-->
+                                  <div class="logo" 
+                                    v-show="currentUserPermissions && !(currentUserPermissions.includes('Pos_price_edit'))">
+                                    <span>{{detail.Net_price}}</span>
+                                    </div>
+                                  <div class="logo" 
+                                    v-show="currentUserPermissions && (currentUserPermissions.includes('Pos_price_edit'))">
+                                    <input
+                                        class="form-control"
+                                        @keyup="keyup_Price_Product(detail ,detail.detail_id)"
+                                        v-model.number="detail.Net_price" 
+                                      >
+                                       
+                                    </div>
                                 </td>
                             
                                 <td>
@@ -681,7 +694,7 @@
 
   <!-- visor imagenes -->
           
-              <b-modal hide-footer size="lg" id="form_visor" :title="Imagenes">
+              <b-modal hide-footer size="md" id="form_visor" :title="Imagenes">
                 <b-form >
                   <b-row>
                                         
