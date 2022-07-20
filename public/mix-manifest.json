@@ -6,6 +6,7 @@
     "/js//login.min.js": "/js//login.min.js",
     "/css/globals.css": "/css/globals.css",
     "/js//main.min.js": "/js//main.min.js",
+    "/js/bundle/Audit.js": "/js/bundle/Audit.js",
     "/js/bundle/Backup.js": "/js/bundle/Backup.js",
     "/js/bundle/Brands.js": "/js/bundle/Brands.js",
     "/js/bundle/Categories.js": "/js/bundle/Categories.js",

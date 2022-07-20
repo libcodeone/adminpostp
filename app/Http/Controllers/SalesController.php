@@ -667,9 +667,7 @@ class SalesController extends BaseController
                  $this->authorizeForUser($request->user('api'), 'check_record', $Sale);
              }
              $Sale->details()->delete();
-             $Sale->update([
-                 'deleted_at' => Carbon::now(),
-             ]);
+             $Sale->delete();
              $Payment_Sale_data = PaymentSale::where('sale_id', $id)->get();
              foreach($Payment_Sale_data as $Payment_Sale){
                  if($Payment_Sale->Reglement == 'credit card') {

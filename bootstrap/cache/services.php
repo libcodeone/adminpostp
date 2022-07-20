@@ -35,14 +35,16 @@
     31 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     32 => 'Way\\Generators\\GeneratorsServiceProvider',
     33 => 'OscarAFDev\\MigrationsGenerator\\MigrationsGeneratorServiceProvider',
-    34 => 'Laravel\\Passport\\PassportServiceProvider',
-    35 => 'App\\Providers\\AppServiceProvider',
-    36 => 'App\\Providers\\AuthServiceProvider',
-    37 => 'App\\Providers\\EventServiceProvider',
-    38 => 'App\\Providers\\RouteServiceProvider',
-    39 => 'Barryvdh\\DomPDF\\ServiceProvider',
-    40 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
-    41 => 'Intervention\\Image\\ImageServiceProvider',
+    34 => 'OwenIt\\Auditing\\AuditingServiceProvider',
+    35 => 'Laravel\\Passport\\PassportServiceProvider',
+    36 => 'App\\Providers\\AppServiceProvider',
+    37 => 'App\\Providers\\AuthServiceProvider',
+    38 => 'App\\Providers\\EventServiceProvider',
+    39 => 'OwenIt\\Auditing\\AuditingServiceProvider',
+    40 => 'App\\Providers\\RouteServiceProvider',
+    41 => 'Barryvdh\\DomPDF\\ServiceProvider',
+    42 => 'Maatwebsite\\Excel\\ExcelServiceProvider',
+    43 => 'Intervention\\Image\\ImageServiceProvider',
   ),
   'eager' => 
   array (
@@ -199,6 +201,7 @@
     'validator' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'validation.presence' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
+    'OwenIt\\Auditing\\Contracts\\Auditor' => 'OwenIt\\Auditing\\AuditingServiceProvider',
   ),
   'when' => 
   array (
@@ -239,6 +242,9 @@
     array (
     ),
     'Laravel\\Tinker\\TinkerServiceProvider' => 
+    array (
+    ),
+    'OwenIt\\Auditing\\AuditingServiceProvider' => 
     array (
     ),
   ),

@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Transfer extends Model
+class Transfer extends Model implements Auditable
 {
+
+    use \OwenIt\Auditing\Auditable;
     protected $table = 'transfers';
     protected $dates = ['deleted_at'];
 
