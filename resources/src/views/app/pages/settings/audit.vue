@@ -88,7 +88,7 @@ export default {
           thClass: "text-left, tdAudit"
         },
         {
-          label: "Auditable tipo",
+          label: "Módulo",
           field: "auditable_type",
           tdClass: "text-left, tdAudit",
           thClass: "text-left, tdAudit"
@@ -118,7 +118,7 @@ export default {
           thClass: "text-left, tdAudit"
         },
         {
-          label: "Fecha",
+          label: "Fecha y hora",
           field: "created_at",
           tdClass: "text-left, tdAudit",
           thClass: "text-left, tdAudit"
