@@ -93,4 +93,11 @@
       1 => 'OscarAFDev\\MigrationsGenerator\\MigrationsGeneratorServiceProvider',
     ),
   ),
+  'owen-it/laravel-auditing' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'OwenIt\\Auditing\\AuditingServiceProvider',
+    ),
+  ),
 );

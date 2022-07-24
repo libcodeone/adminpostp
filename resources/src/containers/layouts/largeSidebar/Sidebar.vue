@@ -239,6 +239,9 @@
             </a>
             <div class="triangle"></div>
           </li> -->
+
+       
+
         </ul>
       </div>
     </vue-perfect-scrollbar>
@@ -623,6 +626,15 @@
             <router-link tag="a" class to="/app/settings/Backup">
               <i class="nav-icon i-Data-Backup"></i>
               <span class="item-name">{{$t('Backup')}}</span>
+            </router-link>
+          </li>
+             <li
+            v-if="currentUserPermissions && (currentUserPermissions.includes('audits'))"
+            class="nav-item"
+          >
+            <router-link tag="a" class="nav-item-hold" to="/app/settings/audit">
+              <i class="nav-icon i-Bar-Chart"></i>
+              <span class="nav-text">{{ $t("audits") }}</span>
             </router-link>
           </li>
         </ul>

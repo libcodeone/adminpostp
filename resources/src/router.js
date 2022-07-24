@@ -22,6 +22,7 @@ const routes = [
                 name: "dashboard",
                 component: () => import(/* webpackChunkName: "dashboard" */ "./views/app/dashboard/dashboard")
             },
+              
             //Products
             {
                 path: "/app/products",
@@ -491,6 +492,15 @@ const routes = [
                         path: "Backup",
                         component: () =>
                             import(/* webpackChunkName: "Backup" */"./views/app/pages/settings/backup")
+                    },
+
+
+                    // Backup
+                    {
+                        name: "audit",
+                        path: "Audit",
+                        component: () =>
+                            import(/* webpackChunkName: "Audit" */"./views/app/pages/settings/audit")
                     },
 
                     // Warehouses

@@ -82,7 +82,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     //------------------------------- Providers --------------------------\\
     //--------------------------------------------------------------------\\
 
-    Route::resource('providers', 'ProvidersController');
+    Route::resource('providers', 'Provider');
     Route::get('providers/export/Excel', 'ProvidersController@exportExcel');
     Route::post('providers/import/csv', 'ProvidersController@import_providers');
     Route::post('providers/delete/by_selection', 'ProvidersController@delete_by_selection');
@@ -320,3 +320,10 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::get('payment_Return_Purchase_PDF/{id}', 'PaymentPurchaseReturnsController@payment_return');
     Route::get('payment_Sale_PDF/{id}', 'PaymentSalesController@payment_sale');
     Route::get('Sales/Print_Invoice/{id}', 'SalesController@Print_Invoice_POS');
+
+
+    //------------------------------- Audits --------------------------\\
+    //------------------------------------------------------------------\\
+
+   Route::resource('audits', 'AuditController');
+   Route::get('audits/export/Excel', 'AuditController@exportExcel');

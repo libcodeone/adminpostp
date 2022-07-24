@@ -101,3 +101,11 @@
   
   border-top-color: #ff0000 !important;
 }
+
+.tableAudit {
+  table-layout: fixed !important;
+}
+
+.tdAudit {
+  word-wrap: break-word;
+}

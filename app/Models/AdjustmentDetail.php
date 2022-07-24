@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class AdjustmentDetail extends Model
+class AdjustmentDetail extends Model implements Auditable
 {
+
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = [
         'id', 'product_id', 'adjustment_id', 'quantity', 'type', 'product_variant_id',

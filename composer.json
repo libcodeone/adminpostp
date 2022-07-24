@@ -21,6 +21,7 @@
         "lcobucci/jwt": "^3.4",
         "maatwebsite/excel": "^3.0.1",
         "nesbot/carbon": "^2.38",
+        "owen-it/laravel-auditing": "^13.0",
         "stripe/stripe-php": "^7.76",
         "twilio/sdk": "^6.22"
     },

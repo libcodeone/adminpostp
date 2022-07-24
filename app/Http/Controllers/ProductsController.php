@@ -487,8 +487,7 @@ class ProductsController extends BaseController
         \DB::transaction(function () use ($id) {
 
             $Product = Product::findOrFail($id);
-            $Product->deleted_at = Carbon::now();
-            $Product->save();
+            $Product->delete();
 
             foreach (explode(',', $Product->image) as $img) {
                 $pathIMG = public_path() . '/images/products/' . $img;

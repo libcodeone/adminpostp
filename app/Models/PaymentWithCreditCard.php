@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class PaymentWithCreditCard extends Model
+class PaymentWithCreditCard extends Model implements Auditable
 {
+
+    use \OwenIt\Auditing\Auditable;
 
     protected $table = 'payment_with_credit_card';
 

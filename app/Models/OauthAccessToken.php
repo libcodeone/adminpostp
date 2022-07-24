@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class OauthAccessToken extends Model
+class OauthAccessToken extends Model implements Auditable
 {
+
+    use \OwenIt\Auditing\Auditable;
 
     public function user()
     {
