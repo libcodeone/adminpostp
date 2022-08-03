@@ -194,8 +194,8 @@ class SalesController extends BaseController
             $order->tax_rate = $taxRate;
             $order->TaxNet = $TaxNet;
             $order->TaxWithheld = $TaxWithheld;
-            $order->discount = $request->discount;
-            $order->shipping = $request->shipping;
+            $order->discount = $request->discount != null ? $request->discount : 0.0 ;
+            $order->shipping = $request->shipping != null ? $request->shipping : 0.0 ;
             $order->statut = $request->statut;
             $order->payment_statut = 'unpaid';
             $order->notes = $request->notes;
