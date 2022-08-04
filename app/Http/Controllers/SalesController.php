@@ -132,8 +132,13 @@ class SalesController extends BaseController
             $item['GrandTotal'] = number_format($Sale['GrandTotal'], 2, '.', '');
             $item['paid_amount'] = number_format($Sale['paid_amount'], 2, '.', '');
             $item['due'] = number_format($Sale['GrandTotal'] - $Sale['paid_amount'], 2, '.', '');
-
-            
+            if($item['discount'] == ".00" || $item['discount'] == ""){
+                $item['discount'] = 0.0;
+                 }
+                if($item['shipping'] == ".00" || $item['shipping'] == ""){
+                $item['shipping'] = 0.0;
+                }
+          
 
             $data[] = $item;
         }
@@ -155,7 +160,6 @@ class SalesController extends BaseController
 
     public function store(Request $request)
     {
-       
         $this->authorizeForUser($request->user('api'), 'create', Sale::class);
         request()->validate([
             'client_id' => 'required',
@@ -194,8 +198,14 @@ class SalesController extends BaseController
             $order->tax_rate = $taxRate;
             $order->TaxNet = $TaxNet;
             $order->TaxWithheld = $TaxWithheld;
-            $order->discount = $request->discount != null ? $request->discount : 0.0 ;
-            $order->shipping = $request->shipping != null ? $request->shipping : 0.0 ;
+            $order->discount = $request->discount != "" ? $request->discount : 0.0 ;
+           
+            $order->shipping = $request->shipping != "" ? $request->shipping : 0.0 ;
+            
+            if($order->discount == ".00" || $order->discount == ""){
+                $order->discount = 0.0;
+                 }
+           
             $order->statut = $request->statut;
             $order->payment_statut = 'unpaid';
             $order->notes = $request->notes;
@@ -225,6 +235,7 @@ class SalesController extends BaseController
                     $price= $value['Unit_price'] - $TaxNetDetail;
                     $TaxMethod = 1;
                 }
+               
                 $orderDetails[] = [
                     'date' => $request->date,
                     'sale_id' => $order->id,
@@ -757,8 +768,14 @@ class SalesController extends BaseController
         $sale_details['date'] = $sale_data->date;
         $sale_details['statut'] = $sale_data->statut;
         $sale_details['warehouse'] = $sale_data['warehouse']->name;
-        $sale_details['discount'] = $sale_data->discount;
+        $sale_details['discount'] = $sale_data->discount;  
+        if($sale_details['discount'] == ".00" || $sale_details['discount'] == ""){
+            $sale_details['discount'] = 0.0;
+             }
         $sale_details['shipping'] = $sale_data->shipping;
+        if($sale_details['shipping'] == ".00" || $sale_details['shipping'] == ""){
+            $sale_details['shipping'] = 0.0;
+             }
         $sale_details['tax_rate'] = $sale_data->tax_rate;
         $sale_details['TaxNet'] = $sale_data->TaxNet;
         $sale_details['client_name'] = $sale_data['client']->name;

@@ -72,6 +72,12 @@ class PosController extends BaseController
             $order->TaxWithheld = $TaxWithheld;
             $order->discount = $request->discount;
             $order->shipping = $request->shipping;
+            if($order->discount == ".00" || $order->discount == ""){
+                $order->discount = 0.0;
+                 }
+            if($order->shipping == ".00" || $order->shipping == ""){
+                $order->shipping = 0.0;
+                }
             $order->subTotal=$request->GrandTotal;
             $order->GrandTotal = $GrandTotal;
             $order->cash = 0;
