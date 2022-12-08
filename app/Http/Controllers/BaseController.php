@@ -37,7 +37,7 @@ class BaseController extends Controller
     {
         $domain = ($_SERVER['SERVER_NAME'] != 'localhost') ? $_SERVER['SERVER_NAME'] : '.'.$_SERVER['SERVER_NAME'];
         $this->destroyCookie($cookie_name);
-        setcookie($cookie_name, $cookie_value, time() + 2147483647, '/', $domain); 
+        setcookie($cookie_name, $cookie_value, time() + 2147483647, '/', $domain);
     }
 
     // Get cookie
@@ -83,16 +83,16 @@ class BaseController extends Controller
     // Set config mail
     public function Set_config_mail()
     {
-
         $server = DB::table('servers')->where('deleted_at', '=', null)->first();
-        $settings = DB::table('settings')->where('deleted_at', '=', null)->first();
-        if ($server && $settings) //checking if table is not empty
+        $setting = DB::table('settings')->where('deleted_at', '=', null)->first();
+        if ($server && $setting) //checking if table is not empty
         {
             $config = array(
                 'driver' => 'smtp',
                 'host' => $server->host,
                 'port' => $server->port,
-                'from' => array('address' => $settings->email, 'name' => 'Admin'),
+                // 'from' => array('address' => $setting->email, 'name' => 'Admin'),
+                'from' => array('address' => $server->username, 'name' => 'Admin'),
                 'encryption' => $server->encryption,
                 'username' => $server->username,
                 'password' => $server->password,
@@ -102,7 +102,7 @@ class BaseController extends Controller
             Config::set('mail', $config);
         }
     }
-    // 
+    //
     public function invoiceDetail($id){
         $sale=Sale::findOrFail($id);
         return $sale->type_invoice." ".$sale->refInvoice;

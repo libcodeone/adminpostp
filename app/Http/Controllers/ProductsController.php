@@ -458,11 +458,13 @@ class ProductsController extends BaseController
                     $filename = implode(",", $images);
                 }
 
+                setlocale(LC_TIME, "sv_ES");
+                
                 $data['old_product_price'] = Product::where('id', '=', $id)->first()->getOriginal('price');
                 $data['new_product_price'] = $Product->price;
                 $data['firstname'] = auth()->user()->firstname;
                 $data['lastname'] = auth()->user()->lastname;
-                $data['date'] = date('l jS \of F Y');
+                $data['date'] = Carbon::now()->locale('es')->isoFormat('dddd\, D \d\e MMMM \d\e\l Y');
                 $data['time'] = date('h:i:s A');
                 $data['name'] = $Product->name;
 

@@ -2,7 +2,20 @@
 
 <span>Estimado administrador,</span>
 
-<span>Este correo fue enviado porque {{$data['firstname']}} {{$data['lastname']}} modificó la información de {{$data['name']}} con los siguientes valores:</span>
+<?php
+    $modifier = '';
+
+    if(auth()->user()->email != $data['email'])
+    {
+        $modifier = $data['firstname'].' '.$data['lastname'].' modificó';
+    }
+    else
+    {
+        $modifier = 'tú modificaste';
+    }
+?>
+
+<span>Este correo fue enviado porque {{$modifier}} la información de {{$data['name']}} con los siguientes valores:</span>
 
 <table border="1">
     <tr>
@@ -12,6 +25,22 @@
         <th>
             Valor
         </th>
+    </tr>
+    <tr>
+        <td>
+            Precio anterior
+        </td>
+        <td>
+            <strong>${{$data['old_product_price']}}</strong>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Precio nuevo
+        </td>
+        <td>
+            <strong>${{$data['new_product_price']}}</strong>
+        </td>
     </tr>
     <tr>
         <td>
@@ -29,24 +58,8 @@
             {{$data['time']}}
         </td>
     </tr>
-    <tr>
-        <td>
-            Precio anterior
-        </td>
-        <td>
-            ${{$data['old_product_price']}}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Precio nuevo
-        </td>
-        <td>
-            ${{$data['new_product_price']}}
-        </td>
-    </tr>
 </table>
 
-<br><span>Regards,<span><br>
+<br><span>Atentamente,<span><br>
 {{ config('app.name') }}
 @endcomponent
