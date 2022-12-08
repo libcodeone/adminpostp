@@ -6,29 +6,27 @@ use App\Exports\ProductsExport;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Adjustment;
-use App\Models\AdjustmentDetail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\DB;
 use App\Models\ProductVariant;
 use App\Models\product_warehouse;
 use App\Models\Unit;
 use App\Models\Warehouse;
 use App\utils\helpers;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Auth;
+use App\Mail\ProductPriceModification;
+use App\Models\Setting;
 use Maatwebsite\Excel\Facades\Excel;
 use \Gumlet\ImageResize;
 
-use DB;
-
-
 class ProductsController extends BaseController
 {
+    private $proceed_function = null;
 
     //------------ Get ALL Products --------------\\
 
@@ -58,7 +56,7 @@ class ProductsController extends BaseController
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('products.name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('products.code', 'LIKE', "%{$request->search}%")                       
+                        ->orWhere('products.code', 'LIKE', "%{$request->search}%")
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('brand', function ($q) use ($request) {
                                 $q->where('name', 'LIKE', "%{$request->search}%");
@@ -138,7 +136,7 @@ class ProductsController extends BaseController
             ]);
 
 
-            \DB::transaction(function () use ($request) {
+            DB::transaction(function () use ($request) {
 
 
                 //-- Create New Product
@@ -253,7 +251,7 @@ class ProductsController extends BaseController
                 'code.required' => 'This field is required',
             ]);
 
-            \DB::transaction(function () use ($request, $id) {
+            DB::transaction(function () use ($request, $id) {
 
                 $Product = Product::where('id', $id)
                     ->where('deleted_at', '=', null)
@@ -460,12 +458,29 @@ class ProductsController extends BaseController
                     $filename = implode(",", $images);
                 }
 
+                $data['old_product_price'] = Product::where('id', '=', $id)->first()->getOriginal('price');
+                $data['new_product_price'] = $Product->price;
+                $data['firstname'] = auth()->user()->firstname;
+                $data['lastname'] = auth()->user()->lastname;
+                $data['date'] = date('l jS \of F Y');
+                $data['time'] = date('h:i:s A');
+                $data['name'] = $Product->name;
+
+                $stringOne = '[{'.'"email"'.':"';
+                $stringTwo = '"}]';
+                $adminEmail = json_encode(DB::select('SELECT email FROM settings WHERE id = 1'));
+
+                $data['email'] = str_replace($stringTwo, '', str_replace($stringOne, '', $adminEmail));
+
+                $this->Set_config_mail();
+                Mail::to($data['email'])->send(new ProductPriceModification($data));
+
                 $Product->image = $filename;
                 $Product->save();
 
             }, 10);
 
-            return response()->json(['success' => true]);
+            return response()->json(['success' => $this->proceed_function]);
 
         } catch (ValidationException $e) {
             return response()->json([
@@ -484,7 +499,7 @@ class ProductsController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'delete', Product::class);
 
-        \DB::transaction(function () use ($id) {
+        DB::transaction(function () use ($id) {
 
             $Product = Product::findOrFail($id);
             $Product->deleted_at = Carbon::now();
@@ -519,7 +534,7 @@ class ProductsController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'delete', Product::class);
 
-        \DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
             $selectedIds = $request->selectedIds;
             foreach ($selectedIds as $product_id) {
 
@@ -1063,7 +1078,7 @@ class ProductsController extends BaseController
                 $Product->Type_barcode = 'CODE128';
                 $Product->price = $value['price'];
                 $Product->cost = $value['cost'];
-            
+
                 $Product->brand_id = $brand_id;
                 $Product->TaxNet = 0;
                 $Product->tax_method = 1;
@@ -1157,9 +1172,5 @@ class ProductsController extends BaseController
         }
 
     }
-
-
-
-
 
 }

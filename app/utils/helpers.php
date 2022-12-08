@@ -2,14 +2,35 @@
 namespace App\utils;
 
 use App\Models\Currency;
+use Illuminate\Support\Facades\DB;
 use App\Models\Role;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder;
 
 class helpers
 {
+    // Return admin's firstname
+
+    // public function adminFirstname()
+    // {
+    //     $stringOne = '[{'.'"firstname"'.':"';
+    //     $stringTwo = '"}]';
+    //     $email = 'yamaesthetics@outlook.com';
+    //     $firstname = json_encode(DB::select('SELECT firstname FROM users WHERE role_id = 1 AND email = ?', [$email]));
+    //     return str_replace($stringTwo, '', str_replace($stringOne, '', $firstname));
+    // }
+
+    // Return admin's lastname
+
+    // public function adminLastname()
+    // {
+    //     $stringOne = '[{'.'"lastname"'.':"';
+    //     $stringTwo = '"}]';
+    //     $email = 'yamaesthetics@outlook.com';
+    //     $lastname = json_encode(DB::select('SELECT lastname FROM users WHERE role_id = 1 AND email = ?', [$email]));
+    //     return str_replace($stringTwo, '', str_replace($stringOne, '', $lastname));
+    // }
 
     //  Helper Multiple Filter
     public function filter($model, $columns, $param, $request)
@@ -26,7 +47,7 @@ class helpers
             $model->where(function ($query) use ($request, $field, $model) {
                 return $model->when($request->filled($field['value']),
                     function ($query) use ($request, $model, $field) {
-                      
+
                         if($field['param'] == 'like'){
                             $model->where($field['value'], 'like', "%".$request[$field['value']]. "%");
                         }elseif($field['param'] == '<>'){
