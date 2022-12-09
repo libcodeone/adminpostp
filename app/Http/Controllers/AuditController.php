@@ -41,7 +41,20 @@ class AuditController extends BaseController
             ->orderBy('audits.'.$order, $dir)
             ->get();
             foreach ($audits as $audits_data) {
-                $item['event'] = $audits_data->event;
+                               
+                if( $audits_data->event == 'updated'){
+                    $item['event'] = "Modificación";
+                }
+                if( $audits_data->event == 'created'){
+                    $item['event'] = "Creación";
+                }
+                if( $audits_data->event == 'deleted'){
+                    $item['event'] = "Eliminación";
+                }
+                
+                if (strncmp($audits_data->new_values, '{"deleted_at', 12) === 0){
+                    $item['event'] = "Eliminación";
+                }
                 $item['user_id'] = $audits_data->username;
                 $item['auditable_id'] = $audits_data->auditable_id;
                 $item['auditable_type'] = $audits_data->auditable_type;
