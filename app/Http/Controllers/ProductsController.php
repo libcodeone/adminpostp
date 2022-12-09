@@ -459,7 +459,7 @@ class ProductsController extends BaseController
                 }
 
                 setlocale(LC_TIME, "sv_ES");
-                
+
                 $data['old_product_price'] = Product::where('id', '=', $id)->first()->getOriginal('price');
                 $data['new_product_price'] = $Product->price;
                 $data['firstname'] = auth()->user()->firstname;
@@ -474,8 +474,11 @@ class ProductsController extends BaseController
 
                 $data['email'] = str_replace($stringTwo, '', str_replace($stringOne, '', $adminEmail));
 
-                $this->Set_config_mail();
-                Mail::to($data['email'])->send(new ProductPriceModification($data));
+                if($data['old_product_price'] != $data['new_product_price'])
+                {
+                    $this->Set_config_mail();
+                    Mail::to($data['email'])->send(new ProductPriceModification($data));
+                }
 
                 $Product->image = $filename;
                 $Product->save();
