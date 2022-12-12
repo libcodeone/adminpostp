@@ -5,27 +5,38 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Client;
-use App\Models\PaymentSale;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Models\ProductVariant;
 use App\Models\product_warehouse;
-use App\Models\PaymentWithCreditCard;
 use App\Models\Role;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Warehouse;
 use App\utils\helpers;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Stripe;
+use App\Mail\ProductPriceModification;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder;
 
 class PosController extends BaseController
 {
+    private $orderDiscount = null;
+    private $productId = null;
+    private $originalProductPriceValue = null;
+    private $originalProductPrice = null;
+    private $newProductPriceValue = null;
+    private $newProductPrice = null;
+    private $subTotalProductPrice = null;
+    private $productDiscount = null;
+    private $clientName = null;
+    private $clientFinalConsumerOrNot = null;
+    private $clientBigConsumerOrNot = null;
+    private $taxMethod = null;
 
     //------------ Create New  POS --------------\\
 
@@ -39,26 +50,29 @@ class PosController extends BaseController
             'payment.amount' => 'required',
         ]);
 
-        $item = \DB::transaction(function () use ($request) {
+        $item = DB::transaction(function () use ($request) {
             $helpers = new helpers();
             $role = Auth::user()->roles()->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $order = new Sale;
             $client = Client::findOrFail($request->client_id);
+            $this->clientName = $client->name;
+            $this->clientFinalConsumerOrNot = $client->final_consumer;
+            $this->clientBigConsumerOrNot = $client->big_consumer;
             $taxRate = 0;
             $TaxNet = 0;
             $TaxWithheld = 0;
             $TaxNetDetail = 0;
             $TaxMethod = 2;
             $TotalConDescuento = $request->GrandTotal - $request->shipping;
-          
+
             $GrandTotal=$request->GrandTotal;
-           
-            if($client->final_consumer === 0){
+
+            if($this->clientFinalConsumerOrNot === 0){
                 $taxRate = 13;
                 $TaxNet = round($TotalConDescuento-($TotalConDescuento / 1.13),2);
-               
-                if($client->big_consumer == 1 and round($TotalConDescuento / 1.13,2)>=100){
+
+                if($this->clientBigConsumerOrNot == 1 and round($TotalConDescuento / 1.13,2)>=100){
                     $TaxWithheld = round((($TotalConDescuento / 1.13)* 0.01),2) ;
                     $GrandTotal=$TotalConDescuento-$TaxWithheld;
                 }
@@ -78,6 +92,7 @@ class PosController extends BaseController
             if($order->shipping == ".00" || $order->shipping == ""){
                 $order->shipping = 0.0;
                 }
+            $this->orderDiscount = $order->discount;
             $order->subTotal=$request->GrandTotal;
             $order->GrandTotal = $GrandTotal;
             $order->cash = 0;
@@ -89,60 +104,128 @@ class PosController extends BaseController
 
             $order->save();
 
-            $data = $request['details'];
-               foreach ($data as $key => $value) {
-                $price= $value['Net_price'];
-                $TaxMethod = 2;
-                if($client->final_consumer === 0){
-                    $TaxNetDetail = round($value['Net_price'] -($value['Net_price']/ 1.13), 2);
-                    $price= $value['Net_price'] - $TaxNetDetail;
-                    $TaxMethod = 1;
+            $data1 = $request['details'];
+            $saleDetailsData = null;
+            foreach ($data1 as $key => $value)
+            {
+                $this->productId = $value['product_id'];
+                $this->productQuantity = $value['quantity'];
+                $this->productDiscount = $value['discount'];
+                $this->subTotalProductPrice = $value['subtotal'];
+                $originalPrice = null;
+                $price = null;
+                if($client->final_consumer === 1)
+                {
+                    $originalPrice = Product::where('id', '=', $this->productId)->first()->getOriginal('price');
+                    $price = $value['Net_price'];
+                    $this->taxMethod = 2;
                 }
+                else if($client->final_consumer === 0)
+                {
+                    $originalPrice = Product::where('id', '=', $this->productId)->first()->getOriginal('price') - round(Product::where('id', '=', $this->productId)->first()->getOriginal('price') - (Product::where('id', '=', $this->productId)->first()->getOriginal('price') / 1.13), 2);
+                    $price = $value['Net_price'] - round($value['Net_price'] - ($value['Net_price'] / 1.13), 2);
+                    $this->taxMethod = 1;
+                }
+                $this->originalProductPrice = $originalPrice;
+                $this->newProductPrice = $price;
+                $saleDetailsData[] = [
+                    'name' => Product::where('id', '=', $this->productId)->first()->getOriginal('name'),
+                    'original_product_price' => $this->originalProductPrice,
+                    'new_product_price' => $this->newProductPrice,
+                    'product_quantity' => $this->productQuantity,
+                    'product_total' => $this->subTotalProductPrice
+                ];
                 $orderDetails[] = [
                     'date' => Carbon::now(),
                     'sale_id' => $order->id,
-                    'quantity' => $value['quantity'],
-                    'product_id' => $value['product_id'],
+                    'quantity' => $this->productQuantity,
+                    'product_id' => $this->productId,
                     'product_variant_id' => $value['product_variant_id'],
-                    'total' => $value['subtotal'],
-                    'price' => $price,
+                    'total' => $this->subTotalProductPrice,
+                    'price' => $this->newProductPrice,
                     'TaxNet' => $TaxNetDetail,
-                    'tax_method' => $TaxMethod,
-                    'discount' => $value['discount'],
+                    'tax_method' => $this->taxMethod,
+                    'discount' => $this->productDiscount,
                     'discount_method' => $value['discount_Method'],
                 ];
                 $unit = Product::with('unitSale')
-                    ->where('id', $value['product_id'])
+                    ->where('id', $this->productId)
                     ->where('deleted_at', '=', null)
                     ->first();
 
-                if ($value['product_variant_id'] !== null) {
+                if ($value['product_variant_id'] !== null)
+                {
                     $product_warehouse = product_warehouse::where('warehouse_id', $order->warehouse_id)
-                        ->where('product_id', $value['product_id'])->where('product_variant_id', $value['product_variant_id'])
+                        ->where('product_id', $this->productId)->where('product_variant_id', $value['product_variant_id'])
                         ->first();
 
                     if ($unit && $product_warehouse) {
                         if ($unit['unitSale']->operator == '/') {
-                            $product_warehouse->qte -= $value['quantity'] / $unit['unitSale']->operator_value;
+                            $product_warehouse->qte -= $this->productQuantity / $unit['unitSale']->operator_value;
                         } else {
-                            $product_warehouse->qte -= $value['quantity'] * $unit['unitSale']->operator_value;
-                        }
-                        $product_warehouse->save();
-                    }
-
-                } else {
-                    $product_warehouse = product_warehouse::where('warehouse_id', $order->warehouse_id)
-                        ->where('product_id', $value['product_id'])
-                        ->first();
-                    if ($unit && $product_warehouse) {
-                        if ($unit['unitSale']->operator == '/') {
-                            $product_warehouse->qte -= $value['quantity'] / $unit['unitSale']->operator_value;
-                        } else {
-                            $product_warehouse->qte -= $value['quantity'] * $unit['unitSale']->operator_value;
+                            $product_warehouse->qte -= $this->productQuantity * $unit['unitSale']->operator_value;
                         }
                         $product_warehouse->save();
                     }
                 }
+                else
+                {
+                    $product_warehouse = product_warehouse::where('warehouse_id', $order->warehouse_id)
+                        ->where('product_id', $this->productId)
+                        ->first();
+                    if ($unit && $product_warehouse)
+                    {
+                        if ($unit['unitSale']->operator == '/')
+                        {
+                            $product_warehouse->qte -= $this->productQuantity / $unit['unitSale']->operator_value;
+                        }
+                        else
+                        {
+                            $product_warehouse->qte -= $this->productQuantity * $unit['unitSale']->operator_value;
+                        }
+                        $product_warehouse->save();
+                    }
+                }
+            }
+
+            setlocale(LC_TIME, "sv_ES");
+
+            $stringOne = '[{'.'"email"'.':"';
+            $stringTwo = '"}]';
+            $adminEmail = json_encode(DB::select('SELECT email FROM settings WHERE id = 1'));
+
+            $data['client_name'] = $this->clientName;
+            $data['final_consumer'] = $this->clientFinalConsumerOrNot;
+            $data['big_consumer'] = $this->clientBigConsumerOrNot;
+            $data['email'] = str_replace($stringTwo, '', str_replace($stringOne, '', $adminEmail));
+            $data['total_discount'] = $this->orderDiscount;
+            $data['firstname'] = auth()->user()->firstname;
+            $data['lastname'] = auth()->user()->lastname;
+            $data['date'] = Carbon::now()->locale('es')->isoFormat('dddd\, D \d\e MMMM \d\e\l Y');
+            $data['time'] = date('h:i:s A');
+
+            $boolean = null;
+            $booleansArray = array();
+
+            for ($i = 0; $i < count($saleDetailsData); $i++)
+            {
+                if ($saleDetailsData[$i]['original_product_price'] != $saleDetailsData[$i]['new_product_price'] || $data['total_discount'] !== 0.0 || ($saleDetailsData[$i]['original_product_price'] != $saleDetailsData[$i]['new_product_price'] && $data['total_discount'] !== 0.0))
+                {
+                    $boolean = true;
+                }
+                else if ($saleDetailsData[$i]['original_product_price'] === $saleDetailsData[$i]['new_product_price'] || $data['total_discount'] === 0.0 || ($saleDetailsData[$i]['original_product_price'] === $saleDetailsData[$i]['new_product_price'] && $data['total_discount'] === 0.0))
+                {
+                    $boolean = false;
+                }
+                array_push($booleansArray, $boolean);
+            }
+
+            Log::info($booleansArray);
+
+            if (in_array(true, $booleansArray))
+            {
+                $this->Set_config_mail();
+                Mail::to($data['email'])->send(new ProductPriceModification($data, $saleDetailsData));
             }
 
             SaleDetail::insert($orderDetails);
@@ -336,7 +419,7 @@ class PosController extends BaseController
             }
 
 
-           
+
             if ($product_warehouse['product']['unitSale']->operator == '/') {
                 $item['qte_sale'] = $product_warehouse->qte * $product_warehouse['product']['unitSale']->operator_value;
                 $price = $product_warehouse['product']->price / $product_warehouse['product']['unitSale']->operator_value;
