@@ -12,15 +12,17 @@ class ProductPriceModification extends Mailable
     use Queueable, SerializesModels;
 
     public $data;
+    public $saleDetailsData;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($data, $saleDetailsData)
     {
         $this->data = $data;
+        $this->saleDetailsData = $saleDetailsData;
     }
 
     /**
@@ -30,7 +32,7 @@ class ProductPriceModification extends Mailable
      */
     public function build()
     {
-        return $this->subject('Modificación del precio de producto exitoso.')
+        return $this->subject('Alerta de modificación a la información de productos.')
             ->markdown('emails.productPriceModification');
     }
 }

@@ -20,7 +20,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Validation\ValidationException;
 use App\Mail\ProductPriceModification;
-use App\Models\Setting;
 use Maatwebsite\Excel\Facades\Excel;
 use \Gumlet\ImageResize;
 
@@ -460,6 +459,14 @@ class ProductsController extends BaseController
 
                 setlocale(LC_TIME, "sv_ES");
 
+                $saleDetailsData = null;
+
+                $stringOne = '[{'.'"email"'.':"';
+                $stringTwo = '"}]';
+                $adminEmail = json_encode(DB::select('SELECT email FROM settings WHERE id = 1'));
+
+                $data['email'] = str_replace($stringTwo, '', str_replace($stringOne, '', $adminEmail));
+                $data['total_discount'] = null;
                 $data['old_product_price'] = Product::where('id', '=', $id)->first()->getOriginal('price');
                 $data['new_product_price'] = $Product->price;
                 $data['firstname'] = auth()->user()->firstname;
@@ -468,16 +475,10 @@ class ProductsController extends BaseController
                 $data['time'] = date('h:i:s A');
                 $data['name'] = $Product->name;
 
-                $stringOne = '[{'.'"email"'.':"';
-                $stringTwo = '"}]';
-                $adminEmail = json_encode(DB::select('SELECT email FROM settings WHERE id = 1'));
-
-                $data['email'] = str_replace($stringTwo, '', str_replace($stringOne, '', $adminEmail));
-
                 if($data['old_product_price'] != $data['new_product_price'])
                 {
                     $this->Set_config_mail();
-                    Mail::to($data['email'])->send(new ProductPriceModification($data));
+                    Mail::to($data['email'])->send(new ProductPriceModification($data, $saleDetailsData));
                 }
 
                 $Product->image = $filename;
