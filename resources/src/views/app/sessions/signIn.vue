@@ -95,7 +95,7 @@ export default {
       email: "",
       password: "",
       userId: "",
-      bgImage: require("./../../../assets/images/photo-wide-4.jpg"),
+      bgImage: require("./../../../assets/images/bgprint.jpeg"),
       loading: false
     };
   },
