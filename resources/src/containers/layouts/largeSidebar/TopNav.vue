@@ -2,7 +2,7 @@
   <div class="main-header">
     <div class="logo">
        <router-link to="/app/dashboard">
-        <img :src="'/images/shadai_logo.png'" alt width="60" height="60">
+        <img :src="'/images/logo-2.png'" alt width="60" height="60">
        </router-link>
     </div>
 

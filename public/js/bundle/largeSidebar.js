@@ -5071,7 +5071,7 @@ _c(
 _c("router-link",{attrs:{to:"/app/dashboard"}},[
 _c("img",{
 attrs:{
-src:"/images/shadai_logo.png",
+src:"/images/logo-2.png",
 alt:"",
 width:"60",
 height:"60"}})])],
