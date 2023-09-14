@@ -4532,7 +4532,7 @@ _c(
 "div",
 {
 staticClass:"row align-items-end ",
-staticStyle:{height:"120px"}},
+staticStyle:{height:"90px"}},
 
 [
 _c("div",{staticClass:"col-6"}),

@@ -467,7 +467,7 @@
                     <div class="col-6"></div>
                     <div class="col-6"></div>
                   </div>
-                  <div class="row align-items-end " style="height:120px">
+                  <div class="row align-items-end " style="height:90px">
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
