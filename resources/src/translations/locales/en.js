@@ -222,6 +222,7 @@ export default {
     StockTransfers: 'Transfer',
     StockManagement: 'Stock Management',
     dashboard: 'Dashboard',
+    audits: "Audit",
     Products: 'Products',
     productsList: 'Product List',
     ProductManagement: 'Product Management',

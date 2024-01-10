@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
 
-class Product extends Model
+class Product extends Model implements Auditable
 {
 
-    use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
+
     protected $dates = ['deleted_at'];
 
     protected $fillable = [

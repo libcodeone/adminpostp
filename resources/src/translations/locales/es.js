@@ -225,6 +225,7 @@ export default {
     StockTransfers: "Transferencias de stock",
     StockManagement: "Gestion de Stocks",
     dashboard: "Tablero",
+    audits: "Auditoría",
     Products: "Productos",
     productsList: "lista de productos",
     ProductManagement: "Gestion de producto",

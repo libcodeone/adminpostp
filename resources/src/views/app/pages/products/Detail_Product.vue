@@ -72,7 +72,7 @@
                 <tr v-if="product.is_variant == 'yes'">
                   <td>{{$t('ProductVariant')}}</td>
                   <th>
-                    <span v-for="variant in product.ProductVariant">{{variant}},</span>
+                    <span v-for="variant in product.ProductVariant" :key="variant">{{variant}},</span>
                   </th>
                 </tr>
               </tbody>
@@ -109,7 +109,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="PROD_W in product.CountQTY">
+                <tr v-for="PROD_W in product.CountQTY" :key="PROD_W">
                   <td>{{PROD_W.mag}}</td>
                   <td>{{PROD_W.qte }} {{product.unit}}</td>
                 </tr>
@@ -127,7 +127,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="PROD_V in product.CountQTY_variants">
+                <tr v-for="PROD_V in product.CountQTY_variants" :key="PROD_V">
                   <td>{{PROD_V.mag}}</td>
                   <td>{{PROD_V.variant}}</td>
                   <td>{{PROD_V.qte}} {{product.unit}}</td>
