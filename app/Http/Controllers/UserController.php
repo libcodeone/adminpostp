@@ -230,7 +230,7 @@ class UserController extends BaseController
                 $filename = $currentAvatar;
             }
 
-            User::whereId($id)->update([
+            User::find($id)->update([
                 'firstname' => $request['firstname'],
                 'lastname' => $request['lastname'],
                 'username' => $request['username'],
