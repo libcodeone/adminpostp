@@ -233,7 +233,7 @@ class UserController extends BaseController
                 $filename = $currentAvatar;
             }
 
-            User::whereId($id)->update([
+            User::find($id)->update([
                 'firstname' => $request['firstname'],
                 'lastname' => $request['lastname'],
                 'username' => $request['username'],
@@ -314,7 +314,7 @@ class UserController extends BaseController
             $filename = $currentAvatar;
         }
 
-        User::whereId($id)->update([
+        User::find($id)->update([
             'firstname' => $request['firstname'],
             'lastname' => $request['lastname'],
             'username' => $request['username'],
@@ -348,7 +348,7 @@ class UserController extends BaseController
 
         $user = Auth::user();
         if ($request['id'] !== $user->id) {
-            User::whereId($id)->update([
+            User::find($id)->update([
                 'statut' => $request['statut'],
             ]);
             return response()->json([
