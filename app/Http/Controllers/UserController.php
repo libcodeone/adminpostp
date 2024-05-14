@@ -97,6 +97,8 @@ class UserController extends BaseController
         $user['currentCF'] = Auth::user()->currentCF;
         $user['finalCF'] = Auth::user()->finalCF;
         $user['warehouse_id'] = Auth::user()->warehouse_id;
+        $user['authorizedCode'] = Auth::user()->authorizedCode;
+        
         $permissions = Auth::user()->roles()->first()->permissions->pluck('name');
         $products_alerts = product_warehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
             ->whereRaw('qte <= stock_alert')
@@ -162,13 +164,14 @@ class UserController extends BaseController
             $User->password  = Hash::make($request['password']);
             $User->avatar    = $filename;
             $User->role_id   = $request['role'];
-            $User->initCCF     = $request['initCCF'];
-            $User->currentCCF     = $request['currentCCF'];
-            $User->finalCCF     = $request['finalCCF'];
-            $User->initCF     = $request['initCF'];
-            $User->currentCF     = $request['currentCF'];
-            $User->finalCF     = $request['finalCF'];
-            $User->warehouse_id     = $request['warehouse_id'];
+            $User->initCCF   = $request['initCCF'];
+            $User->currentCCF= $request['currentCCF'];
+            $User->finalCCF  = $request['finalCCF'];
+            $User->initCF    = $request['initCF'];
+            $User->currentCF = $request['currentCF'];
+            $User->finalCF   = $request['finalCF'];
+            $User->warehouse_id  = $request['warehouse_id'];
+            $User->authorizedCode= $request['authorizedCode']!='null'?$request['authorizedCode']:null;
 
             $User->save();
             $role_user = new role_user;
@@ -247,6 +250,7 @@ class UserController extends BaseController
                 'currentCF' => $request['currentCF'],
                 'finalCF' => $request['finalCF'],
                 'warehouse_id' => $request['warehouse_id'],
+                'authorizedCode'=>$request['authorizedCode']!='null'?$request['authorizedCode']:null,
             ]);
 
             role_user::where('user_id' , $id)->update([
@@ -325,6 +329,8 @@ class UserController extends BaseController
             'currentCF' => $request['currentCF'],
             'finalCF' => $request['finalCF'],
             'warehouse_id' => $request['warehouse_id'],
+            'authorizedCode' => $request['authorizedCode'],
+            
 
 
         ]);

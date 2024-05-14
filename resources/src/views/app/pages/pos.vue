@@ -376,6 +376,39 @@
               </b-form>
             </validation-observer>
 
+              <!--Modal authorization Code-->
+              <b-modal hide-footer size="md" id="form_Auth_Discount" >
+                <b-form @submit.prevent="submit_Auth_Discount">
+                  <b-row>
+                    <!-- Auth Code -->
+                    <!-- New AuthorizationCode -->
+                    <b-col md="6" >
+                      <validation-provider name="New AuthorizationCode" :rules="{min:8 , max:8}" v-slot="validationContext">
+                        <b-form-group :label="$t('authorizedCodeLabel')">
+                          <b-form-input :state="getValidationState(validationContext)"
+                            aria-describedby="NewAuthorizedCodeLabel-feedback"
+                            v-model="authorizedCodeIngressed"
+                            :placeholder="$t('authorizedCodeLabel')"
+                            label="AuthorizedCodeLabel"
+                            type="password"
+                            autocomplete="off"
+                           >
+                          </b-form-input>
+                          <b-form-invalid-feedback id="authorizedCodeLabel-feedback">{{ validationContext.errors[0]
+                            }}</b-form-invalid-feedback>
+                        </b-form-group>
+                      </validation-provider>
+                    </b-col>
+
+                    <b-col md="12">
+                      <b-form-group>
+                        <b-button variant="primary" type="submit">{{$t('submit')}}</b-button>
+                      </b-form-group>
+                    </b-col>
+                  </b-row>
+                </b-form>
+              </b-modal>
+
             <!-- Update Detail Product -->
             <validation-observer ref="Update_Detail">
               <b-modal hide-footer size="md" id="form_Update_Detail" :title="detail.name">
@@ -1106,6 +1139,8 @@ export default {
         cash: 0,
         change: 0
       },
+      authorizedDiscount:false,
+      authorizedCodeIngressed:"",
       loading : false,
       isLoading: true,
       focusSearchProduct:true,
@@ -1466,6 +1501,17 @@ export default {
     },
     //---Submit Validation Update Detail
     submit_Update_Detail() {
+
+      if(this.currentUser.authorizedCode!=null && this.currentUser.authorizedCode!="null"){
+        this.performUpdateDetail();
+        
+      }else{
+        this.authorizedCodeIngressed="";
+        this.$bvModal.show("form_Auth_Discount");
+      }
+       
+    },
+    performUpdateDetail(){
       this.$refs.Update_Detail.validate().then(success => {
         if (!success) {
           return;
@@ -2094,6 +2140,43 @@ setTimeout(function() {
         })
         .catch(response => {
           this.isLoading = false;
+        });
+    }
+  ,
+//-----------Authorize Discount--------------//
+submit_Auth_Discount() {
+    NProgress.start();
+      NProgress.set(0.1);
+      /*
+      1. Call new modal authtorize
+      2. if auth is true perform Update Detail else return;
+      */
+
+      axios
+        .post("pos/authDiscount",{ authorizedCode: this.authorizedCodeIngressed } )
+        .then(response => {
+         
+          this.authorizedDiscount = response.data.authorized;
+         console.log(this.authorizedDiscount)
+         if(this.authorizedDiscount>0){
+            this.performUpdateDetail();
+            this.authorizedCodeIngressed="";
+            this.$bvModal.hide("form_Auth_Discount");
+        }else{
+          alert("No es posible realizar la autorización de descuento")
+         }
+
+          // Complete the animation of theprogress bar.
+          NProgress.done();
+          this.isLoading = false;
+
+        })
+        .catch(response => {
+          // Complete the animation of theprogress bar.
+          NProgress.done();
+          setTimeout(() => {
+            this.isLoading = false;
+          }, 500);
         });
     }
   },

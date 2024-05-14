@@ -468,7 +468,7 @@ class PosController extends BaseController
             $client->final_consumer=$client->final_consumer===0 ? 'CCF' :'CF';
             $client->phone=$client->final_consumer==='CCF' ? $client->NRC :$client->phone;
         }
-        Log::debug($clients);
+       
         $settings = Setting::where('deleted_at', '=', null)->first();
         if ($settings->warehouse_id) {
             if (Warehouse::where('id', $settings->warehouse_id)->where('deleted_at', '=', null)->first()) {
@@ -502,6 +502,20 @@ class PosController extends BaseController
             'warehouses' => $warehouses,
             'categories' => $categories,
         ]);
+    }
+
+    public function authDiscount(Request $request){
+
+        $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
+        
+        $authorizedCode=$request->authorizedCode;
+        
+        $authorized = DB::table('users')->where( 'authorizedCode',$authorizedCode)->count();
+       
+        $authorized = $authorized>=1?1:$authorized;
+    
+       return response()->json(['authorized'=>$authorized]); 
+
     }
 
 }
