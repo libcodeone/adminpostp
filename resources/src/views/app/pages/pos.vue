@@ -1,652 +1,9 @@
 <template>
-  <div class="pos_page">
-    <div class="container-fluid p-0 app-admin-wrap layout-sidebar-large clearfix" id="pos">
-      <div v-if="isLoading" class="loading_page spinner spinner-primary mr-3"></div>
-      <b-row v-if="!isLoading">
-        <!-- Card Left Panel Details Sale-->
-        <b-col md="5">
-          <b-card no-body class="card-order">
-            <div class="main-header">
-              <div class="logo"
-              v-show="currentUserPermissions && (currentUserPermissions.includes('dashboard'))">
-                <router-link to="/app/dashboard">
-                  <img :src="'/images/logo-2.png'" alt width="60" height="60">
-                </router-link>
-              </div>
-              <div class="mx-auto"></div>
-
-              <div class="header-part-right">
-                <!-- Full screen toggle -->
-                <i
-                  class="i-Full-Screen header-icon d-none d-sm-inline-block"
-                  @click="handleFullScreen"
-                ></i>
-                <!-- Grid menu Dropdown -->
-
-                <div class="dropdown">
-                  <b-dropdown
-                    id="dropdown"
-                    text="Dropdown Button"
-                    class="m-md-2"
-                    toggle-class="text-decoration-none"
-                    no-caret
-                    right
-                    variant="link"
-                  >
-                    <template slot="button-content">
-                      <i
-                        class="i-Globe text-muted header-icon"
-                        role="button"
-                        id="dropdownMenuButton"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                      ></i>
-                    </template>
-                    <vue-perfect-scrollbar
-                      :settings="{ suppressScrollX: true, wheelPropagation: false }"
-                      ref="myData"
-                      class="dropdown-menu-left rtl-ps-none notification-dropdown ps scroll"
-                    >
-                      <div class="menu-icon-grid">
-                        <a @click="SetLocal('es')">
-                          <i title="es" class="flag-icon flag-icon-squared flag-icon-es"></i>
-                          <span class="title-lang">Español</span>
-                        </a>
-                        <a @click="SetLocal('en')">
-                          <i title="en" class="flag-icon flag-icon-squared flag-icon-gb"></i> English
-                        </a>
-                      </div>
-                    </vue-perfect-scrollbar>
-                  </b-dropdown>
-                </div>
-
-                <!-- User avatar dropdown -->
-                <div class="dropdown">
-                  <b-dropdown
-                    id="dropdown-1"
-                    text="Dropdown Button"
-                    class="m-md-2 user col align-self-end"
-                    toggle-class="text-decoration-none"
-                    no-caret
-                    variant="link"
-                    right
-                  >
-                    <template slot="button-content">
-                      <img
-                        :src="'/images/avatar/'+currentUser.avatar"
-                        id="userDropdown"
-                        alt
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                      >
-                    </template>
-
-                    <div class="dropdown-menu-left" aria-labelledby="userDropdown">
-                      <div class="dropdown-header">
-                        <i class="i-Lock-User mr-1"></i>
-                        <span>{{currentUser.username}}</span>
-                      </div>
-                      <!--<router-link to="/app/profile" class="dropdown-item">{{$t('profil')}}</router-link>-->
-                      <router-link
-                        v-if="currentUserPermissions && currentUserPermissions.includes('setting_system')"
-                        to="/app/settings/System_settings"
-                        class="dropdown-item"
-                      >{{$t('Settings')}}</router-link>
-                      <a class="dropdown-item" href="#" @click.prevent="logoutUser">{{$t('logout')}}</a>
-                    </div>
-                  </b-dropdown>
-                </div>
-              </div>
-            </div>
-
-            <validation-observer ref="create_pos">
-              <b-form @submit.prevent="Submit_Pos">
-                <b-card-body>
-                  <b-row>
-                    <!-- Customer -->
-                    <b-col lg="12" md="12" sm="12">
-                      <validation-provider name="Customer" :rules="{ required: true}">
-                        <b-input-group slot-scope="{ valid, errors }" class="input-customer">
-                          <v-select
-                            :class="{'is-invalid': !!errors.length}"
-                            :state="errors[0] ? false : (valid ? true : null)"
-                            v-model="sale.client_id"
-                            :reduce="label => label.value"
-                            :placeholder="$t('Choose_Customer')"
-                            class="w-100"
-                            :options="clients.map(clients => ({label: clients.name+'-'+clients.final_consumer+' ('+clients.phone+')', value: clients.id}))"
-                          />
-
-                <!-- <b-col lg="12" md="12" sm="12" class="w-100">
-                  <b-row>
-
-                  <autocomplete
-                    :search="search"
-                    :placeholder="$t('Choose_Customer')"
-                    aria-label="Choose_Customer"
-                    :get-result-value="getResultValueClient"
-                    @submit="SearchClient"
-                    ref="autocompletec"
-                  />
-                  </b-row>
-                  <b-row>
-                  <span class="badge badge-success" v-if="sale.client_id != ''">{{sale.client_name}}</span>
-                  <span class="badge badge-warning" v-if="sale.client_id == ''">{{$t('Choose_Customer')}}</span>
-                  </b-row>
-                </b-col> -->
-                          <b-input-group-append>
-                            <b-button variant="primary" @click="New_Client()">
-                              <span>
-                                <i class="i-Add-User"></i>
-                              </span>
-                            </b-button>
-                          </b-input-group-append>
-                        </b-input-group>
-                      </validation-provider>
-                    </b-col>
-
-                    <!-- warehouse -->
-                    <b-col lg="12" md="12" sm="12">
-                      <validation-provider name="warehouse" :rules="{ required: true}">
-                        <b-form-group slot-scope="{ valid, errors }" class="mt-2">
-                          <v-select
-                            :class="{'is-invalid': !!errors.length}"
-                            :state="errors[0] ? false : (valid ? true : null)"
-                            :disabled="details.length > 0"
-                            @input="Selected_Warehouse"
-                            v-model="sale.warehouse_id"
-                            :reduce="label => label.value"
-                            :placeholder="$t('Choose_Warehouse')"
-                            :options="warehouses.map(warehouses => ({label: warehouses.name, value: warehouses.id}))"
-                          />
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-
-                    <!-- Details Product  -->
-                    <b-col md="12" class="mt-2">
-                      <div class="pos-detail">
-                        <div class="table-responsive">
-                          <table class="table table-striped">
-                            <thead>
-                              <tr>
-                                <th scope="col">{{$t('ProductName')}}</th>
-                                <th scope="col">{{$t('Price')}}</th>
-                                <th scope="col" class="text-center">{{$t('Qty')}}</th>
-                                <th
-                                  scope="col"
-                                  class="text-center"
-                                >{{$t('SubTotal')}}</th>
-                                <th scope="col" class="text-center">
-                                  <i class="fa fa-trash"></i>
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr v-if="details.length <= 0">
-                                <td colspan="5">{{$t('NodataAvailable')}}</td>
-                              </tr>
-                              <tr v-for="(detail, index) in details" :key="index">
-                                <td>
-                                  <span>{{detail.code}}</span>
-                                  <br>
-                                  <span class="badge badge-success">{{detail.name}}</span>
-                                  <i @click="Modal_Update_Detail(detail)" class="i-Edit"></i>
-                                </td>
-                                <!-- <td>{{formatNumber(detail.Total_price, 2)}} {{currentUser.currency}}</td> -->
-                                <td>
-                                  <!-- <div class="price">
-                                    <b-form-input
-                                      :state="getValidationState(validationContext)"
-                                      v-model.number="detail.Total_price"
-                                      @keyup="keyup_Price_Product()"
-                                    ></b-form-input>
-                                    <input
-                                        class="form-control"
-                                        @keyup="keyup_Price_Product(detail ,detail.detail_id)"
-                                        v-model.number="detail.Net_price" :disabled="currentUserPermissions && (currentUserPermissions.includes('Sales_edit'))"
-                                      >
-                                  </div>-->
-                                  <div class="logo"
-                                    v-show="currentUserPermissions && !(currentUserPermissions.includes('Pos_price_edit'))">
-                                    <span>{{detail.Net_price}}</span>
-                                    </div>
-                                  <div class="logo"
-                                    v-show="currentUserPermissions && (currentUserPermissions.includes('Pos_price_edit'))">
-                                    <input
-                                        class="form-control"
-                                        @keyup="keyup_Price_Product(detail ,detail.detail_id)"
-                                        v-model.number="detail.Net_price"
-                                      >
-
-                                    </div>
-                                </td>
-
-                                <td>
-                                  <div class="quantity">
-                                    <b-input-group>
-                                      <b-input-group-prepend>
-                                        <span
-                                          class="btn btn-primary btn-sm"
-                                          @click="decrement(detail ,detail.detail_id)"
-                                        >-</span>
-                                      </b-input-group-prepend>
-
-                                      <input
-                                        class="form-control"
-                                        @keyup="Verified_Qty(detail,detail.detail_id)"
-                                        v-model.number="detail.quantity"
-                                      >
-
-                                      <b-input-group-append>
-                                        <span
-                                          class="btn btn-primary btn-sm"
-                                          @click="increment(detail ,detail.detail_id)"
-                                        >+</span>
-                                      </b-input-group-append>
-                                    </b-input-group>
-                                  </div>
-                                </td>
-                                <td
-                                  class="text-center"
-                                >{{formatNumber((detail.subtotal),2)}} {{currentUser.currency}}</td>
-                                <td>
-                                  <a
-                                    @click="delete_Product_Detail(detail.detail_id)"
-                                    title="Delete"
-                                  >
-                                    <i class="i-Close-Window text-25 text-danger"></i>
-                                  </a>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
-
-                  <!-- Calcul Grand Total -->
-                  <div class="footer_panel">
-                    <b-row>
-                      <b-col md="12">
-                        <div class="grandtotal" style="color: #000 !important;">
-                          <span>{{$t("Total")}} : {{formatNumber(GrandTotal , 2)}} {{currentUser.currency}}</span>
-                        </div>
-                      </b-col>
-
-                      <!-- Order Tax  -->
-                      <!-- <b-col lg="4" md="4" sm="12" v-if="sale.client_id != ''">
-                        <validation-provider
-                          name="Order Tax"
-                          :rules="{ regex: /^\d*\.?\d*$/}"
-                          v-slot="validationContext"
-                        >
-                          <b-form-group :label="$t('Tax')" append="%">
-                            <b-input-group append="%">
-                              <b-form-input
-                                :state="getValidationState(validationContext)"
-                                aria-describedby="OrderTax-feedback"
-                                label="Order Tax"
-                                v-model.number="sale.tax_rate"
-                                @keyup="keyup_OrderTax()"
-                              ></b-form-input>
-                            </b-input-group>
-                            <b-form-invalid-feedback
-                              id="OrderTax-feedback"
-                            >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                          </b-form-group>
-                        </validation-provider>
-                      </b-col> -->
-
-                      <!-- Discount -->
-                      <b-col lg="4" md="4" sm="12">
-                        <validation-provider
-                          name="Discount"
-                          :rules="{ regex: /^\d*\.?\d*$/}"
-                          v-slot="validationContext"
-                        >
-                          <b-form-group :label="$t('Discount')" append="%">
-                            <b-input-group append="$">
-                              <b-form-input
-                                :state="getValidationState(validationContext)"
-                                aria-describedby="Discount-feedback"
-                                label="Discount"
-                                v-model.number="sale.discount"
-                                @keyup="keyup_Discount()"
-                              ></b-form-input>
-                            </b-input-group>
-                            <b-form-invalid-feedback
-                              id="Discount-feedback"
-                            >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                          </b-form-group>
-                        </validation-provider>
-                      </b-col>
-
-                      <!-- Shipping  -->
-                      <b-col lg="4" md="4" sm="12">
-                        <validation-provider
-                          name="Shipping"
-                          :rules="{ regex: /^\d*\.?\d*$/}"
-                          v-slot="validationContext"
-                        >
-                          <b-form-group :label="$t('Shipping')">
-                            <b-input-group append="$">
-                              <b-form-input
-                                :state="getValidationState(validationContext)"
-                                aria-describedby="Shipping-feedback"
-                                label="Shipping"
-                                v-model.number="sale.shipping"
-                                @keyup="keyup_Shipping()"
-                              ></b-form-input>
-                            </b-input-group>
-
-                            <b-form-invalid-feedback
-                              id="Shipping-feedback"
-                            >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                          </b-form-group>
-                        </validation-provider>
-                      </b-col>
-
-                      <b-col md="6" sm="12">
-                        <b-button
-                          @click="Reset_Pos()"
-                          variant="danger ripple btn-rounded btn-block mt-1"
-                        >
-                          <i class="i-Power-2"></i>
-                          {{ $t("Reset") }}
-                        </b-button>
-                      </b-col>
-                      <b-col md="6" sm="12">
-                      <b-button type="submit"
-                    tag="button" variant="primary ripple mt-1 btn-rounded btn-block"
-                    :disabled="loading" >
-                          <i class="i-Checkout"></i>
-                          {{ $t("sendtobox") }}
-                        </b-button>
-                        <div v-once class="typo__p" v-if="loading">
-                    <div class="spinner sm spinner-primary mt-3"></div>
-                  </div>
-                      </b-col>
-                    </b-row>
-                  </div>
-                </b-card-body>
-              </b-form>
-            </validation-observer>
-
-              <!--Modal authorization Code-->
-              <b-modal hide-footer size="md" id="form_Auth_Discount" >
-                <b-form @submit.prevent="submit_Auth_Discount">
-                  <b-row>
-                    <!-- Auth Code -->
-                    <!-- New AuthorizationCode -->
-                    <b-col md="6" >
-                      <validation-provider name="New AuthorizationCode" :rules="{min:8 , max:8}" v-slot="validationContext">
-                        <b-form-group :label="$t('authorizedCodeLabel')">
-                          <b-form-input :state="getValidationState(validationContext)"
-                            aria-describedby="NewAuthorizedCodeLabel-feedback"
-                            v-model="authorizedCodeIngressed"
-                            :placeholder="$t('authorizedCodeLabel')"
-                            label="AuthorizedCodeLabel"
-                            type="password"
-                            autocomplete="off"
-                           >
-                          </b-form-input>
-                          <b-form-invalid-feedback id="authorizedCodeLabel-feedback">{{ validationContext.errors[0]
-                            }}</b-form-invalid-feedback>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-
-                    <b-col md="12">
-                      <b-form-group>
-                        <b-button variant="primary" type="submit">{{$t('submit')}}</b-button>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
-                </b-form>
-              </b-modal>
-
-            <!-- Update Detail Product -->
-            <validation-observer ref="Update_Detail">
-              <b-modal hide-footer size="md" id="form_Update_Detail" :title="detail.name">
-                <b-form @submit.prevent="submit_Update_Detail">
-                  <b-row>
-                    <!-- Unit Price -->
-                    <b-col lg="12" md="12" sm="12">
-                      <validation-provider
-                        name="Product Price"
-                        :rules="{ required: true , regex: /^\d*\.?\d*$/}"
-                        v-slot="validationContext"
-                      >
-                        <b-form-group :label="$t('ProductPrice')" id="Price-input">
-                          <b-form-input
-                            label="Product Price"
-                            v-model="detail.Unit_price"
-                            :state="getValidationState(validationContext)"
-                            aria-describedby="Price-feedback"
-                          ></b-form-input>
-                          <b-form-invalid-feedback
-                            id="Price-feedback"
-                          >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-
-                    <!-- Tax Method -->
-                    <b-col lg="12" md="12" sm="12">
-                      <validation-provider name="Tax Method" :rules="{ required: true}">
-                        <b-form-group slot-scope="{ valid, errors }" :label="$t('TaxMethod')">
-                          <v-select
-                            :class="{'is-invalid': !!errors.length}"
-                            :state="errors[0] ? false : (valid ? true : null)"
-                            v-model="detail.tax_method"
-                            :reduce="label => label.value"
-                            :placeholder="$t('Choose_Method')"
-                            :options="
-                           [
-                            {label: 'Exclusive', value: '1'},
-                            {label: 'Inclusive', value: '2'}
-                           ]"
-                          ></v-select>
-                          <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-
-                    <!-- Tax -->
-                    <b-col lg="12" md="12" sm="12">
-                      <validation-provider
-                        name="Tax"
-                        :rules="{ required: true , regex: /^\d*\.?\d*$/}"
-                        v-slot="validationContext"
-                      >
-                        <b-form-group :label="$t('Tax')">
-                          <b-input-group append="%">
-                            <b-form-input
-                              label="Tax"
-                              v-model="detail.tax_percent"
-                              :state="getValidationState(validationContext)"
-                              aria-describedby="Tax-feedback"
-                            ></b-form-input>
-                          </b-input-group>
-                          <b-form-invalid-feedback
-                            id="Tax-feedback"
-                          >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-
-                    <!-- Discount Method -->
-                    <b-col lg="12" md="12" sm="12">
-                      <validation-provider name="Discount Method" :rules="{ required: true}">
-                        <b-form-group slot-scope="{ valid, errors }" :label="$t('Discount_Method')">
-                          <v-select
-                            v-model="detail.discount_Method"
-                            :reduce="label => label.value"
-                            :placeholder="$t('Choose_Method')"
-                            :class="{'is-invalid': !!errors.length}"
-                            :state="errors[0] ? false : (valid ? true : null)"
-                            :options="
-                              [
-                                {label: 'Percent %', value: '1'},
-                                {label: 'Fixed', value: '2'}
-                              ]"
-                          ></v-select>
-                          <b-form-invalid-feedback>{{ errors[0] }}</b-form-invalid-feedback>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-
-                    <!-- Discount Rate -->
-                    <b-col lg="12" md="12" sm="12">
-                      <validation-provider
-                        name="Discount Rate"
-                        :rules="{ required: true , regex: /^\d*\.?\d*$/}"
-                        v-slot="validationContext"
-                      >
-                        <b-form-group :label="$t('Discount')">
-                          <b-form-input
-                            label="Discount"
-                            v-model="detail.discount"
-                            :state="getValidationState(validationContext)"
-                            aria-describedby="Discount-feedback"
-                          ></b-form-input>
-                          <b-form-invalid-feedback
-                            id="Discount-feedback"
-                          >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                        </b-form-group>
-                      </validation-provider>
-                    </b-col>
-
-                    <b-col md="12">
-                      <b-form-group>
-                        <b-button variant="primary" type="submit">{{$t('submit')}}</b-button>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
-                </b-form>
-              </b-modal>
-            </validation-observer>
-            </b-card>
-            </b-col>
-        </b-row>
-
-        <!-- Card right Of Products -->
-        <b-col md="7">
-          <b-card class="list-grid">
-            <b-row>
-              <b-col md="6">
-                <button v-b-toggle.sidebar-category class="btn btn-outline-info mt-1 btn-block">
-                  <i class="i-Two-Windows"></i>
-                  {{$t('ListofCategory')}}
-                </button>
-              </b-col>
-              <b-col md="6">
-                <button v-b-toggle.sidebar-brand class="btn btn-outline-info mt-1 btn-block">
-                  <i class="i-Library"></i>
-                  {{$t('ListofBrand')}}
-                </button>
-              </b-col>
-              <b-col md="12 mt-2">
-                <div class="input-group">
-                  <input
-                    v-autofocus="focusSearchProduct"
-                    @keyup="getProducts()"
-                    v-model="SearchProduct"
-                    type="text"
-                    :placeholder="$t('Search_Product_by_Code_Name')"
-                    class="form-control"
-                    ref="SearchProducts"
-                  >
-                  <div class="input-group-append">
-                    <span class="input-group-text">
-                      <i class="i-Bar-Code"></i>
-                    </span>
-                  </div>
-                </div>
-              </b-col>
-
-
-
-<div class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2">
-
-                <div
-
-                  v-for="product in products" :key="product"
-                  class="card col-3"
-                >
-                 <span >
-                           <a title="Ver Imagen" v-b-tooltip.hover @click="showImages(product.imageList)">
-                           <i class="i-Eye text-25 text-info" style="cursor: pointer;"></i>
-                        </a>
-
-                        </span>
-                <div
-                  @click="Check_Product_Exist(product , product.id)"
-
-
-                >
-                  <img class="card-img-top" alt :src="'/images/products/'+product.image">
-                  <div class="card-body">
-                    <h5 class="card-title">{{product.category}} -  {{product.name}}</h5>
-                    <p class="card-text text-muted text-small">{{product.code}}</p>
-                    <span
-                        class="badge w-15 w-sm-100 mb-2" style="color: #fff;background-color: #020202;"
-                      >{{formatNumber(product.Net_price , 2)}} {{currentUser.currency}}</span>
-                      <p
-                        class="m-0 text-muted text-small w-15 w-sm-100 d-none d-lg-block item-badges"
-                      >
-                        <span
-                          class="badge" style="color: #020202; background-color: #f5ba16;"
-                        >{{product.qte_sale }} {{product.unitSale}}</span>
-
-
-
-                      </p>
-                  </div>
-                </div>
-              </div>
-                      </div>
-            </b-row>
-
-            <b-row>
-              <b-col md="12" class="mt-4">
-                <b-pagination
-                  @change="Product_onPageChanged"
-                  :total-rows="product_totalRows"
-                  :per-page="product_perPage"
-                  v-model="product_currentPage"
-                  class="my-0 gull-pagination align-items-center"
-                  align="center"
-                  first-text
-                  last-text
-                >
-                  <p class="list-arrow m-0" slot="prev-text">
-                    <i class="i-Arrow-Left text-40"></i>
-                  </p>
-                  <p class="list-arrow m-0" slot="next-text">
-                    <i class="i-Arrow-Right text-40"></i>
-                  </p>
-                </b-pagination>
-              </b-col>
-            </b-row>
-          </b-card>
-        </b-col>
-
-        <!-- Sidebar Brand -->
-        <b-sidebar id="sidebar-brand"
-            :title="$t('ListofBrand')"
-            bg-variant="white"
-            :backdrop-variant="variant"
-            right shadow backdrop
-            :visible="showSidebarBrands"
-            @shown="showSidebarBrand"
-            @hidden="hiddenSidebarBrand"
-            ref="sidebar_brand"
-        />
+    <div class="pos_page">
+        <div
+            class="container-fluid p-0 app-admin-wrap layout-sidebar-large clearfix"
+            id="pos"
+        >
             <div
                 v-if="isLoading"
                 class="loading_page spinner spinner-primary mr-3"
@@ -1728,8 +1085,8 @@
                     @hidden="hiddenSidebarBrand"
                     ref="sidebar_brand"
                 >
-                    <div class="px-3 py-2">
-                        <b-row>
+                    <div class="px-3 py-2" style="display: flex; align-items: center; justify-content: center;">
+                        <b-row style="align-items: center; justify-content: center; width: 100%">
                             <b-col md="12 mt-2">
                                 <div class="input-group">
                                     <input
@@ -1745,7 +1102,8 @@
                                 </div>
                             </b-col>
                         </b-row>
-                        <b-row>
+
+                        <b-row style="align-items: center; justify-content: center; width: 100%">
                             <div
                                 class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2"
                             >
@@ -1796,17 +1154,18 @@
                             </div>
                         </b-row>
 
-                        <b-row>
+                        <b-row style="align-items: center; justify-content: center; width: 100%">
                             <b-col md="12" class="mt-4">
                                 <b-pagination
                                     @change="BrandonPageChanged"
                                     :total-rows="brand_totalRows"
                                     :per-page="brand_perPage"
                                     v-model="brand_currentPage"
-                                    class="my-0 gull-pagination align-items-center"
+                                    class="my-0 gull-pagination"
                                     align="center"
                                     first-text
                                     last-text
+                                    style="display: flex; justify-content: center; align-items: center;"
                                 >
                                     <p class="list-arrow m-0" slot="prev-text">
                                         <i class="i-Arrow-Left text-40"></i>
@@ -1871,8 +1230,8 @@
                     shadow
                     ref="sidebar_category"
                 >
-                    <div class="px-3 py-2">
-                        <b-row>
+                    <div class="px-3 py-2" style="display: flex; align-items: center; justify-content: center;">
+                        <b-row style="align-items: center; justify-content: center; width: 100%">
                             <b-col md="12 mt-2">
                                 <div class="input-group">
                                     <input
@@ -1887,7 +1246,8 @@
                                 </div>
                             </b-col>
                         </b-row>
-                        <b-row>
+
+                        <b-row style="align-items: center; justify-content: center; width: 100%">
                             <div
                                 class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2"
                             >
@@ -1945,7 +1305,7 @@
                             </div>
                         </b-row>
 
-                        <b-row>
+                        <b-row style="align-items: center; justify-content: center; width: 100%">
                             <b-col md="12" class="mt-4">
                                 <b-pagination
                                     @change="Category_onPageChanged"
@@ -1956,6 +1316,7 @@
                                     align="center"
                                     first-text
                                     last-text
+                                    style="display: flex; justify-content: center; align-items: center;"
                                 >
                                     <p class="list-arrow m-0" slot="prev-text">
                                         <i class="i-Arrow-Left text-40"></i>
@@ -2908,7 +2269,9 @@ export default {
                     this.details[i].Unit_price = this.detail.Unit_price;
                     this.details[i].quantity = this.detail.quantity;
                     this.details[i].tax_method = this.detail.tax_method;
-                    this.details[i].discount_Method = this.detail.discount_Method;
+                    this.details[
+                        i
+                    ].discount_Method = this.detail.discount_Method;
                     this.details[i].discount = this.detail.discount;
 
                     if (this.details[i].discount_Method == "2") {
@@ -3068,30 +2431,28 @@ export default {
         //---------------------------------Get Product Details ------------------------\\
 
         Get_Product_Details(product, product_id) {
-            axios.get("Products/" + product_id).then(response =>
-                {
-                    this.product.discount = 0;
-                    this.product.DiscountNet = 0;
-                    this.product.discount_Method = "2";
-                    this.product.product_id = response.data.id;
-                    this.product.name = response.data.name;
-                    this.product.Net_price = response.data.Net_price;
-                    this.product.Total_price = response.data.Total_price;
-                    this.product.Unit_price = response.data.Unit_price;
-                    this.product.taxe = response.data.tax_price;
-                    this.product.tax_method = response.data.tax_method;
-                    this.product.tax_percent = response.data.tax_percent;
-                    this.product.unitSale = response.data.unitSale;
-                    this.product.product_variant_id = product.product_variant_id;
-                    this.product.code = product.code;
-                    this.product.imageList = product.imageList;
-                    this.add_product(product.code);
-                    this.CaclulTotal();
+            axios.get("Products/" + product_id).then(response => {
+                this.product.discount = 0;
+                this.product.DiscountNet = 0;
+                this.product.discount_Method = "2";
+                this.product.product_id = response.data.id;
+                this.product.name = response.data.name;
+                this.product.Net_price = response.data.Net_price;
+                this.product.Total_price = response.data.Total_price;
+                this.product.Unit_price = response.data.Unit_price;
+                this.product.taxe = response.data.tax_price;
+                this.product.tax_method = response.data.tax_method;
+                this.product.tax_percent = response.data.tax_percent;
+                this.product.unitSale = response.data.unitSale;
+                this.product.product_variant_id = product.product_variant_id;
+                this.product.code = product.code;
+                this.product.imageList = product.imageList;
+                this.add_product(product.code);
+                this.CaclulTotal();
 
-                    // Complete the animation of theprogress bar.
-                    NProgress.done();
-                }
-            );
+                // Complete the animation of theprogress bar.
+                NProgress.done();
+            });
         },
 
         async getProductDiscount(productId, productPrice) {
@@ -3113,8 +2474,7 @@ export default {
         CaclulTotal() {
             this.total = 0;
 
-            for (var i = 0; i < this.details.length; i++)
-            {
+            for (var i = 0; i < this.details.length; i++) {
                 var tax = this.details[i].taxe * this.details[i].quantity;
 
                 this.details[i].subtotal = parseFloat(
@@ -3227,7 +2587,6 @@ export default {
 
         keyup_Price_Product(detail, id) {
             for (var i = 0; i < this.details.length; i++) {
-
                 if (this.details[i].detail_id == id)
                     this.details[i].Net_price = detail.Net_price;
             }
@@ -3446,62 +2805,63 @@ export default {
             }, 500);
         });
         // this.$refs.SearchProducts.focus();
-    }
-  ,
-//-----------Authorize Discount--------------//
-submit_Auth_Discount() {
-    NProgress.start();
-      NProgress.set(0.1);
-      /*
+    },
+    //-----------Authorize Discount--------------//
+    submit_Auth_Discount() {
+        NProgress.start();
+        NProgress.set(0.1);
+        /*
       1. Call new modal authtorize
       2. if auth is true perform Update Detail else return;
       */
 
-      axios
-        .post("pos/authDiscount",{ authorizedCode: this.authorizedCodeIngressed } )
-        .then(response => {
+        axios
+            .post("pos/authDiscount", {
+                authorizedCode: this.authorizedCodeIngressed
+            })
+            .then(response => {
+                this.authorizedDiscount = response.data.authorized;
+                console.log(this.authorizedDiscount);
+                if (this.authorizedDiscount > 0) {
+                    this.performUpdateDetail();
+                    this.authorizedCodeIngressed = "";
+                    this.$bvModal.hide("form_Auth_Discount");
+                } else {
+                    alert(
+                        "No es posible realizar la autorización de descuento"
+                    );
+                }
 
-          this.authorizedDiscount = response.data.authorized;
-         console.log(this.authorizedDiscount)
-         if(this.authorizedDiscount>0){
-            this.performUpdateDetail();
-            this.authorizedCodeIngressed="";
-            this.$bvModal.hide("form_Auth_Discount");
-        }else{
-          alert("No es posible realizar la autorización de descuento")
-         }
-
-          // Complete the animation of theprogress bar.
-          NProgress.done();
-          this.isLoading = false;
-
-        })
-        .catch(response => {
-          // Complete the animation of theprogress bar.
-          NProgress.done();
-          setTimeout(() => {
-            this.isLoading = false;
-          }, 500);
-        });
+                // Complete the animation of theprogress bar.
+                NProgress.done();
+                this.isLoading = false;
+            })
+            .catch(response => {
+                // Complete the animation of theprogress bar.
+                NProgress.done();
+                setTimeout(() => {
+                    this.isLoading = false;
+                }, 500);
+            });
     },
 
-  //-------------------- Created Function -----\\
+    //-------------------- Created Function -----\\
 
-  created() {
-    this.GetElementsPos();
-     Fire.$on("pay_now", () => {
-      setTimeout(() => {
-        this.payment.amount = this.formatNumber(this.GrandTotal , 2);
-        this.payment.cash = this.formatNumber(this.GrandTotal , 2);
-        this.payment.Reglement = "Cash";
-        // this.$bvModal.show("Add_Payment");
-        this.CreatePOS();
-        this.loading = false;
-        // Complete the animation of theprogress bar.
-        NProgress.done();
-      }, 500);
-    });
-    // this.$refs.SearchProducts.focus();
-  }
-}
+    created() {
+        this.GetElementsPos();
+        Fire.$on("pay_now", () => {
+            setTimeout(() => {
+                this.payment.amount = this.formatNumber(this.GrandTotal, 2);
+                this.payment.cash = this.formatNumber(this.GrandTotal, 2);
+                this.payment.Reglement = "Cash";
+                // this.$bvModal.show("Add_Payment");
+                this.CreatePOS();
+                this.loading = false;
+                // Complete the animation of theprogress bar.
+                NProgress.done();
+            }, 500);
+        });
+        // this.$refs.SearchProducts.focus();
+    }
+};
 </script>
