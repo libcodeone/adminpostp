@@ -1085,9 +1085,9 @@
                     @hidden="hiddenSidebarBrand"
                     ref="sidebar_brand"
                 >
-                    <div class="px-3 py-2" style="display: flex; align-items: center; justify-content: center;">
+                    <div class="px-3 py-2" style="align-items: center; justify-content: center;">
                         <b-row style="align-items: center; justify-content: center; width: 100%">
-                            <b-col md="12 mt-2">
+                            <div style="margin: 0.5rem 0.25rem; width: 100%;">
                                 <div class="input-group">
                                     <input
                                         autofocus
@@ -1100,12 +1100,12 @@
                                         id="searchBrand"
                                     />
                                 </div>
-                            </b-col>
+                            </div>
                         </b-row>
 
                         <b-row style="align-items: center; justify-content: center; width: 100%">
                             <div
-                                class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2"
+                                class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item" style="margin-top: 0.5rem;"
                             >
                                 <div
                                     @click="GetAllBrands()"
@@ -1155,7 +1155,7 @@
                         </b-row>
 
                         <b-row style="align-items: center; justify-content: center; width: 100%">
-                            <b-col md="12" class="mt-4">
+                            <div class="col-md-12 d-flex flex-row flex-wrap bd-highlight" style="margin-top: 0.5rem;">
                                 <b-pagination
                                     @change="BrandonPageChanged"
                                     :total-rows="brand_totalRows"
@@ -1174,7 +1174,7 @@
                                         <i class="i-Arrow-Right text-40"></i>
                                     </p>
                                 </b-pagination>
-                            </b-col>
+                            </div>
                         </b-row>
                     </div>
                 </b-sidebar>
@@ -1230,9 +1230,9 @@
                     shadow
                     ref="sidebar_category"
                 >
-                    <div class="px-3 py-2" style="display: flex; align-items: center; justify-content: center;">
+                    <div class="px-3 py-2" style="align-items: center; justify-content: center;">
                         <b-row style="align-items: center; justify-content: center; width: 100%">
-                            <b-col md="12 mt-2">
+                            <div style="margin: 0.5rem 0.25rem; width: 100%;">
                                 <div class="input-group">
                                     <input
                                         v-autofocus="focusSearchCategory"
@@ -1244,12 +1244,12 @@
                                         ref="searchCategory"
                                     />
                                 </div>
-                            </b-col>
+                            </div>
                         </b-row>
 
                         <b-row style="align-items: center; justify-content: center; width: 100%">
                             <div
-                                class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2"
+                                class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item" style="margin-top: 0.5rem;"
                             >
                                 <div
                                     @click="getAllCategory()"
@@ -1306,7 +1306,7 @@
                         </b-row>
 
                         <b-row style="align-items: center; justify-content: center; width: 100%">
-                            <b-col md="12" class="mt-4">
+                            <div class="col-md-12 d-flex flex-row flex-wrap bd-highlight" style="margin-top: 0.5rem;">
                                 <b-pagination
                                     @change="Category_onPageChanged"
                                     :total-rows="category_totalRows"
@@ -1325,7 +1325,7 @@
                                         <i class="i-Arrow-Right text-40"></i>
                                     </p>
                                 </b-pagination>
-                            </b-col>
+                            </div>
                         </b-row>
                     </div>
                 </b-sidebar>
