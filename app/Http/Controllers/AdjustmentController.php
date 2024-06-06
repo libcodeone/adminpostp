@@ -6,7 +6,7 @@ use App\Exports\AdjustmentsExport;
 use App\Models\Adjustment;
 use App\Models\AdjustmentDetail;
 use App\Models\ProductVariant;
-use App\Models\product_warehouse;
+use App\Models\ProductWarehouse;
 use App\Models\Role;
 use App\Models\Warehouse;
 use App\utils\helpers;
@@ -23,7 +23,7 @@ class AdjustmentController extends BaseController
     public function index(request $request)
     {
         $this->authorizeForUser($request->user('api'), 'view', Adjustment::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
 
         // How many items do you want to display.
@@ -119,7 +119,7 @@ class AdjustmentController extends BaseController
 
                 if ($value['type'] == "add") {
                     if ($value['product_variant_id'] !== null) {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $order->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->where('product_variant_id', $value['product_variant_id'])
@@ -131,7 +131,7 @@ class AdjustmentController extends BaseController
                         }
 
                     } else {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $order->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->first();
@@ -144,7 +144,7 @@ class AdjustmentController extends BaseController
                 } else {
 
                     if ($value['product_variant_id'] !== null) {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $order->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->where('product_variant_id', $value['product_variant_id'])
@@ -156,7 +156,7 @@ class AdjustmentController extends BaseController
                         }
 
                     } else {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $order->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->first();
@@ -180,7 +180,7 @@ class AdjustmentController extends BaseController
     {
 
         $this->authorizeForUser($request->user('api'), 'update', Adjustment::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $current_adjustment = Adjustment::findOrFail($id);
 
@@ -213,7 +213,7 @@ class AdjustmentController extends BaseController
                 if ($value['type'] == "add") {
 
                     if ($value['product_variant_id'] !== null) {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $current_adjustment->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->where('product_variant_id', $value['product_variant_id'])
@@ -225,7 +225,7 @@ class AdjustmentController extends BaseController
                         }
 
                     } else {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $current_adjustment->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->first();
@@ -237,7 +237,7 @@ class AdjustmentController extends BaseController
                     }
                 } else {
                     if ($value['product_variant_id'] !== null) {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $current_adjustment->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->where('product_variant_id', $value['product_variant_id'])
@@ -249,7 +249,7 @@ class AdjustmentController extends BaseController
                         }
 
                     } else {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $current_adjustment->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->first();
@@ -274,7 +274,7 @@ class AdjustmentController extends BaseController
                 if ($product_detail['type'] == "add") {
 
                     if ($product_detail['product_variant_id'] !== null) {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->warehouse_id)
                             ->where('product_id', $product_detail['product_id'])
                             ->where('product_variant_id', $product_detail['product_variant_id'])
@@ -286,7 +286,7 @@ class AdjustmentController extends BaseController
                         }
 
                     } else {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->warehouse_id)
                             ->where('product_id', $product_detail['product_id'])
                             ->first();
@@ -298,7 +298,7 @@ class AdjustmentController extends BaseController
                     }
                 } else {
                     if ($value['product_variant_id'] !== null) {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->warehouse_id)
                             ->where('product_id', $product_detail['product_id'])
                             ->where('product_variant_id', $product_detail['product_variant_id'])
@@ -310,7 +310,7 @@ class AdjustmentController extends BaseController
                         }
 
                     } else {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->warehouse_id)
                             ->where('product_id', $product_detail['product_id'])
                             ->first();
@@ -355,7 +355,7 @@ class AdjustmentController extends BaseController
         $this->authorizeForUser($request->user('api'), 'delete', Adjustment::class);
 
         \DB::transaction(function () use ($id, $request) {
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $Adjustment = Adjustment::findOrFail($id);
 
@@ -381,7 +381,7 @@ class AdjustmentController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'delete', Adjustment::class);
         \DB::transaction(function () use ($request) {
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $selectedIds = $request->selectedIds;
             foreach ($selectedIds as $adjustment_id) {
@@ -438,7 +438,7 @@ class AdjustmentController extends BaseController
     {
 
         $this->authorizeForUser($request->user('api'), 'update', Adjustment::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $Adjustment_data = Adjustment::with('details.product')
             ->where('deleted_at', '=', null)
@@ -469,7 +469,7 @@ class AdjustmentController extends BaseController
         foreach ($Adjustment_data['details'] as $detail) {
 
             if ($detail->product_variant_id) {
-                $item_product = product_warehouse::where('product_id', $detail->product_id)
+                $item_product = ProductWarehouse::where('product_id', $detail->product_id)
                     ->where('deleted_at', '=', null)
                     ->where('product_variant_id', $detail->product_variant_id)
                     ->where('warehouse_id', $Adjustment_data->warehouse_id)
@@ -492,7 +492,7 @@ class AdjustmentController extends BaseController
 
 
             } else {
-                $item_product = product_warehouse::where('product_id', $detail->product_id)
+                $item_product = ProductWarehouse::where('product_id', $detail->product_id)
                     ->where('deleted_at', '=', null)
                     ->where('warehouse_id', $Adjustment_data->warehouse_id)
                     ->where('product_variant_id', '=', null)
@@ -529,7 +529,7 @@ class AdjustmentController extends BaseController
     {
 
         $this->authorizeForUser($request->user('api'), 'view', Adjustment::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $Adjustment_data = Adjustment::with('details.product.unit')
             ->where('deleted_at', '=', null)

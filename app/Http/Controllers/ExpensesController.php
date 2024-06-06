@@ -31,7 +31,7 @@ class ExpensesController extends BaseController
         $order = $request->SortField;
         $dir = $request->SortType;
         $helpers = new helpers();
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         // Filter fields With Params to retrieve
         $columns = array(0 => 'Ref', 1 => 'warehouse_id', 2 => 'date', 3 => 'expense_category_id');
@@ -135,7 +135,7 @@ class ExpensesController extends BaseController
     {
 
         $this->authorizeForUser($request->user('api'), 'update', Expense::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $expense = Expense::findOrFail($id);
 
@@ -169,7 +169,7 @@ class ExpensesController extends BaseController
     public function destroy(Request $request, $id)
     {
         $this->authorizeForUser($request->user('api'), 'delete', Expense::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $expense = Expense::findOrFail($id);
 
@@ -192,7 +192,7 @@ class ExpensesController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'delete', Expense::class);
         $selectedIds = $request->selectedIds;
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
 
         foreach ($selectedIds as $expense_id) {
@@ -260,7 +260,7 @@ class ExpensesController extends BaseController
     {
 
         $this->authorizeForUser($request->user('api'), 'update', Expense::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $Expense = Expense::where('deleted_at', '=', null)->findOrFail($id);
 

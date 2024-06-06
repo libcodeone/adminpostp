@@ -16,7 +16,7 @@ class CategoryExpenseController extends BaseController
     public function index(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'view', ExpenseCategory::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -77,7 +77,7 @@ class CategoryExpenseController extends BaseController
     public function update(Request $request, $id)
     {
         $this->authorizeForUser($request->user('api'), 'update', ExpenseCategory::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $ExpenseCategory = ExpenseCategory::findOrFail($id);
 
@@ -105,7 +105,7 @@ class CategoryExpenseController extends BaseController
     public function destroy(Request $request, $id)
     {
         $this->authorizeForUser($request->user('api'), 'delete', ExpenseCategory::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $ExpenseCategory = ExpenseCategory::findOrFail($id);
 
@@ -127,7 +127,7 @@ class CategoryExpenseController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'delete', ExpenseCategory::class);
         $selectedIds = $request->selectedIds;
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
 
         foreach ($selectedIds as $category_id) {

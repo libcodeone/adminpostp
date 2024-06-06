@@ -18,7 +18,7 @@ class PurchasesExport implements FromArray, WithHeadings, ShouldAutoSize, WithEv
      */
     function array(): array
     {
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $data = [];
 

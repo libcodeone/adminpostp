@@ -77,7 +77,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::get('Get_Clients_Without_Paginate', 'ClientController@Get_Clients_Without_Paginate');
     Route::post('clients/delete/by_selection', 'ClientController@delete_by_selection');
     Route::post('clients/pos', 'ClientController@store_pos');
-    
+
 
     //------------------------------- Providers --------------------------\\
     //--------------------------------------------------------------------\\
@@ -175,7 +175,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::post('sales/delete/by_selection', 'SalesController@delete_by_selection');
     Route::put('sales/change_status/{id}', 'SalesController@update_status');
     Route::put('sales/update_to_payment/{id}', 'SalesController@update_to_payment');
-   
+
 
     //------------------------------- Payments  Sales --------------------------\\
     //------------------------------------------------------------------\\
@@ -264,7 +264,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
 
     //------------------------------- Users --------------------------\\
     //------------------------------------------------------------------\\
-    
+
     Route::get('GetUserRole', 'UserController@GetUserRole');
     Route::get('GetUserAuth', 'UserController@GetUserAuth');
     Route::get("/GetPermissions", "UserController@GetPermissions");
@@ -282,9 +282,10 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::get('getRoleswithoutpaginate', 'PermissionsController@getRoleswithoutpaginate');
     Route::post('roles/delete/by_selection', 'PermissionsController@delete_by_selection');
 
-    
+
     //------------------------------- Settings ------------------------\\
-    //------------------------------------------------------------------\\    
+    //------------------------------------------------------------------\\
+
     Route::resource('settings', 'SettingsController');
     Route::put('SMTP/{id}', 'SettingsController@updateSMTP');
     Route::post('SMTP', 'SettingsController@CreateSMTP');
@@ -299,12 +300,22 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
 
     //------------------------------- Backup --------------------------\\
     //------------------------------------------------------------------\\
-    
+
     Route::get("/GetBackup", "ReportController@GetBackup");
     Route::get('/download_Backup/{file}', 'ReportController@download');
     Route::get("/GenerateBackup", "ReportController@GenerateBackup");
     Route::delete("/DeleteBackup/{name}", "ReportController@DeleteBackup");
 
+    //------------------------------- Discounts --------------------------\\
+    //---------------------------------------------------------------------\\}
+
+    Route::resource('discounts', 'DiscountProductController');
+    Route::post("/discount", "DiscountProductController@store");
+    Route::get("/discounts/edit/{id}", "DiscountProductController@edit");
+    Route::patch("/discounts/update/{id}", "DiscountProductController@update");
+    Route::get("/discounts/delete_view/{id}", "DiscountProductController@edit");
+    Route::delete("/discounts/destroy/{id}", "DiscountProductController@destroy");
+    Route::get("/discounts/getDiscountForProduct", "DiscountProductController@getDiscountPricePerProduct");
 });
 
     //-------------------------------  Print & PDF ------------------------\\

@@ -7,7 +7,7 @@ use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\role_user;
-use App\Models\product_warehouse;
+use App\Models\ProductWarehouse;
 use App\Models\Warehouse;
 use App\utils\helpers;
 use Illuminate\Support\Facades\Validator;
@@ -26,7 +26,6 @@ class UserController extends BaseController
 
     public function index(request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'view', User::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -41,7 +40,7 @@ class UserController extends BaseController
         $param = array(0 => 'like', 1 => '=', 2 => 'like', 3 => 'like');
         $data = array();
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $users = User::where(function ($query) use ($ShowRecord) {
@@ -97,8 +96,8 @@ class UserController extends BaseController
         $user['currentCF'] = Auth::user()->currentCF;
         $user['finalCF'] = Auth::user()->finalCF;
         $user['warehouse_id'] = Auth::user()->warehouse_id;
-        $permissions = Auth::user()->roles()->first()->permissions->pluck('name');
-        $products_alerts = product_warehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
+        $permissions = Auth::user()->roles->first()->permissions->pluck('name');
+        $products_alerts = ProductWarehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
             ->whereRaw('qte <= stock_alert')
             ->where('product_warehouse.deleted_at', null)
             ->count();
@@ -116,7 +115,7 @@ class UserController extends BaseController
     public function GetUserRole(Request $request)
     {
 
-        $roles = Auth::user()->roles()->with('permissions')->first();
+        $roles = Auth::user()->roles->with('permissions')->first();
 
         $data = [];
         if ($roles) {
@@ -175,7 +174,7 @@ class UserController extends BaseController
             $role_user->user_id = $User->id;
             $role_user->role_id = $request['role'];
             $role_user->save();
-    
+
         }, 10);
 
         return response()->json(['success' => true]);
@@ -186,7 +185,7 @@ class UserController extends BaseController
     public function update(Request $request, $id)
     {
         $this->authorizeForUser($request->user('api'), 'update', User::class);
-        
+
         $this->validate($request, [
             'email' => 'required|email|unique:users',
             'email' => Rule::unique('users')->ignore($id),
@@ -255,7 +254,7 @@ class UserController extends BaseController
             ]);
 
         }, 10);
-        
+
         return response()->json(['success' => true]);
 
     }
@@ -357,7 +356,7 @@ class UserController extends BaseController
 
     public function GetPermissions()
     {
-        $roles = Auth::user()->roles()->with('permissions')->first();
+        $roles = Auth::user()->roles->with('permissions')->first();
         $data = [];
         if ($roles) {
             foreach ($roles->permissions as $permission) {
