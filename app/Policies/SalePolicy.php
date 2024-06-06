@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Sale;
 use App\Models\Permission;
 use Illuminate\Auth\Access\HandlesAuthorization;
 

@@ -2,35 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\UsersExport;
-use App\Models\Role;
-use App\Models\Setting;
 use App\Models\User;
-use App\Models\role_user;
-use App\Models\product_warehouse;
-use App\Models\Warehouse;
+use App\Models\Role;
 use App\utils\helpers;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use File;
+use App\Models\Setting;
+use App\Models\role_user;
+use App\Models\Warehouse;
+use App\Exports\UsersExport;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use App\Models\ProductWarehouse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Intervention\Image\ImageManagerStatic as Image;
 use Maatwebsite\Excel\Facades\Excel;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class UserController extends BaseController
 {
-
     //------------- GET ALL USERS---------\\
 
     public function index(request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'view', User::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -41,7 +38,7 @@ class UserController extends BaseController
         $param = array(0 => 'like', 1 => '=', 2 => 'like', 3 => 'like');
         $data = array();
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $users = User::where(function ($query) use ($ShowRecord) {
@@ -52,7 +49,7 @@ class UserController extends BaseController
 
         //Multiple Filter
         $Filtred = $helpers->filter($users, $columns, $param, $request)
-        // Search With Multiple Param
+            // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('username', 'LIKE', "%{$request->search}%")
@@ -98,9 +95,9 @@ class UserController extends BaseController
         $user['finalCF'] = Auth::user()->finalCF;
         $user['warehouse_id'] = Auth::user()->warehouse_id;
         $user['authorizedCode'] = Auth::user()->authorizedCode;
-        
-        $permissions = Auth::user()->roles()->first()->permissions->pluck('name');
-        $products_alerts = product_warehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
+
+        $permissions = Auth::user()->roles->first()->permissions->pluck('name');
+        $products_alerts = ProductWarehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
             ->whereRaw('qte <= stock_alert')
             ->where('product_warehouse.deleted_at', null)
             ->count();
@@ -118,17 +115,15 @@ class UserController extends BaseController
     public function GetUserRole(Request $request)
     {
 
-        $roles = Auth::user()->roles()->with('permissions')->first();
+        $roles = Auth::user()->roles->with('permissions')->first();
 
         $data = [];
         if ($roles) {
             foreach ($roles->permissions as $permission) {
                 $data[] = $permission->name;
-
             }
             return response()->json(['success' => true, 'data' => $data]);
         }
-
     }
 
     //------------- STORE NEW USER ---------\\
@@ -141,7 +136,7 @@ class UserController extends BaseController
         ], [
             'email.unique' => 'This Email already taken.',
         ]);
-        \DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
             if ($request->hasFile('avatar')) {
 
                 $image = $request->file('avatar');
@@ -150,7 +145,6 @@ class UserController extends BaseController
                 $image_resize = Image::make($image->getRealPath());
                 $image_resize->resize(128, 128);
                 $image_resize->save(public_path('/images/avatar/' . $filename));
-
             } else {
                 $filename = 'no_avatar.png';
             }
@@ -165,20 +159,19 @@ class UserController extends BaseController
             $User->avatar    = $filename;
             $User->role_id   = $request['role'];
             $User->initCCF   = $request['initCCF'];
-            $User->currentCCF= $request['currentCCF'];
+            $User->currentCCF = $request['currentCCF'];
             $User->finalCCF  = $request['finalCCF'];
             $User->initCF    = $request['initCF'];
             $User->currentCF = $request['currentCF'];
             $User->finalCF   = $request['finalCF'];
             $User->warehouse_id  = $request['warehouse_id'];
-            $User->authorizedCode= $request['authorizedCode']!='null'?$request['authorizedCode']:null;
+            $User->authorizedCode = $request['authorizedCode'] != 'null' ? $request['authorizedCode'] : null;
 
             $User->save();
             $role_user = new role_user;
             $role_user->user_id = $User->id;
             $role_user->role_id = $request['role'];
             $role_user->save();
-    
         }, 10);
 
         return response()->json(['success' => true]);
@@ -189,7 +182,7 @@ class UserController extends BaseController
     public function update(Request $request, $id)
     {
         $this->authorizeForUser($request->user('api'), 'update', User::class);
-        
+
         $this->validate($request, [
             'email' => 'required|email|unique:users',
             'email' => Rule::unique('users')->ignore($id),
@@ -197,7 +190,7 @@ class UserController extends BaseController
             'email.unique' => 'This Email already taken.',
         ]);
 
-        \DB::transaction(function () use ($id ,$request) {
+        DB::transaction(function () use ($id, $request) {
             $user = User::findOrFail($id);
             $current = $user->password;
 
@@ -207,7 +200,6 @@ class UserController extends BaseController
                 } else {
                     $pass = $user->password;
                 }
-
             } else {
                 $pass = $user->password;
             }
@@ -250,18 +242,16 @@ class UserController extends BaseController
                 'currentCF' => $request['currentCF'],
                 'finalCF' => $request['finalCF'],
                 'warehouse_id' => $request['warehouse_id'],
-                'authorizedCode'=>$request['authorizedCode']!='null'?$request['authorizedCode']:null,
+                'authorizedCode' => $request['authorizedCode'] != 'null' ? $request['authorizedCode'] : null,
             ]);
 
-            role_user::where('user_id' , $id)->update([
+            role_user::where('user_id', $id)->update([
                 'user_id' => $id,
                 'role_id' => $request['role'],
             ]);
-
         }, 10);
-        
-        return response()->json(['success' => true]);
 
+        return response()->json(['success' => true]);
     }
 
     //------------- Export USERS to EXCEL ---------\\
@@ -287,7 +277,6 @@ class UserController extends BaseController
             } else {
                 $pass = $user->password;
             }
-
         } else {
             $pass = $user->password;
         }
@@ -314,7 +303,7 @@ class UserController extends BaseController
             $filename = $currentAvatar;
         }
 
-        User::whereId($id)->update([
+        User::find($id)->update([
             'firstname' => $request['firstname'],
             'lastname' => $request['lastname'],
             'username' => $request['username'],
@@ -330,13 +319,9 @@ class UserController extends BaseController
             'finalCF' => $request['finalCF'],
             'warehouse_id' => $request['warehouse_id'],
             'authorizedCode' => $request['authorizedCode'],
-            
-
-
         ]);
 
         return response()->json(['avatar' => $filename, 'user' => $request['username']]);
-
     }
 
     //----------- IsActivated (Update Statut User) -------\\
@@ -348,7 +333,7 @@ class UserController extends BaseController
 
         $user = Auth::user();
         if ($request['id'] !== $user->id) {
-            User::whereId($id)->update([
+            User::find($id)->update([
                 'statut' => $request['statut'],
             ]);
             return response()->json([
@@ -363,18 +348,16 @@ class UserController extends BaseController
 
     public function GetPermissions()
     {
-        $roles = Auth::user()->roles()->with('permissions')->first();
+        $roles = Auth::user()->roles->with('permissions')->first();
         $data = [];
         if ($roles) {
             foreach ($roles->permissions as $permission) {
                 $item[$permission->name]['slug'] = $permission->name;
                 $item[$permission->name]['id'] = $permission->id;
-
             }
             $data[] = $item;
         }
         return $data[0];
-
     }
 
     //------------- GET USER Auth ---------\\
@@ -387,7 +370,6 @@ class UserController extends BaseController
         }
         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
 
-        return response()->json(['success' => true, 'user' => $data,'warehouses' => $warehouses]);
+        return response()->json(['success' => true, 'user' => $data, 'warehouses' => $warehouses]);
     }
-
 }

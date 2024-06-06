@@ -2,8 +2,6 @@ import Vue from "vue";
 import store from "./store";
 import Router from "vue-router";
 import { i18n } from "./plugins/i18n";
-import authenticate from "./auth/authenticate";
-import IsConnected from "./auth/IsConnected";
 
 import NProgress from "nprogress";
 Vue.use(Router);
@@ -22,8 +20,8 @@ const routes = [
                 name: "dashboard",
                 component: () => import(/* webpackChunkName: "dashboard" */ "./views/app/dashboard/dashboard")
             },
-              
-            //Products
+
+            // Products
             {
                 path: "/app/products",
                 component: () => import(/* webpackChunkName: "products" */ "./views/app/pages/products"),
@@ -265,7 +263,6 @@ const routes = [
                         component: () =>
                             import(/* webpackChunkName: "index_sale_dispatcher" */"./views/app/pages/sales/index_sale_dispatcher")
                     },
-                    
                     {
                         name: "store_sale",
                         path: "store",
@@ -290,7 +287,6 @@ const routes = [
                         component: () =>
                             import(/* webpackChunkName: "dispatcher_sale" */"./views/app/pages/sales/dispatcher_sale")
                     },
-                    
                     {
                         name: "detail_sale",
                         path: "detail/:id",
@@ -501,6 +497,13 @@ const routes = [
                         path: "Audit",
                         component: () =>
                             import(/* webpackChunkName: "Audit" */"./views/app/pages/settings/audit")
+                    },
+
+                    // Discounts
+                    {
+                        name: "discounts",
+                        path: "discounts",
+                        component: () => import(/* webpackChunkName: "productsDiscounts" */"./views/app/pages/settings/productsDiscounts")
                     },
 
                     // Warehouses

@@ -8,7 +8,7 @@ use App\Models\Client;
 use App\Models\PaymentSaleReturns;
 use App\Models\Product;
 use App\Models\ProductVariant;
-use App\Models\product_warehouse;
+use App\Models\ProductWarehouse;
 use App\Models\Role;
 use App\Models\SaleReturn;
 use App\Models\SaleReturnDetails;
@@ -33,7 +33,7 @@ class SalesReturnController extends BaseController
     public function index(request $request)
     {
         $this->authorizeForUser($request->user('api'), 'view', SaleReturn::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -186,7 +186,7 @@ class SalesReturnController extends BaseController
 
                 if ($order->statut == "received") {
                     if ($value['product_variant_id'] !== null) {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $order->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->where('product_variant_id', $value['product_variant_id'])
@@ -203,7 +203,7 @@ class SalesReturnController extends BaseController
                         }
 
                     } else {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $order->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->first();
@@ -240,7 +240,7 @@ class SalesReturnController extends BaseController
         ]);
 
         \DB::transaction(function () use ($request, $id) {
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $current_SaleReturn = SaleReturn::findOrFail($id);
 
@@ -267,7 +267,7 @@ class SalesReturnController extends BaseController
 
                 if ($current_SaleReturn->statut == "received") {
                     if ($value['product_variant_id'] !== null) {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)->where('warehouse_id', $current_SaleReturn->warehouse_id)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)->where('warehouse_id', $current_SaleReturn->warehouse_id)
                             ->where('product_id', $value['product_id'])->where('product_variant_id', $value['product_variant_id'])
                             ->first();
 
@@ -281,7 +281,7 @@ class SalesReturnController extends BaseController
                         }
 
                     } else {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)->where('warehouse_id', $current_SaleReturn->warehouse_id)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)->where('warehouse_id', $current_SaleReturn->warehouse_id)
                             ->where('product_id', $value['product_id'])
                             ->first();
 
@@ -314,7 +314,7 @@ class SalesReturnController extends BaseController
                 if ($request['statut'] == "received") {
 
                     if ($product_detail['product_variant_id'] !== null) {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->warehouse_id)
                             ->where('product_id', $product_detail['product_id'])
                             ->where('product_variant_id', $product_detail['product_variant_id'])
@@ -330,7 +330,7 @@ class SalesReturnController extends BaseController
                         }
 
                     } else {
-                        $product_warehouse = product_warehouse::where('deleted_at', '=', null)
+                        $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->warehouse_id)
                             ->where('product_id', $product_detail['product_id'])
                             ->first();
@@ -401,7 +401,7 @@ class SalesReturnController extends BaseController
         $this->authorizeForUser($request->user('api'), 'delete', SaleReturn::class);
 
         \DB::transaction(function () use ($id, $request) {
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $SaleReturn = SaleReturn::findOrFail($id);
 
@@ -432,7 +432,7 @@ class SalesReturnController extends BaseController
         $this->authorizeForUser($request->user('api'), 'delete', SaleReturn::class);
 
         \DB::transaction(function () use ($request) {
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $selectedIds = $request->selectedIds;
             foreach ($selectedIds as $SaleReturn_id) {
@@ -474,7 +474,7 @@ class SalesReturnController extends BaseController
 
         $this->authorizeForUser($request->user('api'), 'view', PaymentSaleReturns::class);
 
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $SaleReturn = SaleReturn::findOrFail($id);
 
@@ -532,7 +532,7 @@ class SalesReturnController extends BaseController
     {
 
         $this->authorizeForUser($request->user('api'), 'view', SaleReturn::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $Sale_Return = SaleReturn::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
@@ -723,7 +723,7 @@ class SalesReturnController extends BaseController
     {
 
         $this->authorizeForUser($request->user('api'), 'update', SaleReturn::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $SaleReturn = SaleReturn::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
@@ -776,7 +776,7 @@ class SalesReturnController extends BaseController
                 ->where('deleted_at', '=', null)->first();
 
             if ($detail->product_variant_id) {
-                $item_product = product_warehouse::where('product_id', $detail->product_id)
+                $item_product = ProductWarehouse::where('product_id', $detail->product_id)
                     ->where('product_variant_id', $detail->product_variant_id)
                     ->where('deleted_at', '=', null)
                     ->where('warehouse_id', $SaleReturn->warehouse_id)
@@ -805,7 +805,7 @@ class SalesReturnController extends BaseController
                 $data['unitSale'] = $detail['product']['unitSale']->ShortName;
 
             } else {
-                $item_product = product_warehouse::where('product_id', $detail->product_id)
+                $item_product = ProductWarehouse::where('product_id', $detail->product_id)
                     ->where('warehouse_id', $SaleReturn->warehouse_id)
                     ->where('deleted_at', '=', null)->where('product_variant_id', '=', null)
                     ->first();

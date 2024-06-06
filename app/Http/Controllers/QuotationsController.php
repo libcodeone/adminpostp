@@ -7,7 +7,7 @@ use App\Mail\QuotationMail;
 use App\Models\Client;
 use App\Models\Product;
 use App\Models\ProductVariant;
-use App\Models\product_warehouse;
+use App\Models\ProductWarehouse;
 use App\Models\Quotation;
 use App\Models\QuotationDetail;
 use App\Models\Role;
@@ -30,7 +30,7 @@ class QuotationsController extends BaseController
     public function index(request $request)
     {
         $this->authorizeForUser($request->user('api'), 'view', Quotation::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
 
         // How many items do you want to display.
@@ -182,7 +182,7 @@ class QuotationsController extends BaseController
         ]);
 
         \DB::transaction(function () use ($request, $id) {
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $current_Quotation = Quotation::findOrFail($id);
 
@@ -263,7 +263,7 @@ class QuotationsController extends BaseController
 
         \DB::transaction(function () use ($id, $request) {
 
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $Quotation = Quotation::findOrFail($id);
 
@@ -290,7 +290,7 @@ class QuotationsController extends BaseController
 
         \DB::transaction(function () use ($request) {
 
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $selectedIds = $request->selectedIds;
             foreach ($selectedIds as $Quotation_id) {
@@ -339,7 +339,7 @@ class QuotationsController extends BaseController
     public function show(Request $request, $id)
     {
         $this->authorizeForUser($request->user('api'), 'view', Quotation::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $quotation_data = Quotation::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
@@ -538,7 +538,7 @@ class QuotationsController extends BaseController
     {
 
         $this->authorizeForUser($request->user('api'), 'update', Quotation::class);
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         $Quotation = Quotation::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
@@ -587,7 +587,7 @@ class QuotationsController extends BaseController
                 ->where('deleted_at', '=', null)->first();
 
             if ($detail->product_variant_id) {
-                $item_product = product_warehouse::where('product_id', $detail->product_id)
+                $item_product = ProductWarehouse::where('product_id', $detail->product_id)
                     ->where('product_variant_id', $detail->product_variant_id)
                     ->where('warehouse_id', $Quotation->warehouse_id)
                     ->where('deleted_at', '=', null)
@@ -618,7 +618,7 @@ class QuotationsController extends BaseController
                 $data['unitSale'] = $detail['product']['unitSale']->ShortName;
 
             } else {
-                $item_product = product_warehouse::where('product_id', $detail->product_id)
+                $item_product = ProductWarehouse::where('product_id', $detail->product_id)
                     ->where('deleted_at', '=', null)
                     ->where('warehouse_id', $Quotation->warehouse_id)
                     ->where('product_variant_id', '=', null)

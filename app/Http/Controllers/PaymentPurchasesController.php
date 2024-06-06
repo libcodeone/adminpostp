@@ -36,7 +36,7 @@ class PaymentPurchasesController extends BaseController
         $order = $request->SortField;
         $dir = $request->SortType;
         $helpers = new helpers();
-        $role = Auth::user()->roles()->first();
+        $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         // Filter fields With Params to retriever
         $param = array(0 => 'like', 1 => '=', 2 => 'like' , 3 => '=');
@@ -124,7 +124,7 @@ class PaymentPurchasesController extends BaseController
         $this->authorizeForUser($request->user('api'), 'create', PaymentPurchase::class);
         
         \DB::transaction(function () use ($request) {
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $purchase = Purchase::findOrFail($request['purchase_id']);
     
@@ -172,7 +172,7 @@ class PaymentPurchasesController extends BaseController
         $this->authorizeForUser($request->user('api'), 'update', PaymentPurchase::class);
         
         \DB::transaction(function () use ($id, $request) {
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $payment = PaymentPurchase::findOrFail($id);
     
@@ -218,7 +218,7 @@ class PaymentPurchasesController extends BaseController
         $this->authorizeForUser($request->user('api'), 'delete', PaymentPurchase::class);
         
         \DB::transaction(function () use ($id, $request) {
-            $role = Auth::user()->roles()->first();
+            $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $payment = PaymentPurchase::findOrFail($id);
     

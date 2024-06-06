@@ -9,8 +9,7 @@ use App\Models\PaymentPurchaseReturns;
 use App\Models\PaymentSale;
 use App\Models\PaymentSaleReturns;
 use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\product_warehouse;
+use App\Models\ProductWarehouse;
 use App\Models\Provider;
 use App\Models\Purchase;
 use App\Models\PurchaseReturn;
@@ -26,9 +25,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends BaseController
 {
@@ -264,7 +261,7 @@ class ReportController extends BaseController
     public function Get_last_Sales()
     {
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $Sales = Sale::with('details', 'client', 'facture')->where('deleted_at', '=', null)
@@ -341,7 +338,7 @@ class ReportController extends BaseController
             ->take(5)
             ->get();
 
-        $product_warehouse_data = product_warehouse::with('warehouse', 'product' ,'productVariant')
+        $product_warehouse_data = ProductWarehouse::with('warehouse', 'product' ,'productVariant')
         ->join('products', 'product_warehouse.product_id', '=', 'products.id')
         ->whereRaw('qte <= stock_alert')
         ->where('product_warehouse.deleted_at', null)
@@ -401,7 +398,7 @@ class ReportController extends BaseController
         $data['expenses'] = $data['PaymentPurchase'] + $data['PaymentSaleReturns'] + $data['Amount_EXP'];
         $data['profit'] = $data['income'] - $data['expenses'];
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
         $last_sales = [];
 
@@ -439,14 +436,14 @@ class ReportController extends BaseController
 
     //----------------- Customers Report -----------------------\\
 
-    public function Client_Report(request $request)
+    public function Client_Report(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
 
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -506,7 +503,7 @@ class ReportController extends BaseController
 
     //----------------- Customers Report By ID-----------------------\\
 
-    public function Client_Report_detail(request $request, $id)
+    public function Client_Report_detail(Request $request, $id)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
@@ -531,7 +528,7 @@ class ReportController extends BaseController
 
     //----------------- Provider Report By ID-----------------------\\
 
-    public function Provider_Report_detail(request $request, $id)
+    public function Provider_Report_detail(Request $request, $id)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
@@ -557,17 +554,17 @@ class ReportController extends BaseController
 
     //-------------------- Get Sales By Clients -------------\\
 
-    public function Sales_Client(request $request)
+    public function Sales_Client(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $sales = Sale::where('deleted_at', '=', null)->with('client')
@@ -605,17 +602,17 @@ class ReportController extends BaseController
 
     //-------------------- Get Payments By Clients -------------\\
 
-    public function Payments_Client(request $request)
+    public function Payments_Client(Request $request)
     {
 
         //$this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $payments = DB::table('payment_sales')
@@ -647,17 +644,17 @@ class ReportController extends BaseController
 
     //-------------------- Get Quotations By Clients -------------\\
 
-    public function Quotations_Client(request $request)
+    public function Quotations_Client(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $Quotations = Quotation::where('deleted_at', '=', null)
@@ -682,19 +679,19 @@ class ReportController extends BaseController
 
     //-------------------- Get Returns By Client -------------\\
 
-    public function Returns_Client(request $request)
+    public function Returns_Client(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $data = array();
 
         //  Check If User Has Permission Show All Records
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $SaleReturn = SaleReturn::where('deleted_at', '=', null)->with('client')
@@ -731,12 +728,12 @@ class ReportController extends BaseController
 
     //------------- Show Report Purchases ----------\\
 
-    public function Report_Purchases(request $request)
+    public function Report_Purchases(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'ReportPurchases', Purchase::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -806,12 +803,12 @@ class ReportController extends BaseController
 
     //------------- Show Report SALES -----------\\
 
-    public function Report_Sales(request $request)
+    public function Report_Sales(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'Reports_sales', Sale::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -876,13 +873,13 @@ class ReportController extends BaseController
 
     //----------------- Providers Report -----------------------\\
 
-    public function Providers_Report(request $request)
+    public function Providers_Report(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -939,18 +936,18 @@ class ReportController extends BaseController
 
     //-------------------- Get Purchases By Provider -------------\\
 
-    public function Purchases_Provider(request $request)
+    public function Purchases_Provider(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $data = array();
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $purchases = Purchase::where('deleted_at', '=', null)
@@ -988,19 +985,19 @@ class ReportController extends BaseController
 
     //-------------------- Get Payments By Provider -------------\\
 
-    public function Payments_Provider(request $request)
+    public function Payments_Provider(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
 
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $data = array();
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $payments = DB::table('payment_purchases')
@@ -1031,19 +1028,19 @@ class ReportController extends BaseController
 
     //-------------------- Get Returns By Providers -------------\\
 
-    public function Returns_Provider(request $request)
+    public function Returns_Provider(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
 
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $data = array();
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $PurchaseReturn = PurchaseReturn::where('deleted_at', '=', null)
@@ -1107,7 +1104,7 @@ class ReportController extends BaseController
 
     //----------------- Warehouse Report By ID-----------------------\\
 
-    public function Warehouse_Report(request $request)
+    public function Warehouse_Report(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
@@ -1151,18 +1148,18 @@ class ReportController extends BaseController
 
     //-------------------- Get Sales By Warehouse -------------\\
 
-    public function Sales_Warehouse(request $request)
+    public function Sales_Warehouse(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $data = [];
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $sales = Sale::where('deleted_at', '=', null)->with('client')
@@ -1218,18 +1215,18 @@ class ReportController extends BaseController
 
     //-------------------- Get Quotations By Warehouse -------------\\
 
-    public function Quotations_Warehouse(request $request)
+    public function Quotations_Warehouse(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $data = [];
 
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $Quotations = Quotation::where('deleted_at', '=', null)
@@ -1281,19 +1278,19 @@ class ReportController extends BaseController
 
     //-------------------- Get Returns Sale By Warehouse -------------\\
 
-    public function Returns_Sale_Warehouse(request $request)
+    public function Returns_Sale_Warehouse(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $data = array();
 
         //  Check If User Has Permission Show All Records
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $SaleReturn = SaleReturn::where('deleted_at', '=', null)
@@ -1349,19 +1346,19 @@ class ReportController extends BaseController
 
     //-------------------- Get Returns Purchase By Warehouse -------------\\
 
-    public function Returns_Purchase_Warehouse(request $request)
+    public function Returns_Purchase_Warehouse(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $data = array();
 
         //  Check If User Has Permission Show All Records
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $PurchaseReturn = PurchaseReturn::where('deleted_at', '=', null)
@@ -1417,19 +1414,19 @@ class ReportController extends BaseController
 
     //-------------------- Get Expenses By Warehouse -------------\\
 
-    public function Expenses_Warehouse(request $request)
+    public function Expenses_Warehouse(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $data = array();
 
         //  Check If User Has Permission Show All Records
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $Expenses = Expense::where('deleted_at', '=', null)
@@ -1486,7 +1483,7 @@ class ReportController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
 
-        $stock_count = product_warehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
+        $stock_count = ProductWarehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
             ->join('warehouses', 'product_warehouse.warehouse_id', '=', 'warehouses.id')
             ->where('product_warehouse.deleted_at', '=', null)
             ->select(
@@ -1498,7 +1495,7 @@ class ReportController extends BaseController
             ->groupBy('warehouses.name')
             ->get();
 
-        $stock_value = product_warehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
+        $stock_value = ProductWarehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
             ->join('warehouses', 'product_warehouse.warehouse_id', '=', 'warehouses.id')
             ->where('product_warehouse.deleted_at', '=', null)
             ->select(
@@ -1531,10 +1528,10 @@ class ReportController extends BaseController
 
     //-------------- Count  Product Quantity Alerts ---------------\\
 
-    public function count_quantity_alert(request $request)
+    public function count_quantity_alert(Request $request)
     {
 
-        $products_alerts = product_warehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
+        $products_alerts = ProductWarehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
             ->whereRaw('qte <= stock_alert')
             ->count();
 
@@ -1543,7 +1540,7 @@ class ReportController extends BaseController
 
     //-----------------Profit And Loss ---------------------------\\
 
-    public function ProfitAndLoss(request $request)
+    public function ProfitAndLoss(Request $request)
     {
 
         $this->authorizeForUser($request->user('api'), 'Reports_profit', Client::class);

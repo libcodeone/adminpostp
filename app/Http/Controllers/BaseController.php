@@ -1,32 +1,34 @@
 <?php
+
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Config;
 use App\Http\Controllers\Controller;
-use Config;
-use DB;
+use Illuminate\Support\Facades\DB;
 use App\Models\Sale;
 
 class BaseController extends Controller
 {
-
-    public function sendResponse($result,$msg){
-        $response=[
-            'success'=>true,
-            'message'=>$msg,
+    public function sendResponse($result, $msg)
+    {
+        $response = [
+            'success' => true,
+            'message' => $msg,
         ];
-        if(!empty($result)){
-            $response['data']=$result;
+        if (!empty($result)) {
+            $response['data'] = $result;
         }
         return response()->json($response, 200);
     }
 
-    public function sendError($error_msg, $error=null){
-        $response=[
-            'success'=>false,
-            'message'=>$error_msg,
+    public function sendError($error_msg, $error = null)
+    {
+        $response = [
+            'success' => false,
+            'message' => $error_msg,
         ];
-        if(isset($error)){
-            $response['errors']= $error;
+        if (isset($error)) {
+            $response['errors'] = $error;
         }
 
         return response()->json($response, 400);
@@ -35,7 +37,7 @@ class BaseController extends Controller
     //    Set cookie
     public function setCookie($cookie_name, $cookie_value)
     {
-        $domain = ($_SERVER['SERVER_NAME'] != 'localhost') ? $_SERVER['SERVER_NAME'] : '.'.$_SERVER['SERVER_NAME'];
+        $domain = ($_SERVER['SERVER_NAME'] != 'localhost') ? $_SERVER['SERVER_NAME'] : '.' . $_SERVER['SERVER_NAME'];
         $this->destroyCookie($cookie_name);
         setcookie($cookie_name, $cookie_value, time() + 2147483647, '/', $domain);
     }
@@ -62,18 +64,17 @@ class BaseController extends Controller
     // Destroy cookie
     public function destroyCookie($cookie_name)
     {
-        $domain = ($_SERVER['SERVER_NAME'] != 'localhost') ? $_SERVER['SERVER_NAME'] : '.'.$_SERVER['SERVER_NAME'];
+        $domain = ($_SERVER['SERVER_NAME'] != 'localhost') ? $_SERVER['SERVER_NAME'] : '.' . $_SERVER['SERVER_NAME'];
         if (isset($_COOKIE[$cookie_name])) {
             unset($_COOKIE[$cookie_name]);
             setcookie($cookie_name, '', time() - 2147483647, '/',  $domain);
-
         }
     }
 
     // Clear cookie
     public function clearCookie()
     {
-        $domain = ($_SERVER['SERVER_NAME'] != 'localhost') ? $_SERVER['SERVER_NAME'] : '.'.$_SERVER['SERVER_NAME'];
+        $domain = ($_SERVER['SERVER_NAME'] != 'localhost') ? $_SERVER['SERVER_NAME'] : '.' . $_SERVER['SERVER_NAME'];
         if (isset($_COOKIE['Stocky_token'])) {
             unset($_COOKIE['Stocky_token']);
             setcookie('Stocky_token', '', time() - 2147483647, '/', $domain); // empty value and old timestamp
@@ -103,16 +104,19 @@ class BaseController extends Controller
         }
     }
     //
-    public function invoiceDetail($id){
-        $sale=Sale::findOrFail($id);
-        return $sale->type_invoice." ".$sale->refInvoice;
+    public function invoiceDetail($id)
+    {
+        $sale = Sale::findOrFail($id);
+        return $sale->type_invoice . " " . $sale->refInvoice;
     }
-    public function invoiceDate($id){
-        $sale=Sale::findOrFail($id);
+    public function invoiceDate($id)
+    {
+        $sale = Sale::findOrFail($id);
         return $sale->date;
     }
-    public function invoiceNameSearch($id){
-        $sale=Sale::findOrFail($id);
-        return $sale->type_invoice." (".$sale->refInvoice.")";
+    public function invoiceNameSearch($id)
+    {
+        $sale = Sale::findOrFail($id);
+        return $sale->type_invoice . " (" . $sale->refInvoice . ")";
     }
 }

@@ -9,9 +9,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sale extends Model implements Auditable
 {
-
     use \OwenIt\Auditing\Auditable;
     use SoftDeletes;
+
+    protected $table = "sales";
+
     protected $dates = ['deleted_at'];
 
     protected $fillable = [

@@ -15,9 +15,9 @@
         @on-search="onSearch"
         :search-options="{
         enabled: true,
-        placeholder: $t('Search_this_table'),  
+        placeholder: $t('Search_this_table'),
       }"
-        :select-options="{ 
+        :select-options="{
           enabled: true ,
           clearSelectionText: '',
         }"
@@ -105,7 +105,7 @@
                   :reduce="label => label.value"
                   :placeholder="$t('Choose_Base_Unit')"
                   :options="units_base.map(units_base => ({label: units_base.name, value: units_base.id}))"
-                />
+                ></v-select>
               </b-form-group>
             </b-col>
             <!-- operator  -->

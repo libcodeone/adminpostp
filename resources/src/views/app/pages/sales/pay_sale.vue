@@ -298,7 +298,7 @@
                     </div>
                   </div>
                   <div class="row">
-                   
+
                     <div class="col-8 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
                        &nbsp;&nbsp;&nbsp;&nbsp;{{ invoice_pos.sale.client_adresse }}.
@@ -530,7 +530,7 @@
                       </span>
                     </div>
                   </div>
-                  
+
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-top:15px;margin-left:10px;">
@@ -554,14 +554,14 @@
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
-                         &nbsp; 
+                         &nbsp;
                       </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
-                         &nbsp; 
+                         &nbsp;
                       </span>
                     </div>
                   </div>
@@ -668,8 +668,8 @@
                   <span class="h5 text-uppercase">
                   {{ detail_invoice.quantity }}
                       </span>
-                </div>        
-               
+                </div>
+
                 <div class="col-7">
                    <span class="h5 text-uppercase">
                   {{ detail_invoice.code }}

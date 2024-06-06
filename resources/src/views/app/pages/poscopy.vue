@@ -541,6 +541,7 @@
                   @click="Check_Product_Exist(product , product.id)"
                   v-for="product in products"
                   class="card o-hidden bd-highlight m-1"
+                  :key="product.id"
                 >
                   <div class="list-thumb d-flex">
                     <img alt :src="'/images/products/'+product.image">
