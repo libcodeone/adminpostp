@@ -8,6 +8,7 @@ use App\Models\Client;
 use Illuminate\Http\Request;
 use App\Models\ProductWarehouse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ProductPriceModification;
@@ -380,9 +381,14 @@ class PosController extends BaseController
             $fechaFin = $offer["offer"][0]["fecha_fin"];
             $dias = json_decode($offer["offer"][0]["dias"]);
 
-            setlocale(LC_TIME, "es");
+            $settedLocale = setlocale(LC_TIME, "es");
+
+            Log::info($settedLocale);
 
             $currentDateInSpanish = utf8_encode(strftime("%A"));
+
+            Log::info($currentDateInSpanish);
+
             $currentDateInSpanish = str_replace(['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'], $currentDateInSpanish);
 
             if (in_array($currentDateInSpanish, $dias))
