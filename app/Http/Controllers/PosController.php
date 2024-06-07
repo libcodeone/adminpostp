@@ -335,26 +335,36 @@ class PosController extends BaseController
         $product = json_decode(json_encode(DB::table("products")->where("id", '=', $productId)->first()), true);
         $offers = json_decode(json_encode(DB::table("offers_products")->where("activo", "=", 1)->where("deleted_at", "=", null)->get()), true);
 
+        $productName = json_decode(json_encode(DB::table("products")->where('id', '=', $productId)->pluck('name')->first()), true);
+
         $productDiscount = array();
 
         foreach ($offers as $offer) {
             if (is_null($offer["category_product_id"]) && is_null($offer["warehouse_id"])) {
+                    Log::info("¡Entro a aplicar la oferta global al producto '" + $productName + "'!");
+
                 // if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"] /* $product["category_id"] === null && $product["warehouse_id"] === null */) {
                     array_push($productDiscount, $offer);
                     break;
                 // }
             } else if (!is_null($offer["category_product_id"]) && is_null($offer["warehouse_id"])) {
                 if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"] /* $product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === null */) {
+                    Log::info("¡Entro a aplicar la oferta al producto '" + $productName + "' en el almacén " + $product["warehouse_id"] + "!");
+
                     array_push($productDiscount, $offer);
                     break;
                 }
             } else if (is_null($offer["category_product_id"]) && !is_null($offer["warehouse_id"])) {
                 if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"] /* $product["category_id"] === null && $product["warehouse_id"] === $offer["warehouse_id"] */) {
+                    Log::info("¡Entro a aplicar la oferta al producto '" + $productName + "' de la categoría " + $product["category_id"] + "!");
+
                     array_push($productDiscount, $offer);
                     break;
                 }
             } else if (!is_null($offer["category_product_id"]) && !is_null($offer["warehouse_id"])) {
                 if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"]) {
+                    Log::info("¡Entro a aplicar la oferta al producto '" + $productName + "' en el almacén " + $product["warehouse_id"] + " de la categoría " + $product["category_id"] + "!");
+
                     array_push($productDiscount, $offer);
                     break;
                 }
