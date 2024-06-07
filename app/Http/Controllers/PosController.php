@@ -335,35 +335,40 @@ class PosController extends BaseController
         $product = json_decode(json_encode(DB::table("products")->where("id", '=', $productId)->first()), true);
         $offers = json_decode(json_encode(DB::table("offers_products")->where("activo", "=", 1)->where("deleted_at", "=", null)->get()), true);
 
-        $productName = json_decode(json_encode(DB::table("products")->where('id', '=', $productId)->pluck('name')->first()), true);
+        $productName = (string)json_decode(json_encode(DB::table("products")->where('id', '=', $productId)->pluck('name')->first()), true);
+        $productWarehouseId = $product["warehouse_id"];
+        $productCategoryId = $product["category_id"];
 
         $productDiscount = array();
 
         foreach ($offers as $offer) {
-            if (is_null($offer["category_product_id"]) && is_null($offer["warehouse_id"])) {
-                    Log::info("¡Entro a aplicar la oferta global al producto '" + $productName + "'!");
+            $offerCategoryProductId = $offer["category_product_id"];
+            $offerWarehouseId = $offer["warehouse_id"];
 
-                // if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"] /* $product["category_id"] === null && $product["warehouse_id"] === null */) {
+            if (is_null($offerCategoryProductId) && is_null($offerWarehouseId)) {
+                    Log::info("¡Entro a aplicar la oferta global al producto '" . $productName . "'!");
+
+                // if ($productCategoryId === $offerCategoryProductId && $productWarehouseId === $offerWarehouseId /* $productCategoryId === null && $productWarehouseId === null */) {
                     array_push($productDiscount, $offer);
                     break;
                 // }
-            } else if (!is_null($offer["category_product_id"]) && is_null($offer["warehouse_id"])) {
-                if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"] /* $product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === null */) {
-                    Log::info("¡Entro a aplicar la oferta al producto '" + $productName + "' en el almacén " + $product["warehouse_id"] + "!");
+            } else if (!is_null($offerCategoryProductId) && is_null($offerWarehouseId)) {
+                if ($productCategoryId === $offerCategoryProductId && $productWarehouseId === $offerWarehouseId /* $productCategoryId === $offerCategoryProductId && $productWarehouseId === null */) {
+                    Log::info("¡Entro a aplicar la oferta al producto '" . $productName . "' de la categoría " . (string)$productCategoryId . "!");
 
                     array_push($productDiscount, $offer);
                     break;
                 }
-            } else if (is_null($offer["category_product_id"]) && !is_null($offer["warehouse_id"])) {
-                if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"] /* $product["category_id"] === null && $product["warehouse_id"] === $offer["warehouse_id"] */) {
-                    Log::info("¡Entro a aplicar la oferta al producto '" + $productName + "' de la categoría " + $product["category_id"] + "!");
+            } else if (is_null($offerCategoryProductId) && !is_null($offerWarehouseId)) {
+                if ($productCategoryId === $offerCategoryProductId && $productWarehouseId === $offerWarehouseId /* $productCategoryId === null && $productWarehouseId === $offerWarehouseId */) {
+                    Log::info("¡Entro a aplicar la oferta al producto '" . $productName . "' en el almacén " . (string)$productWarehouseId . "!");
 
                     array_push($productDiscount, $offer);
                     break;
                 }
-            } else if (!is_null($offer["category_product_id"]) && !is_null($offer["warehouse_id"])) {
-                if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"]) {
-                    Log::info("¡Entro a aplicar la oferta al producto '" + $productName + "' en el almacén " + $product["warehouse_id"] + " de la categoría " + $product["category_id"] + "!");
+            } else if (!is_null($offerCategoryProductId) && !is_null($offerWarehouseId)) {
+                if ($productCategoryId === $offerCategoryProductId && $productWarehouseId === $offerWarehouseId) {
+                    Log::info("¡Entro a aplicar la oferta al producto '" . $productName . "' de la categoría " . (string)$productCategoryId . " en el almacén " . (string)$productWarehouseId . "!");
 
                     array_push($productDiscount, $offer);
                     break;
