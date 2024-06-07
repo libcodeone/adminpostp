@@ -170,7 +170,7 @@
                                     <b-form-group
                                         class="mt-3"
                                         id="input-group-2"
-                                        label="nombre"
+                                        label="Nombre"
                                         label-for="nombre"
                                     >
                                         <b-form-input
@@ -568,7 +568,7 @@
                                 >
                                     <b-form-group
                                         id="input-group-2"
-                                        label="nombre"
+                                        label="Nombre"
                                         label-for="nombre"
                                     >
                                         <b-form-input
@@ -1006,7 +1006,7 @@ export default {
         columns() {
             return [
                 {
-                    label: this.$t("Name"),
+                    label: "Nombre",
                     field: "nombre",
                     dataType: "string",
                     tdClass: "text-left",

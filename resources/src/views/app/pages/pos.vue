@@ -24,7 +24,7 @@
                             >
                                 <router-link to="/app/dashboard">
                                     <img
-                                        :src="'/images/shadai_logo.png'"
+                                        :src="'/images/logo-2.png'"
                                         alt
                                         width="60"
                                         height="60"
@@ -210,12 +210,12 @@
                                                     <!-- <b-col lg="12" md="12" sm="12" class="w-100">
                                                         <b-row>
                                                             <autocomplete
-                                                                :search="search"
-                                                                :placeholder="$t('Choose_Customer')"
-                                                                aria-label="Choose_Customer"
-                                                                :get-result-value="getResultValueClient"
-                                                                @submit="SearchClient"
-                                                                ref="autocompletec"
+                                                            :search="search"
+                                                            :placeholder="$t('Choose_Customer')"
+                                                            aria-label="Choose_Customer"
+                                                            :get-result-value="getResultValueClient"
+                                                            @submit="SearchClient"
+                                                            ref="autocompletec"
                                                             />
                                                         </b-row>
                                                         <b-row>
@@ -386,17 +386,17 @@
                                                                 <!-- <td>{{formatNumber(detail.Total_price, 2)}} {{currentUser.currency}}</td> -->
                                                                 <td>
                                                                     <!-- <div class="price">
-                                                                        <b-form-input
-                                                                        :state="getValidationState(validationContext)"
-                                                                        v-model.number="detail.Total_price"
-                                                                        @keyup="keyup_Price_Product()"
-                                                                        ></b-form-input>
-                                                                        <input
-                                                                            class="form-control"
-                                                                            @keyup="keyup_Price_Product(detail ,detail.detail_id)"
-                                                                            v-model.number="detail.Net_price" :disabled="currentUserPermissions && (currentUserPermissions.includes('Sales_edit'))"
-                                                                        >
-                                                                    </div>-->
+                                      <b-form-input
+                                        :state="getValidationState(validationContext)"
+                                        v-model.number="detail.Total_price"
+                                        @keyup="keyup_Price_Product()"
+                                      ></b-form-input>
+                                      <input
+                                          class="form-control"
+                                          @keyup="keyup_Price_Product(detail ,detail.detail_id)"
+                                          v-model.number="detail.Net_price" :disabled="currentUserPermissions && (currentUserPermissions.includes('Sales_edit'))"
+                                        >
+                                    </div>-->
                                                                     <div
                                                                         class="logo"
                                                                         v-show="
@@ -539,27 +539,27 @@
 
                                             <!-- Order Tax  -->
                                             <!-- <b-col lg="4" md="4" sm="12" v-if="sale.client_id != ''">
-                                                <validation-provider
-                                                    name="Order Tax"
-                                                    :rules="{ regex: /^\d*\.?\d*$/}"
-                                                    v-slot="validationContext"
-                                                    >
-                                                    <b-form-group :label="$t('Tax')" append="%">
-                                                            <b-input-group append="%">
-                                                                <b-form-input
-                                                                    :state="getValidationState(validationContext)"
-                                                                    aria-describedby="OrderTax-feedback"
-                                                                    label="Order Tax"
-                                                                    v-model.number="sale.tax_rate"
-                                                                    @keyup="keyup_OrderTax()"
-                                                                ></b-form-input>
-                                                            </b-input-group>
-                                                            <b-form-invalid-feedback
-                                                            id="OrderTax-feedback"
-                                                            >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                                                    </b-form-group>
-                                                </validation-provider>
-                                            </b-col> -->
+                          <validation-provider
+                            name="Order Tax"
+                            :rules="{ regex: /^\d*\.?\d*$/}"
+                            v-slot="validationContext"
+                          >
+                            <b-form-group :label="$t('Tax')" append="%">
+                              <b-input-group append="%">
+                                <b-form-input
+                                  :state="getValidationState(validationContext)"
+                                  aria-describedby="OrderTax-feedback"
+                                  label="Order Tax"
+                                  v-model.number="sale.tax_rate"
+                                  @keyup="keyup_OrderTax()"
+                                ></b-form-input>
+                              </b-input-group>
+                              <b-form-invalid-feedback
+                                id="OrderTax-feedback"
+                              >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                            </b-form-group>
+                          </validation-provider>
+                        </b-col> -->
 
                                             <!-- Discount -->
                                             <b-col lg="4" md="4" sm="12">
@@ -681,6 +681,67 @@
                                 </b-card-body>
                             </b-form>
                         </validation-observer>
+
+                        <!--Modal authorization Code-->
+                        <b-modal hide-footer size="md" id="form_Auth_Discount">
+                            <b-form @submit.prevent="submit_Auth_Discount">
+                                <b-row>
+                                    <!-- Auth Code -->
+                                    <!-- New AuthorizationCode -->
+                                    <b-col md="6">
+                                        <validation-provider
+                                            name="New AuthorizationCode"
+                                            :rules="{ min: 8, max: 8 }"
+                                            v-slot="validationContext"
+                                        >
+                                            <b-form-group
+                                                :label="
+                                                    $t('authorizedCodeLabel')
+                                                "
+                                            >
+                                                <b-form-input
+                                                    :state="
+                                                        getValidationState(
+                                                            validationContext
+                                                        )
+                                                    "
+                                                    aria-describedby="NewAuthorizedCodeLabel-feedback"
+                                                    v-model="
+                                                        authorizedCodeIngressed
+                                                    "
+                                                    :placeholder="
+                                                        $t(
+                                                            'authorizedCodeLabel'
+                                                        )
+                                                    "
+                                                    label="AuthorizedCodeLabel"
+                                                    type="password"
+                                                    autocomplete="off"
+                                                >
+                                                </b-form-input>
+                                                <b-form-invalid-feedback
+                                                    id="authorizedCodeLabel-feedback"
+                                                    >{{
+                                                        validationContext
+                                                            .errors[0]
+                                                    }}</b-form-invalid-feedback
+                                                >
+                                            </b-form-group>
+                                        </validation-provider>
+                                    </b-col>
+
+                                    <b-col md="12">
+                                        <b-form-group>
+                                            <b-button
+                                                variant="primary"
+                                                type="submit"
+                                                >{{ $t("submit") }}</b-button
+                                            >
+                                        </b-form-group>
+                                    </b-col>
+                                </b-row>
+                            </b-form>
+                        </b-modal>
 
                         <!-- Update Detail Product -->
                         <validation-observer ref="Update_Detail">
@@ -1085,9 +1146,9 @@
                     @hidden="hiddenSidebarBrand"
                     ref="sidebar_brand"
                 >
-                    <div class="px-3 py-2" style="align-items: center; justify-content: center;">
-                        <b-row style="align-items: center; justify-content: center; width: 100%">
-                            <div style="margin: 0.5rem 0.25rem; width: 100%;">
+                    <div class="px-3 py-2">
+                        <b-row>
+                            <b-col md="12 mt-2">
                                 <div class="input-group">
                                     <input
                                         autofocus
@@ -1100,12 +1161,12 @@
                                         id="searchBrand"
                                     />
                                 </div>
-                            </div>
+                            </b-col>
                         </b-row>
 
-                        <b-row style="align-items: center; justify-content: center; width: 100%">
+                        <b-row>
                             <div
-                                class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item" style="margin-top: 0.5rem;"
+                                class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2"
                             >
                                 <div
                                     @click="GetAllBrands()"
@@ -1154,18 +1215,17 @@
                             </div>
                         </b-row>
 
-                        <b-row style="align-items: center; justify-content: center; width: 100%">
-                            <div class="col-md-12 d-flex flex-row flex-wrap bd-highlight" style="margin-top: 0.5rem;">
+                        <b-row>
+                            <b-col md="12" class="d-flex flex-row flex-wrap mt-4">
                                 <b-pagination
                                     @change="BrandonPageChanged"
                                     :total-rows="brand_totalRows"
                                     :per-page="brand_perPage"
                                     v-model="brand_currentPage"
-                                    class="my-0 gull-pagination"
+                                    class="my-0 gull-pagination align-items-center"
                                     align="center"
                                     first-text
                                     last-text
-                                    style="display: flex; justify-content: center; align-items: center;"
                                 >
                                     <p class="list-arrow m-0" slot="prev-text">
                                         <i class="i-Arrow-Left text-40"></i>
@@ -1174,7 +1234,7 @@
                                         <i class="i-Arrow-Right text-40"></i>
                                     </p>
                                 </b-pagination>
-                            </div>
+                            </b-col>
                         </b-row>
                     </div>
                 </b-sidebar>
@@ -1230,9 +1290,9 @@
                     shadow
                     ref="sidebar_category"
                 >
-                    <div class="px-3 py-2" style="align-items: center; justify-content: center;">
-                        <b-row style="align-items: center; justify-content: center; width: 100%">
-                            <div style="margin: 0.5rem 0.25rem; width: 100%;">
+                    <div class="px-3 py-2">
+                        <b-row>
+                            <b-col md="12 mt-2">
                                 <div class="input-group">
                                     <input
                                         v-autofocus="focusSearchCategory"
@@ -1244,12 +1304,12 @@
                                         ref="searchCategory"
                                     />
                                 </div>
-                            </div>
+                            </b-col>
                         </b-row>
-
-                        <b-row style="align-items: center; justify-content: center; width: 100%">
+                        
+                        <b-row>
                             <div
-                                class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item" style="margin-top: 0.5rem;"
+                                class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2"
                             >
                                 <div
                                     @click="getAllCategory()"
@@ -1305,8 +1365,8 @@
                             </div>
                         </b-row>
 
-                        <b-row style="align-items: center; justify-content: center; width: 100%">
-                            <div class="col-md-12 d-flex flex-row flex-wrap bd-highlight" style="margin-top: 0.5rem;">
+                        <b-row>
+                            <b-col md="12" class="d-flex flex-row flex-wrap mt-4">
                                 <b-pagination
                                     @change="Category_onPageChanged"
                                     :total-rows="category_totalRows"
@@ -1316,7 +1376,6 @@
                                     align="center"
                                     first-text
                                     last-text
-                                    style="display: flex; justify-content: center; align-items: center;"
                                 >
                                     <p class="list-arrow m-0" slot="prev-text">
                                         <i class="i-Arrow-Left text-40"></i>
@@ -1325,7 +1384,7 @@
                                         <i class="i-Arrow-Right text-40"></i>
                                     </p>
                                 </b-pagination>
-                            </div>
+                            </b-col>
                         </b-row>
                     </div>
                 </b-sidebar>
@@ -1727,6 +1786,8 @@ export default {
                 cash: 0,
                 change: 0
             },
+            authorizedDiscount: false,
+            authorizedCodeIngressed: "",
             loading: false,
             isLoading: true,
             focusSearchProduct: true,
@@ -2083,6 +2144,17 @@ export default {
         },
         //---Submit Validation Update Detail
         submit_Update_Detail() {
+            if (
+                this.currentUser.authorizedCode != null &&
+                this.currentUser.authorizedCode != "null"
+            ) {
+                this.performUpdateDetail();
+            } else {
+                this.authorizedCodeIngressed = "";
+                this.$bvModal.show("form_Auth_Discount");
+            }
+        },
+        performUpdateDetail() {
             this.$refs.Update_Detail.validate().then(success => {
                 if (!success) {
                     return;
@@ -2179,7 +2251,7 @@ export default {
             axios
                 .get("Get_Clients_Without_Paginate")
                 .then(({ data }) => (this.clients = data));
-            // console.log(this.clients);
+                // console.log(this.clients);
         },
 
         //---Validate State Fields
@@ -2246,7 +2318,7 @@ export default {
             this.product.detail_id = this.details[len - 1].detail_id + 1;
         },
 
-        //-------------------------------- Show Modal Product Detail -------------------------\\
+        //-------------------------------- Show Modal Poduct Detail -------------------------\\
         Modal_Update_Detail(detail) {
             this.detail = {};
             this.detail.name = detail.name;
@@ -2261,7 +2333,7 @@ export default {
             this.$bvModal.show("form_Update_Detail");
         },
 
-        //-------------------------------- Update Product Detail -------------------------\\
+        //-------------------------------- Update Poduct Detail -------------------------\\
         Update_Detail() {
             for (var i = 0; i < this.details.length; i++) {
                 if (this.details[i].detail_id === this.detail.detail_id) {
@@ -2449,49 +2521,28 @@ export default {
                 this.product.imageList = product.imageList;
                 this.add_product(product.code);
                 this.CaclulTotal();
-
                 // Complete the animation of theprogress bar.
                 NProgress.done();
             });
         },
 
-        async getProductDiscount(productId, productPrice) {
-            try {
-                const response = await axios.get(
-                    "discounts/getDiscountForProduct?productId=" +
-                        productId +
-                        "&productPrice=" +
-                        productPrice
-                );
-
-                return parseFloat(response).toFixed(2);
-            } catch (error) {
-                console.log(error);
-            }
-        },
-
         //----------- Calcul Total
         CaclulTotal() {
             this.total = 0;
-
             for (var i = 0; i < this.details.length; i++) {
                 var tax = this.details[i].taxe * this.details[i].quantity;
-
                 this.details[i].subtotal = parseFloat(
                     this.details[i].quantity * this.details[i].Net_price + tax
                 );
 
                 this.total = parseFloat(this.total + this.details[i].subtotal);
             }
-
             const total_without_discount = parseFloat(
                 this.total - this.sale.discount
             );
-
             this.sale.TaxNet = parseFloat(
                 (total_without_discount * this.sale.tax_rate) / 100
             );
-
             this.GrandTotal = parseFloat(
                 total_without_discount + this.sale.TaxNet + this.sale.shipping
             );
@@ -2584,13 +2635,11 @@ export default {
                 this.CaclulTotal();
             }
         },
-
         keyup_Price_Product(detail, id) {
             for (var i = 0; i < this.details.length; i++) {
                 if (this.details[i].detail_id == id)
                     this.details[i].Net_price = detail.Net_price;
             }
-
             this.CaclulTotal();
             this.$forceUpdate();
         },
@@ -2697,6 +2746,7 @@ export default {
             this.getProducts(1);
             this.$refs.sidebar_brand.hide();
         },
+
         //------------------------- get Result Value Search Product
 
         getResultValue(result) {
@@ -2723,7 +2773,7 @@ export default {
                     this.product.quantity = 1;
                 }
                 this.product.product_variant_id = result.product_variant_id;
-                this.Get_Product_Details(result, result.id);
+                this.Get_Product_Details(result.id);
             }
             this.$refs.autocomplete.value = "";
         },
@@ -2768,7 +2818,7 @@ export default {
             axios
                 .get("pos/GetELementPos")
                 .then(response => {
-                    //   console.log(this.currentUser);
+                    // console.log(this.currentUser);
                     this.clients = response.data.clients;
                     this.warehouses = response.data.warehouses;
                     this.categories = response.data.categories;
@@ -2785,64 +2835,45 @@ export default {
                 .catch(response => {
                     this.isLoading = false;
                 });
-        }
-    },
+        },
+        //-----------Authorize Discount--------------//
+        submit_Auth_Discount() {
+            NProgress.start();
+            NProgress.set(0.1);
+            /*
+        1. Call new modal authtorize
+        2. if auth is true perform Update Detail else return;
+        */
 
-    //-------------------- Created Function -----\\
+            axios
+                .post("pos/authDiscount", {
+                    authorizedCode: this.authorizedCodeIngressed
+                })
+                .then(response => {
+                    this.authorizedDiscount = response.data.authorized;
+                    console.log(this.authorizedDiscount);
+                    if (this.authorizedDiscount > 0) {
+                        this.performUpdateDetail();
+                        this.authorizedCodeIngressed = "";
+                        this.$bvModal.hide("form_Auth_Discount");
+                    } else {
+                        alert(
+                            "No es posible realizar la autorización de descuento"
+                        );
+                    }
 
-    created() {
-        this.GetElementsPos();
-        Fire.$on("pay_now", () => {
-            setTimeout(() => {
-                this.payment.amount = this.formatNumber(this.GrandTotal, 2);
-                this.payment.cash = this.formatNumber(this.GrandTotal, 2);
-                this.payment.Reglement = "Cash";
-                // this.$bvModal.show("Add_Payment");
-                this.CreatePOS();
-                this.loading = false;
-                // Complete the animation of theprogress bar.
-                NProgress.done();
-            }, 500);
-        });
-        // this.$refs.SearchProducts.focus();
-    },
-    //-----------Authorize Discount--------------//
-    submit_Auth_Discount() {
-        NProgress.start();
-        NProgress.set(0.1);
-        /*
-      1. Call new modal authtorize
-      2. if auth is true perform Update Detail else return;
-      */
-
-        axios
-            .post("pos/authDiscount", {
-                authorizedCode: this.authorizedCodeIngressed
-            })
-            .then(response => {
-                this.authorizedDiscount = response.data.authorized;
-                console.log(this.authorizedDiscount);
-                if (this.authorizedDiscount > 0) {
-                    this.performUpdateDetail();
-                    this.authorizedCodeIngressed = "";
-                    this.$bvModal.hide("form_Auth_Discount");
-                } else {
-                    alert(
-                        "No es posible realizar la autorización de descuento"
-                    );
-                }
-
-                // Complete the animation of theprogress bar.
-                NProgress.done();
-                this.isLoading = false;
-            })
-            .catch(response => {
-                // Complete the animation of theprogress bar.
-                NProgress.done();
-                setTimeout(() => {
+                    // Complete the animation of theprogress bar.
+                    NProgress.done();
                     this.isLoading = false;
-                }, 500);
-            });
+                })
+                .catch(response => {
+                    // Complete the animation of theprogress bar.
+                    NProgress.done();
+                    setTimeout(() => {
+                        this.isLoading = false;
+                    }, 500);
+                });
+        }
     },
 
     //-------------------- Created Function -----\\

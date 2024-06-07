@@ -338,10 +338,10 @@ class PosController extends BaseController
 
         foreach ($offers as $offer) {
             if (is_null($offer["category_product_id"]) && is_null($offer["warehouse_id"])) {
-                if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"] /* $product["category_id"] === null && $product["warehouse_id"] === null */) {
+                // if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"] /* $product["category_id"] === null && $product["warehouse_id"] === null */) {
                     array_push($productDiscount, $offer);
                     break;
-                }
+                // }
             } else if (!is_null($offer["category_product_id"]) && is_null($offer["warehouse_id"])) {
                 if ($product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === $offer["warehouse_id"] /* $product["category_id"] === $offer["category_product_id"] && $product["warehouse_id"] === null */) {
                     array_push($productDiscount, $offer);
