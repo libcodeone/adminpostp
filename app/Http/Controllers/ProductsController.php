@@ -908,7 +908,6 @@ class ProductsController extends BaseController
 
     public function edit(Request $request, $id)
     {
-
         $this->authorizeForUser($request->user('api'), 'update', Product::class);
 
         $Product = Product::where('deleted_at', '=', null)->findOrFail($id);
@@ -963,7 +962,7 @@ class ProductsController extends BaseController
         $productId = $item['id'];
         $productPrice = (double)$Product->price;
 
-        $discount = PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice);
+        $discount = (isset($productId) && isset($productPrice)) ? PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice) : 0.00;
 
         $item['tax_method'] = $Product->tax_method;
         $item['price'] = $productPrice - $discount;
