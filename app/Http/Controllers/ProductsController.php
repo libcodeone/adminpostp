@@ -82,14 +82,20 @@ class ProductsController extends BaseController
                 $item['category'] =  "";
             }
 
+            $productId = $item['id'];
+            $productPrice = (double)$product->price;
+
+            $discount = (isset($productId) && isset($productPrice)) ? PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice) : 0.00;
+
             $item['brand'] = $product['brand'] ? $product['brand']->name : 'N/D';
             $item['unit'] = $product['unit']->ShortName;
-            $item['price'] = (double)$product->price - PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $item['id'], (double)$product->price);
+            $item['price'] = $productPrice - $discount;
 
             $product_warehouse_data = ProductWarehouse::where('product_id', $product->id)
                 ->where('deleted_at', '=', null)
                 ->get();
             $total_qty = 0;
+
             foreach ($product_warehouse_data as $product_warehouse) {
                 $total_qty += $product_warehouse->qte;
                 $item['quantity'] = $total_qty;
@@ -706,7 +712,7 @@ class ProductsController extends BaseController
             $prod_id = $product_warehouse['product']['id'];
             $prod_price = (double)$product_warehouse['product']['price'];
 
-            $discount = PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $prod_id, $prod_price);
+            $discount = (isset($prod_id) && isset($prod_price)) ? PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $prod_id, $prod_price) : 0.00;
 
             if ($product_warehouse['product']['unitSale']->operator == '/') {
                 $item['qte_sale'] = $product_warehouse["qte"] * $product_warehouse['product']['unitSale']["operator_value"];
@@ -761,7 +767,10 @@ class ProductsController extends BaseController
         $item['tax_method'] = $Product_data['tax_method'];
         $item['tax_percent'] = $Product_data['TaxNet'];
 
-        $discount = PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $item['id'], (double)$Product_data['price']);
+        $productId = $item['id'];
+        $productPrice = (double)$Product_data['price'];
+
+        $discount = (isset($productId) && isset($productPrice)) ? PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice) : 0.00;
 
         if ($Product_data['unitSale']->operator == '/')
             $price = ($Product_data['price'] / $Product_data['unitSale']->operator_value) - $discount;
@@ -951,8 +960,13 @@ class ProductsController extends BaseController
             $item['unit_id'] = '';
         }
 
+        $productId = $item['id'];
+        $productPrice = (double)$Product->price;
+
+        $discount = PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice);
+
         $item['tax_method'] = $Product->tax_method;
-        $item['price'] = $Product->price - PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $item['id'], (double)$Product->price);
+        $item['price'] = $productPrice - $discount;
         $item['cost'] = $Product->cost;
         $item['stock_alert'] = $Product->stock_alert;
         $item['TaxNet'] = $Product->TaxNet;

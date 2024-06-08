@@ -332,12 +332,12 @@ class PosController extends BaseController
 
     private function getOfferPerCategoryOrWarehouseOrBoth($productId)
     {
-        $product = json_decode(json_encode(DB::table("products")->where("id", '=', $productId)->first()), true);
+        $product = json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->first()), true);
         $offers = json_decode(json_encode(DB::table("offers_products")->where("activo", "=", 1)->where("deleted_at", "=", null)->get()), true);
 
-        $productName = (string)json_decode(json_encode(DB::table("products")->where('id', '=', $productId)->pluck('name')->first()), true);
-        $productWarehouseId = $product["warehouse_id"];
-        $productCategoryId = $product["category_id"];
+        $productName = (isset($product["name"])) ? $product["name"] : (string)json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->pluck("name")->first()), true);
+        $productWarehouseId = (isset($product["warehouse_id"])) ? $product["warehouse_id"] : json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->pluck("warehouse_id")->first()), true);
+        $productCategoryId = (isset($product["category_id"])) ? $product["category_id"] : json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->pluck("category_id")->first()), true);
 
         $productDiscount = array();
 
@@ -504,7 +504,10 @@ class PosController extends BaseController
                     $item['imageList'][] = $img;
             }
 
-            $discount = $this->checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $product_warehouse["product"]["id"], $product_warehouse["product"]["price"]);
+            $productId = $product_warehouse["product"]["id"];
+            $productPrice = $product_warehouse["product"]["price"];
+
+            $discount = (isset($productId) && isset($productPrice)) ? $this->checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice) : 0.00;
 
             if ($product_warehouse["product"]["unitSale"]["operator"] == '/') {
                 $item['qte_sale'] = $product_warehouse["qte"] * $product_warehouse["product"]["unitSale"]["operator_value"];
