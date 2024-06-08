@@ -1306,7 +1306,7 @@
                                 </div>
                             </b-col>
                         </b-row>
-                        
+
                         <b-row>
                             <div
                                 class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2"
@@ -2503,7 +2503,7 @@ export default {
         //---------------------------------Get Product Details ------------------------\\
 
         Get_Product_Details(product, product_id) {
-            axios.get("Products/" + product_id).then(response => {
+            axios.get("products_details?id=" + product_id + "&warehouse_id=" + this.sale.warehouse_id).then(response => {
                 this.product.discount = 0;
                 this.product.DiscountNet = 0;
                 this.product.discount_Method = "2";
@@ -2773,7 +2773,7 @@ export default {
                     this.product.quantity = 1;
                 }
                 this.product.product_variant_id = result.product_variant_id;
-                this.Get_Product_Details(result.id);
+                this.Get_Product_Details(result, result.id);
             }
             this.$refs.autocomplete.value = "";
         },

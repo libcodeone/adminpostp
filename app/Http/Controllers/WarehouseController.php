@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Product;
+use App\Models\Warehouse;
+use Illuminate\Http\Request;
 use App\Models\ProductVariant;
 use App\Models\ProductWarehouse;
-use App\Models\Warehouse;
-use Carbon\Carbon;
-use DB;
-use Illuminate\Http\Request;
+Use Illuminate\Support\Facades\DB;
 
 class WarehouseController extends Controller
 {
@@ -21,7 +21,7 @@ class WarehouseController extends Controller
 
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -62,7 +62,7 @@ class WarehouseController extends Controller
             'name' => 'required',
         ]);
 
-        \DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
 
             $Warehouse = new Warehouse;
             $Warehouse->name = $request['name'];
@@ -137,7 +137,7 @@ class WarehouseController extends Controller
     {
         $this->authorizeForUser($request->user('api'), 'delete', Warehouse::class);
 
-        \DB::transaction(function () use ($id) {
+        DB::transaction(function () use ($id) {
 
             Warehouse::whereId($id)->update([
                 'deleted_at' => Carbon::now(),
@@ -156,10 +156,9 @@ class WarehouseController extends Controller
 
     public function delete_by_selection(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'delete', Warehouse::class);
 
-        \DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
             $selectedIds = $request->selectedIds;
             foreach ($selectedIds as $warehouse_id) {
                 Warehouse::whereId($warehouse_id)->update([

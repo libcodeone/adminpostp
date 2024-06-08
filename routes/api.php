@@ -102,6 +102,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     //------------------------------------------------------------------\\
 
     Route::resource('Products', 'ProductsController');
+    Route::get('products_details', 'ProductsController@getProductsDetails');
     Route::get('Products/export/Excel', 'ProductsController@export_Excel');
     Route::post('Products/import/csv', 'ProductsController@import_products');
     Route::get('Products/Warehouse/{id}', 'ProductsController@Products_by_Warehouse');

@@ -117,8 +117,6 @@ class PosController extends BaseController
                 $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where('id', '=', $this->productId)->pluck('price')->first()), true), 2);
                 $price = null;
 
-                // $discount = $this->checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $this->productId, $value['Net_price']);
-
                 if ($client->final_consumer === 1) {
                     $price = $value['Net_price'] /* - $discount */;
                     $this->taxMethod = 2;
@@ -330,48 +328,57 @@ class PosController extends BaseController
 
     //--- Get Offers Per Categories or Warehouses or Both ---\\
 
-    private function getOfferPerCategoryOrWarehouseOrBoth($productId)
+    private function getOfferPerCategoryOrWarehouseOrBoth($productId, $warehouseId)
     {
-        $product = json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->first()), true);
         $offers = json_decode(json_encode(DB::table("offers_products")->where("activo", "=", 1)->where("deleted_at", "=", null)->get()), true);
+        $productWarehouse = json_decode(json_encode(DB::table("product_warehouse")->where("product_id", "=", $productId)->where("warehouse_id", "=", $warehouseId)->first()), true);
 
-        $productName = (isset($product["name"])) ? $product["name"] : (string)json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->pluck("name")->first()), true);
-        $productWarehouseId = (isset($product["warehouse_id"])) ? $product["warehouse_id"] : json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->pluck("warehouse_id")->first()), true);
-        $productCategoryId = (isset($product["category_id"])) ? $product["category_id"] : json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->pluck("category_id")->first()), true);
+        $productDiscount = [];
 
-        $productDiscount = array();
+        if (isset($productWarehouse))
+        {
+            if (is_array($productWarehouse))
+            {
+                $productWarehouse["product_details"] = json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->first()), true);
+                $productWarehouse["warehouse_details"] = (isset($warehouseId)) ? json_decode(json_encode(DB::table("warehouses")->where("id", "=", $warehouseId)->first()), true) : [];
 
-        foreach ($offers as $offer) {
-            $offerCategoryProductId = $offer["category_product_id"];
-            $offerWarehouseId = $offer["warehouse_id"];
+                $productName = $productWarehouse["product_details"]["name"];
+                $productCategoryId = $productWarehouse["product_details"]["category_id"];
+                $productWarehouseName = $productWarehouse["warehouse_details"]["name"];
 
-            if (is_null($offerCategoryProductId) && is_null($offerWarehouseId)) {
-                    Log::info("¡Entro a aplicar la oferta global al producto '" . $productName . "'!");
+                foreach ($offers as $offer) {
+                    $offerCategoryProductId = $offer["category_product_id"];
+                    $offerWarehouseId = $offer["warehouse_id"];
 
-                // if ($productCategoryId === $offerCategoryProductId && $productWarehouseId === $offerWarehouseId /* $productCategoryId === null && $productWarehouseId === null */) {
-                    array_push($productDiscount, $offer);
-                    break;
-                // }
-            } else if (!is_null($offerCategoryProductId) && is_null($offerWarehouseId)) {
-                if ($productCategoryId === $offerCategoryProductId && $productWarehouseId === $offerWarehouseId /* $productCategoryId === $offerCategoryProductId && $productWarehouseId === null */) {
-                    Log::info("¡Entro a aplicar la oferta al producto '" . $productName . "' de la categoría " . (string)$productCategoryId . "!");
+                    if (is_null($offerCategoryProductId) && is_null($offerWarehouseId)) {
+                            Log::info("¡Entro a aplicar la oferta global al producto '" . $productName . "'!");
 
-                    array_push($productDiscount, $offer);
-                    break;
-                }
-            } else if (is_null($offerCategoryProductId) && !is_null($offerWarehouseId)) {
-                if ($productCategoryId === $offerCategoryProductId && $productWarehouseId === $offerWarehouseId /* $productCategoryId === null && $productWarehouseId === $offerWarehouseId */) {
-                    Log::info("¡Entro a aplicar la oferta al producto '" . $productName . "' en el almacén " . (string)$productWarehouseId . "!");
+                        // if ($productCategoryId === $offerCategoryProductId && $productWarehouseName === $offerWarehouseId /* $productCategoryId === null && $productWarehouseName === null */) {
+                            array_push($productDiscount, $offer);
+                            break;
+                        // }
+                    } else if (!is_null($offerCategoryProductId) && is_null($offerWarehouseId)) {
+                        if ($productCategoryId === $offerCategoryProductId && $productWarehouseName === $offerWarehouseId /* $productCategoryId === $offerCategoryProductId && $productWarehouseName === null */) {
+                            Log::info("¡Entro a aplicar la oferta al producto '" . $productName . "' de la categoría " . (string)$productCategoryId . "!");
 
-                    array_push($productDiscount, $offer);
-                    break;
-                }
-            } else if (!is_null($offerCategoryProductId) && !is_null($offerWarehouseId)) {
-                if ($productCategoryId === $offerCategoryProductId && $productWarehouseId === $offerWarehouseId) {
-                    Log::info("¡Entro a aplicar la oferta al producto '" . $productName . "' de la categoría " . (string)$productCategoryId . " en el almacén " . (string)$productWarehouseId . "!");
+                            array_push($productDiscount, $offer);
+                            break;
+                        }
+                    } else if (is_null($offerCategoryProductId) && !is_null($offerWarehouseId)) {
+                        if ($productCategoryId === $offerCategoryProductId && $productWarehouseName === $offerWarehouseId /* $productCategoryId === null && $productWarehouseName === $offerWarehouseId */) {
+                            Log::info("¡Entro a aplicar la oferta al producto '" . $productName . "' en el almacén " . (string)$productWarehouseName . "!");
 
-                    array_push($productDiscount, $offer);
-                    break;
+                            array_push($productDiscount, $offer);
+                            break;
+                        }
+                    } else if (!is_null($offerCategoryProductId) && !is_null($offerWarehouseId)) {
+                        if ($productCategoryId === $offerCategoryProductId && $productWarehouseName === $offerWarehouseId) {
+                            Log::info("¡Entro a aplicar la oferta al producto '" . $productName . "' de la categoría " . (string)$productCategoryId . " en el almacén " . (string)$productWarehouseName . "!");
+
+                            array_push($productDiscount, $offer);
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -379,13 +386,13 @@ class PosController extends BaseController
         return (count($productDiscount) > 0) ? $productDiscount : 0.00;
     }
 
-    public static function checkTimeAndGetDiscountPricePerProduct($currentDate, $currentHour, $productId, $productPrice)
+    public static function checkTimeAndGetDiscountPricePerProduct($currentDate, $currentHour, $productId, $productPrice, $warehouseId)
     {
         $is_in_days_array = false;
         $is_between_range_of_dates = false;
         $is_between_range_of_hours = false;
 
-        $offer = PosController::getDiscountPricePerProduct($productId, $productPrice);
+        $offer = PosController::getDiscountPricePerProduct($productId, $productPrice, $warehouseId);
 
         $discount = 0.00;
 
@@ -421,11 +428,11 @@ class PosController extends BaseController
         return round($discount, 2);
     }
 
-    private function getDiscountPricePerProduct($productId, $productPrice)
+    private function getDiscountPricePerProduct($productId, $productPrice, $warehouseId)
     {
         $pos = new PosController();
 
-        $productDiscount = $pos->getOfferPerCategoryOrWarehouseOrBoth($productId);
+        $productDiscount = $pos->getOfferPerCategoryOrWarehouseOrBoth($productId, $warehouseId);
         $finalProductDiscount = (!is_array($productDiscount)) ? $productDiscount : ((!is_null($productDiscount[0]["porcentajeDescuentoProducto"])) ? (float)$productDiscount[0]["porcentajeDescuentoProducto"] : (float)$productDiscount[0]["precioProducto"]);
 
         $discountAmount = ((!is_array($productDiscount)) ? $finalProductDiscount : ((!is_null($productDiscount[0]["porcentajeDescuentoProducto"])) ? ((float)$finalProductDiscount / 100) * $productPrice : (float)$finalProductDiscount));
@@ -504,17 +511,18 @@ class PosController extends BaseController
                     $item['imageList'][] = $img;
             }
 
-            $productId = $product_warehouse["product"]["id"];
-            $productPrice = $product_warehouse["product"]["price"];
+            // $productId = $product_warehouse["product"]["id"];
+            // $productPrice = $product_warehouse["product"]["price"];
+            // $productWarehouseId = $product_warehouse["warehouse_id"];
 
-            $discount = (isset($productId) && isset($productPrice)) ? $this->checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice) : 0.00;
+            // $discount = (isset($productId) && isset($productPrice)) ? $this->checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice, $productWarehouseId) : 0.00;
 
             if ($product_warehouse["product"]["unitSale"]["operator"] == '/') {
                 $item['qte_sale'] = $product_warehouse["qte"] * $product_warehouse["product"]["unitSale"]["operator_value"];
-                $price = ($product_warehouse["product"]["price"] / $product_warehouse["product"]["unitSale"]["operator_value"]) - $discount;
+                $price = ($product_warehouse["product"]["price"] / $product_warehouse["product"]["unitSale"]["operator_value"]) /* - $discount */;
             } else {
                 $item['qte_sale'] = $product_warehouse["qte"] / $product_warehouse["product"]["unitSale"]["operator_value"];
-                $price = ($product_warehouse["product"]["price"] * $product_warehouse["product"]["unitSale"]["operator_value"]) - $discount;
+                $price = ($product_warehouse["product"]["price"] * $product_warehouse["product"]["unitSale"]["operator_value"]) /* - $discount */;
             }
 
             $item['unitSale'] = $product_warehouse["product"]["unitSale"]["ShortName"];
