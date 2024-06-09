@@ -732,38 +732,38 @@ class ProductsController extends BaseController
     {
         $productId = $id;
 
-        $Product_data = json_decode(json_encode(Product::with("unit", "unitSale", "unitPurchase")->where("id", '=', $productId)->where("deleted_at", '=', null)->first()), true);
+        $dataOfProduct = json_decode(json_encode(Product::with("unit", "unitSale", "unitPurchase")->where("id", '=', $productId)->where("deleted_at", '=', null)->first()), true);
 
         $data = [];
 
-        $item['id'] = $Product_data['id'];
-        $item['name'] = $Product_data['name'];
-        $item['Type_barcode'] = $Product_data['Type_barcode'];
-        $item['unit'] = $Product_data['unit']["ShortName"];
-        $item['unitPurchase'] = $Product_data['unit_purchase']["ShortName"];
-        $item['unitSale'] = $Product_data['unit_sale']["ShortName"];
-        $item['tax_method'] = $Product_data['tax_method'];
-        $item['tax_percent'] = $Product_data['TaxNet'];
+        $item['id'] = $dataOfProduct['id'];
+        $item['name'] = $dataOfProduct['name'];
+        $item['Type_barcode'] = $dataOfProduct['Type_barcode'];
+        $item['unit'] = $dataOfProduct['unit']["ShortName"];
+        $item['unitPurchase'] = $dataOfProduct['unit_purchase']["ShortName"];
+        $item['unitSale'] = $dataOfProduct['unit_sale']["ShortName"];
+        $item['tax_method'] = $dataOfProduct['tax_method'];
+        $item['tax_percent'] = $dataOfProduct['TaxNet'];
 
-        if ($Product_data['unit_sale']["operator"] == '/')
-            $price = ($Product_data['price'] / $Product_data['unit_sale']["operator_value"]);
+        if ($dataOfProduct['unit_sale']["operator"] == '/')
+            $price = ($dataOfProduct['price'] / $dataOfProduct['unit_sale']["operator_value"]);
         else
-            $price = ($Product_data['price'] * $Product_data['unit_sale']["operator_value"]);
+            $price = ($dataOfProduct['price'] * $dataOfProduct['unit_sale']["operator_value"]);
 
-        if ($Product_data['unit_purchase']["operator"] == '/') {
-            $cost = $Product_data['cost'] / $Product_data['unit_purchase']["operator_value"];
+        if ($dataOfProduct['unit_purchase']["operator"] == '/') {
+            $cost = $dataOfProduct['cost'] / $dataOfProduct['unit_purchase']["operator_value"];
         } else {
-            $cost = $Product_data['cost'] * $Product_data['unit_purchase']["operator_value"];
+            $cost = $dataOfProduct['cost'] * $dataOfProduct['unit_purchase']["operator_value"];
         }
 
         $item['Unit_cost'] = $cost;
         $item['Unit_price'] = $price;
 
-        if ($Product_data["TaxNet"] !== 0.0) {
+        if ($dataOfProduct["TaxNet"] !== 0.0) {
             //Exclusive
-            if ($Product_data['tax_method'] == '1') {
-                $tax_price = $price * $Product_data['TaxNet'] / 100;
-                $tax_cost = $cost * $Product_data['TaxNet'] / 100;
+            if ($dataOfProduct['tax_method'] == '1') {
+                $tax_price = $price * $dataOfProduct['TaxNet'] / 100;
+                $tax_cost = $cost * $dataOfProduct['TaxNet'] / 100;
 
                 $item['Total_cost'] = $cost + $tax_cost;
                 $item['Total_price'] = $price + $tax_price;
@@ -776,8 +776,8 @@ class ProductsController extends BaseController
             } else {
                 $item['Total_cost'] = $cost;
                 $item['Total_price'] = $price;
-                $item['Net_cost'] = $cost / (($Product_data['TaxNet'] / 100) + 1);
-                $item['Net_price'] = $price / (($Product_data['TaxNet'] / 100) + 1);
+                $item['Net_cost'] = $cost / (($dataOfProduct['TaxNet'] / 100) + 1);
+                $item['Net_price'] = $price / (($dataOfProduct['TaxNet'] / 100) + 1);
                 $item['tax_cost'] = $item['Total_cost'] - $item['Net_cost'];
                 $item['tax_price'] = $item['Total_price'] - $item['Net_price'];
             }
@@ -800,79 +800,97 @@ class ProductsController extends BaseController
     public function getProductsDetails(Request $request)
     {
         $productId = (!isset($request["id"]) && !isset($request->id)) ? null : ((isset($request["id"])) ? (int)$request["id"] : (int)$request->id);
-
-        $Product_data = json_decode(json_encode(Product::with("unit", "unitSale", "unitPurchase")->where("id", '=', $productId)->where("deleted_at", '=', null)->first()), true);
-
-        $data = [];
-
-        $item['id'] = $Product_data['id'];
-        $item['name'] = $Product_data['name'];
-        $item['Type_barcode'] = $Product_data['Type_barcode'];
-        $item['unit'] = $Product_data['unit']["ShortName"];
-        $item['unitPurchase'] = $Product_data['unit_purchase']["ShortName"];
-        $item['unitSale'] = $Product_data['unit_sale']["ShortName"];
-        $item['tax_method'] = $Product_data['tax_method'];
-        $item['tax_percent'] = $Product_data['TaxNet'];
-
-        $productPrice = (float)$Product_data['price'];
         $warehouseId = (!isset($request["warehouse_id"]) && !isset($request->warehouse_id)) ? null : ((isset($request["warehouse_id"])) ? (int)$request["warehouse_id"] : (int)$request->warehouse_id);
 
-        $discount = (isset($productId) && isset($productPrice)) ? PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice, $warehouseId) : 0.00;
-        $productHasDiscount = $discount["product_has_discount"];
-        $discount = $discount["discount"];
+        $discount = null;
+        $productHasDiscount = false;
 
-        if ($Product_data['unit_sale']["operator"] === '/')
-            $price = ($Product_data['price'] / $Product_data['unit_sale']["operator_value"]) - $discount;
-        else
-            $price = ($Product_data['price'] * $Product_data['unit_sale']["operator_value"]) - $discount;
+        $productPerWarehouse = (array)json_decode(json_encode(DB::table("product_warehouse")->where("product_id", '=', $productId)->where("warehouse_id", '=', $warehouseId)->where("qte", ">=", 0)->where("deleted_at", '=', null)->first(), true));
+        $data = [];
+        $item = null;
 
-        if ($Product_data['unit_purchase']["operator"] == '/') {
-            $cost = $Product_data['cost'] / $Product_data['unit_purchase']["operator_value"];
-        } else {
-            $cost = $Product_data['cost'] * $Product_data['unit_purchase']["operator_value"];
-        }
+        if (isset($productPerWarehouse))
+        {
+            if (is_array($productPerWarehouse))
+            {
+                if ($productPerWarehouse["qte"] > 0)
+                {
+                    $dataOfProduct = json_decode(json_encode(Product::with("unit", "unitSale", "unitPurchase")->where("id", '=', $productId)->where("deleted_at", '=', null)->first()), true);
 
-        $item['Unit_cost'] = $cost;
-        $item['Unit_price'] = $price;
+                    $item['id'] = $dataOfProduct['id'];
+                    $item['name'] = $dataOfProduct['name'];
+                    $item['Type_barcode'] = $dataOfProduct['Type_barcode'];
+                    $item['unit'] = $dataOfProduct['unit']["ShortName"];
+                    $item['unitPurchase'] = $dataOfProduct['unit_purchase']["ShortName"];
+                    $item['unitSale'] = $dataOfProduct['unit_sale']["ShortName"];
+                    $item['tax_method'] = $dataOfProduct['tax_method'];
+                    $item['tax_percent'] = $dataOfProduct['TaxNet'];
 
-        if ($Product_data["TaxNet"] !== 0.0) {
-            //Exclusive
-            if ($Product_data['tax_method'] == '1') {
-                $tax_price = $price * $Product_data['TaxNet'] / 100;
-                $tax_cost = $cost * $Product_data['TaxNet'] / 100;
+                    $productPrice = (float)$dataOfProduct['price'];
 
-                $item['Total_cost'] = $cost + $tax_cost;
-                $item['Total_price'] = $price + $tax_price;
-                $item['Net_cost'] = $cost;
-                $item['Net_price'] = $price;
-                $item['tax_price'] = $tax_price;
-                $item['tax_cost'] = $tax_cost;
+                    $discount = (isset($productId) && isset($productPrice)) ? PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice, $warehouseId) : 0.00;
+                    $productHasDiscount = $discount["product_has_discount"];
+                    $discount = $discount["discount"];
 
-                // Inxclusive
-            } else {
-                $item['Total_cost'] = $cost;
-                $item['Total_price'] = $price;
-                $item['Net_cost'] = $cost / (($Product_data['TaxNet'] / 100) + 1);
-                $item['Net_price'] = $price / (($Product_data['TaxNet'] / 100) + 1);
-                $item['tax_cost'] = $item['Total_cost'] - $item['Net_cost'];
-                $item['tax_price'] = $item['Total_price'] - $item['Net_price'];
+                    if ($dataOfProduct['unit_sale']["operator"] === '/')
+                        $price = ($dataOfProduct['price'] / $dataOfProduct['unit_sale']["operator_value"]) - $discount;
+                    else
+                        $price = ($dataOfProduct['price'] * $dataOfProduct['unit_sale']["operator_value"]) - $discount;
+
+                    if ($dataOfProduct['unit_purchase']["operator"] == '/') {
+                        $cost = $dataOfProduct['cost'] / $dataOfProduct['unit_purchase']["operator_value"];
+                    } else {
+                        $cost = $dataOfProduct['cost'] * $dataOfProduct['unit_purchase']["operator_value"];
+                    }
+
+                    $item['Unit_cost'] = $cost;
+                    $item['Unit_price'] = $price;
+
+                    if ($dataOfProduct["TaxNet"] !== 0.0) {
+                        //Exclusive
+                        if ($dataOfProduct['tax_method'] == '1') {
+                            $tax_price = $price * $dataOfProduct['TaxNet'] / 100;
+                            $tax_cost = $cost * $dataOfProduct['TaxNet'] / 100;
+
+                            $item['Total_cost'] = $cost + $tax_cost;
+                            $item['Total_price'] = $price + $tax_price;
+                            $item['Net_cost'] = $cost;
+                            $item['Net_price'] = $price;
+                            $item['tax_price'] = $tax_price;
+                            $item['tax_cost'] = $tax_cost;
+
+                            // Inxclusive
+                        } else {
+                            $item['Total_cost'] = $cost;
+                            $item['Total_price'] = $price;
+                            $item['Net_cost'] = $cost / (($dataOfProduct['TaxNet'] / 100) + 1);
+                            $item['Net_price'] = $price / (($dataOfProduct['TaxNet'] / 100) + 1);
+                            $item['tax_cost'] = $item['Total_cost'] - $item['Net_cost'];
+                            $item['tax_price'] = $item['Total_price'] - $item['Net_price'];
+                        }
+                    } else {
+                        $item['Total_cost'] = $cost;
+                        $item['Total_price'] = $price;
+                        $item['Net_cost'] = $cost;
+                        $item['Net_price'] = $price;
+                        $item['tax_price'] = 0;
+                        $item['tax_cost'] = 0;
+                    }
+                }
             }
-        } else {
-            $item['Total_cost'] = $cost;
-            $item['Total_price'] = $price;
-            $item['Net_cost'] = $cost;
-            $item['Net_price'] = $price;
-            $item['tax_price'] = 0;
-            $item['tax_cost'] = 0;
         }
 
         $data[] = $item;
 
+        $hasStock = (isset($data[0])) ? true : false;
+        $data = ($hasStock) ? $data[0] : null;
+
         return response()->json(
             [
-                "product_details" => $data[0],
+                "product_details" => $data,
                 "product_has_discount" => $productHasDiscount,
-                "product_discount" => $discount
+                "product_discount" => $discount,
+                "has_stock" => $hasStock
             ]
         );
     }
@@ -1213,7 +1231,6 @@ class ProductsController extends BaseController
     // //------------ Reference Number of Adjustement  -----------\\
     public function getNumberOrder()
     {
-
         $last = DB::table('adjustments')->latest('id')->first();
 
         if ($last) {

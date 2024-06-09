@@ -2508,23 +2508,35 @@ export default {
 
         getProductDetails(product, product_id) {
             axios.get("products_details?id=" + product_id + "&warehouse_id=" + this.sale.warehouse_id).then(response => {
-                this.product.discount = 0;
-                this.product.DiscountNet = 0;
-                this.product.discount_Method = "2";
-                this.product.product_id = response.data.product_details.id;
-                this.product.name = response.data.product_details.name;
-                this.product.Net_price = response.data.product_details.Net_price;
-                this.product.Total_price = response.data.product_details.Total_price;
-                this.product.Unit_price = response.data.product_details.Unit_price;
-                this.product.taxe = response.data.product_details.tax_price;
-                this.product.tax_method = response.data.product_details.tax_method;
-                this.product.tax_percent = response.data.product_details.tax_percent;
-                this.product.unitSale = response.data.product_details.unitSale;
-                this.product.product_variant_id = product.product_variant_id;
-                this.product.code = product.code;
-                this.product.imageList = product.imageList;
-                this.addProduct(product.code, response.data.product_has_discount, response.data.product_discount);
-                this.determineTotal();
+                if (response.data.has_stock)
+                {
+                    this.product.discount = 0;
+                    this.product.DiscountNet = 0;
+                    this.product.discount_Method = "2";
+                    this.product.product_id = response.data.product_details.id;
+                    this.product.name = response.data.product_details.name;
+                    this.product.Net_price = response.data.product_details.Net_price;
+                    this.product.Total_price = response.data.product_details.Total_price;
+                    this.product.Unit_price = response.data.product_details.Unit_price;
+                    this.product.taxe = response.data.product_details.tax_price;
+                    this.product.tax_method = response.data.product_details.tax_method;
+                    this.product.tax_percent = response.data.product_details.tax_percent;
+                    this.product.unitSale = response.data.product_details.unitSale;
+                    this.product.product_variant_id = product.product_variant_id;
+                    this.product.code = product.code;
+                    this.product.imageList = product.imageList;
+                    this.addProduct(product.code, response.data.product_has_discount, response.data.product_discount);
+                    this.determineTotal();
+                }
+                else
+                {
+                    this.makeToast(
+                        "warning",
+                        this.$t("LowStock"),
+                        this.$t("Warning")
+                    );
+                }
+
                 // Complete the animation of theprogress bar.
                 NProgress.done();
             });
