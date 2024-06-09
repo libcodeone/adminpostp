@@ -33,13 +33,16 @@ class PosController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
 
+        $productsHaveDiscount = $request->productsHaveDiscount;
+        $productsDiscounts = $request->productsDiscounts;
+
         request()->validate([
             'client_id' => 'required',
             'warehouse_id' => 'required',
             'payment.amount' => 'required',
         ]);
 
-        $item = DB::transaction(function () use ($request) {
+        $item = DB::transaction(function () use ($request, $productsHaveDiscount, $productsDiscounts) {
             $role = DB::table('role_user')
                 ->join('roles', 'role_user.role_id', '=', 'roles.id')
                 ->where('role_user.user_id', Auth::id())
@@ -105,29 +108,31 @@ class PosController extends BaseController
 
             $order->save();
 
-            $data1 = $request['details'];
+            $detailsData = $request['details'];
 
             $saleDetailsData = null;
 
-            foreach ($data1 as $value) {
+            foreach ($detailsData as $key => $value) {
                 $this->productId = $value['product_id'];
                 $this->productQuantity = $value['quantity'];
                 $this->productDiscount = $value['discount'];
                 $this->subTotalProductPrice = $value['subtotal'];
                 $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where('id', '=', $this->productId)->pluck('price')->first()), true), 2);
+                $originalPriceWithDiscount = $originalPrice - $productsDiscounts[$key];
+
                 $price = null;
 
                 if ($client->final_consumer === 1) {
-                    $price = $value['Net_price'] /* - $discount */;
+                    $price = $value['Net_price'];
                     $this->taxMethod = 2;
                 } else if ($client->final_consumer === 0) {
-                    $originalPrice = $originalPrice - round($originalPrice - ($originalPrice / 1.13), 2);
+                    $originalPriceWithDiscount = $originalPriceWithDiscount - round($originalPriceWithDiscount - ($originalPriceWithDiscount / 1.13), 2);
 
-                    $price = $value['Net_price'] - round($value['Net_price'] - ($value['Net_price'] / 1.13), 2) /* - $discount */;
+                    $price = $value['Net_price'] - round($value['Net_price'] - ($value['Net_price'] / 1.13), 2);
                     $this->taxMethod = 1;
                 }
 
-                $this->originalProductPrice = $originalPrice;
+                $this->originalProductPrice = $originalPriceWithDiscount;
                 $this->newProductPrice = $price;
 
                 $productName = json_decode(json_encode(DB::table("products")->where('id', '=', $this->productId)->pluck("name")->first()), true);
@@ -190,8 +195,6 @@ class PosController extends BaseController
                 }
             }
 
-            setlocale(LC_TIME, "sv_ES");
-
             $stringOne = '[{' . '"email"' . ':"';
             $stringTwo = '"}]';
             $adminEmail = json_encode(DB::select('SELECT email FROM settings WHERE id = 1'));
@@ -210,12 +213,12 @@ class PosController extends BaseController
             $booleansArray = array();
 
             for ($i = 0; $i < count($saleDetailsData); $i++) {
-                if (round($saleDetailsData[$i]['original_product_price'], 2) != round($saleDetailsData[$i]['new_product_price'], 2) || $data['total_discount'] !== 0.0 || (round($saleDetailsData[$i]['original_product_price'], 2) != round($saleDetailsData[$i]['new_product_price'], 2) && $data['total_discount'] !== 0.0)) {
-                    $boolean = true;
-                } else if (round($saleDetailsData[$i]['original_product_price'], 2) === round($saleDetailsData[$i]['new_product_price'], 2) || $data['total_discount'] === 0.0 || (round($saleDetailsData[$i]['original_product_price'], 2) === round($saleDetailsData[$i]['new_product_price'], 2) && $data['total_discount'] === 0.0)) {
-                    $boolean = false;
-                }
-                array_push($booleansArray, $boolean);
+                    if (round($saleDetailsData[$i]['original_product_price'], 2) != round($saleDetailsData[$i]['new_product_price'], 2) || $data['total_discount'] !== 0.0 || (round($saleDetailsData[$i]['original_product_price'], 2) != round($saleDetailsData[$i]['new_product_price'], 2) && $data['total_discount'] !== 0.0))
+                        $boolean = true;
+                    else if (round($saleDetailsData[$i]['original_product_price'], 2) === round($saleDetailsData[$i]['new_product_price'], 2) || $data['total_discount'] === 0.0 || (round($saleDetailsData[$i]['original_product_price'], 2) === round($saleDetailsData[$i]['new_product_price'], 2) && $data['total_discount'] === 0.0))
+                        $boolean = false;
+
+                    array_push($booleansArray, $boolean);
             }
 
             if (in_array(true, $booleansArray)) {
@@ -392,9 +395,10 @@ class PosController extends BaseController
         $is_between_range_of_dates = false;
         $is_between_range_of_hours = false;
 
-        $offer = PosController::getDiscountPricePerProduct($productId, $productPrice, $warehouseId);
-
         $discount = 0.00;
+        $productHasDiscount = false;
+
+        $offer = PosController::getDiscountPricePerProduct($productId, $productPrice, $warehouseId);
 
         if (count($offer["offer"]) > 0) {
             $horaInicio = $offer["offer"][0]["hora_inicio"];
@@ -403,15 +407,36 @@ class PosController extends BaseController
             $fechaFin = $offer["offer"][0]["fecha_fin"];
             $dias = json_decode($offer["offer"][0]["dias"]);
 
-            $settedLocale = setlocale(LC_TIME, "es");
+            $currentDateInLetters = (int)strtolower(utf8_encode(strftime("%u")));
 
-            Log::info($settedLocale);
+            $currentDateInSpanish = null;
 
-            $currentDateInSpanish = utf8_encode(strftime("%A"));
-
-            Log::info($currentDateInSpanish);
-
-            $currentDateInSpanish = str_replace(['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'], $currentDateInSpanish);
+            switch ($currentDateInLetters)
+            {
+                case 1:
+                    $currentDateInSpanish = "lunes";
+                    break;
+                case 2:
+                    $currentDateInSpanish = "martes";
+                    break;
+                case 3:
+                    $currentDateInSpanish = "miercoles";
+                    break;
+                case 4:
+                    $currentDateInSpanish = "jueves";
+                    break;
+                case 5:
+                    $currentDateInSpanish = "viernes";
+                    break;
+                case 6:
+                    $currentDateInSpanish = "sabado";
+                    break;
+                case 7:
+                    $currentDateInSpanish = "domingo";
+                    break;
+                default:
+                    break;
+            }
 
             if (in_array($currentDateInSpanish, $dias))
                 $is_in_days_array = true;
@@ -423,9 +448,10 @@ class PosController extends BaseController
                 $is_between_range_of_hours = true;
 
             $discount = ($is_between_range_of_dates && $is_between_range_of_hours && $is_in_days_array) ? $offer["discount"] : $discount;
+            $productHasDiscount = ($is_between_range_of_dates && $is_between_range_of_hours && $is_in_days_array) ? true : $productHasDiscount;
         }
 
-        return round($discount, 2);
+        return ["product_has_discount" => $productHasDiscount, "discount" => round($discount, 2)];
     }
 
     private function getDiscountPricePerProduct($productId, $productPrice, $warehouseId)
@@ -552,7 +578,7 @@ class PosController extends BaseController
 
     //--------------------- Get Element POS ------------------------\\
 
-    public function GetELementPos(Request $request)
+    public function GetElementPos(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
 

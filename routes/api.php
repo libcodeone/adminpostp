@@ -96,7 +96,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::post('pos/authDiscount', 'PosController@authDiscount');
     Route::get('getArticlesByCategory/{id}', 'PosController@getArticlesByCategory');
     Route::get('GetProductsByParametre', 'PosController@GetProductsByParametre');
-    Route::get('pos/GetELementPos', 'PosController@GetELementPos');
+    Route::get('pos/GetElementPos', 'PosController@GetElementPos');
 
     //------------------------------- PRODUCTS --------------------------\\
     //------------------------------------------------------------------\\

@@ -818,6 +818,8 @@ class ProductsController extends BaseController
         $warehouseId = (!isset($request["warehouse_id"]) && !isset($request->warehouse_id)) ? null : ((isset($request["warehouse_id"])) ? (int)$request["warehouse_id"] : (int)$request->warehouse_id);
 
         $discount = (isset($productId) && isset($productPrice)) ? PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice, $warehouseId) : 0.00;
+        $productHasDiscount = $discount["product_has_discount"];
+        $discount = $discount["discount"];
 
         if ($Product_data['unit_sale']["operator"] === '/')
             $price = ($Product_data['price'] / $Product_data['unit_sale']["operator_value"]) - $discount;
@@ -866,7 +868,13 @@ class ProductsController extends BaseController
 
         $data[] = $item;
 
-        return response()->json($data[0]);
+        return response()->json(
+            [
+                "product_details" => $data[0],
+                "product_has_discount" => $productHasDiscount,
+                "product_discount" => $discount
+            ]
+        );
     }
 
     //--------------  Product Quantity Alerts ---------------\\

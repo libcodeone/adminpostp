@@ -386,17 +386,17 @@
                                                                 <!-- <td>{{formatNumber(detail.Total_price, 2)}} {{currentUser.currency}}</td> -->
                                                                 <td>
                                                                     <!-- <div class="price">
-                                      <b-form-input
-                                        :state="getValidationState(validationContext)"
-                                        v-model.number="detail.Total_price"
-                                        @keyup="keyup_Price_Product()"
-                                      ></b-form-input>
-                                      <input
-                                          class="form-control"
-                                          @keyup="keyup_Price_Product(detail ,detail.detail_id)"
-                                          v-model.number="detail.Net_price" :disabled="currentUserPermissions && (currentUserPermissions.includes('Sales_edit'))"
-                                        >
-                                    </div>-->
+                                                                        <b-form-input
+                                                                            :state="getValidationState(validationContext)"
+                                                                            v-model.number="detail.Total_price"
+                                                                            @keyup="keyup_price_product()"
+                                                                        ></b-form-input>
+                                                                        <input
+                                                                            class="form-control"
+                                                                            @keyup="keyup_price_product(detail ,detail.detail_id)"
+                                                                            v-model.number="detail.Net_price" :disabled="currentUserPermissions && (currentUserPermissions.includes('Sales_edit'))"
+                                                                        >
+                                                                    </div>-->
                                                                     <div
                                                                         class="logo"
                                                                         v-show="
@@ -406,9 +406,7 @@
                                                                                 )
                                                                         "
                                                                     >
-                                                                        <span>{{
-                                                                            detail.Net_price
-                                                                        }}</span>
+                                                                        <span>{{ detail.Net_price }}</span>
                                                                     </div>
                                                                     <div
                                                                         class="logo"
@@ -422,7 +420,7 @@
                                                                         <input
                                                                             class="form-control"
                                                                             @keyup="
-                                                                                keyup_Price_Product(
+                                                                                keyup_price_product(
                                                                                     detail,
                                                                                     detail.detail_id
                                                                                 )
@@ -495,7 +493,7 @@
                                                                 <td>
                                                                     <a
                                                                         @click="
-                                                                            delete_Product_Detail(
+                                                                            delete_product_detail(
                                                                                 detail.detail_id
                                                                             )
                                                                         "
@@ -539,27 +537,27 @@
 
                                             <!-- Order Tax  -->
                                             <!-- <b-col lg="4" md="4" sm="12" v-if="sale.client_id != ''">
-                          <validation-provider
-                            name="Order Tax"
-                            :rules="{ regex: /^\d*\.?\d*$/}"
-                            v-slot="validationContext"
-                          >
-                            <b-form-group :label="$t('Tax')" append="%">
-                              <b-input-group append="%">
-                                <b-form-input
-                                  :state="getValidationState(validationContext)"
-                                  aria-describedby="OrderTax-feedback"
-                                  label="Order Tax"
-                                  v-model.number="sale.tax_rate"
-                                  @keyup="keyup_OrderTax()"
-                                ></b-form-input>
-                              </b-input-group>
-                              <b-form-invalid-feedback
-                                id="OrderTax-feedback"
-                              >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
-                            </b-form-group>
-                          </validation-provider>
-                        </b-col> -->
+                                                <validation-provider
+                                                    name="Order Tax"
+                                                    :rules="{ regex: /^\d*\.?\d*$/}"
+                                                    v-slot="validationContext"
+                                                >
+                                                    <b-form-group :label="$t('Tax')" append="%">
+                                                        <b-input-group append="%">
+                                                            <b-form-input
+                                                            :state="getValidationState(validationContext)"
+                                                            aria-describedby="OrderTax-feedback"
+                                                            label="Order Tax"
+                                                            v-model.number="sale.tax_rate"
+                                                            @keyup="keyup_OrderTax()"
+                                                            ></b-form-input>
+                                                        </b-input-group>
+                                                        <b-form-invalid-feedback
+                                                            id="OrderTax-feedback"
+                                                        >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                                                    </b-form-group>
+                                                </validation-provider>
+                                            </b-col> -->
 
                                             <!-- Discount -->
                                             <b-col lg="4" md="4" sm="12">
@@ -589,7 +587,7 @@
                                                                     sale.discount
                                                                 "
                                                                 @keyup="
-                                                                    keyup_Discount()
+                                                                    keyup_discount()
                                                                 "
                                                             ></b-form-input>
                                                         </b-input-group>
@@ -631,7 +629,7 @@
                                                                     sale.shipping
                                                                 "
                                                                 @keyup="
-                                                                    keyup_Shipping()
+                                                                    keyup_shipping()
                                                                 "
                                                             ></b-form-input>
                                                         </b-input-group>
@@ -649,7 +647,7 @@
 
                                             <b-col md="6" sm="12">
                                                 <b-button
-                                                    @click="Reset_Pos()"
+                                                    @click="resetPos()"
                                                     variant="danger ripple btn-rounded btn-block mt-1"
                                                 >
                                                     <i class="i-Power-2"></i>
@@ -684,7 +682,7 @@
 
                         <!--Modal authorization Code-->
                         <b-modal hide-footer size="md" id="form_Auth_Discount">
-                            <b-form @submit.prevent="submit_Auth_Discount">
+                            <b-form @submit.prevent="submitAuthDiscount">
                                 <b-row>
                                     <!-- Auth Code -->
                                     <!-- New AuthorizationCode -->
@@ -1169,7 +1167,7 @@
                                 class="col-md-12 d-flex flex-row flex-wrap bd-highlight list-item mt-2"
                             >
                                 <div
-                                    @click="GetAllBrands()"
+                                    @click="getAllBrands()"
                                     :class="{ 'brand-Active': brand_id == '' }"
                                     class="card o-hidden bd-highlight m-1"
                                 >
@@ -1775,6 +1773,8 @@ export default {
     },
     data() {
         return {
+            productsDiscounts: [],
+            productsHaveDiscount: [],
             langs: ["es", "en"],
             imageList: [],
             cardElement: {},
@@ -2282,7 +2282,7 @@ export default {
         },
 
         //----------------------------------------- Add Detail of Sale -------------------------\\
-        add_product(code) {
+        addProduct(code, productHasDiscount, productDiscount) {
             if (this.details.some(detail => detail.code === code)) {
                 this.makeToast(
                     "warning",
@@ -2299,6 +2299,8 @@ export default {
                         this.product.detail_id = 1;
                     }
                     this.details.push(this.product);
+                    this.productsHaveDiscount.push(productHasDiscount);
+                    this.productsDiscounts.push(productDiscount);
                 } else {
                     this.makeToast(
                         "warning",
@@ -2318,7 +2320,7 @@ export default {
             this.product.detail_id = this.details[len - 1].detail_id + 1;
         },
 
-        //-------------------------------- Show Modal Poduct Detail -------------------------\\
+        //-------------------------------- Show Modal Product Detail -------------------------\\
         Modal_Update_Detail(detail) {
             this.detail = {};
             this.detail.name = detail.name;
@@ -2333,7 +2335,7 @@ export default {
             this.$bvModal.show("form_Update_Detail");
         },
 
-        //-------------------------------- Update Poduct Detail -------------------------\\
+        //-------------------------------- Update Product Detail -------------------------\\
         Update_Detail() {
             for (var i = 0; i < this.details.length; i++) {
                 if (this.details[i].detail_id === this.detail.detail_id) {
@@ -2396,7 +2398,7 @@ export default {
                     this.$forceUpdate();
                 }
             }
-            this.CaclulTotal();
+            this.determineTotal();
             this.$bvModal.hide("form_Update_Detail");
         },
 
@@ -2443,7 +2445,7 @@ export default {
             }, 1000);
         },
         //----------------------------------Create POS ------------------------------\\
-        CreatePOS() {
+        createPOS() {
             this.loading = true;
             NProgress.start();
             NProgress.set(0.1);
@@ -2457,13 +2459,15 @@ export default {
                     shipping: this.sale.shipping,
                     details: this.details,
                     GrandTotal: this.GrandTotal,
-                    payment: this.payment
+                    payment: this.payment,
+                    productsHaveDiscount: this.productsHaveDiscount,
+                    productsDiscounts: this.productsDiscounts
                 })
                 .then(response => {
                     if (response.data.success === true) {
                         // Complete the animation of theprogress bar.
                         NProgress.done();
-                        this.Reset_Pos();
+                        this.resetPos();
                         this.makeToast(
                             "success",
                             this.$t("sendtocheckin"),
@@ -2502,32 +2506,32 @@ export default {
 
         //---------------------------------Get Product Details ------------------------\\
 
-        Get_Product_Details(product, product_id) {
+        getProductDetails(product, product_id) {
             axios.get("products_details?id=" + product_id + "&warehouse_id=" + this.sale.warehouse_id).then(response => {
                 this.product.discount = 0;
                 this.product.DiscountNet = 0;
                 this.product.discount_Method = "2";
-                this.product.product_id = response.data.id;
-                this.product.name = response.data.name;
-                this.product.Net_price = response.data.Net_price;
-                this.product.Total_price = response.data.Total_price;
-                this.product.Unit_price = response.data.Unit_price;
-                this.product.taxe = response.data.tax_price;
-                this.product.tax_method = response.data.tax_method;
-                this.product.tax_percent = response.data.tax_percent;
-                this.product.unitSale = response.data.unitSale;
+                this.product.product_id = response.data.product_details.id;
+                this.product.name = response.data.product_details.name;
+                this.product.Net_price = response.data.product_details.Net_price;
+                this.product.Total_price = response.data.product_details.Total_price;
+                this.product.Unit_price = response.data.product_details.Unit_price;
+                this.product.taxe = response.data.product_details.tax_price;
+                this.product.tax_method = response.data.product_details.tax_method;
+                this.product.tax_percent = response.data.product_details.tax_percent;
+                this.product.unitSale = response.data.product_details.unitSale;
                 this.product.product_variant_id = product.product_variant_id;
                 this.product.code = product.code;
                 this.product.imageList = product.imageList;
-                this.add_product(product.code);
-                this.CaclulTotal();
+                this.addProduct(product.code, response.data.product_has_discount, response.data.product_discount);
+                this.determineTotal();
                 // Complete the animation of theprogress bar.
                 NProgress.done();
             });
         },
 
         //----------- Calcul Total
-        CaclulTotal() {
+        determineTotal() {
             this.total = 0;
             for (var i = 0; i < this.details.length; i++) {
                 var tax = this.details[i].taxe * this.details[i].quantity;
@@ -2568,7 +2572,7 @@ export default {
                 }
             }
             this.$forceUpdate();
-            this.CaclulTotal();
+            this.determineTotal();
         },
 
         //----------------------------------- Increment QTY ------------------------------\\
@@ -2589,7 +2593,7 @@ export default {
                     }
                 }
             }
-            this.CaclulTotal();
+            this.determineTotal();
             this.$forceUpdate();
             this.$refs.SearchProducts.focus();
         },
@@ -2612,7 +2616,7 @@ export default {
                     }
                 }
             }
-            this.CaclulTotal();
+            this.determineTotal();
             this.$forceUpdate();
         },
 
@@ -2622,43 +2626,42 @@ export default {
             if (isNaN(this.sale.tax_rate)) {
                 this.sale.tax_rate = 0;
             } else {
-                this.CaclulTotal();
+                this.determineTotal();
             }
         },
 
         //---------- keyup Discount
 
-        keyup_Discount() {
-            if (isNaN(this.sale.discount)) {
+        keyup_discount() {
+            if (isNaN(this.sale.discount))
                 this.sale.discount = 0;
-            } else {
-                this.CaclulTotal();
-            }
+            else
+                this.determineTotal();
         },
-        keyup_Price_Product(detail, id) {
+        keyup_price_product(detail, id) {
             for (var i = 0; i < this.details.length; i++) {
                 if (this.details[i].detail_id == id)
                     this.details[i].Net_price = detail.Net_price;
             }
-            this.CaclulTotal();
+            this.determineTotal();
             this.$forceUpdate();
         },
 
         //---------- keyup Shipping
 
-        keyup_Shipping() {
+        keyup_shipping() {
             if (isNaN(this.sale.shipping)) {
                 this.sale.shipping = 0;
             } else {
-                this.CaclulTotal();
+                this.determineTotal();
             }
         },
-        keyup_Cash() {
+        keyup_cash() {
             if (isNaN(this.payment.cash)) {
                 this.payment.cash = 0;
             }
         },
-        keyup_Change() {
+        keyup_change() {
             this.payment.change = this.formatNumber(
                 this.payment.cash - this.payment.amount,
                 2
@@ -2672,20 +2675,24 @@ export default {
         },
 
         //-----------------------------------Delete Detail Product ------------------------------\\
-        delete_Product_Detail(id) {
+        delete_product_detail(id) {
             for (var i = 0; i < this.details.length; i++) {
                 if (id === this.details[i].detail_id) {
                     this.details.splice(i, 1);
-                    this.CaclulTotal();
+                    this.productsHaveDiscount.splice(i, 1);
+                    this.productsDiscounts.splice(i, 1);
+                    this.determineTotal();
                 }
             }
             this.$refs.SearchProducts.focus();
         },
 
         //----------Reset Pos
-        Reset_Pos() {
+        resetPos() {
             this.details = [];
             this.product = {};
+            this.productsHaveDiscount = [];
+            this.productsDiscounts = [];
             this.sale.client_id = "";
             this.sale.tax_rate = 0;
             this.sale.TaxNet = 0;
@@ -2715,7 +2722,7 @@ export default {
             } else {
                 this.product.quantity = 1;
             }
-            this.Get_Product_Details(product, id);
+            this.getProductDetails(product, id);
             NProgress.done();
         },
 
@@ -2741,7 +2748,7 @@ export default {
         },
 
         //--- Get All Brands
-        GetAllBrands() {
+        getAllBrands() {
             this.brand_id = "";
             this.getProducts(1);
             this.$refs.sidebar_brand.hide();
@@ -2753,7 +2760,7 @@ export default {
             return result.code + " " + "(" + result.name + ")";
         },
 
-        SearchProduct(result) {
+        searchProduct(result) {
             this.product = {};
             if (
                 this.details.length > 0 &&
@@ -2773,7 +2780,7 @@ export default {
                     this.product.quantity = 1;
                 }
                 this.product.product_variant_id = result.product_variant_id;
-                this.Get_Product_Details(result, result.id);
+                this.getProductDetails(result, result.id);
             }
             this.$refs.autocomplete.value = "";
         },
@@ -2814,9 +2821,9 @@ export default {
         },
 
         //---------------------------------------Get Elements ------------------------------\\
-        GetElementsPos() {
+        getElementsPos() {
             axios
-                .get("pos/GetELementPos")
+                .get("pos/GetElementPos")
                 .then(response => {
                     // console.log(this.currentUser);
                     this.clients = response.data.clients;
@@ -2837,7 +2844,7 @@ export default {
                 });
         },
         //-----------Authorize Discount--------------//
-        submit_Auth_Discount() {
+        submitAuthDiscount() {
             NProgress.start();
             NProgress.set(0.1);
             /*
@@ -2879,14 +2886,14 @@ export default {
     //-------------------- Created Function -----\\
 
     created() {
-        this.GetElementsPos();
+        this.getElementsPos();
         Fire.$on("pay_now", () => {
             setTimeout(() => {
                 this.payment.amount = this.formatNumber(this.GrandTotal, 2);
                 this.payment.cash = this.formatNumber(this.GrandTotal, 2);
                 this.payment.Reglement = "Cash";
                 // this.$bvModal.show("Add_Payment");
-                this.CreatePOS();
+                this.createPOS();
                 this.loading = false;
                 // Complete the animation of theprogress bar.
                 NProgress.done();

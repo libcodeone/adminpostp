@@ -87,7 +87,7 @@
                           <i title="de" class="flag-icon flag-icon-squared flag-icon-de"></i>
                           <span class="title-lang">German</span>
                         </a>
-                        
+
                         <a @click="SetLocal('it')">
                           <i title="it" class="flag-icon flag-icon-squared flag-icon-it"></i>
                           <span class="title-lang">Italien</span>
@@ -875,17 +875,17 @@
                   </div>
                 </div>
                 <div class="row ">
-                  <div class="col-8  border border-primary"> 
+                  <div class="col-8  border border-primary">
                     <div class="row">
-                      <div class="col-12 border border-primary padding-top padding-bottom"> 
+                      <div class="col-12 border border-primary padding-top padding-bottom">
                         {{invoice_pos.sale.client_name}}
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-4 border border-primary"> 
+                      <div class="col-4 border border-primary">
                         REG. No.:
                       </div>
-                      <div class="col-8 border border-primary"> 
+                      <div class="col-8 border border-primary">
                         GIRO CLIENTE:
                       </div>
                     </div>
@@ -999,7 +999,7 @@
                         </b-form-group>
                       </validation-provider>
                     </b-col>
-                    
+
 
                     <!-- Payment choice -->
                     <b-col lg="12" md="12" sm="12">
@@ -1064,7 +1064,7 @@
                         </b-form-group>
                       </validation-provider>
                     </b-col>
-                    
+
                      <!-- Amount_Change  -->
                      <b-col lg="12" md="12" sm="12">
                       <validation-provider
@@ -1086,7 +1086,7 @@
                         </b-form-group>
                       </validation-provider>
                     </b-col>
-                    
+
 
                     <!-- Note -->
                     <b-col lg="12" md="12" sm="12" class="mt-2">
@@ -1099,7 +1099,7 @@
                         ></b-form-textarea>
                       </b-form-group>
                     </b-col>
-                    
+
                     <b-col lg="12" md="12" sm="12" class="mt-2">
                       <b-form-group :label="$t('BillingMethod')" v-slot="{ ariaDescribedby }">
                       <b-form-radio v-model="BillingMethod" :aria-describedby="ariaDescribedby" name="factura" value="0">Factura</b-form-radio>
@@ -1390,7 +1390,7 @@ export default {
         // "hn",
         // "vn"
       ],
-      
+
       stripe: {},
       stripe_key:'',
       cardElement: {},
@@ -1501,7 +1501,7 @@ export default {
 
   computed: {
     ...mapGetters(["currentUser"]),
-    
+
     brand_totalRows() {
       return this.brands.length;
     },
@@ -1545,7 +1545,7 @@ export default {
         }, 500);
       }
     },
-    
+
 
     SetLocal(locale) {
       this.$i18n.locale = locale;
@@ -1954,7 +1954,7 @@ export default {
         });
     },
 
-    
+
     //----------------------------------Process Payment ------------------------------\\
 
    async processPayment() {
@@ -1969,7 +1969,7 @@ export default {
                NProgress.done();
               this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
           } else {
-   
+
          axios
         .post("pos/CreatePOS", {
           client_id: this.sale.client_id,
@@ -2005,7 +2005,7 @@ export default {
 
     //----------------------------------Create POS ------------------------------\\
     CreatePOS() {
-      
+
       NProgress.start();
       NProgress.set(0.1);
       if(this.payment.Reglement  == 'credit card'){
@@ -2190,7 +2190,7 @@ export default {
       }
     },
     keyup_Change(){
-      this.payment.change = this.formatNumber(this.payment.cash - this.payment.amount , 2);  
+      this.payment.change = this.formatNumber(this.payment.cash - this.payment.amount , 2);
       this.$forceUpdate();
       // if (isNaN(this.payment.cash)) {
       //   this.payment.change = 0;
@@ -2226,7 +2226,7 @@ export default {
       this.getProducts(1);
     },
 
-  
+
     //---------------------------------- Check if Product Exist in Order List ---------------------\\
 
     Check_Product_Exist(product, id) {
@@ -2307,23 +2307,27 @@ export default {
     //---------------------------------------Get Elements ------------------------------\\
     GetElementsPos() {
       axios
-        .get("pos/GetELementPos")
-        .then(response => {
-          this.clients = response.data.clients;
-          this.warehouses = response.data.warehouses;
-          this.categories = response.data.categories;
-          this.brands = response.data.brands;
-          this.sale.warehouse_id = response.data.defaultWarehouse;
-           this.sale.client_id = response.data.defaultClient;
-          this.getProducts();
-          this.paginate_Brands(this.brand_perPage, 0);
-          this.paginate_Category(this.category_perPage, 0);
-          this.stripe_key = response.data.stripe_key;
-          this.isLoading = false;
-        })
-        .catch(response => {
-          this.isLoading = false;
-        });
+        .get("pos/GetElementPos")
+        .then(response =>
+            {
+                this.clients = response.data.clients;
+                this.warehouses = response.data.warehouses;
+                this.categories = response.data.categories;
+                this.brands = response.data.brands;
+                this.sale.warehouse_id = response.data.defaultWarehouse;
+                this.sale.client_id = response.data.defaultClient;
+                this.getProducts();
+                this.paginate_Brands(this.brand_perPage, 0);
+                this.paginate_Category(this.category_perPage, 0);
+                this.stripe_key = response.data.stripe_key;
+                this.isLoading = false;
+            }
+            )
+            .catch(response =>
+            {
+                this.isLoading = false;
+            }
+        );
     }
   },
 
