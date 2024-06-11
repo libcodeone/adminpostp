@@ -111,36 +111,51 @@ class PosController extends BaseController
 
             $order->save();
 
-            $token = json_decode(json_encode(DB::table("pos_auth_tokens")->where("token", '=', $request->posToken)->first()), true);
+            $token = (array)json_decode(json_encode(DB::table("pos_auth_tokens")->where("token", '=', $request->posToken)->first()), true);
 
             if (!is_null($token))
             {
-                if ($token["status"] && $token["user_id"] === $request->user('api')->id) {
+                if (Carbon::parse($token["created_at"])->diffInSeconds(Carbon::parse(date("Y-m-d H:i:s.mmm"))) >= 3600)
+                {
                     DB::table("pos_auth_tokens")->where("token", '=', $request->posToken)->update(
                         [
-                            "status" => false,
-                            "sale_id" => $order->id
+                            "status" => false
                         ]
                     );
+
+                    $message = 1;
+
+                    return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está invalidado!"];
                 }
-                else {
-                    if (!$token["status"])
-                    {
-                        $message = 1;
-
-                        return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está invalidado!"];
+                else
+                {
+                    if ($token["status"] && $token["user_id"] === $request->user('api')->id) {
+                        DB::table("pos_auth_tokens")->where("token", '=', $request->posToken)->update(
+                            [
+                                "status" => false,
+                                "sale_id" => $order->id
+                            ]
+                        );
                     }
-                    else if ($token["user_id"] !== $request->user('api')->id)
-                    {
-                        $message = 2;
+                    else {
+                        if (!$token["status"])
+                        {
+                            $message = 1;
 
-                        return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está asignado a otro usuario!"];
-                    }
-                    else
-                    {
-                        $message = 3;
+                            return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está invalidado!"];
+                        }
+                        else if ($token["user_id"] !== $request->user('api')->id)
+                        {
+                            $message = 2;
 
-                        return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya ha sido usado y está invalidado!"];
+                            return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está asignado a otro usuario!"];
+                        }
+                        else
+                        {
+                            $message = 3;
+
+                            return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya ha sido usado y está invalidado!"];
+                        }
                     }
                 }
             }
@@ -749,20 +764,34 @@ class PosController extends BaseController
         $authorizedCode = $request->authorizedCode;
         $userId = $request->user('api')->id;
 
-        $posAuthToken = (array)json_decode(json_encode(DB::table("pos_auth_tokens")->where("token", '=', $authorizedCode)->first()), true);
+        $posAuthToken = (array)json_decode(json_encode(DB::table("pos_auth_tokens")->where("token", '=', $authorizedCode)->where("status", '=', true)->first()), true);
         $posAuthTokenUserId = null;
 
         if (isset($posAuthToken))
         {
-            if ($posAuthToken["status"] && is_null($posAuthToken["user_id"])) {
-                DB::table("pos_auth_tokens")->where("token", '=', $authorizedCode)->update(
-                    [
-                        "user_id" => $userId
-                    ]
-                );
-            }
+            if (count($posAuthToken) > 0)
+            {
+                if (Carbon::parse($posAuthToken["created_at"])->diffInSeconds(Carbon::parse(date("Y-m-d H:i:s.mmm"))) >= 3600)
+                {
+                    DB::table("pos_auth_tokens")->where("token", '=', $authorizedCode)->update(
+                        [
+                            "status" => false
+                        ]
+                    );
+                }
+                else
+                {
+                    if ($posAuthToken["status"] && is_null($posAuthToken["user_id"])) {
+                        DB::table("pos_auth_tokens")->where("token", '=', $authorizedCode)->update(
+                            [
+                                "user_id" => $userId
+                            ]
+                        );
+                    }
 
-            $posAuthTokenUserId = json_decode(json_encode(DB::table("pos_auth_tokens")->where("token", '=', $authorizedCode)->pluck("user_id")->first()), true);
+                    $posAuthTokenUserId = json_decode(json_encode(DB::table("pos_auth_tokens")->where("token", '=', $authorizedCode)->where("status", '=', true)->pluck("user_id")->first()), true);
+                }
+            }
         }
 
         $authorized = (isset($posAuthToken) && isset($posAuthTokenUserId)) ? (($posAuthTokenUserId === $userId) ? 1 : 0) : 0;

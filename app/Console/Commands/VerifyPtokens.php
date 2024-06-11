@@ -39,10 +39,10 @@ class VerifyPtokens extends Command
      */
     public function handle()
     {
-        $expiredTokens = DB::table('pos_auth_tokens')->where("status", '=', true)->where("user_id", '=', null)->get();
+        $expiredTokens = DB::table('pos_auth_tokens')->where("status", '=', true)->get();
 
         foreach ($expiredTokens as $token) {
-            if (Carbon::parse($token->created_at)->diffInSeconds(Carbon::parse(date("Y-m-d H:i:s.mmm"))) >= 3600 || Carbon::parse(date("Y-m-d H:i:s.mmm"))->greaterThanOrEqualTo(Carbon::parse($token->expires_at)))
+            if (Carbon::parse($token->created_at)->diffInSeconds(Carbon::parse(date("Y-m-d H:i:s.mmm"))) >= 3600)
             {
                 DB::table("pos_auth_tokens")->where("id", '=', $token->id)->update(
                     [
