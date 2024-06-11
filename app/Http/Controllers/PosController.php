@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Sale;
 use App\Models\Client;
+use Illuminate\Support\Str;
+use App\Models\PosAuthToken;
 use Illuminate\Http\Request;
 use App\Models\ProductWarehouse;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +35,8 @@ class PosController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'Sales_pos', Sale::class);
 
-        $productsHaveDiscount = $request->productsHaveDiscount;
+        $message = 0;
+
         $productsDiscounts = $request->productsDiscounts;
 
         request()->validate([
@@ -42,7 +45,7 @@ class PosController extends BaseController
             'payment.amount' => 'required',
         ]);
 
-        $item = DB::transaction(function () use ($request, $productsHaveDiscount, $productsDiscounts) {
+        $item = DB::transaction(function () use ($message, $request, $productsDiscounts) {
             $role = DB::table('role_user')
                 ->join('roles', 'role_user.role_id', '=', 'roles.id')
                 ->where('role_user.user_id', Auth::id())
@@ -107,6 +110,40 @@ class PosController extends BaseController
             $order->user_id = Auth::user()->id;
 
             $order->save();
+
+            $token = json_decode(json_encode(DB::table("pos_auth_tokens")->where("token", '=', $request->posToken)->first()), true);
+
+            if (!is_null($token))
+            {
+                if ($token["status"] && $token["user_id"] === $request->user('api')->id) {
+                    DB::table("pos_auth_tokens")->where("token", '=', $request->posToken)->update(
+                        [
+                            "status" => false,
+                            "sale_id" => $order->id
+                        ]
+                    );
+                }
+                else {
+                    if (!$token["status"])
+                    {
+                        $message = 1;
+
+                        return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está invalidado!"];
+                    }
+                    else if ($token["user_id"] !== $request->user('api')->id)
+                    {
+                        $message = 2;
+
+                        return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está asignado a otro usuario!"];
+                    }
+                    else
+                    {
+                        $message = 3;
+
+                        return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya ha sido usado y está invalidado!"];
+                    }
+                }
+            }
 
             $detailsData = $request['details'];
 
@@ -323,10 +360,10 @@ class PosController extends BaseController
             //     return response()->json(['message' => $e->getMessage()], 500);
             // }
 
-            return $order->id;
+            return ["order_id" => $order->id, "message" => $message, "success" => true, "slogan" => ""];
         }, 10);
 
-        return response()->json(['success' => true, 'id' => $item]);
+        return response()->json(['success' => $item["success"], 'id' => $item["order_id"], 'message' => $item["message"], 'slogan' => $item["slogan"]]);
     }
 
     //--- Get Offers Per Categories or Warehouses or Both ---\\
@@ -464,6 +501,73 @@ class PosController extends BaseController
         $discountAmount = ((!is_array($productDiscount)) ? $finalProductDiscount : ((!is_null($productDiscount[0]["porcentajeDescuentoProducto"])) ? ((float)$finalProductDiscount / 100) * $productPrice : (float)$finalProductDiscount));
 
         return ["discount" => $discountAmount, "offer" => (!is_array($productDiscount)) ? [] : ((count($productDiscount) > 0) ? $productDiscount : [])];
+    }
+
+    //------- Create Generation Token -------\\
+
+    public function generateNewPosAuthToken(Request $request)
+    {
+        $this->authorizeForUser($request->user('api'), 'create', PosAuthToken::class);
+
+        openssl_random_pseudo_bytes(64);
+
+        $token = Str::random(8);
+        $todayDateAndTime = date("Y-m-d H:i:s.mmm");
+        $existingAndValidTokens = json_decode(json_encode(DB::table("pos_auth_tokens")->where("expires_at", '>', $todayDateAndTime)->get()), true);
+
+        if (count($existingAndValidTokens) > 0)
+        {
+            foreach ($existingAndValidTokens as $key => $existingAndValidToken) {
+                if ($token === $existingAndValidToken["token"]) {
+                    $token = null;
+                    break;
+                }
+                else {
+                    if (count($existingAndValidTokens) > 1) {
+                        if ($key === count($existingAndValidTokens) - 1) {
+                            DB::table("pos_auth_tokens")->insert(
+                                [
+                                    "token" => $token,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "expires_at" => date("Y-m-d H:i:s.mmm", strtotime(date("Y-m-d H:i:s.mmm") . " + 1 hour")),
+                                    "status" => true
+                                ]
+                            );
+                        }
+                        else
+                            continue;
+                    }
+                    else {
+                        DB::table("pos_auth_tokens")->insert(
+                            [
+                                "token" => $token,
+                                "created_at" => date("Y-m-d H:i:s.mmm"),
+                                "expires_at" => date("Y-m-d H:i:s.mmm", strtotime(date("Y-m-d H:i:s.mmm") . " + 1 hour")),
+                                "status" => true
+                            ]
+                        );
+                    }
+                }
+            }
+        }
+        else
+        {
+            DB::table("pos_auth_tokens")->insert(
+                [
+                    "token" => $token,
+                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                    "expires_at" => date("Y-m-d H:i:s.mmm", strtotime(date("Y-m-d H:i:s.mmm") . " + 1 hour")),
+                    "status" => true
+                ]
+            );
+        }
+
+        return response()->json(
+            [
+                'token' => $token
+            ],
+            (!is_null($token) && !empty($token)) ? 200 : 204
+        );
     }
 
     //------------ Get Products--------------\\
@@ -636,5 +740,37 @@ class PosController extends BaseController
         $authorized = $authorized >= 1 ? 1 : $authorized;
 
         return response()->json(['authorized' => $authorized]);
+    }
+
+    public function authPriceChange(Request $request)
+    {
+        $this->authorizeForUser($request->user('api'), 'view', PosAuthToken::class);
+
+        $authorizedCode = $request->authorizedCode;
+        $userId = $request->user('api')->id;
+
+        $posAuthToken = (array)json_decode(json_encode(DB::table("pos_auth_tokens")->where("token", '=', $authorizedCode)->first()), true);
+        $posAuthTokenUserId = null;
+
+        if (isset($posAuthToken))
+        {
+            if ($posAuthToken["status"] && is_null($posAuthToken["user_id"])) {
+                DB::table("pos_auth_tokens")->where("token", '=', $authorizedCode)->update(
+                    [
+                        "user_id" => $userId
+                    ]
+                );
+            }
+
+            $posAuthTokenUserId = json_decode(json_encode(DB::table("pos_auth_tokens")->where("token", '=', $authorizedCode)->pluck("user_id")->first()), true);
+        }
+
+        $authorized = (isset($posAuthToken) && isset($posAuthTokenUserId)) ? (($posAuthTokenUserId === $userId) ? 1 : 0) : 0;
+
+        return response()->json(
+            [
+                "authorized" => $authorized
+            ]
+        );
     }
 }

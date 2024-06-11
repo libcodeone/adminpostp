@@ -32,5 +32,4 @@ class PaymentSale extends Model implements Auditable
     {
         return $this->belongsTo('App\Models\Sale');
     }
-
 }

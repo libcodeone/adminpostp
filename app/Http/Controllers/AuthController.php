@@ -52,7 +52,7 @@ class AuthController extends BaseController
     public function logout()
     {
         if (Auth::check()) {
-            $user = Auth::user()->token();
+            $user = Auth::user()->token;
             $user->revoke();
             $this->destroyCookie('Stocky_token');
             return response()->json('success');

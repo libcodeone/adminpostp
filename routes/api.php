@@ -87,7 +87,6 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::post('providers/import/csv', 'ProvidersController@import_providers');
     Route::post('providers/delete/by_selection', 'ProvidersController@delete_by_selection');
 
-
     //---------------------- POS (point of sales) ----------------------\\
     //------------------------------------------------------------------\\
 
@@ -97,6 +96,8 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::get('getArticlesByCategory/{id}', 'PosController@getArticlesByCategory');
     Route::get('GetProductsByParametre', 'PosController@GetProductsByParametre');
     Route::get('pos/GetElementPos', 'PosController@GetElementPos');
+    Route::get('pos/generateNewPosAuthToken', 'PosController@generateNewPosAuthToken');
+    Route::post('pos/authPriceChange', 'PosController@authPriceChange');
 
     //------------------------------- PRODUCTS --------------------------\\
     //------------------------------------------------------------------\\

@@ -381,7 +381,7 @@
                                                                             detail.name
                                                                         }}</span
                                                                     >
-                                                                    <!-- <i @click="Modal_Update_Detail(detail)" class="i-Edit"></i> -->
+                                                                    <i @click="Modal_Update_Detail(detail)" class="i-Edit"></i>
                                                                 </td>
                                                                 <!-- <td>{{formatNumber(detail.Total_price, 2)}} {{currentUser.currency}}</td> -->
                                                                 <td>
@@ -682,7 +682,7 @@
 
                         <!--Modal authorization Code-->
                         <b-modal hide-footer size="md" id="form_Auth_Discount">
-                            <b-form @submit.prevent="submitAuthDiscount">
+                            <b-form @submit.prevent="submitAuthPriceChange">
                                 <b-row>
                                     <!-- Auth Code -->
                                     <!-- New AuthorizationCode -->
@@ -705,7 +705,7 @@
                                                     "
                                                     aria-describedby="NewAuthorizedCodeLabel-feedback"
                                                     v-model="
-                                                        authorizedCodeIngressed
+                                                        authorizedCodeEntered
                                                     "
                                                     :placeholder="
                                                         $t(
@@ -749,7 +749,7 @@
                                 id="form_Update_Detail"
                                 :title="detail.name"
                             >
-                                <b-form @submit.prevent="submit_Update_Detail">
+                                <b-form @submit.prevent="changeProductDetail">
                                     <b-row>
                                         <!-- Unit Price -->
                                         <b-col lg="12" md="12" sm="12">
@@ -789,7 +789,7 @@
                                         </b-col>
 
                                         <!-- Tax Method -->
-                                        <b-col lg="12" md="12" sm="12">
+                                        <!-- <b-col lg="12" md="12" sm="12">
                                             <validation-provider
                                                 name="Tax Method"
                                                 :rules="{ required: true }"
@@ -839,10 +839,10 @@
                                                     }}</b-form-invalid-feedback>
                                                 </b-form-group>
                                             </validation-provider>
-                                        </b-col>
+                                        </b-col> -->
 
                                         <!-- Tax -->
-                                        <b-col lg="12" md="12" sm="12">
+                                        <!-- <b-col lg="12" md="12" sm="12">
                                             <validation-provider
                                                 name="Tax"
                                                 :rules="{
@@ -877,10 +877,10 @@
                                                     >
                                                 </b-form-group>
                                             </validation-provider>
-                                        </b-col>
+                                        </b-col> -->
 
                                         <!-- Discount Method -->
-                                        <b-col lg="12" md="12" sm="12">
+                                        <!-- <b-col lg="12" md="12" sm="12">
                                             <validation-provider
                                                 name="Discount Method"
                                                 :rules="{ required: true }"
@@ -931,10 +931,10 @@
                                                     }}</b-form-invalid-feedback>
                                                 </b-form-group>
                                             </validation-provider>
-                                        </b-col>
+                                        </b-col> -->
 
                                         <!-- Discount Rate -->
-                                        <b-col lg="12" md="12" sm="12">
+                                        <!-- <b-col lg="12" md="12" sm="12">
                                             <validation-provider
                                                 name="Discount Rate"
                                                 :rules="{
@@ -967,7 +967,7 @@
                                                     >
                                                 </b-form-group>
                                             </validation-provider>
-                                        </b-col>
+                                        </b-col> -->
 
                                         <b-col md="12">
                                             <b-form-group>
@@ -1787,7 +1787,8 @@ export default {
                 change: 0
             },
             authorizedDiscount: false,
-            authorizedCodeIngressed: "",
+            authorizedPriceChange: false,
+            authorizedCodeEntered: "",
             loading: false,
             isLoading: true,
             focusSearchProduct: true,
@@ -1952,12 +1953,12 @@ export default {
                     this.categories = response.data.categories;
                     this.paginate_Category(this.category_perPage, 0);
 
-                    // Complete the animation of theprogress bar.
+                    // Complete the animation of the progress bar.
                     NProgress.done();
                     this.isLoading = false;
                 })
                 .catch(response => {
-                    // Complete the animation of theprogress bar.
+                    // Complete the animation of the progress bar.
                     NProgress.done();
                     setTimeout(() => {
                         this.isLoading = false;
@@ -1987,12 +1988,12 @@ export default {
                     this.brands = response.data.brands;
                     this.paginate_Brands(this.brand_perPage, 0);
 
-                    // Complete the animation of theprogress bar.
+                    // Complete the animation of the progress bar.
                     NProgress.done();
                     this.isLoading = false;
                 })
                 .catch(response => {
-                    // Complete the animation of theprogress bar.
+                    // Complete the animation of the progress bar.
                     NProgress.done();
                     setTimeout(() => {
                         this.isLoading = false;
@@ -2143,24 +2144,23 @@ export default {
             });
         },
         //---Submit Validation Update Detail
-        submit_Update_Detail() {
-            if (
-                this.currentUser.authorizedCode != null &&
-                this.currentUser.authorizedCode != "null"
-            ) {
+        changeProductDetail() {
+            /*
+            if (this.currentUser.authorizedCode != null && this.currentUser.authorizedCode != "null" && this.currentUser.authorizedCode != "")
                 this.performUpdateDetail();
-            } else {
-                this.authorizedCodeIngressed = "";
+            else {
+                this.authorizedCodeEntered = "";
                 this.$bvModal.show("form_Auth_Discount");
             }
+            */
+            this.$bvModal.show("form_Auth_Discount");
         },
         performUpdateDetail() {
             this.$refs.Update_Detail.validate().then(success => {
-                if (!success) {
+                if (!success)
                     return;
-                } else {
+                else
                     this.Update_Detail();
-                }
             });
         },
 
@@ -2289,7 +2289,7 @@ export default {
                     this.$t("AlreadyAdd"),
                     this.$t("Warning")
                 );
-                // Complete the animation of theprogress bar.
+                // Complete the animation of the progress bar.
                 NProgress.done();
             } else {
                 if (this.details.length < 13) {
@@ -2339,15 +2339,14 @@ export default {
         Update_Detail() {
             for (var i = 0; i < this.details.length; i++) {
                 if (this.details[i].detail_id === this.detail.detail_id) {
-                    this.details[i].tax_percent = this.detail.tax_percent;
                     this.details[i].Unit_price = this.detail.Unit_price;
-                    this.details[i].quantity = this.detail.quantity;
-                    this.details[i].tax_method = this.detail.tax_method;
-                    this.details[
-                        i
-                    ].discount_Method = this.detail.discount_Method;
-                    this.details[i].discount = this.detail.discount;
+                    // this.details[i].tax_percent = this.detail.tax_percent;
+                    // this.details[i].quantity = this.detail.quantity;
+                    // this.details[i].tax_method = this.detail.tax_method;
+                    // this.details[i].discount_Method = this.detail.discount_Method;
+                    // this.details[i].discount = this.detail.discount;
 
+                    /*
                     if (this.details[i].discount_Method == "2") {
                         //Fixed
                         this.details[i].DiscountNet = this.detail.discount;
@@ -2359,18 +2358,16 @@ export default {
                                 100
                         );
                     }
+                    */
 
                     if (this.details[i].tax_method == "1") {
                         //Exclusive
                         this.details[i].Net_price = parseFloat(
-                            this.detail.Unit_price - this.details[i].DiscountNet
+                            this.detail.Unit_price /* - this.details[i].DiscountNet */
                         );
 
                         this.details[i].taxe = parseFloat(
-                            (this.detail.tax_percent *
-                                (this.detail.Unit_price -
-                                    this.details[i].DiscountNet)) /
-                                100
+                            (this.detail.tax_percent * (this.detail.Unit_price /* - this.details[i].DiscountNet */)) / 100
                         );
 
                         this.details[i].Total_price = parseFloat(
@@ -2379,15 +2376,11 @@ export default {
                     } else {
                         //Inclusive
                         this.details[i].Net_price = parseFloat(
-                            (this.detail.Unit_price -
-                                this.details[i].DiscountNet) /
-                                (this.detail.tax_percent / 100 + 1)
+                            (this.detail.Unit_price /* - this.details[i].DiscountNet */) / (this.detail.tax_percent / 100 + 1)
                         );
 
                         this.details[i].taxe = parseFloat(
-                            this.detail.Unit_price -
-                                this.details[i].Net_price -
-                                this.details[i].DiscountNet
+                            this.detail.Unit_price - this.details[i].Net_price /* - this.details[i].DiscountNet */
                         );
 
                         this.details[i].Total_price = parseFloat(
@@ -2451,6 +2444,7 @@ export default {
             NProgress.set(0.1);
             axios
                 .post("pos/CreatePOS", {
+                    user_id: this.currentUser.id,
                     client_id: this.sale.client_id,
                     warehouse_id: this.sale.warehouse_id,
                     tax_rate: this.sale.tax_rate,
@@ -2461,11 +2455,13 @@ export default {
                     GrandTotal: this.GrandTotal,
                     payment: this.payment,
                     productsHaveDiscount: this.productsHaveDiscount,
-                    productsDiscounts: this.productsDiscounts
+                    productsDiscounts: this.productsDiscounts,
+                    posToken: this.authorizedCodeEntered
                 })
                 .then(response => {
-                    if (response.data.success === true) {
-                        // Complete the animation of theprogress bar.
+                    if (response.data.success && response.data.message <= 0) {
+                        // Complete the animation of the progress bar.
+                        this.authorizedCodeEntered = "";
                         NProgress.done();
                         this.resetPos();
                         this.makeToast(
@@ -2474,10 +2470,18 @@ export default {
                             this.$t("Success")
                         );
                         this.loading = false;
+                    } else {
+                        NProgress.done();
+                        this.makeToast(
+                            "danger",
+                            response.data.slogan,
+                            this.$t("Failed")
+                        );
+                        this.loading = false;
                     }
                 })
-                .catch(error => {
-                    // Complete the animation of theprogress bar.
+                .catch(() => {
+                    // Complete the animation of the progress bar.
                     NProgress.done();
                     this.makeToast(
                         "danger",
@@ -2537,7 +2541,7 @@ export default {
                     );
                 }
 
-                // Complete the animation of theprogress bar.
+                // Complete the animation of the progress bar.
                 NProgress.done();
             });
         },
@@ -2823,11 +2827,11 @@ export default {
                     this.product_totalRows = response.data.totalRows;
                     this.Product_paginatePerPage();
 
-                    // Complete the animation of theprogress bar.
+                    // Complete the animation of the progress bar.
                     NProgress.done();
                 })
                 .catch(response => {
-                    // Complete the animation of theprogress bar.
+                    // Complete the animation of the progress bar.
                     NProgress.done();
                 });
         },
@@ -2851,47 +2855,89 @@ export default {
                     this.isLoading = false;
                     this.$refs.SearchProducts.focus();
                 })
-                .catch(response => {
+                .catch(() => {
                     this.isLoading = false;
                 });
         },
+        //------------- Authorize Price Change -------------\\
+
+        submitAuthPriceChange() {
+            NProgress.start();
+            NProgress.set(0.1);
+            /*
+                1. Call new modal authorize
+                2. if auth is true perform Update Detail else return;
+            */
+
+            axios
+                .post("pos/authPriceChange", {
+                    authorizedCode: this.authorizedCodeEntered,
+                    user_id: this.currentUser.id
+                })
+                .then(response => {
+                    this.authorizedPriceChange = response.data.authorized;
+                    console.log(this.authorizedPriceChange);
+                    if (this.authorizedPriceChange > 0) {
+                        this.performUpdateDetail();
+                        this.$bvModal.hide("form_Auth_Discount");
+                    } else {
+                        alert(
+                            "¡No es posible conceder la autorización para el cambio de precio!"
+                        );
+                    }
+
+                    // Complete the animation of the progress bar.
+                    NProgress.done();
+                    this.isLoading = false;
+                })
+                .catch(() => {
+                    // Complete the animation of the progress bar.
+                    NProgress.done();
+                    setTimeout(() => {
+                        this.isLoading = false;
+                    }, 500);
+                }
+            );
+        },
+
         //-----------Authorize Discount--------------//
         submitAuthDiscount() {
             NProgress.start();
             NProgress.set(0.1);
             /*
-        1. Call new modal authtorize
-        2. if auth is true perform Update Detail else return;
-        */
+                1. Call new modal authorize
+                2. if auth is true perform Update Detail else return;
+            */
 
             axios
                 .post("pos/authDiscount", {
-                    authorizedCode: this.authorizedCodeIngressed
+                    authorizedCode: this.authorizedCodeEntered
                 })
                 .then(response => {
                     this.authorizedDiscount = response.data.authorized;
                     console.log(this.authorizedDiscount);
                     if (this.authorizedDiscount > 0) {
                         this.performUpdateDetail();
-                        this.authorizedCodeIngressed = "";
+                        this.authorizedCodeEntered = "";
                         this.$bvModal.hide("form_Auth_Discount");
                     } else {
                         alert(
-                            "No es posible realizar la autorización de descuento"
+                            "No es posible conceder la autorización de descuento"
                         );
                     }
 
-                    // Complete the animation of theprogress bar.
+                    // Complete the animation of the progress bar.
                     NProgress.done();
                     this.isLoading = false;
                 })
                 .catch(response => {
-                    // Complete the animation of theprogress bar.
+                    // Complete the animation of the progress bar.
                     NProgress.done();
                     setTimeout(() => {
                         this.isLoading = false;
                     }, 500);
-                });
+                }
+            );
         }
     },
 
@@ -2907,7 +2953,7 @@ export default {
                 // this.$bvModal.show("Add_Payment");
                 this.createPOS();
                 this.loading = false;
-                // Complete the animation of theprogress bar.
+                // Complete the animation of the progress bar.
                 NProgress.done();
             }, 500);
         });
