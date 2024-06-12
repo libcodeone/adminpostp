@@ -713,7 +713,7 @@
                                                         )
                                                     "
                                                     label="AuthorizedCodeLabel"
-                                                    type="password"
+                                                    type="text"
                                                     autocomplete="off"
                                                 >
                                                 </b-form-input>

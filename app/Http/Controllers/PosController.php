@@ -113,48 +113,51 @@ class PosController extends BaseController
 
             $token = (array)json_decode(json_encode(DB::table("pos_auth_tokens")->where("token", '=', $request->posToken)->first()), true);
 
-            if (!is_null($token))
+            if (isset($token))
             {
-                if (Carbon::parse($token["created_at"])->diffInSeconds(Carbon::parse(date("Y-m-d H:i:s.mmm"))) >= 3600)
+                if (count($token) > 0)
                 {
-                    DB::table("pos_auth_tokens")->where("token", '=', $request->posToken)->update(
-                        [
-                            "status" => false
-                        ]
-                    );
-
-                    $message = 1;
-
-                    return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está invalidado!"];
-                }
-                else
-                {
-                    if ($token["status"] && $token["user_id"] === $request->user('api')->id) {
+                    if (Carbon::parse($token["created_at"])->diffInSeconds(Carbon::parse(date("Y-m-d H:i:s.mmm"))) >= 3600)
+                    {
                         DB::table("pos_auth_tokens")->where("token", '=', $request->posToken)->update(
                             [
-                                "status" => false,
-                                "sale_id" => $order->id
+                                "status" => false
                             ]
                         );
+
+                        $message = 1;
+
+                        return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está invalidado!"];
                     }
-                    else {
-                        if (!$token["status"])
-                        {
-                            $message = 1;
-
-                            return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está invalidado!"];
+                    else
+                    {
+                        if ($token["status"] && $token["user_id"] === $request->user('api')->id) {
+                            DB::table("pos_auth_tokens")->where("token", '=', $request->posToken)->update(
+                                [
+                                    "status" => false,
+                                    "sale_id" => $order->id
+                                ]
+                            );
                         }
-                        else if ($token["user_id"] !== $request->user('api')->id)
-                        {
-                            $message = 2;
+                        else {
+                            if (!$token["status"])
+                            {
+                                $message = 1;
 
-                            return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está asignado a otro usuario!"];
-                        }
-                        else
-                        {
-                            $message = 3;
+                                return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está invalidado!"];
+                            }
+                            else if ($token["user_id"] !== $request->user('api')->id)
+                            {
+                                $message = 2;
 
-                            return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya ha sido usado y está invalidado!"];
+                                return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya está asignado a otro usuario!"];
+                            }
+                            else
+                            {
+                                $message = 3;
+
+                                return ["order_id" => $order->id, "message" => $message, "success" => false, "slogan" => "¡El token ingresado ya ha sido usado y está invalidado!"];
+                            }
                         }
                     }
                 }
