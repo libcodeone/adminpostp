@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DiscountProduct;
-use App\Models\Warehouse;
-use App\Models\Category;
-use App\Models\Product;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Models\DiscountProduct;
+use Illuminate\Support\Facades\DB;
 
 class DiscountProductController extends Controller
 {
@@ -102,7 +99,9 @@ class DiscountProductController extends Controller
     {
         $this->authorizeForUser($request->user('api'), 'update', DiscountProduct::class);
 
-        $offer = json_decode(json_encode(DiscountProduct::with("Types")->find($id)), true);
+        $offer = (array)json_decode(json_encode(DB::table("offers_products")->where("id", '=', $id)->first()), true);
+
+        $offer["types"] = (array)json_decode(json_encode(DB::table("offer_type_product")->where("offer_id", '=', $id)->get()), true);
 
         $products = [];
 

@@ -181,14 +181,14 @@ class PosController extends BaseController
                     $price = $value['Net_price'];
                     $this->taxMethod = 2;
                 } else if ($client->final_consumer === 0) {
-                    $originalPriceWithDiscount = $originalPriceWithDiscount - round($originalPriceWithDiscount - ($originalPriceWithDiscount / 1.13), 2);
+                    $originalPriceWithDiscount = $originalPriceWithDiscount - round(($originalPriceWithDiscount / 1.13), 2);
 
-                    $price = $value['Net_price'] - round($value['Net_price'] - ($value['Net_price'] / 1.13), 2);
+                    $price = $value['Net_price'] - round(($value['Net_price'] / 1.13), 2);
                     $this->taxMethod = 1;
                 }
 
-                $this->originalProductPrice = $originalPriceWithDiscount;
-                $this->newProductPrice = $price;
+                $this->originalProductPrice = round($originalPriceWithDiscount, 2);
+                $this->newProductPrice = round($price, 2);
 
                 $productName = json_decode(json_encode(DB::table("products")->where('id', '=', $this->productId)->pluck("name")->first()), true);
 

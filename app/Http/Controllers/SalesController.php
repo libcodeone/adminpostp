@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Stripe;
 use Twilio\Rest\Client as Client_Twilio;
 use App\Exports\SalesExport;
 use App\Models\SaleReturn;
@@ -23,24 +24,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
-use Stripe;
 use App\Models\PaymentWithCreditCard;
-use DB;
-use PDF;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\PDF;
+use Throwable;
 
 class SalesController extends BaseController
 {
     //------------- GET ALL SALES -----------\\
 
-    public function index(request $request)
+    public function index(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'view', Sale::class);
         $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -166,7 +166,7 @@ class SalesController extends BaseController
             'client_id' => 'required',
             'warehouse_id' => 'required',
         ]);
-        \DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
             $helpers = new helpers();
             $order = new Sale;
             $client = Client::findOrFail($request->client_id);
@@ -217,7 +217,7 @@ class SalesController extends BaseController
             $order->refInvoice = $request->type_invoice == 'CF' ? $user['currentCF'] + 1 : $user['currentCCF'] + 1;
             $order->user_id = Auth::user()->id;
             if ($request['type_invoice'] == 'CF') {
-                Auth::user()->update([
+                DB::table("users")->where("id", '=', Auth::user()->id)->update([
                     'currentCF' =>  $order->refInvoice
                 ]);
             } else {
@@ -379,7 +379,7 @@ class SalesController extends BaseController
 
                         ]);
                     }
-                } catch (Exception $e) {
+                } catch (Throwable $e) {
                     return response()->json(['message' => $e->getMessage()], 500);
                 }
             }
@@ -400,7 +400,7 @@ class SalesController extends BaseController
             'client_id' => 'required',
         ]);
 
-        \DB::transaction(function () use ($request, $id) {
+        DB::transaction(function () use ($request, $id) {
             $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $current_Sale = Sale::findOrFail($id);
@@ -660,7 +660,7 @@ class SalesController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'delete', Sale::class);
 
-        \DB::transaction(function () use ($id, $request) {
+        DB::transaction(function () use ($id, $request) {
             $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $Sale = Sale::findOrFail($id);
@@ -694,7 +694,7 @@ class SalesController extends BaseController
 
         $this->authorizeForUser($request->user('api'), 'delete', Sale::class);
 
-        \DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
             $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $selectedIds = $request->selectedIds;
@@ -1015,7 +1015,7 @@ class SalesController extends BaseController
         $settings = Setting::where('deleted_at', '=', null)->first();
         $symbol = $helpers->Get_Currency();
 
-        $pdf = \PDF::loadView('pdf.sale_pdf', [
+        $pdf = PDF::loadView('pdf.sale_pdf', [
             'symbol' => $symbol,
             'setting' => $settings,
             'sale' => $sale,
@@ -1379,12 +1379,12 @@ class SalesController extends BaseController
                 'from' => $twilio_number,
                 'body' => $message
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
-    public function SaleLessReturnsSave($id)
+    public function SaleLessReturnsSave(Request $request, $id)
     {
 
         $saleAll = $this->SaleLessReturnsNoJson($id);
@@ -1526,7 +1526,7 @@ class SalesController extends BaseController
 
                 ]);
             }
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
         $saleOriginal = Sale::findOrFail($id);

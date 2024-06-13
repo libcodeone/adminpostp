@@ -12,7 +12,7 @@ class DiscountProduct extends Model implements Auditable
     use SoftDeletes;
     protected $table = "offers_products";
     protected $fillable = ['id', 'nombre', 'descripcion', 'porcentajeDescuentoProducto', 'precioProducto', 'activo', 'hora_inicio', 'hora_fin', 'fecha_inicio', 'fecha_fin', 'dias', 'category_product_id', 'product_id', 'warehouse_id', 'is_all_products'];
-    protected $dates = ['deleted_at'];
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
     public function Types()
     {
         return $this->hasMany(TypeDiscountProduct::class, "offer_id");

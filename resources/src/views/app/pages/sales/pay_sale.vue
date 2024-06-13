@@ -232,27 +232,28 @@
         </div>
       </div>
 
-<!--
-  421
-  210
-  105
-  53
+        <!--
+        421
+        210
+        105
+        53
 
 
-  140
+        140
 
 
-  421 - 100
-  321 - 105
-  216 - 40
-  176 - 160
-  16
+        421 - 100
+        321 - 105
+        216 - 40
+        176 - 160
+        16
 
 
-421+50+40+160
- -->
-      <!-- Modal Show Invoice-->
-            <!-- FACTURA-->
+        421+50+40+160
+        -->
+
+        <!-- Modal Show Invoice-->
+        <!-- FACTURA-->
       <b-modal
         hide-footer
         size="lg"
@@ -324,8 +325,8 @@
                   <div class="row">
                     <div class="col-2"> </div>
                     <div class="col-4" style="
-    padding: 0px;
-">
+                        padding: 0px;
+                    ">
                        <span>
                     &nbsp;&nbsp; {{ invoice_pos.sale.date }}.
                       </span>

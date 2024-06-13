@@ -560,7 +560,7 @@
                                             </b-col> -->
 
                                             <!-- Discount -->
-                                            <b-col lg="4" md="4" sm="12">
+                                            <!-- <b-col lg="4" md="4" sm="12">
                                                 <validation-provider
                                                     name="Discount"
                                                     :rules="{
@@ -600,10 +600,10 @@
                                                         >
                                                     </b-form-group>
                                                 </validation-provider>
-                                            </b-col>
+                                            </b-col> -->
 
                                             <!-- Shipping  -->
-                                            <b-col lg="4" md="4" sm="12">
+                                            <b-col md="12">
                                                 <validation-provider
                                                     name="Shipping"
                                                     :rules="{
