@@ -27,7 +27,7 @@
                         @click="openModalForNewGeneratedPosAuthCode"
                         type="button"
                     >
-                        <span style="font-size: 67.5%; font-weight: bold; text-align: center;">Token</span>
+                        <span style="font-size: 67.5%; font-weight: bold; text-align: center;">TOKEN</span>
                     </button>
 
                     <router-link
@@ -45,15 +45,14 @@
                 <div style="display: flex;">
                     <button
                         v-if="
-                            currentUserPermissions &&
-                                currentUserPermissions.includes('posAuthTokenGen')
+                            currentUserPermissions && currentUserPermissions.includes('posAuthTokenGen')
                         "
                         style="margin-right: 1.25px;"
                         class="btn btn-outline-success btn-sm btn-rounded"
                         @click="openModalForNewGeneratedPosAuthCode"
                         type="button"
                     >
-                        <span style="font-weight: bold; text-align: center;">Token</span>
+                        <span style="font-weight: bold; text-align: center;">TOKEN</span>
                     </button>
 
                     <router-link

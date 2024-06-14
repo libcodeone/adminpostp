@@ -81,6 +81,7 @@ class UserController extends BaseController
     public function GetUserAuth(Request $request)
     {
         $helpers = new helpers();
+        $user['id'] = Auth::user()->id;
         $user['avatar'] = Auth::user()->avatar;
         $user['username'] = Auth::user()->username;
         $user['currency'] = $helpers->Get_Currency();
@@ -95,6 +96,7 @@ class UserController extends BaseController
         $user['finalCF'] = Auth::user()->finalCF;
         $user['warehouse_id'] = Auth::user()->warehouse_id;
         $user['authorizedCode'] = Auth::user()->authorizedCode;
+        $user['roles'] = (array)json_decode(json_encode(DB::table("roles")->where("id", '=', Auth::user()->role_id)->first()), true);
 
         $permissions = Auth::user()->roles->first()->permissions->pluck('name');
         $products_alerts = ProductWarehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')

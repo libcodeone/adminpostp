@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import VueCookie from 'vue-cookie'
 import axios from 'axios'
-import router from "./../../router";
+// import VueCookie from 'vue-cookie'
+
 Vue.use(Vuex)
 // Vue.use(VueCookie)
 

@@ -6,18 +6,19 @@ import config from "./modules/config";
 import auth from "./modules/auth";
 import language from './modules/language';
 
-
-
 // Load Vuex
 Vue.use(Vuex);
 
 // Create store
-export default new Vuex.Store({
-  modules: {
-    language,
-    auth,
-    largeSidebar,
-    compactSidebar,
-    config,
-  }
-});
+export default new Vuex.Store(
+    {
+        modules:
+        {
+            language,
+            auth,
+            largeSidebar,
+            compactSidebar,
+            config,
+        }
+    }
+);
