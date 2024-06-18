@@ -911,12 +911,13 @@ class ProductsController extends BaseController
 
         $data = [];
 
-        if ($product_warehouse_data->isNotEmpty()) {
-
+        if (count((array)$product_warehouse_data) > 0) {
             foreach ($product_warehouse_data as $product_warehouse) {
                 if ($product_warehouse["qte"] <= $product_warehouse['product']["stock_alert"]) {
+                    $productWarehouse_productVariantName = (is_null($product_warehouse['productVariant']) || empty($product_warehouse['productVariant'])) ? "N/A" : $product_warehouse["productVariant"]["name"];
+
                     if ($product_warehouse["product_variant_id"] !== null)
-                        $item['code'] = $product_warehouse['productVariant']["name"] . '-' . $product_warehouse['product']["code"];
+                        $item['code'] = $productWarehouse_productVariantName . '-' . $product_warehouse['product']["code"];
                     else
                         $item['code'] = $product_warehouse['product']["code"];
 

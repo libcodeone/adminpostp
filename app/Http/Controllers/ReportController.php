@@ -325,24 +325,26 @@ class ReportController extends BaseController
             ->take(5)
             ->get();
 
-        $product_warehouse_data = (array)ProductWarehouse::with('warehouse', 'product', 'productVariant')
+        $product_warehouse_data = ProductWarehouse::with('warehouse', 'product', 'productVariant')
             ->join('products', 'product_warehouse.product_id', '=', 'products.id')
             ->whereRaw('qte <= stock_alert')
             ->where('product_warehouse.deleted_at', null)
             ->take('5')->get();
 
         $stock_alert = [];
-        if (count($product_warehouse_data) > 0) {
+        if (count((array)$product_warehouse_data) > 0) {
             foreach ($product_warehouse_data as $product_warehouse) {
                 if ($product_warehouse["qte"] <= $product_warehouse['product']['stock_alert']) {
+                    $productWarehouse_productVariantName = (is_null($product_warehouse['productVariant']) || empty($product_warehouse['productVariant'])) ? "N/A" : $product_warehouse["productVariant"]["name"];
+
                     if ($product_warehouse->product_variant_id !== null)
-                        $item['code'] = $product_warehouse['productVariant']['name'] . '-' . $product_warehouse['product']['code'];
+                        $item['code'] = $productWarehouse_productVariantName . '-' . $product_warehouse['product']['code'];
                     else
                         $item['code'] = $product_warehouse['product']['code'];
 
                     $item['quantity'] = $product_warehouse['qte'];
                     $item['name'] = $product_warehouse['product']['name'];
-                    $item['warehouse'] = $product_warehouse['warehouse']['name'];
+                    $item['warehouse'] = (is_null($product_warehouse['warehouse']) || empty($product_warehouse['warehouse'])) ? "N/A" : $product_warehouse["warehouse"]["name"];
                     $item['stock_alert'] = $product_warehouse['product']['stock_alert'];
                     $stock_alert[] = $item;
                 }

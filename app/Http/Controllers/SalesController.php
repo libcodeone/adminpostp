@@ -841,7 +841,7 @@ class SalesController extends BaseController
         $sale = Sale::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
-        $Payment_Sale = (array)PaymentSale::where('sale_id', '=', $sale->id)->first();
+        $Payment_Sale = PaymentSale::where('sale_id', '=', $sale->id)->first();
 
         $item['id'] = $sale->id;
         $item['Ref'] = $sale->Ref;
