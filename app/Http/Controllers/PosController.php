@@ -57,8 +57,6 @@ class PosController extends BaseController
                 ->where("permissions.name", "record_view")
                 ->count() > 0;
 
-            $order = new Sale();
-
             $client = Client::findOrFail($request->client_id);
 
             $this->clientName = $client->name;
@@ -69,8 +67,20 @@ class PosController extends BaseController
             $TaxWithheld = 0.00;
             $TaxNetDetail = 0.00;
             $totalWithDiscount = round(($request->GrandTotal - $request->shipping), 2);
-
             $GrandTotal = round($request->GrandTotal, 2);
+
+            $detailsData = $request["details"];
+
+            $orderDiscount = 0;
+
+            if (count($detailsData) > 0) {
+                $discounts = [];
+
+                foreach ($detailsData as $key => $product)
+                    $discounts[] = $this->verifyDiscounts($product["Net_price"], $product["product_id"], $productsDiscounts[$key], $product["quantity"])["product_discount"];
+
+                $orderDiscount = round(array_sum($discounts), 2);
+            }
 
             if ($this->clientFinalConsumerOrNot === 0) {
                 $taxRate = 13;
@@ -83,7 +93,13 @@ class PosController extends BaseController
                     $TaxWithheld = round((($totalWithDiscount / 1.13) * 0.01), 2);
                     $GrandTotal = round(($totalWithDiscount - $TaxWithheld), 2);
                 }
+                else
+                    $GrandTotal = ($orderDiscount > 0.00) ? $GrandTotal - $orderDiscount : $GrandTotal;
             }
+            else
+                $GrandTotal = ($orderDiscount > 0.00) ? $GrandTotal - $orderDiscount : $GrandTotal;
+
+            $order = new Sale();
 
             $order->is_pos = 1;
             $order->date = Carbon::now();
@@ -92,14 +108,14 @@ class PosController extends BaseController
             $order->tax_rate = $taxRate;
             $order->TaxNet = $TaxNet;
             $order->TaxWithheld = $TaxWithheld;
-            $order->discount = $request->discount;
+            $order->discount = $orderDiscount;
             $order->shipping = $request->shipping;
 
             if ($order->discount == ".00" || $order->discount == "")
-                $order->discount = 0.0;
+                $order->discount = 0.00;
 
             if ($order->shipping == ".00" || $order->shipping == "")
-                $order->shipping = 0.0;
+                $order->shipping = 0.00;
 
             $this->orderDiscount = $order->discount;
             $order->subTotal = $request->GrandTotal;
@@ -154,8 +170,6 @@ class PosController extends BaseController
                 }
             }
 
-            $detailsData = $request["details"];
-
             $saleDetailsData = null;
 
             $productsTotalAmount = 0;
@@ -178,10 +192,12 @@ class PosController extends BaseController
             foreach ($detailsData as $key => $value) {
                 $this->productId = $value["product_id"];
                 $this->productQuantity = $value["quantity"];
-                $this->productDiscount = $value["discount"];
                 $this->subTotalProductPrice = $value["subtotal"];
-                $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where("id", "=", $this->productId)->pluck("price")->first()), true), 2);
-                $originalPriceWithDiscount = $originalPrice - $productsDiscounts[$key];
+
+                $productDiscountAndOriginalPriceVerifier = $this->verifyDiscounts($value["Net_price"], $this->productId, $productsDiscounts[$key], $this->productQuantity);
+
+                $this->productDiscount = $productDiscountAndOriginalPriceVerifier["product_discount"];
+                $originalPrice = $productDiscountAndOriginalPriceVerifier["original_price"] - $productsDiscounts[$key];
 
                 $price = null;
 
@@ -192,7 +208,7 @@ class PosController extends BaseController
                     $totalTaxPerProduct = $dividedTaxWithHeld * $this->productQuantity;
 
                     if ($this->clientBigConsumerOrNot === 1 && round($totalWithDiscount / 1.13, 2) >= 100) {
-                        $originalPriceWithDiscount = $originalPriceWithDiscount - $dividedTaxWithHeld;
+                        $originalPrice = $originalPrice - $dividedTaxWithHeld;
                         $price = $value["Net_price"] - $dividedTaxWithHeld;
                         $this->subTotalProductPrice = $this->subTotalProductPrice - $totalTaxPerProduct;
                         $productsSubTotal[$key] = $this->subTotalProductPrice;
@@ -227,7 +243,7 @@ class PosController extends BaseController
                     $this->taxMethod = 1;
                 }
 
-                $this->originalProductPrice = round($originalPriceWithDiscount, 2);
+                $this->originalProductPrice = round($originalPrice, 2);
                 $this->newProductPrice = round($price, 2);
 
                 $productName = json_decode(json_encode(DB::table("products")->where("id", "=", $this->productId)->pluck("name")->first()), true);
@@ -301,7 +317,7 @@ class PosController extends BaseController
             $data["total_discount"] = round($this->orderDiscount, 2);
             $data["firstname"] = auth()->user()->firstname;
             $data["lastname"] = auth()->user()->lastname;
-            $data["date"] = Carbon::now()->locale("es")->isoFormat("dddd\, D \d\e MMMM \d\e\l Y");
+            $data["date"] = Carbon::now()->locale("es")->isoFormat("dddd, D [de] MMMM [del] Y");
             $data["time"] = date("h:i:s A");
 
             $boolean = null;
@@ -422,6 +438,20 @@ class PosController extends BaseController
         }, 10);
 
         return response()->json(["success" => $item["success"], "id" => $item["order_id"], "message" => $item["message"], "slogan" => $item["slogan"]]);
+    }
+
+    private function verifyDiscounts($netPrice, $productId, $productDiscount, $productQuantity)
+    {
+        $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->pluck("price")->first()), true), 2);
+
+        if ($netPrice < $originalPrice)
+            $productTotalDiscount = ($netPrice !== $originalPrice - $productDiscount) ? ((($originalPrice - $netPrice) + $productDiscount) * $productQuantity) : ($productDiscount * $productQuantity);
+        else if ($netPrice === $originalPrice)
+            $productTotalDiscount = $productDiscount * $productQuantity;
+        else
+            $productTotalDiscount = ($netPrice !== $originalPrice - $productDiscount) ? ((($originalPrice - $netPrice) + $productDiscount) * $productQuantity) : ($productDiscount * $productQuantity);
+
+        return ["original_price" => $originalPrice, "product_discount" => $productTotalDiscount];
     }
 
     //--- Get Offers Per Categories or Warehouses or Both ---\\
