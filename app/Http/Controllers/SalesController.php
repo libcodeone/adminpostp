@@ -841,7 +841,8 @@ class SalesController extends BaseController
         $sale = Sale::with('details.product.unitSale')
             ->where('deleted_at', '=', null)
             ->findOrFail($id);
-        $Payment_Sale = PaymentSale::where('sale_id', $sale->id)->first();
+        $Payment_Sale = (array)PaymentSale::where('sale_id', '=', $sale->id)->first();
+
         $item['id'] = $sale->id;
         $item['Ref'] = $sale->Ref;
         $item['date'] = $sale->date;
@@ -866,7 +867,7 @@ class SalesController extends BaseController
         $item['GrandTotal'] = $sale->GrandTotal;
         $item['type_invoice'] = $sale->type_invoice;
         $item['refInvoice'] = $sale->refInvoice;
-        $item['Reglement'] = $Payment_Sale->Reglement;
+        $item['Reglement'] = (count($Payment_Sale) > 0) ? $Payment_Sale["Reglement"] : null;
 
         foreach ($sale['details'] as $detail) {
             if ($detail->product_variant_id) {

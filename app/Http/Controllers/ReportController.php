@@ -29,12 +29,10 @@ use Illuminate\Support\Facades\DB;
 
 class ReportController extends BaseController
 {
-
     //----------------- Sales Chart js -----------------------\\
 
     public function SalesChart()
     {
-
         // Build an array of the dates we want to show, oldest first
         $dates = collect();
         foreach (range(-6, 0) as $i) {
@@ -64,14 +62,12 @@ class ReportController extends BaseController
         }
 
         return response()->json(['data' => $data, 'days' => $days]);
-
     }
 
     //----------------- Purchases Chart -----------------------\\
 
     public function PurchasesChart()
     {
-
         // Build an array of the dates we want to show, oldest first
         $dates = collect();
         foreach (range(-6, 0) as $i) {
@@ -103,7 +99,6 @@ class ReportController extends BaseController
         }
 
         return response()->json(['data' => $data, 'days' => $days]);
-
     }
 
     //-------------------- Get Top 5 Customers -------------\\
@@ -112,7 +107,7 @@ class ReportController extends BaseController
     {
         $data = Sale::whereBetween('date', [
             Carbon::now()->startOfMonth(),
-            Carbon::now()->endOfMonth(),
+            Carbon::now()->endOfMonth()
         ])->where('sales.deleted_at', '=', null)
 
             ->join('clients', 'sales.client_id', '=', 'clients.id')
@@ -129,7 +124,7 @@ class ReportController extends BaseController
 
     public function report_with_echart(Request $request)
     {
-       //$this->authorizeForUser($request->user('api'), 'dashboard' ,Client::class);
+        //$this->authorizeForUser($request->user('api'), 'dashboard' ,Client::class);
 
         $dataSales = $this->SalesChart();
         $datapurchases = $this->PurchasesChart();
@@ -144,16 +139,14 @@ class ReportController extends BaseController
             'payments' => $Payment_chart,
             'customers' => $TopCustomers,
             'product_report' => $Top_Products_Year,
-            'report_dashboard' => $report_dashboard,
+            'report_dashboard' => $report_dashboard
         ]);
-
     }
 
     //----------------- Payment Chart js -----------------------\\
 
     public function Payment_chart()
     {
-
         // Build an array of the dates we want to show, oldest first
         $dates = collect();
         foreach (range(-6, 0) as $i) {
@@ -230,9 +223,8 @@ class ReportController extends BaseController
         return response()->json([
             'payment_sent' => $data_sent,
             'payment_received' => $data_recieved,
-            'days' => $days,
+            'days' => $days
         ]);
-
     }
 
     //----------------- array merge -----------------------\\
@@ -260,7 +252,6 @@ class ReportController extends BaseController
 
     public function Get_last_Sales()
     {
-
         $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
@@ -275,7 +266,6 @@ class ReportController extends BaseController
             ->get();
 
         foreach ($Sales as $Sale) {
-
             $item['Ref'] = $Sale['Ref'];
             $item['statut'] = $Sale['statut'];
             $item['client_name'] = $Sale['client']['name'];
@@ -294,10 +284,9 @@ class ReportController extends BaseController
 
     public function Top_Products_Year()
     {
-
         $products = SaleDetail::whereBetween('date', [
             Carbon::now()->startOfYear(),
-            Carbon::now()->endOfYear(),
+            Carbon::now()->endOfYear()
         ])
             ->join('products', 'sale_details.product_id', '=', 'products.id')
             ->select(
@@ -318,11 +307,9 @@ class ReportController extends BaseController
 
     public function report_dashboard()
     {
-
-
         $products = SaleDetail::whereBetween('date', [
             Carbon::now()->startOfMonth(),
-            Carbon::now()->endOfMonth(),
+            Carbon::now()->endOfMonth()
         ])
             ->join('products', 'sale_details.product_id', '=', 'products.id')
             ->join('units', 'products.unit_sale_id', '=', 'units.id')
@@ -338,30 +325,28 @@ class ReportController extends BaseController
             ->take(5)
             ->get();
 
-        $product_warehouse_data = ProductWarehouse::with('warehouse', 'product' ,'productVariant')
-        ->join('products', 'product_warehouse.product_id', '=', 'products.id')
-        ->whereRaw('qte <= stock_alert')
-        ->where('product_warehouse.deleted_at', null)
-        ->take('5')->get();
+        $product_warehouse_data = (array)ProductWarehouse::with('warehouse', 'product', 'productVariant')
+            ->join('products', 'product_warehouse.product_id', '=', 'products.id')
+            ->whereRaw('qte <= stock_alert')
+            ->where('product_warehouse.deleted_at', null)
+            ->take('5')->get();
 
         $stock_alert = [];
-        if ($product_warehouse_data->isNotEmpty()) {
-
+        if (count($product_warehouse_data) > 0) {
             foreach ($product_warehouse_data as $product_warehouse) {
-                if ($product_warehouse->qte <= $product_warehouse['product']->stock_alert) {
-                    if ($product_warehouse->product_variant_id !== null) {
-                        $item['code'] = $product_warehouse['productVariant']->name . '-' . $product_warehouse['product']->code;
-                    } else {
-                        $item['code'] = $product_warehouse['product']->code;
-                    }
-                    $item['quantity'] = $product_warehouse->qte;
-                    $item['name'] = $product_warehouse['product']->name;
-                    $item['warehouse'] = $product_warehouse['warehouse']->name;
-                    $item['stock_alert'] = $product_warehouse['product']->stock_alert;
+                if ($product_warehouse["qte"] <= $product_warehouse['product']['stock_alert']) {
+                    if ($product_warehouse->product_variant_id !== null)
+                        $item['code'] = $product_warehouse['productVariant']['name'] . '-' . $product_warehouse['product']['code'];
+                    else
+                        $item['code'] = $product_warehouse['product']['code'];
+
+                    $item['quantity'] = $product_warehouse['qte'];
+                    $item['name'] = $product_warehouse['product']['name'];
+                    $item['warehouse'] = $product_warehouse['warehouse']['name'];
+                    $item['stock_alert'] = $product_warehouse['product']['stock_alert'];
                     $stock_alert[] = $item;
                 }
             }
-
         }
 
         $data['sales'] = Sale::where('deleted_at', '=', null)
@@ -413,7 +398,6 @@ class ReportController extends BaseController
             ->get();
 
         foreach ($Sales as $Sale) {
-
             $item_sale['Ref'] = $Sale['Ref'];
             $item_sale['statut'] = $Sale['statut'];
             $item_sale['client_name'] = $Sale['client']['name'];
@@ -429,16 +413,14 @@ class ReportController extends BaseController
             'products' => $products,
             'stock_alert' => $stock_alert,
             'report' => $data,
-            'last_sales' => $last_sales,
+            'last_sales' => $last_sales
         ]);
-
     }
 
     //----------------- Customers Report -----------------------\\
 
     public function Client_Report(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
 
         // How many items do you want to display.
@@ -451,7 +433,7 @@ class ReportController extends BaseController
         $data = array();
 
         $clients = Client::where('deleted_at', '=', null)
-        // Search With Multiple Param
+            // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('name', 'LIKE', "%{$request->search}%")
@@ -496,16 +478,14 @@ class ReportController extends BaseController
 
         return response()->json([
             'report' => $data,
-            'totalRows' => $totalRows,
+            'totalRows' => $totalRows
         ]);
-
     }
 
     //----------------- Customers Report By ID-----------------------\\
 
     public function Client_Report_detail(Request $request, $id)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
 
         $client = Client::where('deleted_at', '=', null)->findOrFail($id);
@@ -530,7 +510,6 @@ class ReportController extends BaseController
 
     public function Provider_Report_detail(Request $request, $id)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
 
         $provider = Provider::where('deleted_at', '=', null)->findOrFail($id);
@@ -549,14 +528,12 @@ class ReportController extends BaseController
         $data['due'] = $data['total_amount'] - $data['total_paid'];
 
         return response()->json(['report' => $data]);
-
     }
 
     //-------------------- Get Sales By Clients -------------\\
 
     public function Sales_Client(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -595,16 +572,14 @@ class ReportController extends BaseController
         }
         return response()->json([
             'totalRows' => $totalRows,
-            'sales' => $data,
+            'sales' => $data
         ]);
-
     }
 
     //-------------------- Get Payments By Clients -------------\\
 
     public function Payments_Client(Request $request)
     {
-
         //$this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -625,8 +600,11 @@ class ReportController extends BaseController
             ->join('sales', 'payment_sales.sale_id', '=', 'sales.id')
             ->where('sales.client_id', $request->id)
             ->select(
-                'payment_sales.date', 'payment_sales.Ref AS Ref', 'sales.Ref AS Sale_Ref',
-                'payment_sales.Reglement', 'payment_sales.montant'
+                'payment_sales.date',
+                'payment_sales.Ref AS Ref',
+                'sales.Ref AS Sale_Ref',
+                'payment_sales.Reglement',
+                'payment_sales.montant'
             );
 
         $totalRows = $payments->count();
@@ -637,16 +615,14 @@ class ReportController extends BaseController
 
         return response()->json([
             'payments' => $payments,
-            'totalRows' => $totalRows,
+            'totalRows' => $totalRows
         ]);
-
     }
 
     //-------------------- Get Quotations By Clients -------------\\
 
     public function Quotations_Client(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -673,7 +649,7 @@ class ReportController extends BaseController
 
         return response()->json([
             'quotations' => $Quotations,
-            'totalRows' => $totalRows,
+            'totalRows' => $totalRows
         ]);
     }
 
@@ -681,7 +657,6 @@ class ReportController extends BaseController
 
     public function Returns_Client(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_customers', Client::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -709,20 +684,20 @@ class ReportController extends BaseController
             ->get();
 
         foreach ($SaleReturn as $Sale_Return) {
-            $item['Ref'] = $Sale_Return->Ref;
-            $item['statut'] = $Sale_Return->statut;
-            $item['client_name'] = $Sale_Return['client']->name;
-            $item['GrandTotal'] = $Sale_Return->GrandTotal;
-            $item['paid_amount'] = $Sale_Return->paid_amount;
-            $item['due'] = $Sale_Return->GrandTotal - $Sale_Return->paid_amount;
-            $item['payment_status'] = $Sale_Return->payment_statut;
+            $item['Ref'] = $Sale_Return["Ref"];
+            $item['statut'] = $Sale_Return["statut"];
+            $item['client_name'] = $Sale_Return['client']['name'];
+            $item['GrandTotal'] = $Sale_Return["GrandTotal"];
+            $item['paid_amount'] = $Sale_Return["paid_amount"];
+            $item['due'] = $Sale_Return["GrandTotal"] - $Sale_Return["paid_amount"];
+            $item['payment_status'] = $Sale_Return["payment_statut"];
 
             $data[] = $item;
         }
 
         return response()->json([
             'totalRows' => $totalRows,
-            'returns_customer' => $data,
+            'returns_customer' => $data
         ]);
     }
 
@@ -740,10 +715,9 @@ class ReportController extends BaseController
         $dir = $request->SortType;
         $helpers = new helpers();
         // Filter fields With Params to retrieve
-        $param = array(0 => 'like', 1 => 'like', 2 => '=', 3 => 'like' , 4 => '=');
-        $columns = array(0 => 'Ref', 1 => 'statut', 2 => 'provider_id', 3 => 'payment_statut' , 4 => 'date');
+        $param = array(0 => 'like', 1 => 'like', 2 => '=', 3 => 'like', 4 => '=');
+        $columns = array(0 => 'Ref', 1 => 'statut', 2 => 'provider_id', 3 => 'payment_statut', 4 => 'date');
         $data = array();
-        $total = 0;
 
         $Purchases = Purchase::select('purchases.*')
             ->with('facture', 'provider', 'warehouse')
@@ -754,7 +728,7 @@ class ReportController extends BaseController
         $Purchases = $helpers->Show_Records($Purchases);
         //Multiple Filter
         $Filtred = $helpers->filter($Purchases, $columns, $param, $request)
-        // Search With Multiple Param
+            // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('purchases.Ref', 'LIKE', "%{$request->search}%")
@@ -765,26 +739,25 @@ class ReportController extends BaseController
                 });
             });
 
-        $totalRows = $Filtred->count();
+        $totalRows = count((array)$Filtred);
         $Purchases = $Filtred->offset($offSet)
             ->limit($perPage)
             ->orderBy('purchases.' . $order, $dir)
             ->get();
 
         foreach ($Purchases as $Purchase) {
-
-            $item['id'] = $Purchase->id;
-            $item['date'] = $Purchase->date;
-            $item['Ref'] = $Purchase->Ref;
-            $item['warehouse_name'] = $Purchase['warehouse']->name;
-            $item['discount'] = $Purchase->discount;
-            $item['shipping'] = $Purchase->shipping;
-            $item['statut'] = $Purchase->statut;
-            $item['provider_name'] = $Purchase['provider']->name;
-            $item['provider_email'] = $Purchase['provider']->email;
-            $item['provider_tele'] = $Purchase['provider']->phone;
-            $item['provider_code'] = $Purchase['provider']->code;
-            $item['provider_adr'] = substr($Purchase['provider']->adresse, 0, 30);
+            $item['id'] = $Purchase["id"];
+            $item['date'] = $Purchase["date"];
+            $item['Ref'] = $Purchase["Ref"];
+            $item['warehouse_name'] = $Purchase['warehouse']['name'];
+            $item['discount'] = $Purchase["discount"];
+            $item['shipping'] = $Purchase["shipping"];
+            $item['statut'] = $Purchase["statut"];
+            $item['provider_name'] = $Purchase['provider']['name'];
+            $item['provider_email'] = $Purchase['provider']['email'];
+            $item['provider_tele'] = $Purchase['provider']['phone'];
+            $item['provider_code'] = $Purchase['provider']['code'];
+            $item['provider_adr'] = substr($Purchase['provider']['adresse'], 0, 30);
             $item['GrandTotal'] = $Purchase['GrandTotal'];
             $item['paid_amount'] = $Purchase['paid_amount'];
             $item['due'] = $Purchase['GrandTotal'] - $Purchase['paid_amount'];
@@ -797,7 +770,7 @@ class ReportController extends BaseController
         return response()->json([
             'totalRows' => $totalRows,
             'purchases' => $data,
-            'suppliers' => $suppliers,
+            'suppliers' => $suppliers
         ]);
     }
 
@@ -815,8 +788,8 @@ class ReportController extends BaseController
         $dir = $request->SortType;
         $helpers = new helpers();
         // Filter fields With Params to retrieve
-        $param = array(0 => 'like', 1 => 'like', 2 => '=', 3 => 'like' , 4 => '=');
-        $columns = array(0 => 'Ref', 1 => 'statut', 2 => 'client_id', 3 => 'payment_statut' , 4 => 'date');
+        $param = array(0 => 'like', 1 => 'like', 2 => '=', 3 => 'like', 4 => '=');
+        $columns = array(0 => 'Ref', 1 => 'statut', 2 => 'client_id', 3 => 'payment_statut', 4 => 'date');
         $data = array();
 
         $Sales = Sale::select('sales.*')
@@ -828,7 +801,7 @@ class ReportController extends BaseController
         $Sales = $helpers->Show_Records($Sales);
         //Multiple Filter
         $Filtred = $helpers->filter($Sales, $columns, $param, $request)
-        // Search With Multiple Param
+            // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('sales.Ref', 'LIKE', "%{$request->search}%")
@@ -846,7 +819,6 @@ class ReportController extends BaseController
             ->get();
 
         foreach ($Sales as $Sale) {
-
             $item['id'] = $Sale['id'];
             $item['date'] = $Sale['date'];
             $item['Ref'] = $Sale['Ref'];
@@ -875,7 +847,6 @@ class ReportController extends BaseController
 
     public function Providers_Report(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -887,7 +858,7 @@ class ReportController extends BaseController
         $data = array();
 
         $providers = Provider::where('deleted_at', '=', null)
-        // Search With Multiple Param
+            // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('name', 'LIKE', "%{$request->search}%")
@@ -929,16 +900,14 @@ class ReportController extends BaseController
 
         return response()->json([
             'report' => $data,
-            'totalRows' => $totalRows,
+            'totalRows' => $totalRows
         ]);
-
     }
 
     //-------------------- Get Purchases By Provider -------------\\
 
     public function Purchases_Provider(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -978,16 +947,14 @@ class ReportController extends BaseController
 
         return response()->json([
             'totalRows' => $totalRows,
-            'purchases' => $data,
+            'purchases' => $data
         ]);
-
     }
 
     //-------------------- Get Payments By Provider -------------\\
 
     public function Payments_Provider(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
 
         // How many items do you want to display.
@@ -1010,8 +977,11 @@ class ReportController extends BaseController
             ->join('purchases', 'payment_purchases.purchase_id', '=', 'purchases.id')
             ->where('purchases.provider_id', $request->id)
             ->select(
-                'payment_purchases.date', 'payment_purchases.Ref AS Ref', 'purchases.Ref AS purchase_Ref',
-                'payment_purchases.Reglement', 'payment_purchases.montant'
+                'payment_purchases.date',
+                'payment_purchases.Ref AS Ref',
+                'purchases.Ref AS purchase_Ref',
+                'payment_purchases.Reglement',
+                'payment_purchases.montant'
             );
 
         $totalRows = $payments->count();
@@ -1022,7 +992,7 @@ class ReportController extends BaseController
 
         return response()->json([
             'payments' => $payments,
-            'totalRows' => $totalRows,
+            'totalRows' => $totalRows
         ]);
     }
 
@@ -1030,7 +1000,6 @@ class ReportController extends BaseController
 
     public function Returns_Provider(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
 
         // How many items do you want to display.
@@ -1059,29 +1028,27 @@ class ReportController extends BaseController
             ->get();
 
         foreach ($PurchaseReturn as $Purchase_Return) {
-            $item['Ref'] = $Purchase_Return->Ref;
-            $item['statut'] = $Purchase_Return->statut;
-            $item['provider_name'] = $Purchase_Return['provider']->name;
-            $item['GrandTotal'] = $Purchase_Return->GrandTotal;
-            $item['paid_amount'] = $Purchase_Return->paid_amount;
-            $item['due'] = $Purchase_Return->GrandTotal - $Purchase_Return->paid_amount;
-            $item['payment_status'] = $Purchase_Return->payment_statut;
+            $item['Ref'] = $Purchase_Return["Ref"];
+            $item['statut'] = $Purchase_Return["statut"];
+            $item['provider_name'] = $Purchase_Return['provider']['name'];
+            $item['GrandTotal'] = $Purchase_Return["GrandTotal"];
+            $item['paid_amount'] = $Purchase_Return["paid_amount"];
+            $item['due'] = $Purchase_Return["GrandTotal"] - $Purchase_Return["paid_amount"];
+            $item['payment_status'] = $Purchase_Return["payment_statut"];
 
             $data[] = $item;
         }
 
         return response()->json([
             'totalRows' => $totalRows,
-            'returns_supplier' => $data,
+            'returns_supplier' => $data
         ]);
-
     }
 
     //-------------------- Top 5 Suppliers -------------\\
 
     public function ToProviders(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_suppliers', Provider::class);
 
         $results = DB::table('purchases')->where('purchases.deleted_at', '=', null)
@@ -1106,7 +1073,6 @@ class ReportController extends BaseController
 
     public function Warehouse_Report(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
 
         $data['sales'] = Sale::where('deleted_at', '=', null)
@@ -1143,14 +1109,12 @@ class ReportController extends BaseController
             'data' => $data,
             'warehouses' => $warehouses,
         ], 200);
-
     }
 
     //-------------------- Get Sales By Warehouse -------------\\
 
     public function Sales_Warehouse(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -1173,7 +1137,7 @@ class ReportController extends BaseController
                     return $query->where('warehouse_id', $request->warehouse_id);
                 });
             })
-        // Search With Multiple Param
+            // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('Ref', 'LIKE', "%{$request->search}%")
@@ -1189,35 +1153,34 @@ class ReportController extends BaseController
             });
 
         $totalRows = $sales->count();
+
         $sales = $sales->offset($offSet)
             ->limit($perPage)
             ->orderBy('id', 'desc')
             ->get();
 
         foreach ($sales as $sale) {
-            $item['date'] = $sale->date;
-            $item['Ref'] = $sale->Ref;
-            $item['client_name'] = $sale['client']->name;
-            $item['statut'] = $sale->statut;
-            $item['GrandTotal'] = $sale->GrandTotal;
-            $item['paid_amount'] = $sale->paid_amount;
-            $item['due'] = $sale->GrandTotal - $sale->paid_amount;
-            $item['payment_status'] = $sale->payment_statut;
+            $item['date'] = $sale["date"];
+            $item['Ref'] = $sale["Ref"];
+            $item['client_name'] = $sale['client']['name'];
+            $item['statut'] = $sale["statut"];
+            $item['GrandTotal'] = $sale["GrandTotal"];
+            $item['paid_amount'] = $sale["paid_amount"];
+            $item['due'] = $sale["GrandTotal"] - $sale["paid_amount"];
+            $item['payment_status'] = $sale["payment_statut"];
 
             $data[] = $item;
         }
         return response()->json([
             'totalRows' => $totalRows,
-            'sales' => $data,
+            'sales' => $data
         ]);
-
     }
 
     //-------------------- Get Quotations By Warehouse -------------\\
 
     public function Quotations_Warehouse(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -1241,7 +1204,7 @@ class ReportController extends BaseController
                     return $query->where('warehouse_id', $request->warehouse_id);
                 });
             })
-        //Search With Multiple Param
+            //Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('Ref', 'LIKE', "%{$request->search}%")
@@ -1261,18 +1224,18 @@ class ReportController extends BaseController
             ->get();
 
         foreach ($Quotations as $Quotation) {
-            $item['date'] = $Quotation->date;
-            $item['Ref'] = $Quotation->Ref;
-            $item['client_name'] = $Quotation['client']->name;
-            $item['statut'] = $Quotation->statut;
-            $item['GrandTotal'] = $Quotation->GrandTotal;
+            $item['date'] = $Quotation["date"];
+            $item['Ref'] = $Quotation["Ref"];
+            $item['client_name'] = $Quotation['client']['name'];
+            $item['statut'] = $Quotation["statut"];
+            $item['GrandTotal'] = $Quotation["GrandTotal"];
 
             $data[] = $item;
         }
 
         return response()->json([
             'quotations' => $data,
-            'totalRows' => $totalRows,
+            'totalRows' => $totalRows
         ]);
     }
 
@@ -1280,7 +1243,6 @@ class ReportController extends BaseController
 
     public function Returns_Sale_Warehouse(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -1305,7 +1267,7 @@ class ReportController extends BaseController
                     return $query->where('warehouse_id', $request->warehouse_id);
                 });
             })
-        //Search With Multiple Param
+            //Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('Ref', 'LIKE', "%{$request->search}%")
@@ -1327,20 +1289,20 @@ class ReportController extends BaseController
             ->get();
 
         foreach ($SaleReturn as $Sale_Return) {
-            $item['Ref'] = $Sale_Return->Ref;
-            $item['statut'] = $Sale_Return->statut;
-            $item['client_name'] = $Sale_Return['client']->name;
-            $item['GrandTotal'] = $Sale_Return->GrandTotal;
-            $item['paid_amount'] = $Sale_Return->paid_amount;
-            $item['due'] = $Sale_Return->GrandTotal - $Sale_Return->paid_amount;
-            $item['payment_status'] = $Sale_Return->payment_statut;
+            $item['Ref'] = $Sale_Return["Ref"];
+            $item['statut'] = $Sale_Return["statut"];
+            $item['client_name'] = $Sale_Return['client']['name'];
+            $item['GrandTotal'] = $Sale_Return["GrandTotal"];
+            $item['paid_amount'] = $Sale_Return["paid_amount"];
+            $item['due'] = $Sale_Return["GrandTotal"] - $Sale_Return["paid_amount"];
+            $item['payment_status'] = $Sale_Return["payment_statut"];
 
             $data[] = $item;
         }
 
         return response()->json([
             'totalRows' => $totalRows,
-            'returns_sale' => $data,
+            'returns_sale' => $data
         ]);
     }
 
@@ -1348,7 +1310,6 @@ class ReportController extends BaseController
 
     public function Returns_Purchase_Warehouse(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -1373,7 +1334,7 @@ class ReportController extends BaseController
                     return $query->where('warehouse_id', $request->warehouse_id);
                 });
             })
-        //Search With Multiple Param
+            //Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('Ref', 'LIKE', "%{$request->search}%")
@@ -1395,20 +1356,20 @@ class ReportController extends BaseController
             ->get();
 
         foreach ($PurchaseReturn as $Purchase_Return) {
-            $item['Ref'] = $Purchase_Return->Ref;
-            $item['statut'] = $Purchase_Return->statut;
-            $item['provider_name'] = $Purchase_Return['provider']->name;
-            $item['GrandTotal'] = $Purchase_Return->GrandTotal;
-            $item['paid_amount'] = $Purchase_Return->paid_amount;
-            $item['due'] = $Purchase_Return->GrandTotal - $Purchase_Return->paid_amount;
-            $item['payment_status'] = $Purchase_Return->payment_statut;
+            $item['Ref'] = $Purchase_Return["Ref"];
+            $item['statut'] = $Purchase_Return["statut"];
+            $item['provider_name'] = $Purchase_Return['provider']['name'];
+            $item['GrandTotal'] = $Purchase_Return["GrandTotal"];
+            $item['paid_amount'] = $Purchase_Return["paid_amount"];
+            $item['due'] = $Purchase_Return["GrandTotal"] - $Purchase_Return["paid_amount"];
+            $item['payment_status'] = $Purchase_Return["payment_statut"];
 
             $data[] = $item;
         }
 
         return response()->json([
             'totalRows' => $totalRows,
-            'returns_purchase' => $data,
+            'returns_purchase' => $data
         ]);
     }
 
@@ -1416,7 +1377,6 @@ class ReportController extends BaseController
 
     public function Expenses_Warehouse(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'WarehouseStock', Product::class);
         // How many items do you want to display.
         $perPage = $request->limit;
@@ -1441,7 +1401,7 @@ class ReportController extends BaseController
                     return $query->where('warehouse_id', $request->warehouse_id);
                 });
             })
-        //Search With Multiple Param
+            //Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where('Ref', 'LIKE', "%{$request->search}%")
@@ -1462,18 +1422,17 @@ class ReportController extends BaseController
             ->get();
 
         foreach ($Expenses as $Expense) {
-
-            $item['date'] = $Expense->date;
-            $item['Ref'] = $Expense->Ref;
-            $item['details'] = substr($Expense->details, 0, 30);
-            $item['amount'] = $Expense->amount;
-            $item['category_name'] = $Expense['expense_category']->name;
+            $item['date'] = $Expense["date"];
+            $item['Ref'] = $Expense["Ref"];
+            $item['details'] = substr($Expense["details"], 0, 30);
+            $item['amount'] = $Expense["amount"];
+            $item['category_name'] = $Expense['expense_category']['name'];
             $data[] = $item;
         }
 
         return response()->json([
             'totalRows' => $totalRows,
-            'expenses' => $data,
+            'expenses' => $data
         ]);
     }
 
@@ -1521,16 +1480,14 @@ class ReportController extends BaseController
         return response()->json([
             'stock_count' => $stock_count,
             'stock_value' => $data,
-            'warehouses' => $warehouses,
+            'warehouses' => $warehouses
         ]);
-
     }
 
     //-------------- Count  Product Quantity Alerts ---------------\\
 
     public function count_quantity_alert(Request $request)
     {
-
         $products_alerts = ProductWarehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')
             ->whereRaw('qte <= stock_alert')
             ->count();
@@ -1542,10 +1499,9 @@ class ReportController extends BaseController
 
     public function ProfitAndLoss(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'Reports_profit', Client::class);
 
-        $data = [];
+        // $data = [];
         $item['sales'] = Sale::where('deleted_at', '=', null)->whereBetween('date', array($request->from, $request->to))
             ->select(
                 DB::raw('SUM(GrandTotal) AS sum'),
@@ -1628,7 +1584,6 @@ class ReportController extends BaseController
 
     public function GetBackup(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'backup', User::class);
 
         $data = [];
@@ -1645,16 +1600,14 @@ class ReportController extends BaseController
 
         return response()->json([
             'backups' => $data,
-            'totalRows' => $totalRows,
+            'totalRows' => $totalRows
         ]);
-
     }
 
     //-------------------- Generate Databse -------------\\
 
     public function GenerateBackup(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'backup', User::class);
 
         Artisan::call('database:backup');
@@ -1662,16 +1615,16 @@ class ReportController extends BaseController
         return response()->json('Generate complete success');
     }
 
-    public function download($file_name) {
-        $file_path = storage_path() . '/app/public/backup/' .$file_name;
+    public function download($file_name)
+    {
+        $file_path = storage_path() . '/app/public/backup/' . $file_name;
         return response()->download($file_path);
-      }
+    }
 
     //-------------------- Delete Databse -------------\\
 
     public function DeleteBackup(Request $request, $name)
     {
-
         $this->authorizeForUser($request->user('api'), 'backup', User::class);
 
         foreach (glob(storage_path() . '/app/public/backup/*') as $filename) {
@@ -1681,5 +1634,4 @@ class ReportController extends BaseController
             }
         }
     }
-
 }
