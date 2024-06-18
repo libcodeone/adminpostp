@@ -911,7 +911,8 @@ class ProductsController extends BaseController
 
         $data = [];
 
-        if (count((array)$product_warehouse_data) > 0) {
+        $productWarehouseDataArray = (array)$product_warehouse_data;
+        if (count($productWarehouseDataArray) > 0) {
             foreach ($product_warehouse_data as $product_warehouse) {
                 if ($product_warehouse["qte"] <= $product_warehouse['product']["stock_alert"]) {
                     $productWarehouse_productVariantName = (is_null($product_warehouse['productVariant']) || empty($product_warehouse['productVariant'])) ? "N/A" : $product_warehouse["productVariant"]["name"];

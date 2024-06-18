@@ -332,7 +332,10 @@ class ReportController extends BaseController
             ->take('5')->get();
 
         $stock_alert = [];
-        if (count((array)$product_warehouse_data) > 0) {
+
+        $productWarehouseDataArray = (array)$product_warehouse_data;
+
+        if (count($productWarehouseDataArray) > 0) {
             foreach ($product_warehouse_data as $product_warehouse) {
                 if ($product_warehouse["qte"] <= $product_warehouse['product']['stock_alert']) {
                     $productWarehouse_productVariantName = (is_null($product_warehouse['productVariant']) || empty($product_warehouse['productVariant'])) ? "N/A" : $product_warehouse["productVariant"]["name"];
@@ -741,7 +744,8 @@ class ReportController extends BaseController
                 });
             });
 
-        $totalRows = count((array)$Filtred);
+        $filteredDataArray = (array)$Filtred;
+        $totalRows = count($filteredDataArray);
         $Purchases = $Filtred->offset($offSet)
             ->limit($perPage)
             ->orderBy('purchases.' . $order, $dir)
