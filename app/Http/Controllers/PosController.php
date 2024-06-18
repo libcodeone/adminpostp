@@ -192,7 +192,7 @@ class PosController extends BaseController
                     $totalTaxPerProduct = $dividedTaxWithHeld * $this->productQuantity;
 
                     if ($this->clientBigConsumerOrNot === 1 && round($totalWithDiscount / 1.13, 2) >= 100) {
-                        $originalPriceWithDiscount = $originalPriceWithDiscount - round(($originalPriceWithDiscount / 1.13), 2);
+                        $originalPriceWithDiscount = $originalPriceWithDiscount - $dividedTaxWithHeld;
                         $price = $value["Net_price"] - $dividedTaxWithHeld;
                         $this->subTotalProductPrice = $this->subTotalProductPrice - $totalTaxPerProduct;
                         $productsSubTotal[$key] = $this->subTotalProductPrice;
