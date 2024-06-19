@@ -169,43 +169,45 @@
                                                     }"
                                                     class="input-customer"
                                                 >
-                                                    <v-select
-                                                        :class="{
-                                                            'is-invalid': !!errors.length
-                                                        }"
-                                                        :state="
-                                                            errors[0]
-                                                                ? false
-                                                                : valid
-                                                                ? true
-                                                                : null
-                                                        "
-                                                        v-model="sale.client_id"
-                                                        :reduce="
-                                                            label => label.value
-                                                        "
-                                                        :placeholder="
-                                                            $t(
-                                                                'Choose_Customer'
-                                                            )
-                                                        "
-                                                        class="w-100"
-                                                        :options="
-                                                            clients.map(
-                                                                clients => ({
-                                                                    label:
-                                                                        clients.name +
-                                                                        '-' +
-                                                                        clients.final_consumer +
-                                                                        ' (' +
-                                                                        clients.phone +
-                                                                        ')',
-                                                                    value:
-                                                                        clients.id
-                                                                })
-                                                            )
-                                                        "
-                                                    />
+                                                    <div style="width: 100%;">
+                                                        <label
+                                                            for="customer-select"
+                                                        >Seleccione un cliente:</label>
+                                                        <input
+                                                            class="form-control"
+                                                            id="customer-select"
+                                                            name="customer-select"
+                                                            list="customer-options"
+                                                            v-model="
+                                                                sale.client_id
+                                                            "
+                                                            :class="{
+                                                                'is-invalid': !!errors.length,
+                                                                'is-valid': valid
+                                                            }"
+                                                            placeholder="Ingrese el nombre o ID de cliente"
+                                                        />
+                                                        <datalist
+                                                            id="customer-options"
+                                                        >
+                                                            <option
+                                                                v-for="client in clients"
+                                                                :key="client.id"
+                                                                :value="client.id"
+                                                            >
+                                                                {{
+                                                                    client.name
+                                                                }}
+                                                                -
+                                                                {{
+                                                                    client.final_consumer
+                                                                }}
+                                                                ({{
+                                                                    client.phone
+                                                                }})
+                                                            </option>
+                                                        </datalist>
+                                                    </div>
 
                                                     <!-- <b-col lg="12" md="12" sm="12" class="w-100">
                                                         <b-row>
@@ -223,7 +225,10 @@
                                                             <span class="badge badge-warning" v-if="sale.client_id == ''">{{$t('Choose_Customer')}}</span>
                                                         </b-row>
                                                     </b-col> -->
-                                                    <b-input-group-append>
+
+                                                    <div
+                                                        style="margin-top: auto;"
+                                                    >
                                                         <b-button
                                                             variant="primary"
                                                             @click="
@@ -236,7 +241,7 @@
                                                                 ></i>
                                                             </span>
                                                         </b-button>
-                                                    </b-input-group-append>
+                                                    </div>
                                                 </b-input-group>
                                             </validation-provider>
                                         </b-col>
@@ -254,45 +259,42 @@
                                                     }"
                                                     class="mt-2"
                                                 >
-                                                    <v-select
-                                                        :class="{
-                                                            'is-invalid': !!errors.length
-                                                        }"
-                                                        :state="
-                                                            errors[0]
-                                                                ? false
-                                                                : valid
-                                                                ? true
-                                                                : null
-                                                        "
-                                                        :disabled="
-                                                            details.length > 0
-                                                        "
-                                                        @input="
-                                                            Selected_Warehouse
-                                                        "
-                                                        v-model="
-                                                            sale.warehouse_id
-                                                        "
-                                                        :reduce="
-                                                            label => label.value
-                                                        "
-                                                        :placeholder="
-                                                            $t(
-                                                                'Choose_Warehouse'
-                                                            )
-                                                        "
-                                                        :options="
-                                                            warehouses.map(
-                                                                warehouses => ({
-                                                                    label:
-                                                                        warehouses.name,
-                                                                    value:
-                                                                        warehouses.id
-                                                                })
-                                                            )
-                                                        "
-                                                    />
+                                                    <div>
+                                                        <label
+                                                            for="warehouse-select"
+                                                        >Seleccione un almacén:</label>
+                                                        <input
+                                                            class="form-control"
+                                                            id="warehouse-select"
+                                                            name="customer-select"
+                                                            list="warehouse-options"
+                                                            :class="{
+                                                                'is-invalid': !!errors.length,
+                                                                'is-valid': valid
+                                                            }"
+                                                            :disabled="
+                                                                details.length > 0
+                                                            "
+                                                            @input="Selected_Warehouse(sale.warehouse_id)"
+                                                            v-model="
+                                                                sale.warehouse_id
+                                                            "
+                                                            placeholder="Ingrese el nombre o ID de almacén"
+                                                        />
+                                                        <datalist
+                                                            id="warehouse-options"
+                                                        >
+                                                            <option
+                                                                v-for="warehouse in warehouses"
+                                                                :key="warehouse.id"
+                                                                :value="warehouse.id"
+                                                            >
+                                                                {{
+                                                                    warehouse.name
+                                                                }}
+                                                            </option>
+                                                        </datalist>
+                                                    </div>
                                                 </b-form-group>
                                             </validation-provider>
                                         </b-col>
@@ -353,8 +355,7 @@
                                                         <tbody>
                                                             <tr
                                                                 v-if="
-                                                                    details.length <=
-                                                                        0
+                                                                    details.length <= 0
                                                                 "
                                                             >
                                                                 <td colspan="5">
@@ -381,7 +382,14 @@
                                                                             detail.name
                                                                         }}</span
                                                                     >
-                                                                    <i @click="Modal_Update_Detail(detail)" class="i-Edit"></i>
+                                                                    <i
+                                                                        @click="
+                                                                            Modal_Update_Detail(
+                                                                                detail
+                                                                            )
+                                                                        "
+                                                                        class="i-Edit"
+                                                                    ></i>
                                                                 </td>
                                                                 <!-- <td>{{formatNumber(detail.Total_price, 2)}} {{currentUser.currency}}</td> -->
                                                                 <td>
@@ -406,7 +414,9 @@
                                                                                 )
                                                                         "
                                                                     >
-                                                                        <span>{{ detail.Net_price }}</span>
+                                                                        <span>{{
+                                                                            detail.Net_price
+                                                                        }}</span>
                                                                     </div>
                                                                     <div
                                                                         class="logo"
@@ -417,7 +427,7 @@
                                                                                 )
                                                                         "
                                                                     >
-                                                                        <input
+                                                                        <!-- <input
                                                                             class="form-control"
                                                                             @keyup="
                                                                                 keyup_price_product(
@@ -425,6 +435,12 @@
                                                                                     detail.detail_id
                                                                                 )
                                                                             "
+                                                                            disabled="disabled"
+                                                                            v-model.number="detail.Net_price"
+                                                                        /> -->
+                                                                        <input
+                                                                            class="form-control"
+                                                                            disabled="disabled"
                                                                             v-model.number="
                                                                                 detail.Net_price
                                                                             "
@@ -801,7 +817,7 @@
                                                     }"
                                                     :label="$t('TaxMethod')"
                                                 >
-                                                    <v-select
+                                                    <select
                                                         :class="{
                                                             'is-invalid': !!errors.length
                                                         }"
@@ -833,7 +849,7 @@
                                                                 value: '2'
                                                             }
                                                         ]"
-                                                    ></v-select>
+                                                    ></select>
                                                     <b-form-invalid-feedback>{{
                                                         errors[0]
                                                     }}</b-form-invalid-feedback>
@@ -894,7 +910,7 @@
                                                         $t('Discount_Method')
                                                     "
                                                 >
-                                                    <v-select
+                                                    <select
                                                         v-model="
                                                             detail.discount_Method
                                                         "
@@ -925,7 +941,7 @@
                                                                 value: '2'
                                                             }
                                                         ]"
-                                                    ></v-select>
+                                                    ></select>
                                                     <b-form-invalid-feedback>{{
                                                         errors[0]
                                                     }}</b-form-invalid-feedback>
@@ -1214,7 +1230,10 @@
                         </b-row>
 
                         <b-row>
-                            <b-col md="12" class="d-flex flex-row flex-wrap mt-4">
+                            <b-col
+                                md="12"
+                                class="d-flex flex-row flex-wrap mt-4"
+                            >
                                 <b-pagination
                                     @change="BrandonPageChanged"
                                     :total-rows="brand_totalRows"
@@ -1364,7 +1383,10 @@
                         </b-row>
 
                         <b-row>
-                            <b-col md="12" class="d-flex flex-row flex-wrap mt-4">
+                            <b-col
+                                md="12"
+                                class="d-flex flex-row flex-wrap mt-4"
+                            >
                                 <b-pagination
                                     @change="Category_onPageChanged"
                                     :total-rows="category_totalRows"
@@ -2157,10 +2179,8 @@ export default {
         },
         performUpdateDetail() {
             this.$refs.Update_Detail.validate().then(success => {
-                if (!success)
-                    return;
-                else
-                    this.Update_Detail();
+                if (!success) return;
+                else this.Update_Detail();
             });
         },
 
@@ -2251,7 +2271,7 @@ export default {
             axios
                 .get("Get_Clients_Without_Paginate")
                 .then(({ data }) => (this.clients = data));
-                // console.log(this.clients);
+            // console.log(this.clients);
         },
 
         //---Validate State Fields
@@ -2363,11 +2383,15 @@ export default {
                     if (this.details[i].tax_method == "1") {
                         //Exclusive
                         this.details[i].Net_price = parseFloat(
-                            this.detail.Unit_price /* - this.details[i].DiscountNet */
+                            this.detail
+                                .Unit_price /* - this.details[i].DiscountNet */
                         );
 
                         this.details[i].taxe = parseFloat(
-                            (this.detail.tax_percent * (this.detail.Unit_price /* - this.details[i].DiscountNet */)) / 100
+                            (this.detail.tax_percent *
+                                this.detail
+                                    .Unit_price /* - this.details[i].DiscountNet */) /
+                                100
                         );
 
                         this.details[i].Total_price = parseFloat(
@@ -2376,11 +2400,15 @@ export default {
                     } else {
                         //Inclusive
                         this.details[i].Net_price = parseFloat(
-                            (this.detail.Unit_price /* - this.details[i].DiscountNet */) / (this.detail.tax_percent / 100 + 1)
+                            this.detail
+                                .Unit_price /* - this.details[i].DiscountNet */ /
+                                (this.detail.tax_percent / 100 + 1)
                         );
 
                         this.details[i].taxe = parseFloat(
-                            this.detail.Unit_price - this.details[i].Net_price /* - this.details[i].DiscountNet */
+                            this.detail.Unit_price -
+                                this.details[i]
+                                    .Net_price /* - this.details[i].DiscountNet */
                         );
 
                         this.details[i].Total_price = parseFloat(
@@ -2511,39 +2539,56 @@ export default {
         //---------------------------------Get Product Details ------------------------\\
 
         getProductDetails(product, product_id) {
-            axios.get("products_details?id=" + product_id + "&warehouse_id=" + this.sale.warehouse_id).then(response => {
-                if (response.data.has_stock)
-                {
-                    this.product.discount = 0;
-                    this.product.DiscountNet = 0;
-                    this.product.discount_Method = "2";
-                    this.product.product_id = response.data.product_details.id;
-                    this.product.name = response.data.product_details.name;
-                    this.product.Net_price = response.data.product_details.Net_price;
-                    this.product.Total_price = response.data.product_details.Total_price;
-                    this.product.Unit_price = response.data.product_details.Unit_price;
-                    this.product.taxe = response.data.product_details.tax_price;
-                    this.product.tax_method = response.data.product_details.tax_method;
-                    this.product.tax_percent = response.data.product_details.tax_percent;
-                    this.product.unitSale = response.data.product_details.unitSale;
-                    this.product.product_variant_id = product.product_variant_id;
-                    this.product.code = product.code;
-                    this.product.imageList = product.imageList;
-                    this.addProduct(product.code, response.data.product_has_discount, response.data.product_discount);
-                    this.determineTotal();
-                }
-                else
-                {
-                    this.makeToast(
-                        "warning",
-                        this.$t("LowStock"),
-                        this.$t("Warning")
-                    );
-                }
+            axios
+                .get(
+                    "products_details?id=" +
+                        product_id +
+                        "&warehouse_id=" +
+                        this.sale.warehouse_id
+                )
+                .then(response => {
+                    if (response.data.has_stock) {
+                        this.product.discount = 0;
+                        this.product.DiscountNet = 0;
+                        this.product.discount_Method = "2";
+                        this.product.product_id =
+                            response.data.product_details.id;
+                        this.product.name = response.data.product_details.name;
+                        this.product.Net_price =
+                            response.data.product_details.Net_price;
+                        this.product.Total_price =
+                            response.data.product_details.Total_price;
+                        this.product.Unit_price =
+                            response.data.product_details.Unit_price;
+                        this.product.taxe =
+                            response.data.product_details.tax_price;
+                        this.product.tax_method =
+                            response.data.product_details.tax_method;
+                        this.product.tax_percent =
+                            response.data.product_details.tax_percent;
+                        this.product.unitSale =
+                            response.data.product_details.unitSale;
+                        this.product.product_variant_id =
+                            product.product_variant_id;
+                        this.product.code = product.code;
+                        this.product.imageList = product.imageList;
+                        this.addProduct(
+                            product.code,
+                            response.data.product_has_discount,
+                            response.data.product_discount
+                        );
+                        this.determineTotal();
+                    } else {
+                        this.makeToast(
+                            "warning",
+                            this.$t("LowStock"),
+                            this.$t("Warning")
+                        );
+                    }
 
-                // Complete the animation of the progress bar.
-                NProgress.done();
-            });
+                    // Complete the animation of the progress bar.
+                    NProgress.done();
+                });
         },
 
         //----------- Calcul Total
@@ -2649,10 +2694,8 @@ export default {
         //---------- keyup Discount
 
         keyup_discount() {
-            if (isNaN(this.sale.discount))
-                this.sale.discount = 0;
-            else
-                this.determineTotal();
+            if (isNaN(this.sale.discount)) this.sale.discount = 0;
+            else this.determineTotal();
         },
         keyup_price_product(detail, id) {
             for (var i = 0; i < this.details.length; i++) {
@@ -2896,8 +2939,7 @@ export default {
                     setTimeout(() => {
                         this.isLoading = false;
                     }, 500);
-                }
-            );
+                });
         },
 
         //-----------Authorize Discount--------------//
@@ -2936,8 +2978,7 @@ export default {
                     setTimeout(() => {
                         this.isLoading = false;
                     }, 500);
-                }
-            );
+                });
         }
     },
 
