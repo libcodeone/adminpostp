@@ -172,7 +172,9 @@
                                                     <div style="width: 100%;">
                                                         <label
                                                             for="customer-select"
-                                                        >Seleccione un cliente:</label>
+                                                            >Seleccione un
+                                                            cliente:</label
+                                                        >
                                                         <input
                                                             class="form-control"
                                                             id="customer-select"
@@ -193,7 +195,9 @@
                                                             <option
                                                                 v-for="client in clients"
                                                                 :key="client.id"
-                                                                :value="client.id"
+                                                                :value="
+                                                                    client.id
+                                                                "
                                                             >
                                                                 {{
                                                                     client.name
@@ -259,42 +263,45 @@
                                                     }"
                                                     class="mt-2"
                                                 >
-                                                    <div>
-                                                        <label
-                                                            for="warehouse-select"
-                                                        >Seleccione un almacén:</label>
-                                                        <input
-                                                            class="form-control"
-                                                            id="warehouse-select"
-                                                            name="customer-select"
-                                                            list="warehouse-options"
-                                                            :class="{
-                                                                'is-invalid': !!errors.length,
-                                                                'is-valid': valid
-                                                            }"
-                                                            :disabled="
-                                                                details.length > 0
-                                                            "
-                                                            @input="Selected_Warehouse(sale.warehouse_id)"
-                                                            v-model="
-                                                                sale.warehouse_id
-                                                            "
-                                                            placeholder="Ingrese el nombre o ID de almacén"
-                                                        />
-                                                        <datalist
-                                                            id="warehouse-options"
-                                                        >
-                                                            <option
-                                                                v-for="warehouse in warehouses"
-                                                                :key="warehouse.id"
-                                                                :value="warehouse.id"
-                                                            >
-                                                                {{
-                                                                    warehouse.name
-                                                                }}
-                                                            </option>
-                                                        </datalist>
-                                                    </div>
+                                                    <v-select
+                                                        :class="{
+                                                            'is-invalid': !!errors.length
+                                                        }"
+                                                        :state="
+                                                            errors[0]
+                                                                ? false
+                                                                : valid
+                                                                ? true
+                                                                : null
+                                                        "
+                                                        :disabled="
+                                                            details.length > 0
+                                                        "
+                                                        @input="
+                                                            Selected_Warehouse
+                                                        "
+                                                        v-model="
+                                                            sale.warehouse_id
+                                                        "
+                                                        :reduce="
+                                                            label => label.value
+                                                        "
+                                                        :placeholder="
+                                                            $t(
+                                                                'Choose_Warehouse'
+                                                            )
+                                                        "
+                                                        :options="
+                                                            warehouses.map(
+                                                                warehouses => ({
+                                                                    label:
+                                                                        warehouses.name,
+                                                                    value:
+                                                                        warehouses.id
+                                                                })
+                                                            )
+                                                        "
+                                                    />
                                                 </b-form-group>
                                             </validation-provider>
                                         </b-col>
@@ -355,7 +362,8 @@
                                                         <tbody>
                                                             <tr
                                                                 v-if="
-                                                                    details.length <= 0
+                                                                    details.length <=
+                                                                        0
                                                                 "
                                                             >
                                                                 <td colspan="5">
@@ -2390,7 +2398,7 @@ export default {
                         this.details[i].taxe = parseFloat(
                             (this.detail.tax_percent *
                                 this.detail
-                                    .Unit_price /* - this.details[i].DiscountNet */) /
+                                    .Unit_price) /* - this.details[i].DiscountNet */ /
                                 100
                         );
 
