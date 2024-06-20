@@ -9,8 +9,10 @@ class Role extends Model implements Auditable
 {
 
     use \OwenIt\Auditing\Auditable;
+    protected $table = "roles";
+
     protected $guarded = ['id'];
-    protected $fillable = array('name','status', 'label', 'description');
+    protected $fillable = array('name', 'status', 'label', 'description');
 
     public function permissions()
     {
@@ -21,6 +23,12 @@ class Role extends Model implements Auditable
     {
         return $this->permissions()->save($permission);
     }
+
+    public function users()
+    {
+        return $this->hasMany(User::class, "role_id")->orderBy('name','ASC');
+    }
+
     /**
      * Determine if the user may perform the given permission.
      *

@@ -305,6 +305,30 @@
                 </b-form-group>
               </validation-provider>
             </b-col>
+
+             <!-- New AuthorizationCode -->
+             <b-col md="6" >
+              <validation-provider
+                name="New AuthorizationCode"
+                :rules="{min:6 , max:14}"
+                v-slot="validationContext"
+              >
+                <b-form-group :label="$t('authorizedCodeLabel')">
+                  <b-form-input
+                    :state="getValidationState(validationContext)"
+                    aria-describedby="NewAuthorizedCodeLabel-feedback"
+                    :placeholder="$t('authorizedCodeLabel')"
+                    label="AuthorizedCodeLabel"
+                    type="text"
+                    v-model="user.authorizedCode"
+                  ></b-form-input>
+                  <b-form-invalid-feedback
+                    id="authorizedCodeLabel-feedback"
+                  >{{ validationContext.errors[0] }}</b-form-invalid-feedback>
+                </b-form-group>
+              </validation-provider>
+            </b-col>
+
              <!-- Default Warehouse -->
                   <b-col lg="12" md="12" sm="12">
                     <b-form-group :label="$t('DefaultWarehouse')">
@@ -503,7 +527,8 @@ export default {
         initCF: "",
         currentCF: "",
         finalCF: "",
-        warehouse_id: ""
+        warehouse_id: "",
+        authorizedCode:""
       }
     };
   },
@@ -873,6 +898,7 @@ export default {
       self.data.append("currentCF", self.user.currentCF);
       self.data.append("finalCF", self.user.finalCF);
       self.data.append("warehouse_id", self.user.warehouse_id);
+      self.data.append("authorizedCode", self.user.authorizedCode);
       self.data.append("_method", "put");
 
       axios

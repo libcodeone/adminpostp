@@ -20,7 +20,7 @@ class User extends Authenticatable implements Auditable
      */
     protected $fillable = [
         'firstname', 'lastname', 'username', 'email', 'password', 'phone', 'statut', 'avatar', 'role_id',
-        'warehouse_id', 'initCCF', 'currentCCF', 'finalCCF','initCF', 'currentCF','finalCF'
+        'warehouse_id', 'initCCF', 'currentCCF', 'finalCCF','initCF', 'currentCF','finalCF','authorizedCode'
     ];
  
     /**

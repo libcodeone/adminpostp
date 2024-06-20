@@ -77,7 +77,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::get('Get_Clients_Without_Paginate', 'ClientController@Get_Clients_Without_Paginate');
     Route::post('clients/delete/by_selection', 'ClientController@delete_by_selection');
     Route::post('clients/pos', 'ClientController@store_pos');
-    
+
 
     //------------------------------- Providers --------------------------\\
     //--------------------------------------------------------------------\\
@@ -87,20 +87,23 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::post('providers/import/csv', 'ProvidersController@import_providers');
     Route::post('providers/delete/by_selection', 'ProvidersController@delete_by_selection');
 
-
     //---------------------- POS (point of sales) ----------------------\\
     //------------------------------------------------------------------\\
 
     Route::post('pos/CreatePOS', 'PosController@CreatePOS');
     Route::post('pos/calculTotal', 'PosController@CalculGrandTotal');
+    Route::post('pos/authDiscount', 'PosController@authDiscount');
     Route::get('getArticlesByCategory/{id}', 'PosController@getArticlesByCategory');
     Route::get('GetProductsByParametre', 'PosController@GetProductsByParametre');
-    Route::get('pos/GetELementPos', 'PosController@GetELementPos');
+    Route::get('pos/GetElementPos', 'PosController@GetElementPos');
+    Route::get('pos/generateNewPosAuthToken', 'PosController@generateNewPosAuthToken');
+    Route::post('pos/authPriceChange', 'PosController@authPriceChange');
 
     //------------------------------- PRODUCTS --------------------------\\
     //------------------------------------------------------------------\\
 
     Route::resource('Products', 'ProductsController');
+    Route::get('products_details', 'ProductsController@getProductsDetails');
     Route::get('Products/export/Excel', 'ProductsController@export_Excel');
     Route::post('Products/import/csv', 'ProductsController@import_products');
     Route::get('Products/Warehouse/{id}', 'ProductsController@Products_by_Warehouse');
@@ -175,7 +178,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::post('sales/delete/by_selection', 'SalesController@delete_by_selection');
     Route::put('sales/change_status/{id}', 'SalesController@update_status');
     Route::put('sales/update_to_payment/{id}', 'SalesController@update_to_payment');
-   
+
 
     //------------------------------- Payments  Sales --------------------------\\
     //------------------------------------------------------------------\\
@@ -264,7 +267,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
 
     //------------------------------- Users --------------------------\\
     //------------------------------------------------------------------\\
-    
+
     Route::get('GetUserRole', 'UserController@GetUserRole');
     Route::get('GetUserAuth', 'UserController@GetUserAuth');
     Route::get("/GetPermissions", "UserController@GetPermissions");
@@ -282,9 +285,10 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::get('getRoleswithoutpaginate', 'PermissionsController@getRoleswithoutpaginate');
     Route::post('roles/delete/by_selection', 'PermissionsController@delete_by_selection');
 
-    
+
     //------------------------------- Settings ------------------------\\
-    //------------------------------------------------------------------\\    
+    //------------------------------------------------------------------\\
+
     Route::resource('settings', 'SettingsController');
     Route::put('SMTP/{id}', 'SettingsController@updateSMTP');
     Route::post('SMTP', 'SettingsController@CreateSMTP');
@@ -299,12 +303,22 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
 
     //------------------------------- Backup --------------------------\\
     //------------------------------------------------------------------\\
-    
+
     Route::get("/GetBackup", "ReportController@GetBackup");
     Route::get('/download_Backup/{file}', 'ReportController@download');
     Route::get("/GenerateBackup", "ReportController@GenerateBackup");
     Route::delete("/DeleteBackup/{name}", "ReportController@DeleteBackup");
 
+    //------------------------------- Discounts --------------------------\\
+    //---------------------------------------------------------------------\\}
+
+    Route::resource('discounts', 'DiscountProductController');
+    Route::post("/discount", "DiscountProductController@store");
+    Route::get("/discounts/edit/{id}", "DiscountProductController@edit");
+    Route::patch("/discounts/update/{id}", "DiscountProductController@update");
+    Route::get("/discounts/delete_view/{id}", "DiscountProductController@edit");
+    Route::delete("/discounts/destroy/{id}", "DiscountProductController@destroy");
+    Route::get("/discounts/getDiscountForProduct", "DiscountProductController@getDiscountPricePerProduct");
 });
 
     //-------------------------------  Print & PDF ------------------------\\

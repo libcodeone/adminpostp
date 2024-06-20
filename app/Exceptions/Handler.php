@@ -3,13 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Auth\AuthenticationException;
 use Throwable;
 use Exception;
-use App\Http\Controllers\BaseController;
-
-
-
 
 class Handler extends ExceptionHandler
 {
@@ -18,7 +13,7 @@ class Handler extends ExceptionHandler
      *
      * @var arrays
      */
- 
+
     protected $dontReport = [
         \Illuminate\Auth\AuthenticationException::class,
         \Illuminate\Auth\Access\AuthorizationException::class,
@@ -62,14 +57,14 @@ class Handler extends ExceptionHandler
      *
      * @throws \Throwable
      */
-      
+
 
         // public function destroyCookie($cookie_name){
-        
+
         //     $domain = ($_SERVER['SERVER_NAME'] != 'localhost') ? $_SERVER['SERVER_NAME'] : '.'.$_SERVER['SERVER_NAME'];
 
         //     if (isset($_COOKIE[$cookie_name])) {
-        //         unset($_COOKIE[$cookie_name]);  
+        //         unset($_COOKIE[$cookie_name]);
         //         setcookie($cookie_name, '', time() - 2147483647, '/', $domain); // empty value and old timestamp
         //     }
         // }
@@ -104,7 +99,4 @@ class Handler extends ExceptionHandler
 
             return parent::render($request, $exception);
         }
-       
-
-    
 }

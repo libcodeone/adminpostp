@@ -232,27 +232,28 @@
         </div>
       </div>
 
-<!--
-  421
-  210
-  105
-  53
+        <!--
+        421
+        210
+        105
+        53
 
 
-  140
+        140
 
 
-  421 - 100
-  321 - 105
-  216 - 40
-  176 - 160
-  16
+        421 - 100
+        321 - 105
+        216 - 40
+        176 - 160
+        16
 
 
-421+50+40+160
- -->
-      <!-- Modal Show Invoice-->
-            <!-- FACTURA-->
+        421+50+40+160
+        -->
+
+        <!-- Modal Show Invoice-->
+        <!-- FACTURA-->
       <b-modal
         hide-footer
         size="lg"
@@ -298,7 +299,7 @@
                     </div>
                   </div>
                   <div class="row">
-                   
+
                     <div class="col-8 padding-top padding-bottom">
                       <span class="h5 text-uppercase">
                        &nbsp;&nbsp;&nbsp;&nbsp;{{ invoice_pos.sale.client_adresse }}.
@@ -324,8 +325,8 @@
                   <div class="row">
                     <div class="col-2"> </div>
                     <div class="col-4" style="
-    padding: 0px;
-">
+                        padding: 0px;
+                    ">
                        <span>
                     &nbsp;&nbsp; {{ invoice_pos.sale.date }}.
                       </span>
@@ -467,7 +468,7 @@
                     <div class="col-6"></div>
                     <div class="col-6"></div>
                   </div>
-                  <div class="row align-items-end " style="height:120px">
+                  <div class="row align-items-end " style="height:90px">
                     <div class="col-6"></div>
                     <div class="col-6">
                       <span class="h5 text-uppercase">
@@ -530,7 +531,7 @@
                       </span>
                     </div>
                   </div>
-                  
+
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-top:15px;margin-left:10px;">
@@ -554,14 +555,14 @@
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
-                         &nbsp; 
+                         &nbsp;
                       </span>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-12 padding-top padding-bottom">
                       <span class="h5 text-uppercase" style="margin-top:10px;margin-left:10px;">
-                         &nbsp; 
+                         &nbsp;
                       </span>
                     </div>
                   </div>
@@ -668,8 +669,8 @@
                   <span class="h5 text-uppercase">
                   {{ detail_invoice.quantity }}
                       </span>
-                </div>        
-               
+                </div>
+
                 <div class="col-7">
                    <span class="h5 text-uppercase">
                   {{ detail_invoice.code }}

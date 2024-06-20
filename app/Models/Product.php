@@ -58,7 +58,6 @@ class Product extends Model implements Auditable
         return $this->belongsToMany('App\Models\Category')->withTimestamps();
     }
 
-
     public function unit()
     {
         return $this->belongsTo('App\Models\Unit', 'unit_id');

@@ -3,7 +3,7 @@
 namespace App\Exports;
 
 use App\Models\Product;
-use App\Models\product_warehouse;
+use App\Models\ProductWarehouse;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -24,7 +24,7 @@ class ProductsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEve
         if ($products->isNotEmpty()) {
 
             foreach ($products as $product) {
-                $product_warehouse_data = product_warehouse::where('deleted_at', '=', null)
+                $product_warehouse_data = ProductWarehouse::where('deleted_at', '=', null)
                     ->where('product_id', $product->id)->get();
 
                 $qte = 0;

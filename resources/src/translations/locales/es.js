@@ -662,5 +662,6 @@ export default {
     currentCF: "Tiraje actual de Factura",
     finalCF: "Tiraje Final de Factura",
     max13: "Ya tienes 13 productos en tu factura, envia a caja si quieres agregar mas productos en una nueva factura",
+    authorizedCodeLabel:"Código de autorización",
     
 };

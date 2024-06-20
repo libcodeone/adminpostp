@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\ProductVariant;
-use App\Models\product_warehouse;
-use App\Models\Warehouse;
 use Carbon\Carbon;
-use DB;
+use App\Models\Product;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
+use App\Models\ProductVariant;
+use App\Models\ProductWarehouse;
+Use Illuminate\Support\Facades\DB;
 
 class WarehouseController extends Controller
 {
@@ -21,7 +21,7 @@ class WarehouseController extends Controller
 
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -62,7 +62,7 @@ class WarehouseController extends Controller
             'name' => 'required',
         ]);
 
-        \DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
 
             $Warehouse = new Warehouse;
             $Warehouse->name = $request['name'];
@@ -101,7 +101,7 @@ class WarehouseController extends Controller
                         ];
                     }
 
-                    product_warehouse::insert($product_warehouse);
+                    ProductWarehouse::insert($product_warehouse);
                 }
             }
 
@@ -137,13 +137,13 @@ class WarehouseController extends Controller
     {
         $this->authorizeForUser($request->user('api'), 'delete', Warehouse::class);
 
-        \DB::transaction(function () use ($id) {
+        DB::transaction(function () use ($id) {
 
             Warehouse::whereId($id)->update([
                 'deleted_at' => Carbon::now(),
             ]);
 
-            product_warehouse::where('warehouse_id', $id)->update([
+            ProductWarehouse::where('warehouse_id', $id)->update([
                 'deleted_at' => Carbon::now(),
             ]);
 
@@ -156,17 +156,16 @@ class WarehouseController extends Controller
 
     public function delete_by_selection(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'delete', Warehouse::class);
 
-        \DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
             $selectedIds = $request->selectedIds;
             foreach ($selectedIds as $warehouse_id) {
                 Warehouse::whereId($warehouse_id)->update([
                     'deleted_at' => Carbon::now(),
                 ]);
 
-                product_warehouse::where('warehouse_id', $warehouse_id)->update([
+                ProductWarehouse::where('warehouse_id', $warehouse_id)->update([
                     'deleted_at' => Carbon::now(),
                 ]);
             }

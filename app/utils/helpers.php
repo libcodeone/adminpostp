@@ -73,7 +73,7 @@ class helpers
     //  Check If Hass Permission Show All records
     public function Show_Records($model)
     {
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         if (!$ShowRecord) {

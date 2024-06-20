@@ -1,0 +1,25 @@
+{
+    // Use IntelliSense para saber los atributos posibles.
+    // Mantenga el puntero para ver las descripciones de los existentes atributos.
+    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Listen for Xdebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9000
+        },
+        {
+            "type": "msedge",
+            "request": "launch",
+            "name": "VueJS: Edge",
+            "url": "http://192.168.0.15:7000",
+            "webRoot": "${workspaceFolder}/resources/js",
+            // "breakOnLoad": true,
+            "sourceMapPathOverrides": {
+                "webpack:///./resources/js/*": "${webRoot}/*"
+            }
+        }
+    ]
+}

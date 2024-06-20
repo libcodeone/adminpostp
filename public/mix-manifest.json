@@ -66,6 +66,7 @@
     "/js/bundle/permissions.js": "/js/bundle/permissions.js",
     "/js/bundle/pos.js": "/js/bundle/pos.js",
     "/js/bundle/products.js": "/js/bundle/products.js",
+    "/js/bundle/productsDiscounts.js": "/js/bundle/productsDiscounts.js",
     "/js/bundle/profile.js": "/js/bundle/profile.js",
     "/js/bundle/profit_and_loss.js": "/js/bundle/profit_and_loss.js",
     "/js/bundle/providers_report.js": "/js/bundle/providers_report.js",

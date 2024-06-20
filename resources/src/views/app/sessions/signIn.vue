@@ -6,7 +6,7 @@
           <div class="col-md-12">
             <div class="p-4">
               <div class="auth-logo text-center mb-30">
-                <img :src="'/images/shadai_logo.png'">
+                <img :src="'/images/logo-2.png'">
               </div>
               <h1 class="mb-3 text-18">{{$t('SignIn')}}</h1>
               <validation-observer ref="submit_login">
@@ -95,7 +95,7 @@ export default {
       email: "",
       password: "",
       userId: "",
-      bgImage: require("./../../../assets/images/photo-wide-4.jpg"),
+      bgImage:  require("./../../../assets/images/bgprint.jpg"),
       loading: false
     };
   },

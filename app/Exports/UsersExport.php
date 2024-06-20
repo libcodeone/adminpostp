@@ -18,7 +18,7 @@ class UsersExport implements FromArray, WithHeadings, ShouldAutoSize, WithEvents
      */
     function array(): array
     {
-        $Role = Auth::user()->roles()->first();
+        $Role = Auth::user()->roles->first();
         $ShowRecord = Role::findOrFail($Role->id)->inRole('record_view');
 
         $data = [];
