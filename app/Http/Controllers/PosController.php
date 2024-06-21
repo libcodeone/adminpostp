@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ProductPriceModification;
+use Illuminate\Database\Eloquent\Builder;
 
 class PosController extends BaseController
 {
@@ -172,12 +173,10 @@ class PosController extends BaseController
             $productsTotalAmount = 0;
             $dividedTaxWithHeld = 0.00;
 
-            if (count($detailsData) > 0)
-            {
+            if (count($detailsData) > 0) {
                 $productsTotal = collect($detailsData)->pluck("quantity");
 
-                if ($productsTotal)
-                {
+                if ($productsTotal) {
                     $productsTotal = $productsTotal->toArray();
                     $productsTotalAmount = array_sum($productsTotal);
                     $dividedTaxWithHeld = $TaxWithheld / $productsTotalAmount;
@@ -212,20 +211,16 @@ class PosController extends BaseController
                         $this->subTotalProductPrice = $this->subTotalProductPrice - $totalTaxPerProduct;
                         $productsSubTotal[$key] = $this->subTotalProductPrice;
 
-                        if ($key === count($detailsData) - 1)
-                        {
+                        if ($key === count($detailsData) - 1) {
                             $currentOrder = DB::table("sales")->where("id", '=', $order->id)->first();
 
-                            if (isset($currentOrder))
-                            {
+                            if (isset($currentOrder)) {
                                 $currentOrder = (array)$currentOrder;
 
-                                if (count($currentOrder) > 0)
-                                {
+                                if (count($currentOrder) > 0) {
                                     $productsSubTotalAmount = array_sum($productsSubTotal);
 
-                                    if ($currentOrder["GrandTotal"] !== $productsSubTotalAmount)
-                                    {
+                                    if ($currentOrder["GrandTotal"] !== $productsSubTotalAmount) {
                                         DB::table("sales")->where("id", '=', $order->id)->update(
                                             [
                                                 "subTotal" => round(($productsSubTotalAmount + $order->TaxWithheld), 2),
@@ -236,9 +231,7 @@ class PosController extends BaseController
                                 }
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $this->taxMethod = 2;
                         $price = $value["Net_price"];
                     }
@@ -664,28 +657,39 @@ class PosController extends BaseController
         $offset = ($pageStart * $perPage) - $perPage;
         $data = array();
 
-        $product_warehouse_query = DB::table("product_warehouse")
-            ->join("products", "product_warehouse.product_id", "=", "products.id")
-            ->join("units", "products.unit_sale_id", "=", "units.id")
-            ->where("product_warehouse.warehouse_id", $request->warehouse_id)
-            ->whereNull("product_warehouse.deleted_at")
-            ->when($request->filled("category_id"), function ($query) use ($request) {
-                return $query->whereExists(function ($query) use ($request) {
-                    $query->select(DB::raw(1))
-                        ->from("categories")
-                        ->whereRaw("categories.id = products.category_id")
-                        ->where("categories.id", $request->category_id);
+        $product_warehouse_query = DB::table('product_warehouse')
+            ->where('warehouse_id', '=', $request->warehouse_id)
+            ->whereNull('deleted_at')
+            ->when($request->filled('category_id'), function ($query) use ($request) {
+                return $query->whereExists(function ($subquery) use ($request) {
+                    $subquery->select(DB::raw(1))
+                        ->from('category_product')
+                        ->join('categories', 'category_product.category_id', '=', 'categories.id')
+                        ->join('products', 'category_product.product_id', '=', 'products.id')
+                        ->whereColumn('categories.id', '=', 'category_product.category_id')
+                        ->where('categories.id', '=', $request->category_id);
                 });
             })
-            ->when($request->filled("brand_id"), function ($query) use ($request) {
-                return $query->where("products.brand_id", $request->brand_id);
-            })
-            ->when($request->filled("search"), function ($query) use ($request) {
-                return $query->where(function ($query) use ($request) {
-                    $query->where("products.name", "LIKE", "%{$request->search}%")
-                        ->orWhere("products.code", "LIKE", "%{$request->search}%");
+            ->when($request->filled('brand_id'), function ($query) use ($request) {
+                return $query->whereExists(function ($subquery) use ($request) {
+                    $subquery->select(DB::raw(1))
+                        ->from('products')
+                        ->whereColumn('products.id', '=', 'product_warehouse.product_id')
+                        ->where('products.brand_id', '=', $request->brand_id);
                 });
-            })->get();
+            })
+            ->when($request->filled('search'), function ($query) use ($request) {
+                return $query->whereExists(function ($subquery) use ($request) {
+                    $subquery->select(DB::raw(1))
+                        ->from('products')
+                        ->whereColumn('products.id', '=', 'product_warehouse.product_id')
+                        ->where(function ($subsubquery) use ($request) {
+                            $subsubquery->where('products.name', 'LIKE', "%{$request->search}%")
+                                ->orWhere('products.code', 'LIKE', "%{$request->search}%");
+                        });
+                });
+            })
+            ->get();
 
         $totalRows = $product_warehouse_query->count();
 
