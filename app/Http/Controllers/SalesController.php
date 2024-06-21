@@ -803,21 +803,22 @@ class SalesController extends BaseController
             }
 
             if ($detail->discount_method == '2') {
-                $data['DiscountNet'] = $detail->discount;
+                $data['DiscountNet'] = ($detail->discount / $detail->quantity);
             } else {
-                $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+                $data['DiscountNet'] = $detail->price * ($detail->discount / $detail->quantity) / 100;
             }
 
-            $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
             $data['Unit_price'] = $detail->price;
-            $data['discount'] = $detail->discount;
+            $data['discount'] = ($detail->discount / $detail->quantity);
+
+            $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where("id", "=", $detail['product']['id'])->pluck("price")->first()), true), 2);
 
             if ($detail->tax_method == '1') {
-                $data['Net_price'] = $detail->price - $data['DiscountNet'];
-                $data['taxe'] = $detail->TaxNet * $detail->quantity;
+                $data['Net_price'] = ($detail->price < $originalPrice) ? $originalPrice - $data['DiscountNet'] : (($detail->price === $originalPrice) ? $detail->price - $data['DiscountNet'] : $detail->price);
+                $data['taxe'] = ($data['total'] >= 100.00) ? 0.00 : (($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity);
             } else {
-                $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
-                $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'] * $detail->quantity;;
+                $data['Net_price'] = ($detail->price < $originalPrice) ? (($originalPrice - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : (($detail->price === $originalPrice) ? (($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : ($detail->price / (($detail->TaxNet / 100) + 1)));                $data['taxe'] = ($data['Net_price'] - $detail->price) * $detail->quantity;
+                $data['taxe'] = ($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity;
             }
 
             $details[] = $data;
@@ -996,21 +997,22 @@ class SalesController extends BaseController
             $data['price'] = number_format($detail->price, 2, '.', '');
 
             if ($detail->discount_method == '2') {
-                $data['DiscountNet'] = number_format($detail->discount, 2, '.', '');
+                $data['DiscountNet'] = number_format(($detail->discount / $detail->quantity), 2, '.', '');
             } else {
-                $data['DiscountNet'] = number_format($detail->price * $detail->discount / 100, 2, '.', '');
+                $data['DiscountNet'] = number_format($detail->price * ($detail->discount / $detail->quantity) / 100, 2, '.', '');
             }
 
-            $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
             $data['Unit_price'] = number_format($detail->price, 2, '.', '');
-            $data['discount'] = number_format($detail->discount, 2, '.', '');
+            $data['discount'] = number_format(($detail->discount / $detail->quantity), 2, '.', '');
+
+            $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where("id", "=", $detail['product']['id'])->pluck("price")->first()), true), 2);
 
             if ($detail->tax_method == '1') {
-                $data['Net_price'] = $detail->price - $data['DiscountNet'];
-                $data['taxe'] = number_format($tax_price, 2, '.', '');
+                $data['Net_price'] = ($detail->price < $originalPrice) ? $originalPrice - $data['DiscountNet'] : (($detail->price === $originalPrice) ? $detail->price - $data['DiscountNet'] : $detail->price);
+                $data['taxe'] = number_format((($data['total'] >= 100.00) ? 0.00 : (($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity)), 2, '.', '');
             } else {
-                $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
-                $data['taxe'] = number_format($detail->price - $data['Net_price'] - $data['DiscountNet'], 2, '.', '');
+                $data['Net_price'] = ($detail->price < $originalPrice) ? (($originalPrice - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : (($detail->price === $originalPrice) ? (($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : ($detail->price / (($detail->TaxNet / 100) + 1)));;
+                $data['taxe'] = number_format((($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity), 2, '.', '');
             }
 
             $details[] = $data;
@@ -1162,26 +1164,27 @@ class SalesController extends BaseController
             }
 
             if ($detail->discount_method == '2') {
-                $data['DiscountNet'] = $detail->discount;
+                $data['DiscountNet'] = ($detail->discount / $detail->quantity);
             } else {
-                $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+                $data['DiscountNet'] = $detail->price * ($detail->discount / $detail->quantity) / 100;
             }
 
-            $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
             $data['Unit_price'] = $detail->price;
             $data['tax_percent'] = $detail->TaxNet;
             $data['tax_method'] = $detail->tax_method;
-            $data['discount'] = $detail->discount;
+            $data['discount'] = ($detail->discount / $detail->quantity);
             $data['discount_Method'] = $detail->discount_method;
 
+            $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where("id", "=", $detail['product']['id'])->pluck("price")->first()), true), 2);
+
             if ($detail->tax_method == '1') {
-                $data['Net_price'] = $detail->price - $data['DiscountNet'];
-                $data['taxe'] = $detail->TaxNet;
-                $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
+                $data['Net_price'] = ($detail->price < $originalPrice) ? $originalPrice - $data['DiscountNet'] : (($detail->price === $originalPrice) ? $detail->price - $data['DiscountNet'] : $detail->price);
+                $data['taxe'] = ($data['total'] >= 100.00) ? 0.00 : (($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity);
+                $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + (($data['Net_price'] - $detail->price) * $data['quantity']);
             } else {
-                $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
-                $data['taxe'] = $detail->TaxNet;
-                $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
+                $data['Net_price'] = ($detail->price < $originalPrice) ? (($originalPrice - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : (($detail->price === $originalPrice) ? (($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : ($detail->price / (($detail->TaxNet / 100) + 1)));
+                $data['taxe'] = ($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity;
+                $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + (($data['Net_price'] - $detail->price) * $data['quantity']);
             }
 
             $details[] = $data;
@@ -1329,25 +1332,27 @@ class SalesController extends BaseController
             }
 
             if ($detail->discount_method == '2') {
-                $data['DiscountNet'] = $detail->discount;
+                $data['DiscountNet'] = ($detail->discount / $detail->quantity);
             } else {
-                $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+                $data['DiscountNet'] = $detail->price * ($detail->discount / $detail->quantity) / 100;
             }
-            $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
+
             $data['Unit_price'] = $detail->price;
             $data['tax_percent'] = $detail->TaxNet;
             $data['tax_method'] = $detail->tax_method;
-            $data['discount'] = $detail->discount;
+            $data['discount'] = ($detail->discount / $detail->quantity);
             $data['discount_Method'] = $detail->discount_method;
 
+            $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where("id", "=", $detail['product']['id'])->pluck("price")->first()), true), 2);
+
             if ($detail->tax_method == '1') {
-                $data['Net_price'] = $detail->price - $data['DiscountNet'];
-                $data['taxe'] = $tax_price;
-                $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
+                $data['Net_price'] = ($detail->price < $originalPrice) ? $originalPrice - $data['DiscountNet'] : (($detail->price === $originalPrice) ? $detail->price - $data['DiscountNet'] : $detail->price);
+                $data['taxe'] = ($data['total'] >= 100.00) ? 0.00 : (($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity);
+                $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + (($data['Net_price'] - $detail->price) * $data['quantity']);
             } else {
-                $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
-                $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
-                $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + ($tax_price * $data['quantity']);
+                $data['Net_price'] = ($detail->price < $originalPrice) ? (($originalPrice - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : (($detail->price === $originalPrice) ? (($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : ($detail->price / (($detail->TaxNet / 100) + 1)));
+                $data['taxe'] = ($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity;
+                $data['subtotal'] = ($data['Net_price'] * $data['quantity']) + (($data['Net_price'] - $detail->price) * $data['quantity']);
             }
 
             $details[] = $data;
@@ -1629,21 +1634,22 @@ class SalesController extends BaseController
             }
 
             if ($detail->discount_method == '2') {
-                $data['DiscountNet'] = $detail->discount;
+                $data['DiscountNet'] = ($detail->discount / $detail->quantity);
             } else {
-                $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+                $data['DiscountNet'] = $detail->price * ($detail->discount / $detail->quantity) / 100;
             }
 
-            $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
             $data['Unit_price'] = $detail->price;
-            $data['discount'] = $detail->discount;
+            $data['discount'] = ($detail->discount / $detail->quantity);
+
+            $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where("id", "=", $detail['product']['id'])->pluck("price")->first()), true), 2);
 
             if ($detail->tax_method == '1') {
-                $data['Net_price'] = $detail->price - $data['DiscountNet'];
-                $data['taxe'] = $tax_price;
+                $data['Net_price'] = ($detail->price < $originalPrice) ? $originalPrice - $data['DiscountNet'] : (($detail->price === $originalPrice) ? $detail->price - $data['DiscountNet'] : $detail->price);
+                $data['taxe'] =  ($data['total'] >= 100.00) ? 0.00 : (($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity);
             } else {
-                $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
-                $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
+                $data['Net_price'] = ($detail->price < $originalPrice) ? (($originalPrice - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : (($detail->price === $originalPrice) ? (($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : ($detail->price / (($detail->TaxNet / 100) + 1)));
+                $data['taxe'] = ($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity;
             }
 
             $details[] = $data;
@@ -1765,21 +1771,22 @@ class SalesController extends BaseController
             }
 
             if ($detail->discount_method == '2') {
-                $data['DiscountNet'] = $detail->discount;
+                $data['DiscountNet'] = ($detail->discount / $detail->quantity);
             } else {
-                $data['DiscountNet'] = $detail->price * $detail->discount / 100;
+                $data['DiscountNet'] = $detail->price * ($detail->discount / $detail->quantity) / 100;
             }
 
-            $tax_price = $detail->TaxNet * (($detail->price - $data['DiscountNet']) / 100);
             $data['Unit_price'] = $detail->price;
-            $data['discount'] = $detail->discount;
+            $data['discount'] = ($detail->discount / $detail->quantity);
+
+            $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where("id", "=", $detail['product']['id'])->pluck("price")->first()), true), 2);
 
             if ($detail->tax_method == '1') {
-                $data['Net_price'] = $detail->price - $data['DiscountNet'];
-                $data['taxe'] = $tax_price;
+                $data['Net_price'] = ($detail->price < $originalPrice) ? $originalPrice - $data['DiscountNet'] : (($detail->price === $originalPrice) ? $detail->price - $data['DiscountNet'] : $detail->price);
+                $data['taxe'] = ($data['total'] >= 100.00) ? 0.00 : (($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity);
             } else {
-                $data['Net_price'] = ($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1);
-                $data['taxe'] = $detail->price - $data['Net_price'] - $data['DiscountNet'];
+                $data['Net_price'] = ($detail->price < $originalPrice) ? (($originalPrice - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : (($detail->price === $originalPrice) ? (($detail->price - $data['DiscountNet']) / (($detail->TaxNet / 100) + 1)) : ($detail->price / (($detail->TaxNet / 100) + 1)));
+                $data['taxe'] = ($data['Net_price'] >= $detail->price) ? ($data['Net_price'] - $detail->price) * $detail->quantity : ($detail->price - $data['Net_price']) * $detail->quantity;
             }
 
             $details[] = $data;
