@@ -657,48 +657,40 @@ class PosController extends BaseController
         $offset = ($pageStart * $perPage) - $perPage;
         $data = array();
 
-        $product_warehouse_query = DB::table('product_warehouse')
-            ->where('warehouse_id', '=', $request->warehouse_id)
-            ->whereNull('deleted_at')
-            ->when($request->filled('category_id'), function ($query) use ($request) {
-                return $query->whereExists(function ($subquery) use ($request) {
-                    $subquery->select(DB::raw(1))
-                        ->from('category_product')
-                        ->join('categories', 'category_product.category_id', '=', 'categories.id')
-                        ->join('products', 'category_product.product_id', '=', 'products.id')
-                        ->whereColumn('categories.id', '=', 'category_product.category_id')
-                        ->where('categories.id', '=', $request->category_id);
-                });
-            })
-            ->when($request->filled('brand_id'), function ($query) use ($request) {
-                return $query->whereExists(function ($subquery) use ($request) {
-                    $subquery->select(DB::raw(1))
-                        ->from('products')
-                        ->whereColumn('products.id', '=', 'product_warehouse.product_id')
-                        ->where('products.brand_id', '=', $request->brand_id);
-                });
-            })
-            ->when($request->filled('search'), function ($query) use ($request) {
-                return $query->whereExists(function ($subquery) use ($request) {
-                    $subquery->select(DB::raw(1))
-                        ->from('products')
-                        ->whereColumn('products.id', '=', 'product_warehouse.product_id')
-                        ->where(function ($subsubquery) use ($request) {
-                            $subsubquery->where('products.name', 'LIKE', "%{$request->search}%")
-                                ->orWhere('products.code', 'LIKE', "%{$request->search}%");
+        $product_warehouse_query = ProductWarehouse::where("warehouse_id", '=', $request->warehouse_id)
+            ->with('product', 'product.unitSale')
+            ->where("deleted_at", '=', null)
+            ->where(function ($query) use ($request) {
+                return $query->when($request->filled('category_id'), function ($query) use ($request) {
+                    return $query->whereHas('product', function ($q) use ($request) {
+                        $q->whereHas('categories', function (Builder $query)  use ($request) {
+                            $query->where('category_id', '=', $request->category_id);
                         });
+                    });
                 });
             })
-            ->get();
+            ->where(function ($query) use ($request) {
+                return $query->when($request->filled('brand_id'), function ($query) use ($request) {
+                    return $query->whereHas('product', function ($q) use ($request) {
+                        $q->where('brand_id', '=', $request->brand_id);
+                    });
+                });
+            })
+            ->where(function ($query) use ($request) {
+                return $query->when($request->filled('search'), function ($query) use ($request) {
+                    return $query->where(function ($query) use ($request) {
+                        return $query->whereHas('product', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', "%{$request->search}%")->orWhere('code', 'LIKE', "%{$request->search}%");
+                        });
+                    });
+                });
+            })->get();
 
         $totalRows = $product_warehouse_query->count();
 
         $product_warehouse_data = json_decode(json_encode($product_warehouse_query->skip($offset)->take($perPage)), true);
 
         foreach ($product_warehouse_data as &$product_warehouse) {
-            $product_warehouse["product"] = json_decode(json_encode(DB::table("products")->where("id", $product_warehouse["product_id"])->first()), true);
-            $product_warehouse["product"]["unitSale"] = json_decode(json_encode(DB::table("units")->where("id", $product_warehouse["product"]["unit_sale_id"])->first()), true);
-
             if ($product_warehouse["product_variant_id"]) {
                 $productsVariants = DB::table("product_variants")->where("product_id", $product_warehouse["product_id"])
                     ->where("id", $product_warehouse["product_variant_id"])
@@ -731,15 +723,15 @@ class PosController extends BaseController
 
             // $discount = (isset($productId) && isset($productPrice)) ? $this->checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice, $productWarehouseId) : 0.00;
 
-            if ($product_warehouse["product"]["unitSale"]["operator"] == "/") {
-                $item["qte_sale"] = $product_warehouse["qte"] * $product_warehouse["product"]["unitSale"]["operator_value"];
-                $price = ($product_warehouse["product"]["price"] / $product_warehouse["product"]["unitSale"]["operator_value"]) /* - $discount */;
+            if ($product_warehouse["product"]["unit_sale"]["operator"] == "/") {
+                $item["qte_sale"] = $product_warehouse["qte"] * $product_warehouse["product"]["unit_sale"]["operator_value"];
+                $price = ($product_warehouse["product"]["price"] / $product_warehouse["product"]["unit_sale"]["operator_value"]) /* - $discount */;
             } else {
-                $item["qte_sale"] = $product_warehouse["qte"] / $product_warehouse["product"]["unitSale"]["operator_value"];
-                $price = ($product_warehouse["product"]["price"] * $product_warehouse["product"]["unitSale"]["operator_value"]) /* - $discount */;
+                $item["qte_sale"] = $product_warehouse["qte"] / $product_warehouse["product"]["unit_sale"]["operator_value"];
+                $price = ($product_warehouse["product"]["price"] * $product_warehouse["product"]["unit_sale"]["operator_value"]) /* - $discount */;
             }
 
-            $item["unitSale"] = $product_warehouse["product"]["unitSale"]["ShortName"];
+            $item["unitSale"] = $product_warehouse["product"]["unit_sale"]["ShortName"];
 
             if ($product_warehouse["product"]["TaxNet"] !== 0.0) {
                 //Exclusive
