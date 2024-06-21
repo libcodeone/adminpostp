@@ -68,6 +68,7 @@ class PosController extends BaseController
             $TaxNetDetail = 0.00;
             $totalWithDiscount = round(($request->GrandTotal - $request->shipping), 2);
             $GrandTotal = round($request->GrandTotal, 2);
+            $subTotal = $request->GrandTotal;
 
             $detailsData = $request["details"];
 
@@ -93,11 +94,7 @@ class PosController extends BaseController
                     $TaxWithheld = round((($totalWithDiscount / 1.13) * 0.01), 2);
                     $GrandTotal = round(($totalWithDiscount - $TaxWithheld), 2);
                 }
-                else
-                    $GrandTotal = ($orderDiscount > 0.00) ? $GrandTotal - $orderDiscount : $GrandTotal;
             }
-            else
-                $GrandTotal = ($orderDiscount > 0.00) ? $GrandTotal - $orderDiscount : $GrandTotal;
 
             $order = new Sale();
 
@@ -118,7 +115,7 @@ class PosController extends BaseController
                 $order->shipping = 0.00;
 
             $this->orderDiscount = $order->discount;
-            $order->subTotal = $request->GrandTotal;
+            $order->subTotal = $subTotal;
             $order->GrandTotal = $GrandTotal;
             $order->cash = 0;
             $order->change = 0;
@@ -208,6 +205,8 @@ class PosController extends BaseController
                     $totalTaxPerProduct = $dividedTaxWithHeld * $this->productQuantity;
 
                     if ($this->clientBigConsumerOrNot === 1 && round($totalWithDiscount / 1.13, 2) >= 100) {
+                        $this->taxMethod = 1;
+
                         $originalPrice = $originalPrice - $dividedTaxWithHeld;
                         $price = $value["Net_price"] - $dividedTaxWithHeld;
                         $this->subTotalProductPrice = $this->subTotalProductPrice - $totalTaxPerProduct;
@@ -237,10 +236,12 @@ class PosController extends BaseController
                                 }
                             }
                         }
-                    } else
+                    }
+                    else
+                    {
+                        $this->taxMethod = 2;
                         $price = $value["Net_price"];
-
-                    $this->taxMethod = 1;
+                    }
                 }
 
                 $this->originalProductPrice = round($originalPrice, 2);
@@ -445,11 +446,11 @@ class PosController extends BaseController
         $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->pluck("price")->first()), true), 2);
 
         if ($netPrice < $originalPrice)
-            $productTotalDiscount = ($netPrice !== $originalPrice - $productDiscount) ? ((($originalPrice - $netPrice) + $productDiscount) * $productQuantity) : ($productDiscount * $productQuantity);
+            $productTotalDiscount = ($netPrice < $originalPrice - $productDiscount) ? ((($originalPrice - $netPrice) + $productDiscount) * $productQuantity) : (($netPrice === $originalPrice - $productDiscount) ? ($productDiscount * $productQuantity) : 0.00);
         else if ($netPrice === $originalPrice)
             $productTotalDiscount = $productDiscount * $productQuantity;
         else
-            $productTotalDiscount = ($netPrice !== $originalPrice - $productDiscount) ? ((($originalPrice - $netPrice) + $productDiscount) * $productQuantity) : ($productDiscount * $productQuantity);
+            $productTotalDiscount = ($netPrice < $originalPrice - $productDiscount) ? ((($originalPrice - $netPrice) + $productDiscount) * $productQuantity) : (($netPrice === $originalPrice - $productDiscount) ? ($productDiscount * $productQuantity) : 0.00);
 
         return ["original_price" => $originalPrice, "product_discount" => $productTotalDiscount];
     }
