@@ -1803,6 +1803,7 @@ export default {
     },
     data() {
         return {
+            originalProductPrice: 0.00,
             productsDiscounts: [],
             productsHaveDiscount: [],
             langs: ["es", "en"],
@@ -1935,6 +1936,7 @@ export default {
         brand_totalRows() {
             return this.brands.length;
         },
+
         category_totalRows() {
             return this.categories.length;
         }
@@ -2175,15 +2177,12 @@ export default {
         },
         //---Submit Validation Update Detail
         changeProductDetail() {
-            /*
-            if (this.currentUser.authorizedCode != null && this.currentUser.authorizedCode != "null" && this.currentUser.authorizedCode != "")
-                this.performUpdateDetail();
-            else {
-                this.authorizedCodeEntered = "";
+            if (this.detail.Unit_price < this.originalProductPrice)
                 this.$bvModal.show("form_Auth_Discount");
+            else {
+                this.performUpdateDetail();
+                this.originalProductPrice = 0.00;
             }
-            */
-            this.$bvModal.show("form_Auth_Discount");
         },
         performUpdateDetail() {
             this.$refs.Update_Detail.validate().then(success => {
@@ -2360,6 +2359,9 @@ export default {
             this.detail.quantity = detail.quantity;
             this.detail.tax_percent = detail.tax_percent;
             this.detail.taxe = detail.taxe;
+
+            this.originalProductPrice = this.detail.Unit_price;
+
             this.$bvModal.show("form_Update_Detail");
         },
 
@@ -2912,7 +2914,8 @@ export default {
         },
         //------------- Authorize Price Change -------------\\
 
-        submitAuthPriceChange() {
+        submitAuthPriceChange()
+        {
             NProgress.start();
             NProgress.set(0.1);
             /*
@@ -2921,16 +2924,19 @@ export default {
             */
 
             axios
-                .post("pos/authPriceChange", {
+                .post("pos/authPriceChange",
+                {
                     authorizedCode: this.authorizedCodeEntered,
                     user_id: this.currentUser.id
-                })
+                }
+            )
                 .then(response => {
                     this.authorizedPriceChange = response.data.authorized;
-                    console.log(this.authorizedPriceChange);
+
                     if (this.authorizedPriceChange > 0) {
                         this.performUpdateDetail();
                         this.$bvModal.hide("form_Auth_Discount");
+                        this.originalProductPrice = 0.00;
                     } else {
                         alert(
                             "¡No es posible conceder la autorización para el cambio de precio!"
@@ -2940,18 +2946,27 @@ export default {
                     // Complete the animation of the progress bar.
                     NProgress.done();
                     this.isLoading = false;
-                })
-                .catch(() => {
+                }
+            )
+                .catch(
+                () =>
+                {
                     // Complete the animation of the progress bar.
                     NProgress.done();
-                    setTimeout(() => {
-                        this.isLoading = false;
-                    }, 500);
-                });
+                    setTimeout(
+                        () =>
+                        {
+                            this.isLoading = false;
+                        },
+                        500
+                    );
+                }
+            );
         },
 
         //-----------Authorize Discount--------------//
-        submitAuthDiscount() {
+        submitAuthDiscount()
+        {
             NProgress.start();
             NProgress.set(0.1);
             /*
@@ -2960,33 +2975,40 @@ export default {
             */
 
             axios
-                .post("pos/authDiscount", {
+                .post("pos/authDiscount",
+                {
                     authorizedCode: this.authorizedCodeEntered
-                })
-                .then(response => {
+                }
+            )
+                .then(response =>
+                {
                     this.authorizedDiscount = response.data.authorized;
-                    console.log(this.authorizedDiscount);
+
                     if (this.authorizedDiscount > 0) {
                         this.performUpdateDetail();
                         this.authorizedCodeEntered = "";
                         this.$bvModal.hide("form_Auth_Discount");
                     } else {
                         alert(
-                            "No es posible conceder la autorización de descuento"
+                            "¡No es posible conceder la autorización de descuento!"
                         );
                     }
 
                     // Complete the animation of the progress bar.
                     NProgress.done();
                     this.isLoading = false;
-                })
-                .catch(response => {
+                }
+            )
+                .catch(
+                () =>
+                {
                     // Complete the animation of the progress bar.
                     NProgress.done();
                     setTimeout(() => {
                         this.isLoading = false;
                     }, 500);
-                });
+                }
+            );
         }
     },
 
@@ -2995,18 +3017,21 @@ export default {
     created() {
         this.getElementsPos();
         Fire.$on("pay_now", () => {
-            setTimeout(() => {
-                this.payment.amount = this.formatNumber(this.GrandTotal, 2);
-                this.payment.cash = this.formatNumber(this.GrandTotal, 2);
-                this.payment.Reglement = "Cash";
-                // this.$bvModal.show("Add_Payment");
-                this.createPOS();
-                this.loading = false;
-                // Complete the animation of the progress bar.
-                NProgress.done();
-            }, 500);
-        });
-        // this.$refs.SearchProducts.focus();
+                setTimeout(
+                    () =>
+                    {
+                        this.payment.amount = this.formatNumber(this.GrandTotal, 2);
+                        this.payment.cash = this.formatNumber(this.GrandTotal, 2);
+                        this.payment.Reglement = "Cash";
+                        this.createPOS();
+                        this.loading = false;
+
+                        // Complete the animation of the progress bar.
+                        NProgress.done();
+                    }, 500
+                );
+            }
+        );
     }
 };
 </script>
