@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\DiscountProduct;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class DiscountProductController extends Controller
 {
@@ -21,17 +22,17 @@ class DiscountProductController extends Controller
 
         $query = DB::table("offers_products")->select('*')->where("deleted_at", '=', null);
 
-        if(!is_null($request->orderByName) && $request->orderByName != ""){
-            $orderByStr = $request->dataTypeOrderBy == 'int' ? 'CAST('.$request->orderByName.' AS UNSIGNED)'.' '.$request->orderBy : $request->orderByName.' ' .$request->orderBy;
+        if (!is_null($request->orderByName) && $request->orderByName != "") {
+            $orderByStr = $request->dataTypeOrderBy == 'int' ? 'CAST(' . $request->orderByName . ' AS UNSIGNED)' . ' ' . $request->orderBy : $request->orderByName . ' ' . $request->orderBy;
             $query->orderByRaw($orderByStr);
         }
 
-        if(!is_null($request->search) && $request->search != ''){
-            $query->where(function ($q) use ($request){
-                $q->where('offers_products.nombre', 'like' ,'%'.$request->search.'%')
-                ->orWhere('offers_products.descripcion', 'like' ,'%'.$request->search.'%')
-                ->orWhere('offers_products.porcentajeDescuentoProducto', 'like' ,'%'.$request->search.'%')
-                ->orWhere('offers_products.precioProducto', 'like' ,'%'.$request->search.'%');
+        if (!is_null($request->search) && $request->search != '') {
+            $query->where(function ($q) use ($request) {
+                $q->where('offers_products.nombre', 'like', '%' . $request->search . '%')
+                    ->orWhere('offers_products.descripcion', 'like', '%' . $request->search . '%')
+                    ->orWhere('offers_products.porcentajeDescuentoProducto', 'like', '%' . $request->search . '%')
+                    ->orWhere('offers_products.precioProducto', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -53,7 +54,8 @@ class DiscountProductController extends Controller
         $products = json_decode(json_encode($products), true);
         $categories = json_decode(json_encode($categories), true);
 
-        return response()->json([
+        return response()->json(
+            [
                 'permissions' => $permissions,
                 'warehouses' => $warehouses,
                 'products' => $products,
@@ -69,29 +71,74 @@ class DiscountProductController extends Controller
     {
         $this->authorizeForUser($request->user('api'), 'create', DiscountProduct::class);
 
-        $patron = '/[^\w\s\[\]\',\"]+/';
+        $data = json_decode(json_encode(request()->all()), true);
 
-        $discountProduct = DB::table("offers_products")->insert([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'porcentajeDescuentoProducto' => $request->porcentajeDescuentoProducto,
-            'precioProducto' => $request->precioProducto,
-            'activo' =>  $request->activo,
-            'dias' => preg_replace($patron, '', $request->dias),
-            'hora_inicio' => $request->hora_inicio,
-            'hora_fin' => $request->hora_fin,
-            'fecha_inicio' => $request->fecha_inicio,
-            'fecha_fin' => $request->fecha_fin,
-            'is_all_products' => $request->is_all_products,
-            'warehouse_id' =>$request->warehouse_id,
-            'category_product_id' => $request->category_product_id
-        ]);
+        $daysArray = json_decode($data["dias"], true);
+        $data["dias"] = (count($daysArray) < 1) ? json_decode("[\"lunes\",\"martes\",\"miercoles\",\"jueves\",\"viernes\",\"sabado\",\"domingo\"]", true) : json_decode($data["dias"], true);
+
+        $requestValidator = Validator::make($data,
+            [
+                'dias' =>
+                [
+                    function ($attribute, $input, $fail) {
+                        if (count($input) < 1)
+                            $fail("¡Debes seleccionar al menos 1 día para aplicar la oferta!");
+                    }
+                ]
+            ]
+        );
+
+        $isFailed = $requestValidator->fails();
+
+        if ($isFailed) {
+            $messages = [];
+            $messageBag = json_decode(json_encode($requestValidator->getMessageBag()), true);
+
+            foreach ($messageBag as $index => $message)
+                $messages[] = $message[0];
+
+            $success = $isFailed;
+            $status = 422;
+        } else {
+            $patron = '/[^\w\s\[\]\',\"]+/';
+            $daysString = json_encode($data["dias"]);
+
+            $discountProduct = DB::table("offers_products")->insert([
+                'nombre' => $data["nombre"],
+                'descripcion' => $data["descripcion"],
+                'porcentajeDescuentoProducto' => (isset($data["porcentajeDescuentoProducto"])) ? $data["porcentajeDescuentoProducto"] : null,
+                'precioProducto' => (isset($data["precioProducto"])) ? $data["precioProducto"] : null,
+                'activo' =>  $data["activo"],
+                'dias' => preg_replace($patron, '', $daysString),
+                'hora_inicio' => $data["hora_inicio"],
+                'hora_fin' => $data["hora_fin"],
+                'fecha_inicio' => $data["fecha_inicio"],
+                'fecha_fin' => $data["fecha_fin"],
+                'is_all_products' => $data["is_all_products"],
+                'warehouse_id' => $data["warehouse_id"],
+                'category_product_id' => $data["category_product_id"]
+            ]);
+
+            $success = $discountProduct;
+
+            if ($success)
+            {
+                $messages[] = '';
+                $status = 200;
+            }
+            else
+            {
+                $messages[] = "¡No existe contenido!";
+                $status = 204;
+            }
+        }
 
         return response()->json(
             [
-                "discount_product_is_created" => $discountProduct
+                "success" => $success,
+                "messages" => $messages
             ],
-            200
+            // $status
         );
     }
 
@@ -105,8 +152,7 @@ class DiscountProductController extends Controller
 
         $products = [];
 
-        foreach ($offer["types"] as $typeOffer)
-        {
+        foreach ($offer["types"] as $typeOffer) {
             if ($typeOffer["type"] === "producto")
                 array_push($products, $typeOffer["entidad_id"]);
         }
@@ -130,25 +176,66 @@ class DiscountProductController extends Controller
     {
         $this->authorizeForUser($request->user('api'), 'update', DiscountProduct::class);
 
-        $patron = '/[^\w\s\[\]\',\"]+/';
+        $data = json_decode(json_encode(request()->all()), true);
 
-        DB::table("offers_products")->where("id", '=', $id)->update([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-            'porcentajeDescuentoProducto' => $request->porcentajeDescuentoProducto,
-            'precioProducto' => $request->precioProducto,
-            'activo' => $request->activo,
-            'hora_inicio' => $request->hora_inicio,
-            'dias' => preg_replace($patron, '', $request->dias),
-            'hora_fin' => $request->hora_fin,
-            'fecha_inicio' => $request->fecha_inicio,
-            'fecha_fin' => $request->fecha_fin,
-            'warehouse_id' =>$request->warehouse_id,
-            'category_product_id' => $request->category_product_id,
-            'is_all_products' => $request->is_all_products
-        ]);
+        $daysArray = json_decode($data["dias"], true);
+        $data["dias"] = (count($daysArray) < 1) ? json_decode("[\"lunes\",\"martes\",\"miercoles\",\"jueves\",\"viernes\",\"sabado\",\"domingo\"]", true) : json_decode($data["dias"], true);
 
-        return response()->json("status", 200);
+        $requestValidator = Validator::make($data,
+            [
+                'dias' =>
+                [
+                    function ($attribute, $input, $fail) {
+                        if (count($input) < 1)
+                            $fail("¡Debes seleccionar al menos 1 día para aplicar la oferta!");
+                    }
+                ]
+            ]
+        );
+
+        $isFailed = $requestValidator->fails();
+
+        if ($isFailed) {
+            $messages = [];
+            $messageBag = json_decode(json_encode($requestValidator->getMessageBag()), true);
+
+            foreach ($messageBag as $index => $message)
+                $messages[] = $message[0];
+
+            $success = $isFailed;
+            $status = 422;
+        } else {
+            $patron = '/[^\w\s\[\]\',\"]+/';
+            $daysString = json_encode($data["dias"]);
+
+            DB::table("offers_products")->where("id", '=', $id)->update([
+                'nombre' => $data["nombre"],
+                'descripcion' => $data["descripcion"],
+                'porcentajeDescuentoProducto' => (isset($data["porcentajeDescuentoProducto"])) ? $data["porcentajeDescuentoProducto"] : null,
+                'precioProducto' => (isset($data["precioProducto"])) ? $data["precioProducto"] : null,
+                'activo' => $data["activo"],
+                'hora_inicio' => $data["hora_inicio"],
+                'dias' => preg_replace($patron, '', $daysString),
+                'hora_fin' => $data["hora_fin"],
+                'fecha_inicio' => $data["fecha_inicio"],
+                'fecha_fin' => $data["fecha_fin"],
+                'warehouse_id' => $data["warehouse_id"],
+                'category_product_id' => $data["category_product_id"],
+                'is_all_products' => $data["is_all_products"]
+            ]);
+
+            $messages = '';
+            $success = !$isFailed;
+            $status = 200;
+        }
+
+        return response()->json(
+            [
+                "messages" => $messages,
+                "success" => $success
+            ],
+            // $status
+        );
     }
 
     public function destroy(Request $request, $id)

@@ -95,7 +95,6 @@
                             Filas:
                         </label>
                         <b-form-select
-
                             id="rowsPerPage"
                             name="rowsAmountSelect"
                             v-model="per_page"
@@ -115,7 +114,19 @@
                 </div>
 
                 <div v-if="!isLoading" class="table-responsive">
-                    <b-table :items="tableData" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" @sort-changed="onSortChanged(sortBy, (sortDesc ? !sortDesc : sortDesc), currentPage)">
+                    <b-table
+                        :items="tableData"
+                        :fields="fields"
+                        :sort-by.sync="sortBy"
+                        :sort-desc.sync="sortDesc"
+                        @sort-changed="
+                            onSortChanged(
+                                sortBy,
+                                sortDesc ? !sortDesc : sortDesc,
+                                currentPage
+                            )
+                        "
+                    >
                         <template v-slot:cell(nombre)="data">
                             {{ data.item.nombre }}
                         </template>
@@ -132,18 +143,39 @@
                             {{ data.item.fecha_fin }}
                         </template>
                         <template v-slot:cell(actions)="data">
-                            <button class="btn btn-primary btn-sm" style="color: white; font-weight: bold;" @click="edit(data.item.id)">Editar</button>
-                            <button class="btn btn-danger btn-sm" style="color: white; font-weight: bold;" @click="deleteview(data.item.id)">Eliminar</button>
+                            <button
+                                class="btn btn-primary btn-sm"
+                                style="color: white; font-weight: bold;"
+                                @click="edit(data.item.id)"
+                            >
+                                Editar
+                            </button>
+                            <button
+                                class="btn btn-danger btn-sm"
+                                style="color: white; font-weight: bold;"
+                                @click="deleteview(data.item.id)"
+                            >
+                                Eliminar
+                            </button>
                         </template>
                     </b-table>
                 </div>
 
-                <div v-else class="d-flex justify-content-center" style="width: 100%; margin-top: 300px; margin-bottom: 300px">
+                <div
+                    v-else
+                    class="d-flex justify-content-center"
+                    style="width: 100%; margin-top: 300px; margin-bottom: 300px"
+                >
                     <div class="spinner sm spinner-primary mt-3"></div>
                 </div>
 
                 <div style="display: flex; justify-content: center">
-                    <b-pagination v-model="currentPage" :total-rows="rows" :per-page="per_page" @input="onChangePage">
+                    <b-pagination
+                        v-model="currentPage"
+                        :total-rows="rows"
+                        :per-page="per_page"
+                        @input="onChangePage"
+                    >
                     </b-pagination>
                 </div>
             </div>
@@ -437,7 +469,9 @@
                         </b-row>
                         <b-row>
                             <b-col cols="12">
-                                <label for="">Dias</label>
+                                <label>
+                                    {{ "Días (" + $t("Field_optional") + ")" }}
+                                </label>
                                 <!-- <small
                                     >(No seleccionar para que se active todos
                                     los dias)</small
@@ -835,7 +869,9 @@
                         <hr />
                         <b-row>
                             <b-col cols="12">
-                                <label for="">Dias</label>
+                                <label>
+                                    {{ "Días (" + $t("Field_optional") + ")" }}
+                                </label>
                                 <!-- <small
                                     >(No seleccionar para que se active todos
                                     los dias)</small
@@ -995,12 +1031,16 @@ export default {
         title: "Discounts"
     },
     computed: {
-        tableData()
-        {
-            if (this.busqueda || (this.$refs.warehouses_filter && this.$refs.warehouses_filter.value) || (this.$refs.category_product_filter && this.$refs.category_product_filter.value))
+        tableData() {
+            if (
+                this.busqueda ||
+                (this.$refs.warehouses_filter &&
+                    this.$refs.warehouses_filter.value) ||
+                (this.$refs.category_product_filter &&
+                    this.$refs.category_product_filter.value)
+            )
                 return this.filteredItems();
-            else
-                return this.offers;
+            else return this.offers;
         },
         ...mapGetters(["currentUserPermissions", "currentUser"]),
         columns() {
@@ -1110,12 +1150,28 @@ export default {
             ],
             sortDesc: false,
             fields: [
-                { key: 'nombre', sortable: true },
-                { key: 'porcentaje_descuento', label: 'Porcentaje de descuento', sortable: true },
-                { key: 'precio_producto', label: 'Precio del producto', sortable: true },
-                { key: 'fecha_inicio', label: 'Fecha de inicio', sortable: true },
-                { key: 'fecha_fin', label: 'Fecha de vencimiento', sortable: true },
-                { key: 'actions', label: 'Acción' }
+                { key: "nombre", sortable: true },
+                {
+                    key: "porcentaje_descuento",
+                    label: "Porcentaje de descuento",
+                    sortable: true
+                },
+                {
+                    key: "precio_producto",
+                    label: "Precio del producto",
+                    sortable: true
+                },
+                {
+                    key: "fecha_inicio",
+                    label: "Fecha de inicio",
+                    sortable: true
+                },
+                {
+                    key: "fecha_fin",
+                    label: "Fecha de vencimiento",
+                    sortable: true
+                },
+                { key: "actions", label: "Acción" }
             ],
             dias: [
                 "lunes",
@@ -1142,19 +1198,19 @@ export default {
                 code: "",
                 Type_barcode: "",
                 name: "",
-                cost: 0.00,
-                price: 0.00,
+                cost: 0.0,
+                price: 0.0,
                 category_id: null,
                 brand_id: null,
                 unit_id: null,
                 unit_sale_id: null,
                 unit_purchase_id: null,
                 warehouse_id: null,
-                TaxNet: 0.00,
-                tax_method: '1',
+                TaxNet: 0.0,
+                tax_method: "1",
                 image: "",
                 note: "",
-                stock_alert: 0.00,
+                stock_alert: 0.0,
                 is_variant: 0,
                 is_active: 1
             },
@@ -1177,19 +1233,19 @@ export default {
                 code: "",
                 Type_barcode: "",
                 name: "",
-                cost: 0.00,
-                price: 0.00,
+                cost: 0.0,
+                price: 0.0,
                 category_id: null,
                 brand_id: null,
                 unit_id: null,
                 unit_sale_id: null,
                 unit_purchase_id: null,
                 warehouse_id: null,
-                TaxNet: 0.00,
-                tax_method: '1',
+                TaxNet: 0.0,
+                tax_method: "1",
                 image: "",
                 note: "",
-                stock_alert: 0.00,
+                stock_alert: 0.0,
                 is_variant: 0,
                 is_active: 1
             },
@@ -1212,19 +1268,19 @@ export default {
                 code: "",
                 Type_barcode: "",
                 name: "",
-                cost: 0.00,
-                price: 0.00,
+                cost: 0.0,
+                price: 0.0,
                 category_id: null,
                 brand_id: null,
                 unit_id: null,
                 unit_sale_id: null,
                 unit_purchase_id: null,
                 warehouse_id: null,
-                TaxNet: 0.00,
-                tax_method: '1',
+                TaxNet: 0.0,
+                tax_method: "1",
                 image: "",
                 note: "",
-                stock_alert: 0.00,
+                stock_alert: 0.0,
                 is_variant: 0,
                 is_active: 1
             },
@@ -1256,18 +1312,38 @@ export default {
         filteredItems() {
             let filtered = this.offers;
 
-            if (this.busqueda)
-            {
-                filtered = filtered.filter(offer =>
-                    offer["nombre"].toString().toLowerCase().includes(this.busqueda.toLowerCase()) || offer["descripcion"].toString().toLowerCase().includes(this.busqueda.toLowerCase())
+            if (this.busqueda) {
+                filtered = filtered.filter(
+                    offer =>
+                        offer["nombre"]
+                            .toString()
+                            .toLowerCase()
+                            .includes(this.busqueda.toLowerCase()) ||
+                        offer["descripcion"]
+                            .toString()
+                            .toLowerCase()
+                            .includes(this.busqueda.toLowerCase())
                 );
             }
 
-            if (this.$refs.warehouses_filter && this.$refs.warehouses_filter.value)
-                filtered = filtered.filter(item => item.warehouse_id === this.$refs.warehouses_filter.value);
+            if (
+                this.$refs.warehouses_filter &&
+                this.$refs.warehouses_filter.value
+            )
+                filtered = filtered.filter(
+                    item =>
+                        item.warehouse_id === this.$refs.warehouses_filter.value
+                );
 
-            if (this.$refs.category_product_filter && this.$refs.category_product_filter.value)
-                filtered = filtered.filter(item => item.category_product_id === this.$refs.category_product_filter.value);
+            if (
+                this.$refs.category_product_filter &&
+                this.$refs.category_product_filter.value
+            )
+                filtered = filtered.filter(
+                    item =>
+                        item.category_product_id ===
+                        this.$refs.category_product_filter.value
+                );
 
             return filtered;
         },
@@ -1323,13 +1399,15 @@ export default {
             this.offer.warehouse_id =
                 this.warehouse_add == null ? null : this.warehouse_add.id;
             this.offer.category_product_id =
-                this.category_product_add == null ? null : this.category_product_add.id;
+                this.category_product_add == null
+                    ? null
+                    : this.category_product_add.id;
             this.offer.is_all_products = this.is_all_products ? "si" : "no";
 
             axios
                 .post("discount", this.offer)
                 .then(response => {
-                    if (response.status == 200) {
+                    if (response.data.success) {
                         this.offer = {};
                         this.$bvModal.hide("modal-1");
                         this.$swal(
@@ -1338,13 +1416,24 @@ export default {
                             "success"
                         );
                         this.index();
+                    } else {
+                        let messages = response.data.messages;
+
+                        for (let i = 0; i < messages.length; i++)
+                            this.$swal("¡Fallido!", messages[i], "error");
                     }
                 })
-                .catch(error => {
-                    if (error.response.status == 422)
-                        this.errors = error.response.data.errors;
-                    else this.$swal("Oops!", "Ha ocurrido un error", "error");
+                .catch(() => {
+                    this.$swal("¡Oops!", "Ha ocurrido un error", "error");
                 });
+        },
+        getMessagePerCase(error) {
+            switch (error) {
+                case error.dias:
+                    return error.dias[1];
+                default:
+                    return "¡Se ha detectado un dato inválido!";
+            }
         },
         edit(id) {
             this.errors = [];
@@ -1353,48 +1442,58 @@ export default {
                 .then(response => {
                     if (response.status == 200) {
                         this.offer = response.data.offer;
-                        this.warehouse_edit =
-                            (response.data.warehouse) ? response.data.warehouse : {
-                            id: null,
-                            name: "",
-                            mobile: "",
-                            zip: "",
-                            email: "",
-                            country: ""
-                        };
-                        this.category_product_edit =
-                            (response.data.category_product) ? response.data.category_product : {
-                            id: null,
-                            code: "",
-                            name: "",
-                            image: ""
-                        };
+                        this.warehouse_edit = response.data.warehouse
+                            ? response.data.warehouse
+                            : {
+                                  id: null,
+                                  name: "",
+                                  mobile: "",
+                                  zip: "",
+                                  email: "",
+                                  country: ""
+                              };
+                        this.category_product_edit = response.data
+                            .category_product
+                            ? response.data.category_product
+                            : {
+                                  id: null,
+                                  code: "",
+                                  name: "",
+                                  image: ""
+                              };
                         this.is_all_products =
-                            (this.offer.is_all_products == "si") ? true : false;
+                            this.offer.is_all_products == "si" ? true : false;
                         this.diasSelected =
-                            (this.offer.dias == null || this.offer.dias == "" || this.offer.dias == "[]") ? [] : JSON.parse(this.offer.dias);
+                            this.offer.dias == null ||
+                            this.offer.dias == "" ||
+                            this.offer.dias == "[]"
+                                ? []
+                                : JSON.parse(this.offer.dias);
                         this.typeDescOffer =
-                            (this.offer.porcentajeDescuentoProducto != null) ? "descuento" : "";
+                            this.offer.porcentajeDescuentoProducto != null
+                                ? "descuento"
+                                : "";
                         this.$bvModal.show("modal-2");
                     }
                 })
-                .catch(error => {
-                    this.$swal("Oops!", "Ha ocurrido un error", "error");
+                .catch(() => {
+                    this.$swal("¡Oops!", "Ha ocurrido un error", "error");
                 });
         },
         update(id) {
             this.offer.dias = JSON.stringify(this.diasSelected);
             this.offer.warehouse_id =
-                (this.warehouse_edit == null) ? null : this.warehouse_edit.id;
+                this.warehouse_edit == null ? null : this.warehouse_edit.id;
             this.offer.category_product_id =
-                (this.category_product_edit == null) ? null : this.category_product_edit.id;
-            this.offer.is_all_products =
-                (this.is_all_products) ? "si" : "no";
+                this.category_product_edit == null
+                    ? null
+                    : this.category_product_edit.id;
+            this.offer.is_all_products = this.is_all_products ? "si" : "no";
 
             axios
                 .patch("discounts/update/" + id, this.offer)
                 .then(response => {
-                    if (response.status == 200) {
+                    if (response.data.success) {
                         this.offer = {};
                         this.$bvModal.hide("modal-2");
                         this.$swal(
@@ -1403,28 +1502,28 @@ export default {
                             "success"
                         );
                         this.index();
+                    } else {
+                        let messages = response.data.messages;
+
+                        for (let i = 0; i < messages.length; i++)
+                            this.$swal("¡Fallido!", messages[i], "error");
                     }
                 })
-                .catch(error => {
-                    if (error.response.status == 422)
-                        this.errors = error.response.data.errors;
-                    else this.$swal("Oops!", "Ha ocurrido un error", "error");
+                .catch(() => {
+                    this.$swal("¡Oops!", "Ha ocurrido un error", "error");
                 });
         },
         deleteview(id) {
             axios
                 .get("discounts/delete_view/" + id)
-                .then(response =>
-                    {
-                        if (response.status == 200)
-                        {
-                            this.offer = response.data.offer;
-                            this.$bvModal.show("modal-3");
-                        }
+                .then(response => {
+                    if (response.status == 200) {
+                        this.offer = response.data.offer;
+                        this.$bvModal.show("modal-3");
                     }
-                )
-                .catch(error => {
-                    this.$swal("Oops!", "Ha ocurrido un error", "error");
+                })
+                .catch(() => {
+                    this.$swal("¡Oops!", "Ha ocurrido un error", "error");
                 });
         },
         destroy(id) {
@@ -1443,7 +1542,7 @@ export default {
                     }
                 })
                 .catch(error => {
-                    this.$swal("Oops!", "Ha ocurrido un error", "error");
+                    this.$swal("¡Oops!", "Ha ocurrido un error", "error");
                 });
         },
         changeModalidadOffer() {
@@ -1499,7 +1598,7 @@ export default {
         //             }
         //         })
         //         .catch((error) => {
-        //             this.$swal("Oops!", "Ha ocurrido un error", "error");
+        //             this.$swal("¡Oops!", "Ha ocurrido un error", "error");
         //         });
         // },
         // addProduct(id) {
@@ -1520,7 +1619,7 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    this.$swal("Oops!", "Ha ocurrido un error", "error");
+                    this.$swal("¡Oops!", "Ha ocurrido un error", "error");
                 });
         },
         */
@@ -1545,7 +1644,7 @@ export default {
                 .catch((error) => {
                     if (error.response.status == 422)
                         this.errors = error.response.data.errors;
-                    else this.$swal("Oops!", "Ha ocurrido un error", "error");
+                    else this.$swal("¡Oops!", "Ha ocurrido un error", "error");
                 });
         },
         */
@@ -1565,8 +1664,7 @@ export default {
             this.index();
         },
 
-        onSortChanged(name, type, currentPage)
-        {
+        onSortChanged(name, type, currentPage) {
             this.sortBy = name;
             this.sortDesc = type;
             this.currentPage = currentPage;
@@ -1582,31 +1680,42 @@ export default {
         },
         */
 
-        onSubmit(submitEvent)
-        {
+        onSubmit(submitEvent) {
             submitEvent.preventDefault();
 
             let formData = {
-                nombre: '',
-                descripcion: '',
+                nombre: "",
+                descripcion: "",
                 porcentaje_descuento: null,
                 precio_producto: null,
-                fecha_inicio: '',
-                fecha_inicio: '',
+                fecha_inicio: "",
+                fecha_inicio: "",
                 // warehouse_id: '',
                 // category_id: '',
                 discount_status: false
             };
 
             formData.nombre = submitEvent.target.elements.nombre.value;
-            formData.descripcion = submitEvent.target.elements.descripcion.value;
-            formData.porcentaje_descuento = (submitEvent.target.elements.porcentajeDescuentoProducto) ? parseFloat(submitEvent.target.elements.porcentajeDescuentoProducto.value) : null;
-            formData.precio_producto = (submitEvent.target.elements.precioProducto) ? parseFloat(submitEvent.target.elements.precioProducto.value) : null;
-            formData.fecha_inicio = submitEvent.target.elements.fecha_inicio.value;
+            formData.descripcion =
+                submitEvent.target.elements.descripcion.value;
+            formData.porcentaje_descuento = submitEvent.target.elements
+                .porcentajeDescuentoProducto
+                ? parseFloat(
+                      submitEvent.target.elements.porcentajeDescuentoProducto
+                          .value
+                  )
+                : null;
+            formData.precio_producto = submitEvent.target.elements
+                .precioProducto
+                ? parseFloat(submitEvent.target.elements.precioProducto.value)
+                : null;
+            formData.fecha_inicio =
+                submitEvent.target.elements.fecha_inicio.value;
             formData.fecha_fin = submitEvent.target.elements.fecha_fin.value;
             // formData.warehouse_id = submitEvent.target.elements.warehouse_filter.value;
             // formData.category_id = submitEvent.target.elements.category_product_filter_form.value;
-            formData.discount_status = submitEvent.target.elements.status.checked;
+            formData.discount_status =
+                submitEvent.target.elements.status.checked;
 
             if (!formData.nombre)
                 this.errors.push('El campo "Nombre" es obligatorio.');
@@ -1614,12 +1723,15 @@ export default {
             if (!formData.descripcion)
                 this.errors.push('El campo "Descripción" es obligatorio.');
 
-            if (!formData.porcentaje_descuento || !formData.precio_producto)
-            {
+            if (!formData.porcentaje_descuento || !formData.precio_producto) {
                 if (!formData.porcentaje_descuento)
-                    this.errors.push('El campo "Porcentaje de Descuento" es obligatorio.');
+                    this.errors.push(
+                        'El campo "Porcentaje de Descuento" es obligatorio.'
+                    );
                 else
-                    this.errors.push('El campo "Precio de Producto" es obligatorio.');
+                    this.errors.push(
+                        'El campo "Precio de Producto" es obligatorio.'
+                    );
             }
 
             if (!formData.fecha_inicio)

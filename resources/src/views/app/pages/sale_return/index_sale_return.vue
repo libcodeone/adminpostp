@@ -17,7 +17,7 @@
         placeholder: $t('Search_this_table'),
         enabled: true,
       }"
-        :select-options="{ 
+        :select-options="{
           enabled: true ,
           clearSelectionText: '',
         }"
@@ -67,10 +67,12 @@
                 size="lg"
                 no-caret
               >
-                <template v-slot:button-content class="_r_btn border-0">
-                  <span class="_dot _r_block-dot bg-dark"></span>
-                  <span class="_dot _r_block-dot bg-dark"></span>
-                  <span class="_dot _r_block-dot bg-dark"></span>
+                <template v-slot:button-content="{ attrs }">
+                    <button :class="['_r_btn', 'border-0']" v-bind="attrs">
+                        <span class="_dot _r_block-dot bg-dark"></span>
+                        <span class="_dot _r_block-dot bg-dark"></span>
+                        <span class="_dot _r_block-dot bg-dark"></span>
+                    </button>
                 </template>
                 <b-navbar-nav>
                   <b-dropdown-item title="Show" :to="'/app/sale_return/detail/'+props.row.id">
@@ -263,7 +265,7 @@
                 <tr v-if="factures.length <= 0">
                   <td colspan="5">{{$t('NodataAvailable')}}</td>
                 </tr>
-                <tr v-for="facture in factures">
+                <tr v-for="facture in factures" :key="facture.id">
                   <td>{{facture.date}}</td>
                   <td>{{facture.Ref}}</td>
                   <td>{{formatNumber((facture.montant),2)}} {{currentUser.currency}}</td>
@@ -812,7 +814,7 @@ export default {
       if (sale_return.payment_status == "paid") {
         this.$swal({
           icon: "error",
-          title: "Oops...",
+          title: "¡Oops...",
           text: this.$t("PaymentComplete")
         });
       } else {
