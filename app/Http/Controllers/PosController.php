@@ -30,6 +30,17 @@ class PosController extends BaseController
     private $clientBigConsumerOrNot = null;
     private $taxMethod = null;
 
+    public function bypassAuthorization(Request $request) {
+        $isBypassedAuthorization = json_decode(json_encode(DB::table("configurations")->where("key", '=', "BypassAuthorizationInPOS")->pluck("value_es")->first()), true);
+        $isBypassedAuthorization = ($isBypassedAuthorization === "si") ? true : false;
+
+        return response()->json(
+            [
+                "isBypassedAuthorization" => $isBypassedAuthorization
+            ]
+        );
+    }
+
     //------------ Create New  POS --------------\\
 
     public function CreatePOS(Request $request)

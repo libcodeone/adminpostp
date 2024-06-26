@@ -2177,9 +2177,18 @@ export default {
         },
         //---Submit Validation Update Detail
         changeProductDetail() {
-            if (this.detail.Unit_price < this.originalProductPrice)
-                this.$bvModal.show("form_Auth_Discount");
-            else {
+            if (this.detail.Unit_price < this.originalProductPrice) {
+                axios.get("pos/bypassAuthorization").then(response => {
+                        if (response.data.isBypassedAuthorization)
+                        {
+                            this.performUpdateDetail();
+                            this.originalProductPrice = 0.00;
+                        }
+                        else
+                            this.$bvModal.show("form_Auth_Discount");
+                    }
+                );
+            } else {
                 this.performUpdateDetail();
                 this.originalProductPrice = 0.00;
             }
