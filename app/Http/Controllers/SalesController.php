@@ -43,7 +43,7 @@ class SalesController extends BaseController
         $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
-        $order = $request->SortField;
+        $order = isset($request->SortField) ? $request->SortField : "desc";
         $dir = $request->SortType;
         $helpers = new helpers();
         // Filter fields With Params to retrieve
@@ -77,8 +77,7 @@ class SalesController extends BaseController
         $data = array();
 
         // Check If User Has Permission View  All Records
-        $Sales = Sale::with('facture', 'client', 'warehouse')
-            ->where('deleted_at', '=', null);
+        $Sales = Sale::with('facture', 'client', 'warehouse')->where('deleted_at', '=', null);
         // ->where(function ($query) use ($view_records) {
         //     if (!$view_records) {
         //         return $query->where('user_id', '=', Auth::user()->id);
