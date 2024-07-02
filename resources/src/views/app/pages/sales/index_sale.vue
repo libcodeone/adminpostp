@@ -1638,7 +1638,7 @@ export default {
       if (sale.payment_status == "paid") {
         this.$swal({
           icon: "error",
-          title: "Oops...",
+          title: "¡Oops...",
           text: this.$t("PaymentComplete")
         });
       } else {

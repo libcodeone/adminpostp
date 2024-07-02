@@ -16,7 +16,7 @@
         placeholder: $t('Search_this_table'),
         enabled: true,
       }"
-        :select-options="{ 
+        :select-options="{
           enabled: true ,
           clearSelectionText: '',
         }"
@@ -34,7 +34,7 @@
             <i class="i-Filter-2"></i>
             {{ $t("Filter") }}
           </b-button>
-          
+
           <b-button @click="Sales_Excel()" size="sm" variant="outline-danger ripple m-1">
             <i class="i-File-Excel"></i> EXCEL
           </b-button>
@@ -42,7 +42,7 @@
             <span class="ul-btn__icon">
               <i class="i-arrow-rotate-right"></i>
             </span>
-            <span class="ul-btn__text ml-1">{{$t('Actualizar')}}</span> 
+            <span class="ul-btn__text ml-1">{{$t('Actualizar')}}</span>
           </b-button>
         </div>
 
@@ -71,7 +71,7 @@
               >
               <i class="nav-icon i-Checkout font-weight-bold mr-2"></i>
                     {{$t('Checkin')}}
-                
+
               </router-link>
             </div>
           </span>
@@ -629,7 +629,7 @@ export default {
           tdClass: "text-left",
           thClass: "text-left"
         },
-        
+
         {
           label: this.$t("Action"),
           field: "actions",
@@ -752,7 +752,7 @@ export default {
       this.Filter_Payment = "";
       this.Filter_Ref = "null";
       this.Filter_date = "";
-      // (this.Filter_warehouse = this.currentUser.warehouse_id), 
+      // (this.Filter_warehouse = this.currentUser.warehouse_id),
       this.Get_Sales(this.serverParams.page);
     },
     //------------------------------Formetted Numbers -------------------------\\
@@ -1055,7 +1055,7 @@ export default {
       if (sale.payment_status == "paid") {
         this.$swal({
           icon: "error",
-          title: "Oops...",
+          title: "¡Oops...",
           text: this.$t("PaymentComplete")
         });
       } else {
@@ -1321,7 +1321,7 @@ export default {
         notes: ""
       };
     },
-   
+
   },
   //----------------------------- Created function-------------------\\
   created() {

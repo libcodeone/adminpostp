@@ -832,15 +832,14 @@ class ProductsController extends BaseController
                     $discount = $discount["discount"];
 
                     if ($dataOfProduct['unit_sale']["operator"] === '/')
-                        $price = ($dataOfProduct['price'] / $dataOfProduct['unit_sale']["operator_value"]) - $discount;
+                        $price = round((($dataOfProduct['price'] / $dataOfProduct['unit_sale']["operator_value"]) - $discount), 2);
                     else
-                        $price = ($dataOfProduct['price'] * $dataOfProduct['unit_sale']["operator_value"]) - $discount;
+                        $price = round((($dataOfProduct['price'] * $dataOfProduct['unit_sale']["operator_value"]) - $discount), 2);
 
-                    if ($dataOfProduct['unit_purchase']["operator"] == '/') {
-                        $cost = $dataOfProduct['cost'] / $dataOfProduct['unit_purchase']["operator_value"];
-                    } else {
-                        $cost = $dataOfProduct['cost'] * $dataOfProduct['unit_purchase']["operator_value"];
-                    }
+                    if ($dataOfProduct['unit_purchase']["operator"] == '/')
+                        $cost = round(($dataOfProduct['cost'] / $dataOfProduct['unit_purchase']["operator_value"]), 2);
+                    else
+                        $cost = round(($dataOfProduct['cost'] * $dataOfProduct['unit_purchase']["operator_value"]), 2);
 
                     $item['Unit_cost'] = $cost;
                     $item['Unit_price'] = $price;
@@ -858,7 +857,7 @@ class ProductsController extends BaseController
                             $item['tax_price'] = $tax_price;
                             $item['tax_cost'] = $tax_cost;
 
-                            // Inxclusive
+                            // Inclusive
                         } else {
                             $item['Total_cost'] = $cost;
                             $item['Total_price'] = $price;

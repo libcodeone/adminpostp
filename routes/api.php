@@ -90,6 +90,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     //---------------------- POS (point of sales) ----------------------\\
     //------------------------------------------------------------------\\
 
+    Route::get('pos/bypassAuthorization', 'PosController@bypassAuthorization');
     Route::post('pos/CreatePOS', 'PosController@CreatePOS');
     Route::post('pos/calculTotal', 'PosController@CalculGrandTotal');
     Route::post('pos/authDiscount', 'PosController@authDiscount');

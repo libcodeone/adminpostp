@@ -30,6 +30,17 @@ class PosController extends BaseController
     private $clientBigConsumerOrNot = null;
     private $taxMethod = null;
 
+    public function bypassAuthorization(Request $request) {
+        $isBypassedAuthorization = json_decode(json_encode(DB::table("configurations")->where("key", '=', "BypassAuthorizationInPOS")->pluck("value_es")->first()), true);
+        $isBypassedAuthorization = ($isBypassedAuthorization === "si") ? true : false;
+
+        return response()->json(
+            [
+                "isBypassedAuthorization" => $isBypassedAuthorization
+            ]
+        );
+    }
+
     //------------ Create New  POS --------------\\
 
     public function CreatePOS(Request $request)
@@ -79,7 +90,7 @@ class PosController extends BaseController
                 $discounts = [];
 
                 foreach ($detailsData as $key => $product)
-                    $discounts[] = $this->verifyDiscounts($product["Net_price"], $product["product_id"], $productsDiscounts[$key], $product["quantity"])["product_discount"];
+                    $discounts[] = $this->verifyDiscounts($product["Net_price"], $product["product_id"], $productsDiscounts[$key], $product["quantity"])["total_product_discount"];
 
                 $orderDiscount = round(array_sum($discounts), 2);
             }
@@ -184,6 +195,7 @@ class PosController extends BaseController
             }
 
             $productsSubTotal = [];
+            $productsTotalDiscounts = [];
 
             foreach ($detailsData as $key => $value) {
                 $this->productId = $value["product_id"];
@@ -192,8 +204,9 @@ class PosController extends BaseController
 
                 $productDiscountAndOriginalPriceVerifier = $this->verifyDiscounts($value["Net_price"], $this->productId, $productsDiscounts[$key], $this->productQuantity);
 
-                $this->productDiscount = $productDiscountAndOriginalPriceVerifier["product_discount"];
-                $originalPrice = $productDiscountAndOriginalPriceVerifier["original_price"] - $productsDiscounts[$key];
+                $this->productDiscount = $productDiscountAndOriginalPriceVerifier["total_product_discount"];
+                $originalPrice = $productDiscountAndOriginalPriceVerifier["original_price"] - $productDiscountAndOriginalPriceVerifier["product_offer"];
+                $productsTotalDiscounts[] = ($productDiscountAndOriginalPriceVerifier["product_discount"] < 0.00) ? 0.00 : $productDiscountAndOriginalPriceVerifier["product_discount"];
 
                 $price = null;
 
@@ -242,12 +255,18 @@ class PosController extends BaseController
 
                 $productName = json_decode(json_encode(DB::table("products")->where("id", "=", $this->productId)->pluck("name")->first()), true);
 
+                $pOffer = $productDiscountAndOriginalPriceVerifier["product_offer"];
+                $pDiscount = $productDiscountAndOriginalPriceVerifier["product_discount"];
+
+                $this->originalProductPrice = ($pOffer === 0.00 && $pDiscount === 0.00) ? $this->originalProductPrice : (($pOffer > 0.00 && $pDiscount === 0.00) ? $this->originalProductPrice + $pOffer : (($pOffer === 0.00 && $pDiscount > 0.00) ? $this->originalProductPrice : $this->originalProductPrice + $pOffer));
+                $this->newProductPrice = ($pOffer === 0.00 && $pDiscount === 0.00) ? $this->newProductPrice : (($pOffer > 0.00 && $pDiscount === 0.00) ? $this->newProductPrice + $pOffer : (($pOffer === 0.00 && $pDiscount > 0.00) ? $this->newProductPrice : $this->newProductPrice + $pOffer));
+
                 $saleDetailsData[] = [
                     "name" => $productName,
                     "original_product_price" => round($this->originalProductPrice, 2),
                     "new_product_price" => round($this->newProductPrice, 2),
                     "product_quantity" => $this->productQuantity,
-                    "product_total" => round($this->subTotalProductPrice)
+                    "product_total" => round($this->subTotalProductPrice, 2)
                 ];
 
                 $orderDetails[] = [
@@ -260,7 +279,7 @@ class PosController extends BaseController
                     "price" => round($this->newProductPrice, 2),
                     "TaxNet" => round($TaxNetDetail, 2),
                     "tax_method" => $this->taxMethod,
-                    "discount" => round($this->productDiscount),
+                    "discount" => round($this->productDiscount, 2),
                     "discount_method" => $value["discount_Method"],
                 ];
 
@@ -308,7 +327,7 @@ class PosController extends BaseController
             $data["final_consumer"] = $this->clientFinalConsumerOrNot;
             $data["big_consumer"] = $this->clientBigConsumerOrNot;
             $data["email"] = str_replace($stringTwo, "", str_replace($stringOne, "", $adminEmail));
-            $data["total_discount"] = round($this->orderDiscount, 2);
+            $data["total_discount"] = round(array_sum($productsTotalDiscounts), 2);
             $data["firstname"] = auth()->user()->firstname;
             $data["lastname"] = auth()->user()->lastname;
             $data["date"] = Carbon::now()->locale("es")->isoFormat("dddd, D [de] MMMM [del] Y");
@@ -318,9 +337,9 @@ class PosController extends BaseController
             $booleansArray = array();
 
             for ($i = 0; $i < count($saleDetailsData); $i++) {
-                if (round($saleDetailsData[$i]["original_product_price"], 2) != round($saleDetailsData[$i]["new_product_price"], 2) || $data["total_discount"] !== 0.0 || (round($saleDetailsData[$i]["original_product_price"], 2) != round($saleDetailsData[$i]["new_product_price"], 2) && $data["total_discount"] !== 0.0))
+                if (round($saleDetailsData[$i]["original_product_price"], 2) !== round($saleDetailsData[$i]["new_product_price"], 2))
                     $boolean = true;
-                else if (round($saleDetailsData[$i]["original_product_price"], 2) === round($saleDetailsData[$i]["new_product_price"], 2) || $data["total_discount"] === 0.0 || (round($saleDetailsData[$i]["original_product_price"], 2) === round($saleDetailsData[$i]["new_product_price"], 2) && $data["total_discount"] === 0.0))
+                else if (round($saleDetailsData[$i]["original_product_price"], 2) === round($saleDetailsData[$i]["new_product_price"], 2))
                     $boolean = false;
 
                 array_push($booleansArray, $boolean);
@@ -439,13 +458,13 @@ class PosController extends BaseController
         $originalPrice = round((float)json_decode(json_encode(DB::table("products")->where("id", "=", $productId)->pluck("price")->first()), true), 2);
 
         if ($netPrice < $originalPrice)
-            $productTotalDiscount = ($netPrice < $originalPrice - $productDiscount) ? ((($originalPrice - $netPrice) + $productDiscount) * $productQuantity) : (($netPrice === $originalPrice - $productDiscount) ? ($productDiscount * $productQuantity) : 0.00);
+            $productTotalDiscount = ($netPrice < $originalPrice - $productDiscount) ? ((($originalPrice - $netPrice) + $productDiscount) * $productQuantity) : (($netPrice === $originalPrice - $productDiscount) ? ($productDiscount * $productQuantity) : (($originalPrice - $netPrice) * $productQuantity));
         else if ($netPrice === $originalPrice)
             $productTotalDiscount = $productDiscount * $productQuantity;
         else
-            $productTotalDiscount = ($netPrice < $originalPrice - $productDiscount) ? ((($originalPrice - $netPrice) + $productDiscount) * $productQuantity) : (($netPrice === $originalPrice - $productDiscount) ? ($productDiscount * $productQuantity) : 0.00);
+            $productTotalDiscount = 0.00;
 
-        return ["original_price" => $originalPrice, "product_discount" => $productTotalDiscount];
+        return ["original_price" => $originalPrice, "total_product_discount" => $productTotalDiscount, "product_offer" => $productDiscount, "product_discount" => ($netPrice < $originalPrice - $productDiscount) ? ($originalPrice - $netPrice) : (($netPrice === $originalPrice - $productDiscount) ? 0.00 : ($originalPrice - $netPrice))];
     }
 
     //--- Get Offers Per Categories or Warehouses or Both ---\\
@@ -657,48 +676,40 @@ class PosController extends BaseController
         $offset = ($pageStart * $perPage) - $perPage;
         $data = array();
 
-        $product_warehouse_query = DB::table('product_warehouse')
-            ->where('warehouse_id', '=', $request->warehouse_id)
-            ->whereNull('deleted_at')
-            ->when($request->filled('category_id'), function ($query) use ($request) {
-                return $query->whereExists(function ($subquery) use ($request) {
-                    $subquery->select(DB::raw(1))
-                        ->from('category_product')
-                        ->join('categories', 'category_product.category_id', '=', 'categories.id')
-                        ->join('products', 'category_product.product_id', '=', 'products.id')
-                        ->whereColumn('categories.id', '=', 'category_product.category_id')
-                        ->where('categories.id', '=', $request->category_id);
-                });
-            })
-            ->when($request->filled('brand_id'), function ($query) use ($request) {
-                return $query->whereExists(function ($subquery) use ($request) {
-                    $subquery->select(DB::raw(1))
-                        ->from('products')
-                        ->whereColumn('products.id', '=', 'product_warehouse.product_id')
-                        ->where('products.brand_id', '=', $request->brand_id);
-                });
-            })
-            ->when($request->filled('search'), function ($query) use ($request) {
-                return $query->whereExists(function ($subquery) use ($request) {
-                    $subquery->select(DB::raw(1))
-                        ->from('products')
-                        ->whereColumn('products.id', '=', 'product_warehouse.product_id')
-                        ->where(function ($subsubquery) use ($request) {
-                            $subsubquery->where('products.name', 'LIKE', "%{$request->search}%")
-                                ->orWhere('products.code', 'LIKE', "%{$request->search}%");
+        $product_warehouse_query = ProductWarehouse::where("warehouse_id", '=', $request->warehouse_id)
+            ->with('product', 'product.unitSale')
+            ->where("deleted_at", '=', null)
+            ->where(function ($query) use ($request) {
+                return $query->when($request->filled('category_id'), function ($query) use ($request) {
+                    return $query->whereHas('product', function ($q) use ($request) {
+                        $q->whereHas('categories', function (Builder $query)  use ($request) {
+                            $query->where('category_id', '=', $request->category_id);
                         });
+                    });
                 });
             })
-            ->get();
+            ->where(function ($query) use ($request) {
+                return $query->when($request->filled('brand_id'), function ($query) use ($request) {
+                    return $query->whereHas('product', function ($q) use ($request) {
+                        $q->where('brand_id', '=', $request->brand_id);
+                    });
+                });
+            })
+            ->where(function ($query) use ($request) {
+                return $query->when($request->filled('search'), function ($query) use ($request) {
+                    return $query->where(function ($query) use ($request) {
+                        return $query->whereHas('product', function ($q) use ($request) {
+                            $q->where('name', 'LIKE', "%{$request->search}%")->orWhere('code', 'LIKE', "%{$request->search}%");
+                        });
+                    });
+                });
+            })->get();
 
         $totalRows = $product_warehouse_query->count();
 
         $product_warehouse_data = json_decode(json_encode($product_warehouse_query->skip($offset)->take($perPage)), true);
 
         foreach ($product_warehouse_data as &$product_warehouse) {
-            $product_warehouse["product"] = json_decode(json_encode(DB::table("products")->where("id", $product_warehouse["product_id"])->first()), true);
-            $product_warehouse["product"]["unitSale"] = json_decode(json_encode(DB::table("units")->where("id", $product_warehouse["product"]["unit_sale_id"])->first()), true);
-
             if ($product_warehouse["product_variant_id"]) {
                 $productsVariants = DB::table("product_variants")->where("product_id", $product_warehouse["product_id"])
                     ->where("id", $product_warehouse["product_variant_id"])
@@ -731,15 +742,15 @@ class PosController extends BaseController
 
             // $discount = (isset($productId) && isset($productPrice)) ? $this->checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $productId, $productPrice, $productWarehouseId) : 0.00;
 
-            if ($product_warehouse["product"]["unitSale"]["operator"] == "/") {
-                $item["qte_sale"] = $product_warehouse["qte"] * $product_warehouse["product"]["unitSale"]["operator_value"];
-                $price = ($product_warehouse["product"]["price"] / $product_warehouse["product"]["unitSale"]["operator_value"]) /* - $discount */;
+            if ($product_warehouse["product"]["unit_sale"]["operator"] == "/") {
+                $item["qte_sale"] = $product_warehouse["qte"] * $product_warehouse["product"]["unit_sale"]["operator_value"];
+                $price = ($product_warehouse["product"]["price"] / $product_warehouse["product"]["unit_sale"]["operator_value"]) /* - $discount */;
             } else {
-                $item["qte_sale"] = $product_warehouse["qte"] / $product_warehouse["product"]["unitSale"]["operator_value"];
-                $price = ($product_warehouse["product"]["price"] * $product_warehouse["product"]["unitSale"]["operator_value"]) /* - $discount */;
+                $item["qte_sale"] = $product_warehouse["qte"] / $product_warehouse["product"]["unit_sale"]["operator_value"];
+                $price = ($product_warehouse["product"]["price"] * $product_warehouse["product"]["unit_sale"]["operator_value"]) /* - $discount */;
             }
 
-            $item["unitSale"] = $product_warehouse["product"]["unitSale"]["ShortName"];
+            $item["unitSale"] = $product_warehouse["product"]["unit_sale"]["ShortName"];
 
             if ($product_warehouse["product"]["TaxNet"] !== 0.0) {
                 //Exclusive
