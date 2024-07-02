@@ -812,7 +812,7 @@ class ProductsController extends BaseController
         {
             if (is_array($productPerWarehouse))
             {
-                if ($productPerWarehouse["qte"] > 0)
+                if (isset($productPerWarehouse["qte"]) && $productPerWarehouse["qte"] > 0)
                 {
                     $dataOfProduct = json_decode(json_encode(Product::with("unit", "unitSale", "unitPurchase")->where("id", '=', $productId)->where("deleted_at", '=', null)->first()), true);
 
