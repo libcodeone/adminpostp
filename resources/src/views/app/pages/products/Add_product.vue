@@ -438,8 +438,8 @@ export default {
         name: newTag,
         id: newTag.substring(0, 2) + Math.floor((Math.random() * 10000000))
       }
-      this.categories.push(tag)
-      this.categories_id.push(tag)
+      this.categories.push(tag.name)
+      this.categories_id.push(tag.id)
     },
 
     //------ Toast
