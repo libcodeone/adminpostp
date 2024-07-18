@@ -589,11 +589,48 @@ class SalesController extends BaseController
     public function update_to_payment(Request $request, $id)
     {
         $this->authorizeForUser($request->user('api'), 'update', Sale::class);
-        $current_Sale = Sale::findOrFail($id);
+        $current_Sale = Sale::with('details.product.unitSale')->findOrFail($id);
         $company = Setting::where('deleted_at', '=', null)->first();
         $user = Auth::user();
         $payments_sale = PaymentSale::where('deleted_at', '=', null)->where('sale_id', $id)->get();
         $payment_statut = 'paid';
+
+        foreach ($current_Sale["details"] as $iKey => $sale_details) {
+            $unit = json_decode(json_encode(DB::table("products")
+                ->where("id", "=", $sale_details["product_id"])
+                ->where("deleted_at", "=", null)
+                ->first()), true);
+
+            $unit["unitSale"] = json_decode(json_encode(DB::table("units")->where("id", $unit["unit_sale_id"])->first()), true);
+
+            if ($sale_details["product_variant_id"] !== null) {
+                $productWarehouse = ProductWarehouse::where("warehouse_id", $current_Sale->warehouse_id)
+                    ->where("product_id", $sale_details["product_id"])->where("product_variant_id", $sale_details["product_variant_id"])
+                    ->first();
+
+                if ($unit && $productWarehouse) {
+                    if ($unit["unitSale"]["operator"] == "/")
+                        $productWarehouse->qte -= $sale_details["quantity"] / $unit["unitSale"]["operator_value"];
+                    else
+                        $productWarehouse->qte -= $sale_details["quantity"] * $unit["unitSale"]["operator_value"];
+
+                    $productWarehouse->save();
+                }
+            } else {
+                $productWarehouse = ProductWarehouse::where("warehouse_id", $current_Sale->warehouse_id)
+                    ->where("product_id", $sale_details["product_id"])
+                    ->first();
+
+                if ($unit && $productWarehouse) {
+                    if ($unit["unitSale"]["operator"] == "/")
+                        $productWarehouse->qte -= $sale_details["quantity"] / $unit["unitSale"]["operator_value"];
+                    else
+                        $productWarehouse->qte -= $sale_details["quantity"] * $unit["unitSale"]["operator_value"];
+
+                    $productWarehouse->save();
+                }
+            }
+        }
 
         if ($request['amount'] > 0) {
             $PaymentSale = new PaymentSale();
@@ -956,7 +993,6 @@ class SalesController extends BaseController
 
     public function Sale_PDF(Request $request, $id)
     {
-
         $details = array();
         $helpers = new helpers();
         $sale_data = Sale::with('details.product.unitSale')
@@ -976,17 +1012,15 @@ class SalesController extends BaseController
         $sale['GrandTotal'] = number_format($sale_data->GrandTotal, 2, '.', '');
         $sale['payment_status'] = $sale_data->payment_statut;
         $detail_id = 0;
+
         foreach ($sale_data['details'] as $detail) {
-
             if ($detail->product_variant_id) {
-
                 $productsVariants = ProductVariant::where('product_id', $detail->product_id)
-                    ->where('id', $detail->product_variant_id)->first();
+                ->where('id', $detail->product_variant_id)->first();
 
                 $data['code'] = $productsVariants->name . '-' . $detail['product']['code'];
-            } else {
+            } else
                 $data['code'] = $detail['product']['code'];
-            }
 
             $data['detail_id'] = $detail_id += 1;
             $data['quantity'] = $detail->quantity;
@@ -995,11 +1029,10 @@ class SalesController extends BaseController
             $data['unitSale'] = $detail['product']['unitSale']->ShortName;
             $data['price'] = number_format($detail->price, 2, '.', '');
 
-            if ($detail->discount_method == '2') {
+            if ($detail->discount_method == '2')
                 $data['DiscountNet'] = number_format(($detail->discount / $detail->quantity), 2, '.', '');
-            } else {
+            else
                 $data['DiscountNet'] = number_format($detail->price * ($detail->discount / $detail->quantity) / 100, 2, '.', '');
-            }
 
             $data['Unit_price'] = number_format($detail->price, 2, '.', '');
             $data['discount'] = number_format(($detail->discount / $detail->quantity), 2, '.', '');

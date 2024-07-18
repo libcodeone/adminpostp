@@ -282,41 +282,6 @@ class PosController extends BaseController
                     "discount" => round($this->productDiscount, 2),
                     "discount_method" => $value["discount_Method"],
                 ];
-
-                $unit = json_decode(json_encode(DB::table("products")
-                    ->where("id", "=", $this->productId)
-                    ->where("deleted_at", "=", null)
-                    ->first()), true);
-
-                $unit["unitSale"] = json_decode(json_encode(DB::table("units")->where("id", $unit["unit_sale_id"])->first()), true);
-
-                if ($value["product_variant_id"] !== null) {
-                    $product_warehouse = ProductWarehouse::where("warehouse_id", $order->warehouse_id)
-                        ->where("product_id", $this->productId)->where("product_variant_id", $value["product_variant_id"])
-                        ->first();
-
-                    if ($unit && $product_warehouse) {
-                        if ($unit["unitSale"]["operator"] == "/")
-                            $product_warehouse->qte -= $this->productQuantity / $unit["unitSale"]["operator_value"];
-                        else
-                            $product_warehouse->qte -= $this->productQuantity * $unit["unitSale"]["operator_value"];
-
-                        $product_warehouse->save();
-                    }
-                } else {
-                    $product_warehouse = ProductWarehouse::where("warehouse_id", $order->warehouse_id)
-                        ->where("product_id", $this->productId)
-                        ->first();
-
-                    if ($unit && $product_warehouse) {
-                        if ($unit["unitSale"]["operator"] == "/")
-                            $product_warehouse->qte -= $this->productQuantity / $unit["unitSale"]["operator_value"];
-                        else
-                            $product_warehouse->qte -= $this->productQuantity * $unit["unitSale"]["operator_value"];
-
-                        $product_warehouse->save();
-                    }
-                }
             }
 
             $stringOne = "[{" . "\"email\"" . ":\"";
