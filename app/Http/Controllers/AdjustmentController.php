@@ -207,7 +207,7 @@ class AdjustmentController extends BaseController
             }
 
             $old_products_id = [];
-            // Init Data with old Parametre
+            // Init Data with old parameter
             foreach ($old_adjustment_details as $key => $value) {
                 $old_products_id[] = $value->id;
                 if ($value['type'] == "add") {

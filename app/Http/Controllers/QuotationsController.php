@@ -202,7 +202,7 @@ class QuotationsController extends BaseController
                 $new_details_id[] = $new_detail['id'];
             }
 
-            // Init quotation with old Parametre
+            // Init quotation with old parameter
             $old_detail_id = [];
             foreach ($old_quotation_details as $key => $value) {
                 $old_detail_id[] = $value->id;

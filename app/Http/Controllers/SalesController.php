@@ -436,7 +436,7 @@ class SalesController extends BaseController
                 $new_products_id[] = $new_detail['id'];
             }
 
-            // Init Data with old Parametre
+            // Init Data with old parameter
             $old_products_id = [];
             foreach ($old_sale_details as $key => $value) {
                 $old_products_id[] = $value->id;

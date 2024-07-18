@@ -1114,6 +1114,33 @@
                                                 }}
                                                 {{ currentUser.currency }}</span
                                             >
+                                            <table border="1px solid" style="border-color: black; font-size: x-small; text-align: center;">
+                                                <thead>
+                                                    <th>
+                                                        Sucursal
+                                                    </th>
+                                                    <th>
+                                                        Cantidad
+                                                    </th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr
+                                                        v-for="p_qte_per_warehouse in product.product_qte_per_warehouse"
+                                                        :key="p_qte_per_warehouse"
+                                                    >
+                                                        <td style="border-bottom: 1px solid black;">
+                                                            {{
+                                                                p_qte_per_warehouse.warehouse_name
+                                                            }}
+                                                        </td>
+                                                        <td style="border-bottom: 1px solid black;">
+                                                            {{
+                                                                p_qte_per_warehouse.qte_per_warehouse
+                                                            }}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                             <p
                                                 class="m-0 text-muted text-small w-15 w-sm-100 d-none d-lg-block item-badges"
                                             >
@@ -2312,9 +2339,14 @@ export default {
         //------------------------------------ Get Products By Warehouse -------------------------\\
 
         Get_Products_By_Warehouse(id) {
-            axios
-                .get("Products/Warehouse/" + id + "?stock=" + 1)
-                .then(({ data }) => (this.products = data));
+            axios.get("Products/Warehouse/" + id + "?stock=" + 1)
+            .then(
+                (
+                    { data }
+                ) => {
+                    this.products = data;
+                }
+            );
         },
 
         //----------------------------------------- Add Detail of Sale -------------------------\\
@@ -2870,7 +2902,7 @@ export default {
             NProgress.set(0.1);
             axios
                 .get(
-                    "GetProductsByParametre?page=" +
+                    "GetProductsByParameter?page=" +
                         page +
                         "&category_id=" +
                         this.category_id +

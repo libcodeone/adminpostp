@@ -2276,7 +2276,7 @@ export default {
       NProgress.set(0.1);
       axios
         .get(
-          "GetProductsByParametre?page=" +
+          "GetProductsByParameter?page=" +
             page +
             "&category_id=" +
             this.category_id +

@@ -629,7 +629,7 @@ class PosController extends BaseController
 
     //------------ Get Products--------------\\
 
-    public function GetProductsByParametre(Request $request)
+    public function GetProductsByParameter(Request $request)
     {
         $this->authorizeForUser($request->user("api"), "Sales_pos", Sale::class);
 
@@ -716,6 +716,24 @@ class PosController extends BaseController
             }
 
             $item["unitSale"] = $product_warehouse["product"]["unit_sale"]["ShortName"];
+
+            $item["product_qte_per_warehouse"] = [];
+            $p_qte_per_w = 0;
+
+            $warehouses = json_decode(json_encode(DB::table("warehouses")->where("deleted_at", '=', null)->get()), true);
+
+            foreach ($warehouses as $iKey => $warehouse) {
+                $product_qte_per_warehouse = json_decode(json_encode(DB::table("product_warehouse")->where("product_id", '=', $product_warehouse["product_id"])->where("warehouse_id", '=', $warehouse["id"])->first()), true);
+                $p_qte_per_w = (isset($product_qte_per_warehouse["qte"]) && !empty($product_qte_per_warehouse["qte"])) ? $product_qte_per_warehouse["qte"] : 0;
+
+                array_push(
+                    $item["product_qte_per_warehouse"],
+                    [
+                        "warehouse_name" => $warehouse["name"],
+                        "qte_per_warehouse" => $p_qte_per_w
+                    ]
+                );
+            }
 
             if ($product_warehouse["product"]["TaxNet"] !== 0.0) {
                 //Exclusive
