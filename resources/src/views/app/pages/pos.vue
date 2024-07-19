@@ -1103,18 +1103,33 @@
                                             >
                                                 {{ product.code }}
                                             </p>
-                                            <span
-                                                class="badge w-15 w-sm-100 mb-2"
-                                                style="color: #fff;background-color: #020202;"
-                                                >{{
-                                                    formatNumber(
-                                                        product.Net_price,
-                                                        2
-                                                    )
-                                                }}
-                                                {{ currentUser.currency }}</span
-                                            >
-                                            <table border="1px solid" style="border-color: black; font-size: x-small; text-align: center;">
+                                            <div style="display: flex; flex-direction: column;">
+                                                <div style="flex: 50%;">
+                                                    <span
+                                                        class="badge mb-2 w-15 w-sm-100"
+                                                        style="background-color: #020202; color: #fff;"
+                                                        >{{
+                                                            formatNumber(
+                                                                product.Net_price,
+                                                                2
+                                                            )
+                                                        }}
+                                                        {{ currentUser.currency }}</span
+                                                    >
+                                                </div>
+                                                <div style="flex: 50%;">
+                                                    <b-button
+                                                        type="button"
+                                                        variant="warning"
+                                                        :id="'btn_product_table_' + product.id"
+                                                        style="align-items: center; border: 1px solid; border-color: black; display: flex; font-size: medium; font-weight: 500; justify-content: center; margin: 0px auto 2.5px 0px; max-height: 0.906rem; max-width: 2.752rem; min-height: 0.6795rem; min-width: 2.064rem; padding: 0.125rem; text-align: center;"
+                                                        @click.stop="toggleTable(product.id)"
+                                                    >
+                                                        {{ '+' }}
+                                                    </b-button>
+                                                </div>
+                                            </div>
+                                            <table class="d-none" :id="'product_table_' + product.id" border="1px solid" style="border-color: black; font-size: x-small; text-align: center;">
                                                 <thead>
                                                     <th>
                                                         Sucursal
@@ -2640,6 +2655,24 @@ export default {
                     // Complete the animation of the progress bar.
                     NProgress.done();
                 });
+        },
+
+        toggleTable(productCardId) {
+            const pCardId = productCardId.toString();
+
+            const pQuantityPerWarehouseTable = document.getElementById("product_table_" + pCardId);
+            const showOrHideTableButton = document.getElementById("btn_product_table_" + pCardId);
+
+            if (showOrHideTableButton && pQuantityPerWarehouseTable) {
+                if (pQuantityPerWarehouseTable.classList.contains("d-none")){
+                    pQuantityPerWarehouseTable.classList.remove("d-none");
+                    showOrHideTableButton.textContent = '-';
+                }
+                else {
+                    pQuantityPerWarehouseTable.classList.add("d-none");
+                    showOrHideTableButton.textContent = '+';
+                }
+            }
         },
 
         //----------- Calcul Total
