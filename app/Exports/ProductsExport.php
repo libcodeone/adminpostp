@@ -67,7 +67,7 @@ class ProductsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEve
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellRange = 'A1:J1'; // All headers
+                $cellRange = 'A1:J1';
                 $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
 
                 $styleArray = [

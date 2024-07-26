@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\ProvidersExport;
-use App\Models\Provider;
-use App\utils\helpers;
 use Carbon\Carbon;
-use DB;
+use App\utils\helpers;
+use App\Models\Provider;
 use Illuminate\Http\Request;
+use App\Exports\ProvidersExport;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProvidersController extends BaseController
 {
+    private const MAX_LINE_LENGTH = 10000;
 
     //----------- Get ALL Suppliers-------\\
 
-    public function index(request $request)
+    public function index(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'view', Provider::class);
 
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -30,7 +31,6 @@ class ProvidersController extends BaseController
         // Filter fields With Params to retrieve
         $columns = array(0 => 'name', 1 => 'code', 2 => 'phone', 3 => 'email');
         $param = array(0 => 'like', 1 => 'like', 2 => 'like', 3 => 'like');
-        $data = array();
 
         $providers = Provider::where('deleted_at', '=', null);
 
@@ -146,14 +146,18 @@ class ProvidersController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'view', Provider::class);
 
-        return Excel::download(new ProvidersExport, 'Providers.xlsx');
+        return Excel::download(new ProvidersExport, 'Lista_de_Proveedores.xlsx', \Maatwebsite\Excel\Excel::XLSX,
+            [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="Lista_de_Proveedores.xlsx"',
+            ]
+        );
     }
 
     //----------- get Number Order Of Suppliers-------\\
 
     public function getNumberOrder()
     {
-
         $last = DB::table('providers')->latest('id')->first();
 
         if ($last) {
@@ -178,7 +182,7 @@ class ProvidersController extends BaseController
             $data = array();
             $rowcount = 0;
             if (($handle = fopen($file_upload, "r")) !== false) {
-                $max_line_length = defined('MAX_LINE_LENGTH') ? MAX_LINE_LENGTH : 10000;
+                $max_line_length = defined('MAX_LINE_LENGTH') ? ProvidersController::MAX_LINE_LENGTH : 10000;
                 $header = fgetcsv($handle, $max_line_length);
                 $header_colcount = count($header);
                 while (($row = fgetcsv($handle, $max_line_length)) !== false) {
@@ -186,27 +190,43 @@ class ProvidersController extends BaseController
                     if ($row_colcount == $header_colcount) {
                         $entry = array_combine($header, $row);
                         $data[] = $entry;
-                    } else {
+                    } else
                         return null;
-                    }
+
                     $rowcount++;
                 }
                 fclose($handle);
-            } else {
+            } else
                 return null;
-            }
 
             //-- Create New Provider
-            foreach ($data as $key => $value) {
-                Provider::create([
-                    'name' => $value['name'] == '' ? null : $value['name'],
-                    'code' => $this->getNumberOrder(),
-                    'adresse' => $value['adresse'] == '' ? null : $value['adresse'],
-                    'phone' => $value['phone'] == '' ? null : $value['phone'],
-                    'email' => $value['email'] == '' ? null : $value['email'],
-                    'country' => $value['country'] == '' ? null : $value['country'],
-                    'city' => $value['city'] == '' ? null : $value['city'],
-                ]);
+            foreach ($data as $iKey => $value) {
+                $providerCode = $value["Código"];
+
+                if (DB::table("providers")->where("code", '=', $providerCode)->count() < 1) {
+                    Provider::create(
+                        [
+                            'name' => (!isset($value['Nombre']) && empty($value['Nombre'])) ? null : $value['Nombre'],
+                            'code' => $this->getNumberOrder(),
+                            'adresse' => (!isset($value['Dirección']) && empty($value['Dirección'])) ? null : $value['Dirección'],
+                            'phone' => (!isset($value['Número de teléfono']) && empty($value['Número de teléfono'])) ? null : $value['Número de teléfono'],
+                            'email' => (!isset($value['Correo electrónico']) && empty($value['Correo electrónico'])) ? null : $value['Correo electrónico'],
+                            'country' => (!isset($value['País']) && empty($value['País'])) ? null : $value['País'],
+                            'city' => (!isset($value['Ciudad']) && empty($value['Ciudad'])) ? null : $value['Ciudad'],
+                        ]
+                    );
+                } else {
+                    DB::table("providers")->where("code", '=', $providerCode)->update(
+                        [
+                            'name' => (!isset($value['Nombre']) && empty($value['Nombre'])) ? null : $value['Nombre'],
+                            'adresse' => (!isset($value['Dirección']) && empty($value['Dirección'])) ? null : $value['Dirección'],
+                            'phone' => (!isset($value['Número de teléfono']) && empty($value['Número de teléfono'])) ? null : $value['Número de teléfono'],
+                            'email' => (!isset($value['Correo electrónico']) && empty($value['Correo electrónico'])) ? null : $value['Correo electrónico'],
+                            'country' => (!isset($value['País']) && empty($value['País'])) ? null : $value['País'],
+                            'city' => (!isset($value['Ciudad']) && empty($value['Ciudad'])) ? null : $value['Ciudad'],
+                        ]
+                    );
+                }
             }
 
             return response()->json([
