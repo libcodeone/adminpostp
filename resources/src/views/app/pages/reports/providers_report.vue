@@ -206,12 +206,12 @@ export default {
         .then(response => {
           this.providers = response.data.report;
           this.totalRows = response.data.totalRows;
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.isLoading = false;
         })
         .catch(response => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           setTimeout(() => {
             this.isLoading = false;

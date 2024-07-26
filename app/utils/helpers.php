@@ -1,12 +1,17 @@
 <?php
 namespace App\utils;
 
-use App\Models\Currency;
-use Illuminate\Support\Facades\DB;
+use Throwable;
 use App\Models\Role;
 use App\Models\Setting;
+use App\Models\Product;
+use App\Models\Currency;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Database\Eloquent\Builder;
+use App\Http\Controllers\BaseController as Controller;
 
 class helpers
 {
@@ -68,6 +73,75 @@ class helpers
 
         // Finally return the model
         return $model;
+    }
+
+    private function convertToCSV($csvBody, $csvHeaders, $filename)
+    {
+        $outputBuffer = fopen($filename, 'w', true);
+
+        fputcsv($outputBuffer, $csvHeaders);
+
+        foreach ($csvBody as $row)
+            fputcsv($outputBuffer, $row);
+
+        fclose($outputBuffer);
+    }
+
+    public function downloadSampleOfCSV(Request $request) {
+        $baseController = new Controller();
+        $baseController->authorizeForUser($request->user('api'), 'view', Product::class);
+
+        $filename = $request->section . "_sample_" . date("Ymd_His") . ".csv";
+
+        try
+        {
+            $csvBody = json_decode($request->dataArray, true);
+            $csvHeaders = json_decode($request->csvHeaders, true);
+
+            /*
+            $csvConversionOutput = $this->convertToCSV($csvBody, $csvHeaders, $filename);
+
+            $isFileClosed = $csvConversionOutput["file_is_closed"];
+            */
+
+            $filepath = tempnam(sys_get_temp_dir(), 'prefix_');
+
+            $this->convertToCSV($csvBody, $csvHeaders, $filepath);
+
+            $headers = [
+                "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+                "Content-Type" => "text/csv; charset=utf-8",
+                "Content-Disposition" => 'attachment; filename="' . $filename . '"',
+                "Expires" => "0",
+                "Pragma" => "public"
+            ];
+
+            return Response::make(
+                [
+                    'file' => File::get($filepath),
+                    'filename' => $filename,
+                    'errors' => null,
+                    'message' => "¡La generación del archivo " . $filename . " fue exitosa!",
+                    'success' => true
+                ],
+                200,
+                $headers
+            );
+        }
+        catch (Throwable $throwable)
+        {
+            $errors = $throwable->getMessage();
+
+            return Response::json(
+                [
+                    'file' => null,
+                    'filename' => null,
+                    'errors' => $errors,
+                    'message' => "¡La generación del archivo " . $filename . " fue fallida!",
+                    'success' => false
+                ]
+            );
+        }
     }
 
     //  Check If Hass Permission Show All records

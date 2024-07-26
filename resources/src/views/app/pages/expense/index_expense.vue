@@ -281,11 +281,11 @@ export default {
           link.setAttribute("download", "List_Expense.xlsx");
           document.body.appendChild(link);
           link.click();
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           setTimeout(() => NProgress.done(), 500);
         })
         .catch(() => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           setTimeout(() => NProgress.done(), 500);
         });
     },
@@ -398,12 +398,12 @@ export default {
           this.totalRows = response.data.totalRows;
           this.totalMount=response.data.totalExpenseve;
 
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.isLoading = false;
         })
         .catch(response => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           setTimeout(() => {
             this.isLoading = false;
@@ -439,7 +439,7 @@ export default {
               Fire.$emit("Delete_Expense");
             })
             .catch(() => {
-              // Complete the animation of theprogress bar.
+              // Complete the animation of the progress bar.
               setTimeout(() => NProgress.done(), 500);
               this.$swal(
                 this.$t("Delete.Failed"),
@@ -482,7 +482,7 @@ export default {
               Fire.$emit("Delete_Expense");
             })
             .catch(() => {
-              // Complete the animation of theprogress bar.
+              // Complete the animation of the progress bar.
               setTimeout(() => NProgress.done(), 500);
               this.$swal(
                 this.$t("Delete.Failed"),
@@ -501,7 +501,7 @@ export default {
 
     Fire.$on("Delete_Expense", () => {
       setTimeout(() => {
-        // Complete the animation of theprogress bar.
+        // Complete the animation of the progress bar.
         NProgress.done();
         this.Get_Expenses(this.serverParams.page);
       }, 500);

@@ -462,12 +462,12 @@ export default {
           this.warehouses = response.data.warehouses;
           this.totalRows = response.data.totalRows;
 
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.isLoading = false;
         })
         .catch(response => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           setTimeout(() => {
             this.isLoading = false;
@@ -528,11 +528,11 @@ export default {
           link.setAttribute("download", "List_Transfers.xlsx");
           document.body.appendChild(link);
           link.click();
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           setTimeout(() => NProgress.done(), 500);
         })
         .catch(() => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           setTimeout(() => NProgress.done(), 500);
         });
     },
@@ -565,7 +565,7 @@ export default {
               Fire.$emit("Delete_Transfer");
             })
             .catch(() => {
-              // Complete the animation of theprogress bar.
+              // Complete the animation of the progress bar.
               setTimeout(() => NProgress.done(), 500);
               this.$swal(
                 this.$t("Delete.Failed"),
@@ -608,7 +608,7 @@ export default {
               Fire.$emit("Delete_Transfer");
             })
             .catch(() => {
-              // Complete the animation of theprogress bar.
+              // Complete the animation of the progress bar.
               setTimeout(() => NProgress.done(), 500);
               this.$swal(
                 this.$t("Delete.Failed"),
@@ -627,14 +627,14 @@ export default {
 
     Fire.$on("Get_Details_Transfer", () => {
       this.$bvModal.show("showDetails");
-      // Complete the animation of theprogress bar.
+      // Complete the animation of the progress bar.
       setTimeout(() => NProgress.done(), 500);
     });
 
     Fire.$on("Delete_Transfer", () => {
       setTimeout(() => {
         this.Get_Transfers(this.serverParams.page);
-        // Complete the animation of theprogress bar.
+        // Complete the animation of the progress bar.
         setTimeout(() => NProgress.done(), 500);
       }, 500);
     });

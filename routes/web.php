@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 /*
@@ -15,10 +16,19 @@ use Illuminate\Support\Facades\Storage;
 
 //------------------------------------------------------------------\\
 
-Route::post('/login', [
-    'uses' => 'Auth\LoginController@login',
-    'middleware' => 'Is_Active',
-]);
+Route::post('/login',
+    [
+        'uses' => 'Auth\LoginController@login',
+        'middleware' => 'Is_Active',
+    ]
+);
+
+Route::post('/loginWithEmailAndPassword',
+    [
+        'uses' => 'Auth\LoginController@loginWithEmailAndPassword',
+        'middleware' => 'Is_Active',
+    ]
+);
 
 Route::get('password/find/{token}', 'PasswordResetController@find');
 
@@ -93,27 +103,19 @@ if ($installed === false) {
 //------------------------------------------------------------------\\
 
 Route::group(['middleware' => ['auth', 'Is_Active']], function () {
-
-    Route::get('/login', function () {
-        $installed = Storage::disk('public')->exists('installed');
-        if ($installed === false) {
-            return redirect('/login');
-        } else {
-            return redirect('/login');
-        }
-    });
-
+    Route::get("/login", "Auth\LoginController@showLoginForm");
 
     Route::get('/{vue?}',
-        function () {
-            $installed = Storage::disk('public')->exists('installed');
-            if ($installed === false) {
-                return view('layouts.master');
-            } else {
-                return view('layouts.master');
+    function () {
+                $installed = Storage::disk('public')->exists('installed');
+                if ($installed === false)
+                    return view('layouts.master');
+                else
+                    return view('layouts.master');
             }
-        })->where('vue', '^(?!setup|update|password).*$');
-});
+        )->where('vue', '^(?!setup|update|password).*$');
+    }
+);
 
 Auth::routes([
     'register' => false,

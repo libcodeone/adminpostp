@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -9,31 +10,29 @@
     <link rel="stylesheet" href="/css/master.css">
 
     <title>Stocky | Ultimate Inventory With POS</title>
-  </head>
+</head>
 
-  <body class="text-left">
+<body class="text-left">
     <noscript>
-      <strong>
-        We're sorry but Stocky doesn't work properly without JavaScript
-        enabled. Please enable it to continue.</strong
-      >
+        <strong>
+            We're sorry but Stocky doesn't work properly without JavaScript
+            enabled. Please enable it to continue.
+        </strong>
     </noscript>
 
     <!-- built files will be auto injected -->
     <div class="loading_wrap" id="loading_wrap">
-      <div class="loader_logo">
-      <img src="/images/logo-2.png" class="" alt="logo" />
+        <div class="loader_logo">
+            <img src="/images/logo-2.png" class="" alt="logo" />
+        </div>
 
-      </div>
-
-      <div class="loading"></div>
+        <div class="loading"></div>
     </div>
     <div id="login">
-        <login-component></login-component>
-      </div>
+        <login-component :preroute="'{!! $previousRelativeURL !!}'"></login-component>
+    </div>
 
-      <script src="/js/login.min.js"></script>
-  </body>
+    <script src="/js/login.min.js"></script>
+</body>
+
 </html>
-
-    

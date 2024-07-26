@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Throwable;
 use App\Exports\ProductsExport;
 use App\Models\Brand;
 use App\Models\Category;
@@ -27,6 +28,7 @@ use \Gumlet\ImageResize;
 class ProductsController extends BaseController
 {
     private $proceed_function = null;
+    private const MAX_LINE_LENGTH = 10000;
 
     //------------ Get ALL Products --------------\\
 
@@ -74,13 +76,17 @@ class ProductsController extends BaseController
             $item['name'] = $product->name;
             if (isset($product->categories[0])) {
                 $categoriesProduct = "";
-                foreach ($product->categories as $itemCategory) {
-                    $categoriesProduct .=  $itemCategory->name . ', ';
+
+                foreach ($product->categories as $iKey => $itemCategory) {
+                    if (count($product->categories) > 1)
+                        $categoriesProduct .=  $itemCategory->name . (($iKey === count($product->categories) - 1) ? '' : ', ');
+                    else
+                        $categoriesProduct .=  $itemCategory->name;
                 }
+
                 $item['category'] =  $categoriesProduct;
-            } else {
+            } else
                 $item['category'] =  "";
-            }
 
             $item['brand'] = $product['brand'] ? $product['brand']["name"] : 'N/D';
             $item['unit'] = $product['unit']["ShortName"];
@@ -95,6 +101,9 @@ class ProductsController extends BaseController
                 $total_qty += $product_warehouse->qte;
                 $item['quantity'] = $total_qty;
             }
+
+            $item['stock_alert'] = (isset($product->stock_alert) && !empty($product->stock_alert)) ? $product->stock_alert : 0;
+            $item['note'] = (isset($product->note) && !empty($product->note)) ? $product->note : '';
 
             $firstimage = explode(',', $product->image);
             $item['image'] = $firstimage[0];
@@ -112,6 +121,56 @@ class ProductsController extends BaseController
             'products' => $data,
             'totalRows' => $totalRows,
         ]);
+    }
+
+    public function resetStock(Request $request) {
+        $this->authorizeForUser($request->user('api'), 'create', Product::class);
+
+        $warehouseId = (int)$request->warehouse_id;
+        $resetAllWarehouses = $request->allWarehouses;
+
+        try {
+            $warehousesToReset = ($resetAllWarehouses === "yes") ? "todas las sucursales" : DB::table("warehouses")->where("id", '=', $warehouseId)->pluck("name")->first();
+
+            if ($resetAllWarehouses === "yes") {
+                DB::table("product_warehouse")->update(
+                    [
+                        "qte" => 0
+                    ]
+                );
+            } else {
+                DB::table("product_warehouse")->where("warehouse_id", '=', $warehouseId)->update(
+                    [
+                        "qte" => 0
+                    ]
+                );
+            }
+
+            $errors = null;
+            $message = "¡Enhorabuena! Se han reiniciado la cantidad de existencias en $warehousesToReset de todos los productos.";
+
+            return response()->json(
+                [
+                    "errors" => $errors,
+                    "message" => $message,
+                    "success" => true
+                ]
+            );
+        }
+        catch (Throwable $throwable)
+        {
+            $warehousesToReset = ($resetAllWarehouses === "yes") ? "todas las sucursales" : "la sucursal con ID $warehouseId";
+            $message = "¡Oops! Ha habido un error al reiniciar la cantidad de existencias en $warehousesToReset de todos los productos.";
+            $errors = $throwable->getMessage();
+
+            return response()->json(
+                [
+                    "errors" => $errors,
+                    "message" => $message,
+                    "success" => false
+                ]
+            );
+        }
     }
 
     //-------------- Store new  Product  ---------------\\
@@ -562,7 +621,12 @@ class ProductsController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'view', Product::class);
 
-        return Excel::download(new ProductsExport, 'List_Products.xlsx');
+        return Excel::download(new ProductsExport, 'Lista_de_Productos.xlsx', \Maatwebsite\Excel\Excel::XLSX,
+            [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="Lista_de_Productos.xlsx"',
+            ]
+        );
     }
 
     //--------------  Show Product Details ---------------\\
@@ -707,7 +771,7 @@ class ProductsController extends BaseController
             $item['qte'] = $product_warehouse["qte"];
             $item['unitSale'] = $product_warehouse['product']['unitSale']["ShortName"];
             $item['unitPurchase'] = $product_warehouse['product']['unitPurchase']["ShortName"];
-            
+
             $item["product_qte_per_warehouse"] = [];
             $p_qte_per_w = 0;
 
@@ -826,12 +890,9 @@ class ProductsController extends BaseController
         $data = [];
         $item = null;
 
-        if (isset($productPerWarehouse))
-        {
-            if (is_array($productPerWarehouse))
-            {
-                if (isset($productPerWarehouse["qte"]) && $productPerWarehouse["qte"] > 0)
-                {
+        if (isset($productPerWarehouse)) {
+            if (is_array($productPerWarehouse)) {
+                if (isset($productPerWarehouse["qte"]) && $productPerWarehouse["qte"] > 0) {
                     $dataOfProduct = json_decode(json_encode(Product::with("unit", "unitSale", "unitPurchase")->where("id", '=', $productId)->where("deleted_at", '=', null)->first()), true);
 
                     $item['id'] = $dataOfProduct['id'];
@@ -1133,8 +1194,7 @@ class ProductsController extends BaseController
             $data = array();
             $rowcount = 0;
             if (($handle = fopen($file_upload, "r")) !== false) {
-
-                $max_line_length = defined('MAX_LINE_LENGTH') ? MAX_LINE_LENGTH : 10000;
+                $max_line_length = defined('MAX_LINE_LENGTH') ? ProductsController::MAX_LINE_LENGTH : 10000;
                 $header = fgetcsv($handle, $max_line_length);
                 $header_colcount = count($header);
                 while (($row = fgetcsv($handle, $max_line_length)) !== false) {
@@ -1156,77 +1216,45 @@ class ProductsController extends BaseController
 
             //-- Create New Product
             foreach ($data as $key => $value) {
-                $category = Category::where('name', '=', $value['category'])->get();
-                if (isset($category[0])) {
+                $category = Category::where('name', '=', $value['Categoría'])->get();
+                if (isset($category[0]))
                     $category_id = $category[0]["id"];
-                } else {
+                else {
                     $category = new Category;
-                    $category->name =  $value['category'];
+                    $category->name =  $value['Categoría'];
                     $category->save();
-                    $category_id = $category->id;
                 }
 
-
-                /* $unit = Unit::where(['ShortName' => $value['unit']])
-                    ->orWhere(['name' => $value['unit']])->first();
-                $unit_id = $unit->id;*/
-
-                if ($value['brand'] != 'N/A' && $value['brand'] != '') {
-                    $brand = Brand::firstOrCreate(['name' => $value['brand']]);
+                if ($value['Marca'] != 'N/A' && $value['Marca'] != '') {
+                    $brand = Brand::firstOrCreate(['name' => $value['Marca']]);
                     $brand_id = $brand->id;
-                } else {
+                } else
                     $brand_id = null;
-                }
 
                 $Product = new Product;
-                $Product->name = $value['name'] == '' ? null : $value['name'];
+                $Product->name = $value['Nombre'] == '' ? null : $value['Precio'];
                 $Product->code = $this->generate_random_code();
                 $Product->Type_barcode = 'CODE128';
-                $Product->price = $value['price'];
-                $Product->cost = $value['cost'];
+                $Product->price = $value['Precio'];
+                $Product->cost = $value['Costo'];
 
                 $Product->brand_id = $brand_id;
                 $Product->TaxNet = 0;
                 $Product->tax_method = 1;
-                $Product->note = $value['note'] ? $value['note'] : '';
-                /* $Product->unit_id = $unit_id;
-                $Product->unit_sale_id = $unit_id;
-                $Product->unit_purchase_id = $unit_id;*/
-                $Product->stock_alert = $value['stock_alert'] ? $value['stock_alert'] : 0;
+                $Product->note = $value['Nota'] ? $value['Nota'] : '';
+                $Product->stock_alert = $value['Stock'] ? $value['Stock'] : 0;
                 $Product->is_variant = 0;
                 $Product->image = 'no-image.png';
-                /*  if ($value['codeAN'] != 'N/A' && $value['codeAN'] != '') {
-                    $Product->codeAN = $value['codeAN'];
-                } else {
-                    $Product->codeAN = null;
-                }*/
                 $Product->save();
 
                 if ($warehouses) {
                     foreach ($warehouses as $warehouse) {
                         //-- Add Adjustment
-                        if ($value['quantity'] != 'N/A' && $value['quantity'] != '') {
-                            // $order = new Adjustment;
-                            // $order->date = strtotime("now");
-                            // $order->Ref = $this->getNumberOrder();
-                            // $order->warehouse_id = $warehouse;
-                            // $order->notes = '';
-                            // $order->items = 1;
-                            // $order->user_id = Auth::user()->id;
-                            // $order->save();
-
-                            // //-- Add AdjustmentDetail
-                            // $orderDetails[] = [
-                            //     'adjustment_id' => $order->id,
-                            //     'quantity' => $value['quantity'],
-                            //     'product_id' => $Product->id,
-                            //     'type' => 'add',
-                            // ];
-                            // AdjustmentDetail::insert($orderDetails);
+                        if (isset($value['Cantidad']) && $value['Cantidad'] !== 'N/A' && $value['Cantidad'] !== '' && $value['Cantidad'] !== 0) {
                             $product_warehouse[] = [
                                 'product_id' => $Product->id,
                                 'warehouse_id' => $warehouse,
-                                'qte' => $value['quantity'],
+                                'qte' => $value['Cantidad'],
                             ];
                         } else {
                             $product_warehouse[] = [
@@ -1245,7 +1273,7 @@ class ProductsController extends BaseController
             ], 200);
         }
     }
-    // //------------ Reference Number of Adjustement  -----------\\
+
     public function getNumberOrder()
     {
         $last = DB::table('adjustments')->latest('id')->first();

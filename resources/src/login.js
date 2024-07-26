@@ -81,16 +81,14 @@ axios.interceptors.response.use(
     },
     error => {
         if (error.response && error.response.data) {
-            if (error.response.status === 401) {
+            if (error.response.status === 401)
                 window.location.href = "/login";
-            }
 
-            if (error.response.status === 404) {
+            if (error.response.status === 404)
                 router.push({ name: "NotFound" });
-            }
-            if (error.response.status === 403) {
+
+            if (error.response.status === 403)
                 router.push({ name: "not_authorize" });
-            }
 
             return Promise.reject(error.response.data);
         }

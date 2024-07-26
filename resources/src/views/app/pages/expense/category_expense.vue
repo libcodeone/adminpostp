@@ -303,12 +303,12 @@ export default {
         .then(response => {
           this.categories = response.data.Expenses_category;
           this.totalRows = response.data.totalRows;
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.isLoading = false;
         })
         .catch(response => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           setTimeout(() => {
             this.isLoading = false;
@@ -424,7 +424,7 @@ export default {
               Fire.$emit("Delete_Category_Expense");
             })
             .catch(() => {
-              // Complete the animation of theprogress bar.
+              // Complete the animation of the progress bar.
               setTimeout(() => NProgress.done(), 500);
               this.$swal(
                 this.$t("Delete.Failed"),

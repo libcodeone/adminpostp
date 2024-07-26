@@ -17,42 +17,48 @@ class ProductsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEve
      */
     function array(): array
     {
-        $products = Product::where('deleted_at', '=', null)
-            ->orderBy('id', 'DESC')
-            ->get();
+        $products = Product::where('deleted_at', '=', null)->orderBy('id', 'DESC')->get();
 
         if ($products->isNotEmpty()) {
 
             foreach ($products as $product) {
-                $product_warehouse_data = ProductWarehouse::where('deleted_at', '=', null)
-                    ->where('product_id', $product->id)->get();
+                $product_warehouse_data = ProductWarehouse::where('deleted_at', '=', null)->where('product_id', $product->id)->get();
 
                 $qte = 0;
                 $item['code'] = $product->code;
                 $item['name'] = $product->name;
-                if(isset($product->categories[0])){
-                    $categoriesProduct = "";
-                    foreach ($product->categories as $itemCategory){
-                        $categoriesProduct .=  $itemCategory->name . ', ';
+                if (isset($product->categories[0])) {
+                    $categoriesProduct = '';
+
+                    foreach ($product->categories as $iKey => $itemCategory) {
+                        if (count($product->categories) > 1) {
+                            $categoriesProduct .=  $itemCategory->name . (($iKey === count($product->categories) - 1) ? '' : ", ");
+                        }
+                        else
+                            $categoriesProduct .=  $itemCategory->name;
                     }
+
                     $item['category'] =  $categoriesProduct;
-                }else{
-                    $item['category'] =  "";
-                }
+                } else
+                    $item['category'] =  '';
+
                 $item['brand'] = $product['brand'] ? $product['brand']->name : 'N/D';
+
                 foreach ($product_warehouse_data as $product_warehouse) {
                     $qte += $product_warehouse->qte;
                     $item['quantity'] = $qte;
                 }
+
                 $item['unit'] = $product['unit']->ShortName;
                 $item['cost'] = $product->cost;
                 $item['price'] = $product->price;
+                $item['stock_alert'] = (isset($product->stock_alert) && !empty($product->stock_alert)) ? $product->stock_alert : 0;
+                $item['note'] = (isset($product->note) && !empty($product->note)) ? $product->note : '';
 
                 $data[] = $item;
             }
-        } else {
+        } else
             $data = [];
-        }
 
         return $data;
     }
@@ -61,7 +67,7 @@ class ProductsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEve
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellRange = 'A1:H1'; // All headers
+                $cellRange = 'A1:J1'; // All headers
                 $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
 
                 $styleArray = [
@@ -76,23 +82,23 @@ class ProductsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEve
                         'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
                     ],
                 ];
-
             },
         ];
-
     }
 
     public function headings(): array
     {
         return [
-            'Code',
-            'Name',
-            'Category',
-            'Brand',
-            'Quantity',
-            'Unit',
-            'Cost',
-            'Price',
+            'Código',
+            'Nombre',
+            'Categoría',
+            'Marca',
+            'Cantidad',
+            'Unidad',
+            'Costo',
+            'Precio',
+            'Stock',
+            'Nota'
         ];
     }
 }

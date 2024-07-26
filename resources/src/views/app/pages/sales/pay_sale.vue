@@ -1274,7 +1274,7 @@ export default {
       NProgress.set(0.1);
       this.$refs.Add_payment.validate().then((success) => {
         if (!success) {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.makeToast(
             "danger",
@@ -1367,7 +1367,7 @@ export default {
         })
         .then((response) => {
           if (response.data.success === true) {
-            // Complete the animation of theprogress bar.
+            // Complete the animation of the progress bar.
             NProgress.done();
             this.makeToast(
               "success",
@@ -1380,7 +1380,7 @@ export default {
           }
         })
         .catch((error) => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
         });
@@ -1409,7 +1409,7 @@ export default {
     //     })
     //     .then((response) => {
     //        if (response.data.success === true) {
-    //           // Complete the animation of theprogress bar.
+    //           // Complete the animation of the progress bar.
     //             NProgress.done();
     //           this.makeToast(
     //         "success",
@@ -1520,7 +1520,7 @@ export default {
         this.payment.cash = this.formatNumber(this.sale.due, 2);
         this.payment.Reglement = "Efectivo";
         this.$bvModal.show("Add_Payment");
-        // Complete the animation of theprogress bar.
+        // Complete the animation of the progress bar.
         NProgress.done();
       }, 500);
     });

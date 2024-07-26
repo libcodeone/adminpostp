@@ -582,7 +582,7 @@ export default {
       axios
         .post("Products", self.data)
         .then(response => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.$router.push({ name: "index_products" });
           this.makeToast(
@@ -592,7 +592,7 @@ export default {
           );
         })
         .catch(error => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           if (error.errors.code.length > 0) {
             self.code_exist = error.errors.code[0];

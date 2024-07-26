@@ -94,7 +94,8 @@ class UserController extends BaseController
         $user['initCF'] = Auth::user()->initCF;
         $user['currentCF'] = Auth::user()->currentCF;
         $user['finalCF'] = Auth::user()->finalCF;
-        $user['warehouse_id'] = Auth::user()->warehouse_id;
+        $user['warehouse_id'] = (isset(Auth::user()->warehouse_id) && !empty(Auth::user()->warehouse_id)) ? Auth::user()->warehouse_id : null;
+        $user['warehouse_name'] = (isset($user['warehouse_id']) && !empty($user['warehouse_id'])) ? DB::table("warehouses")->where("id", '=', $user['warehouse_id'])->pluck("name")->first() : "N/A";
         $user['authorizedCode'] = Auth::user()->authorizedCode;
         $user['roles'] = (array)json_decode(json_encode(DB::table("roles")->where("id", '=', Auth::user()->role_id)->first()), true);
 
@@ -104,7 +105,17 @@ class UserController extends BaseController
             ->where('product_warehouse.deleted_at', null)
             ->count();
 
+        $rootURI = url()->to('/');
+
+        $previousURI = url()->previous(function () {
+                $rootURI = url()->to('/');
+
+                return $rootURI;
+            }
+        );
+
         return response()->json([
+            'previous_uri' => $previousURI,
             'success' => true,
             'user' => $user,
             'notifs' => $products_alerts,

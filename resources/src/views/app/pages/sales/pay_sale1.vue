@@ -815,7 +815,7 @@ export default {
       this.payment.cash = this.formatNumber(this.sale.due, 2);
       this.payment.Reglement = "Cash";
       this.$bvModal.show("Add_Payment");
-      // Complete the animation of theprogress bar.
+      // Complete the animation of the progress bar.
       // NProgress.done();
     },
     //---------------------- Event Select Payment Method ------------------------------\\
@@ -833,7 +833,7 @@ export default {
       NProgress.set(0.1);
       this.$refs.Add_payment.validate().then((success) => {
         if (!success) {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.makeToast(
             "danger",
@@ -953,7 +953,7 @@ export default {
     //       .then(response => {
     //         this.paymentProcessing = false;
     //         if (response.data.success === true) {
-    //           // Complete the animation of theprogress bar.
+    //           // Complete the animation of the progress bar.
     //           NProgress.done();
     //           this.Invoice_POS(response.data.id);
     //           this.$bvModal.hide("Add_Payment");
@@ -962,7 +962,7 @@ export default {
     //       })
     //       .catch(error => {
     //         this.paymentProcessing = false;
-    //         // Complete the animation of theprogress bar.
+    //         // Complete the animation of the progress bar.
     //         NProgress.done();
     //         this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
     //       });
@@ -987,7 +987,7 @@ export default {
         this.product.code = product.code;
         this.add_product(product.code);
         this.CaclulTotal();
-        // Complete the animation of theprogress bar.
+        // Complete the animation of the progress bar.
         NProgress.done();
       });
     },
