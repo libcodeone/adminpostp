@@ -1191,11 +1191,32 @@ class ProductsController extends BaseController
                 'status' => false,
             ]);
         } else {
+            $accents = array(
+                'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a',
+                'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A',
+                'ß'=>'B', 'ç'=>'c', 'Ç'=>'C',
+                'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e',
+                'È'=>'E', 'É'=>'E', 'Ê'=>'E', 'Ë'=>'E',
+                'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i',
+                'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I',
+                'ñ'=>'n', 'Ñ'=>'N',
+                'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o', 'ö'=>'o',
+                'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O',
+                'š'=>'s', 'Š'=>'S',
+                'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ü'=>'u',
+                'Ù'=>'U', 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U',
+                'ý'=>'y', 'Ý'=>'Y', 'ž'=>'z', 'Ž'=>'Z'
+            );
             $data = array();
             $rowcount = 0;
             if (($handle = fopen($file_upload, "r")) !== false) {
                 $max_line_length = defined('MAX_LINE_LENGTH') ? ProductsController::MAX_LINE_LENGTH : 10000;
                 $header = fgetcsv($handle, $max_line_length);
+                $header = array_map(
+                    function ($key) use ($accents) {
+                        return strtr($key, $accents);
+                    }, $header
+                );
                 $header_colcount = count($header);
                 while (($row = fgetcsv($handle, $max_line_length)) !== false) {
                     $row_colcount = count($row);
@@ -1231,7 +1252,7 @@ class ProductsController extends BaseController
                 } else
                     $brand_id = null;
 
-                $productCode = $value['Código'];
+                $productCode = $value['Codigo'];
 
                 if (DB::table("products")->where("code", '=', $productCode)->count() >= 1) {
                     DB::table("products")->where("code", '=', $productCode)->update(
