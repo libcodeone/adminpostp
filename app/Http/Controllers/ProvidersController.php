@@ -202,7 +202,7 @@ class ProvidersController extends BaseController
                 $header = fgetcsv($handle, $max_line_length);
                 $header = array_map(
                     function ($key) use ($accents) {
-                        return strtr($key, $accents);
+                        return strtolower(strtr($key, $accents));
                     }, $header
                 );
                 $header_colcount = count($header);
@@ -222,29 +222,31 @@ class ProvidersController extends BaseController
 
             //-- Create New Provider
             foreach ($data as $iKey => $value) {
-                $providerCode = $value["Codigo"];
+                if (isset($value['codigo']) && !empty($value['codigo'])) {
+                    $providerCode = $value['codigo'];
 
-                if (DB::table("providers")->where("code", '=', $providerCode)->count() < 1) {
+                    if (DB::table("providers")->where("code", '=', $providerCode)->count() >= 1) {
+                        DB::table("providers")->where("code", '=', $providerCode)->update(
+                            [
+                                'name' => (!isset($value['nombre']) && empty($value['nombre'])) ? '' : $value['nombre'],
+                                'adresse' => (!isset($value['direccion']) && empty($value['direccion'])) ? '' : $value['direccion'],
+                                'phone' => (!isset($value['numero de telefono']) && empty($value['numero de telefono'])) ? '' : $value['numero de telefono'],
+                                'email' => (!isset($value['correo electronico']) && empty($value['correo electronico'])) ? '' : $value['correo electronico'],
+                                'country' => (!isset($value['pais']) && empty($value['pais'])) ? 'El Salvador' : $value['pais'],
+                                'city' => (!isset($value['ciudad']) && empty($value['ciudad'])) ? 'San Salvador' : $value['ciudad']
+                            ]
+                        );
+                    }
+                } else {
                     Provider::create(
                         [
-                            'name' => (!isset($value['Nombre']) && empty($value['Nombre'])) ? null : $value['Nombre'],
+                            'name' => (!isset($value['nombre']) && empty($value['nombre'])) ? '' : $value['nombre'],
                             'code' => $this->getNumberOrder(),
-                            'adresse' => (!isset($value['Direccion']) && empty($value['Direccion'])) ? null : $value['Direccion'],
-                            'phone' => (!isset($value['Numero de telefono']) && empty($value['Numero de telefono'])) ? null : $value['Numero de telefono'],
-                            'email' => (!isset($value['Correo electronico']) && empty($value['Correo electronico'])) ? null : $value['Correo electronico'],
-                            'country' => (!isset($value['Pais']) && empty($value['Pais'])) ? null : $value['Pais'],
-                            'city' => (!isset($value['Ciudad']) && empty($value['Ciudad'])) ? null : $value['Ciudad'],
-                        ]
-                    );
-                } else {
-                    DB::table("providers")->where("code", '=', $providerCode)->update(
-                        [
-                            'name' => (!isset($value['Nombre']) && empty($value['Nombre'])) ? null : $value['Nombre'],
-                            'adresse' => (!isset($value['Direccion']) && empty($value['Direccion'])) ? null : $value['Direccion'],
-                            'phone' => (!isset($value['Numero de telefono']) && empty($value['Numero de telefono'])) ? null : $value['Numero de telefono'],
-                            'email' => (!isset($value['Correo electronico']) && empty($value['Correo electronico'])) ? null : $value['Correo electronico'],
-                            'country' => (!isset($value['Pais']) && empty($value['Pais'])) ? null : $value['Pais'],
-                            'city' => (!isset($value['Ciudad']) && empty($value['Ciudad'])) ? null : $value['Ciudad'],
+                            'adresse' => (!isset($value['direccion']) && empty($value['direccion'])) ? '' : $value['direccion'],
+                            'phone' => (!isset($value['numero de telefono']) && empty($value['numero de telefono'])) ? '' : $value['numero de telefono'],
+                            'email' => (!isset($value['correo electronico']) && empty($value['correo electronico'])) ? '' : $value['correo electronico'],
+                            'country' => (!isset($value['pais']) && empty($value['pais'])) ? 'El Salvador' : $value['pais'],
+                            'city' => (!isset($value['ciudad']) && empty($value['ciudad'])) ? 'San Salvador' : $value['ciudad']
                         ]
                     );
                 }
