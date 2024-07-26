@@ -181,7 +181,7 @@ export default {
           expense: this.expense
         })
         .then(response => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.makeToast(
             "success",
@@ -191,7 +191,7 @@ export default {
           this.$router.push({ name: "index_expense" });
         })
         .catch(error => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
         });

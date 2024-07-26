@@ -696,7 +696,7 @@ export default {
             GrandTotal: this.GrandTotal
           })
           .then(response => {
-            // Complete the animation of theprogress bar.
+            // Complete the animation of the progress bar.
             NProgress.done();
             this.$router.push({ name: "index_transfer" });
 
@@ -707,7 +707,7 @@ export default {
             );
           })
           .catch(error => {
-            // Complete the animation of theprogress bar.
+            // Complete the animation of the progress bar.
             NProgress.done();
             this.makeToast("danger", this.$t("InvalidData"), this.$t("Failed"));
           });

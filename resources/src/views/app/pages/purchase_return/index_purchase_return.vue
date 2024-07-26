@@ -1028,12 +1028,12 @@ export default {
           this.warehouses = response.data.warehouses;
           this.totalRows = response.data.totalRows;
 
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.isLoading = false;
         })
         .catch(response => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           setTimeout(() => {
             this.isLoading = false;
@@ -1111,7 +1111,7 @@ export default {
               Fire.$emit("Delete_purchase_return");
             })
             .catch(() => {
-              // Complete the animation of theprogress bar.
+              // Complete the animation of the progress bar.
               setTimeout(() => NProgress.done(), 500);
               this.$swal(
                 this.$t("Delete.Failed"),

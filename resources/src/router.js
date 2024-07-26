@@ -10,7 +10,7 @@ Vue.use(Router);
 
 const routes = [
     {
-        path: "/",
+        path: '/',
         component: () => import("./views/app"),
         // beforeEnter: authenticate,
         redirect: "/app/sales/list_checkin",

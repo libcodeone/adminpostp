@@ -82,7 +82,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     //------------------------------- Providers --------------------------\\
     //--------------------------------------------------------------------\\
 
-    Route::resource('providers', 'Provider');
+    Route::resource('providers', 'ProvidersController');
     Route::get('providers/export/Excel', 'ProvidersController@exportExcel');
     Route::post('providers/import/csv', 'ProvidersController@import_providers');
     Route::post('providers/delete/by_selection', 'ProvidersController@delete_by_selection');
@@ -104,6 +104,7 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     //------------------------------------------------------------------\\
 
     Route::resource('Products', 'ProductsController');
+    Route::get("products/reset_stock", "ProductsController@resetStock");
     Route::get('products_details', 'ProductsController@getProductsDetails');
     Route::get('Products/export/Excel', 'ProductsController@export_Excel');
     Route::post('Products/import/csv', 'ProductsController@import_products');
@@ -320,6 +321,8 @@ Route::middleware(['auth:api', 'Is_Active'])->group(function () {
     Route::get("/discounts/delete_view/{id}", "DiscountProductController@edit");
     Route::delete("/discounts/destroy/{id}", "DiscountProductController@destroy");
     Route::get("/discounts/getDiscountForProduct", "DiscountProductController@getDiscountPricePerProduct");
+
+    Route::get("/downloadSampleOfCSV", [App\utils\helpers::class, "downloadSampleOfCSV"]);
 });
 
     //-------------------------------  Print & PDF ------------------------\\

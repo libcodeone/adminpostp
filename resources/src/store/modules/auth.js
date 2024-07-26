@@ -8,13 +8,12 @@ Vue.use(Vuex)
 
 
 const state = {
-    // token: Vue.cookie.get('Stocky_token'),
     isAuthenticated:false,
     Permissions: null,
     user: {},
     loading: false,
     error: null,
-    notifs:0,
+    notifs: 0,
 };
 
 
@@ -50,7 +49,6 @@ const mutations = {
         // state.user = user;
     },
 
-
     setUser(state, user) {
         state.user = user;
     },
@@ -83,14 +81,14 @@ const actions = {
     // },
 
     async refreshUserPermissions(context) {
-
-        await axios.get("GetUserAuth").then((userAuth) => {
-            let Permissions = userAuth.data.permissions
+        await axios.get("GetUserAuth").then((userAuth) =>
+        {
+            let permissions = userAuth.data.permissions
             let user = userAuth.data.user
             let notifs = userAuth.data.notifs
 
             // context.commit('SET_AUTHENTICATED', true)
-            context.commit('setPermissions', Permissions)
+            context.commit('setPermissions', permissions)
             context.commit('setUser', user)
             context.commit('Notifs_alert', notifs)
         }).catch(() => {
@@ -102,10 +100,9 @@ const actions = {
     },
 
     logout({ commit }) {
-
         axios({method:'post',  url: '/logout', baseURL: '' })
           .then((userData) => {
-            window.location.href='/login';
+            window.location.href = '/login';
         })
     },
 };

@@ -159,12 +159,12 @@ export default {
           this.products = response.data.products.data;
           this.warehouses = response.data.warehouses;
           this.totalRows = response.data.products.total;
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.isLoading = false;
         })
         .catch(response => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           setTimeout(() => {
             this.isLoading = false;

@@ -939,12 +939,12 @@ export default {
           this.warehouses = response.data.warehouses;
           this.totalRows = response.data.totalRows;
           this.stripe_key = response.data.stripe_key;
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.isLoading = false;
         })
         .catch(response => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           setTimeout(() => {
             this.isLoading = false;

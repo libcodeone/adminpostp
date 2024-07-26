@@ -82,10 +82,11 @@
   </div>
 </template>
 <script>
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters } from "vuex";
 import NProgress from "nprogress";
 
 export default {
+  props: ['preroute'],
   metaInfo: {
     title: "SignIn"
   },
@@ -131,12 +132,15 @@ export default {
 
     Login() {
       let self = this;
+
       // Start the progress bar.
       NProgress.start();
       NProgress.set(0.1);
       self.loading = true;
+
       axios
-        .post("/login",{
+        .post("/loginWithEmailAndPassword",{
+          previousRelativeURL: self.preroute,
           email: self.email,
           password: self.password
         },
@@ -144,16 +148,15 @@ export default {
           baseURL: '',
         })
         .then(response => {
-
             this.makeToast(
               "success",
               this.$t("Successfully_Logged_In"),
               this.$t("Success")
             );
-          window.location = '/';
-           
-          NProgress.done();
-          this.loading = false;
+            window.location = response.data.redirectTo;
+
+            NProgress.done();
+            this.loading = false;
         })
         .catch(error => {
           NProgress.done();

@@ -295,11 +295,11 @@ export default {
           link.setAttribute("download", "List_Adjustments.xlsx");
           document.body.appendChild(link);
           link.click();
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           setTimeout(() => NProgress.done(), 500);
         })
         .catch(() => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           setTimeout(() => NProgress.done(), 500);
         });
     },
@@ -433,12 +433,12 @@ export default {
           this.adjustments = response.data.adjustments;
           this.warehouses = response.data.warehouses;
           this.totalRows = response.data.totalRows;
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           this.isLoading = false;
         })
         .catch(response => {
-          // Complete the animation of theprogress bar.
+          // Complete the animation of the progress bar.
           NProgress.done();
           setTimeout(() => {
             this.isLoading = false;
@@ -474,7 +474,7 @@ export default {
               Fire.$emit("Delete_Adjustment");
             })
             .catch(() => {
-              // Complete the animation of theprogress bar.
+              // Complete the animation of the progress bar.
               setTimeout(() => NProgress.done(), 500);
               this.$swal(
                 this.$t("Delete.Failed"),
@@ -516,7 +516,7 @@ export default {
               Fire.$emit("Delete_Adjustment");
             })
             .catch(() => {
-              // Complete the animation of theprogress bar.
+              // Complete the animation of the progress bar.
               setTimeout(() => NProgress.done(), 500);
               this.$swal(
                 this.$t("Delete.Failed"),
@@ -534,14 +534,14 @@ export default {
     this.Get_Adjustments(1);
 
     Fire.$on("Get_Details_Adjust", () => {
-      // Complete the animation of theprogress bar.
+      // Complete the animation of the progress bar.
       setTimeout(() => NProgress.done(), 500);
       this.$bvModal.show("showDetails");
     });
 
     Fire.$on("Delete_Adjustment", () => {
       setTimeout(() => {
-        // Complete the animation of theprogress bar.
+        // Complete the animation of the progress bar.
         NProgress.done();
         this.Get_Adjustments(this.serverParams.page);
       }, 500);
