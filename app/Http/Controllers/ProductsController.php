@@ -1214,7 +1214,7 @@ class ProductsController extends BaseController
                 $header = fgetcsv($handle, $max_line_length);
                 $header = array_map(
                     function ($key) use ($accents) {
-                        return strtr($key, $accents);
+                        return strtolower(strtr($key, $accents));
                     }, $header
                 );
                 $header_colcount = count($header);
@@ -1237,49 +1237,54 @@ class ProductsController extends BaseController
 
             //-- Create New Product
             foreach ($data as $iKey => $value) {
-                $category = Category::where('name', '=', $value['Categoría'])->get();
+                $category = Category::where('name', '=', $value['categoria'])->get();
                 if (isset($category[0]))
                     $category_id = $category[0]["id"];
                 else {
                     $category = new Category;
-                    $category->name =  $value['Categoría'];
+                    $category->name =  $value['categoria'];
                     $category->save();
                 }
 
-                if ($value['Marca'] != 'N/A' && $value['Marca'] != '') {
-                    $brand = Brand::firstOrCreate(['name' => $value['Marca']]);
+                if ($value['marca'] != 'N/A' && $value['marca'] != '') {
+                    $brand = Brand::firstOrCreate(['name' => $value['marca']]);
                     $brand_id = $brand->id;
                 } else
                     $brand_id = null;
 
-                $productCode = $value['Codigo'];
+                if (isset($value['codigo']) && !empty($value['codigo'])) {
+                    $productCode = $value['codigo'];
 
-                if (DB::table("products")->where("code", '=', $productCode)->count() >= 1) {
-                    DB::table("products")->where("code", '=', $productCode)->update(
-                        [
-                            'name' => (!isset($value['Nombre']) && empty($value['Nombre'])) ? null : $value['Nombre'],
-                            'price' => $value['Precio'],
-                            'cost' => $value['Costo'],
-                            'brand_id' => $brand_id,
-                            'note' => (isset($value['Nota']) && !empty($value['Nota'])) ? $value['Nota'] : '',
-                            'stock_alert' => (isset($value['Stock']) && !empty($value['Stock'])) ? $value['Stock'] : 0
-                        ]
-                    );
+                    if (DB::table("products")->where("code", '=', $productCode)->count() >= 1) {
+                        DB::table("products")->where("code", '=', $productCode)->update(
+                            [
+                                'name' => (isset($value['nombre']) && !empty($value['nombre'])) ? $value['nombre'] : "Producto X",
+                                'price' => $value['precio'],
+                                'cost' => $value['costo'],
+                                'brand_id' => $brand_id,
+                                'note' => (isset($value['nota']) && !empty($value['nota'])) ? $value['nota'] : '',
+                                'stock_alert' => (isset($value['stock']) && !empty($value['stock'])) ? $value['stock'] : 0
+                            ]
+                        );
+                    }
                 } else {
                     $productCode = $this->generate_random_code();
 
                     DB::table("products")->insert(
                         [
-                            'name' => (!isset($value['Nombre']) && empty($value['Nombre'])) ? null : $value['Nombre'],
+                            'name' => (isset($value['nombre']) && !empty($value['nombre'])) ? $value['nombre'] : "Producto X",
                             'code' => $productCode,
                             'Type_barcode' => 'CODE128',
-                            'price' => $value['Precio'],
-                            'cost' => $value['Costo'],
+                            'price' => $value['precio'],
+                            'cost' => $value['costo'],
                             'brand_id' => $brand_id,
                             'TaxNet' => 0,
+                            'unit_id' => ($value['unidad'] === "Und") ? DB::table("units")->where("name", '=', $value['unidad'])->pluck("id")->first() : 1,
+                            'unit_sale_id' => ($value['unidad'] === "Und") ? DB::table("units")->where("name", '=', $value['unidad'])->pluck("id")->first() : 1,
+                            'unit_purchase_id' => ($value['unidad'] === "Und") ? DB::table("units")->where("name", '=', $value['unidad'])->pluck("id")->first() : 1,
                             'tax_method' => 1,
-                            'note' => (isset($value['Nota']) && !empty($value['Nota'])) ? $value['Nota'] : '',
-                            'stock_alert' => (isset($value['Stock']) && !empty($value['Stock'])) ? $value['Stock'] : 0,
+                            'note' => (isset($value['nota']) && !empty($value['nota'])) ? $value['nota'] : '',
+                            'stock_alert' => (isset($value['stock']) && !empty($value['stock'])) ? $value['stock'] : 0,
                             'is_variant' => 0,
                             'image' => 'no-image.png'
                         ]
@@ -1291,11 +1296,11 @@ class ProductsController extends BaseController
                 if ($warehouses) {
                     foreach ($warehouses as $warehouse) {
                         //-- Add Adjustment
-                        if (isset($value['Cantidad']) && $value['Cantidad'] !== 'N/A' && $value['Cantidad'] !== '' && $value['Cantidad'] !== 0) {
+                        if (isset($value['cantidad']) && $value['cantidad'] !== 'N/A' && $value['cantidad'] !== '' && $value['cantidad'] !== 0) {
                             $product_warehouse[] = [
                                 'product_id' => $productId,
                                 'warehouse_id' => $warehouse,
-                                'qte' => $value['Cantidad'],
+                                'qte' => $value['cantidad'],
                             ];
                         } else {
                             $product_warehouse[] = [
