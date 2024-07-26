@@ -1202,20 +1202,20 @@ export default {
 
             let pdf = new jsPDF("p", "pt");
             let columns = [
-                { title: "Code", dataKey: "code" },
-                { title: "Name", dataKey: "name" },
-                { title: "Phone", dataKey: "phone" },
-                { title: "Email", dataKey: "email" },
-                { title: "Country", dataKey: "country" },
-                { title: "City", dataKey: "city" },
+                { title: "Código", dataKey: "code" },
+                { title: "Nombre", dataKey: "name" },
+                { title: "Número de teléfono", dataKey: "phone" },
+                { title: "Correo electrónico", dataKey: "email" },
+                { title: "País", dataKey: "country" },
+                { title: "Ciudad", dataKey: "city" },
                 { title: "NIT", dataKey: "NIT" },
                 { title: "DUI", dataKey: "DUI" },
                 { title: "NRC", dataKey: "NRC" },
                 { title: "Giro", dataKey: "giro" }
             ];
             pdf.autoTable(columns, self.clients);
-            pdf.text("Customer List", 40, 25);
-            pdf.save("Customer_List.pdf");
+            pdf.text("Lista de Clientes", 40, 25);
+            pdf.save("Lista_de_Clientes.pdf");
         },
 
         //--------------------------------- Clients Excel -------------------------------\\
@@ -1236,9 +1236,12 @@ export default {
                     );
                     const link = document.createElement("a");
                     link.href = url;
-                    link.setAttribute("download", "List_Customers.xlsx");
+                    link.setAttribute("download", "Lista_de_Clientes.xlsx");
                     document.body.appendChild(link);
                     link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+
                     // Complete the animation of the progress bar.
                     setTimeout(() => NProgress.done(), 500);
                 })

@@ -2,29 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\ClientsExport;
-use App\Models\Client;
-use App\Models\Sale;
-use App\utils\helpers;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
-use DB;
+use App\Models\Sale;
+use App\Models\Client;
+use App\utils\helpers;
 use Illuminate\Http\Request;
+use App\Exports\ClientsExport;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ClientController extends BaseController
 {
+    private const MAX_LINE_LENGTH = 10000;
 
     //------------- Get ALL Customers -------------\\
 
-    public function index(request $request)
+    public function index(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'view', Client::class);
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -33,7 +31,6 @@ class ClientController extends BaseController
         // Filter fields With Params to retrieve
         $columns = array(0 => 'name', 1 => 'code', 2 => 'phone', 3 => 'email', 4 => 'NIT', 5 => 'DUI', 6 => 'NRC', 7 => 'giro');
         $param = array(0 => 'like', 1 => 'like', 2 => 'like', 3 => 'like', 4 => 'like', 5 => 'like', 6 => 'like', 7 => 'like');
-        $data = array();
 
         $clients = Client::where('deleted_at', '=', null);
 
@@ -171,7 +168,12 @@ class ClientController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'view', Client::class);
 
-        return Excel::download(new ClientsExport, 'Clients.xlsx');
+        return Excel::download(new ClientsExport, 'Lista_de_Clientes.xlsx', \Maatwebsite\Excel\Excel::XLSX,
+            [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=UTF-8',
+                'Content-Disposition' => 'attachment; filename="Lista_de_Clientes.xlsx"',
+            ]
+        );
     }
 
     //------------- get Number Order Customer -------------\\
@@ -214,7 +216,7 @@ class ClientController extends BaseController
             $data = array();
             $rowcount = 0;
             if (($handle = fopen($file_upload, "r")) !== false) {
-                $max_line_length = defined('MAX_LINE_LENGTH') ? MAX_LINE_LENGTH : 10000;
+                $max_line_length = defined('MAX_LINE_LENGTH') ? ClientController::MAX_LINE_LENGTH : 10000;
                 $header = fgetcsv($handle, $max_line_length);
                 $header_colcount = count($header);
                 while (($row = fgetcsv($handle, $max_line_length)) !== false) {
@@ -231,32 +233,46 @@ class ClientController extends BaseController
             } else {
                 return null;
             }
-           
-            // $rules = array('email' => 'required|email|unique:clients');
-            //-- Create New Client
-            foreach ($data as $key => $value) {
-                $input['email'] = $value['email'];
 
-                // $validator = Validator::make($input, $rules);
-                // if (!$validator->fails()) {
-                    
-                    Client::create([
-                        'name' => $value['name'] == '' ? null : $value['name'],
-                        'code' => $this->getNumberOrder(),
-                        'adresse' => $value['adresse'] == '' ? null : $value['adresse'],
-                        'phone' => $value['phone'] == '' ? null : $value['phone'],
-                        'email' => $value['email'] == '' ? null : $value['email'],
-                        'country' => $value['country'] == '' ? null : $value['country'],
-                        'city' => $value['city'] == '' ? null : $value['city'],
-                        'NIT' => $value['NIT'] == '' ? null : $value['NIT'],
-                        'DUI' => $value['DUI'] == '' ? null : $value['DUI'],
-                        'NRC' => $value['NRC'] == '' ? null : $value['NRC'],
-                        'giro' => $value['giro'] == '' ? null : $value['giro'],
-                        'big_consumer' => $value['big_consumer'] == '' ? null : $value['big_consumer'],
-                        'final_consumer' => $value['final_consumer'] == '' ? null : $value['final_consumer'],
-                    ]);
-                // }
+            foreach ($data as $iKey => $value) {
+                $clientCode = $value["Código"];
 
+                if (DB::table("clients")->where("code", '=', $clientCode)->count() < 1) {
+                    Client::create(
+                        [
+                            'name' => (!isset($value['Nombre']) && empty($value['Nombre'])) ? null : $value['Nombre'],
+                            'code' => $this->getNumberOrder(),
+                            'adresse' => (!isset($value['Dirección']) && empty($value['Dirección'])) ? null : $value['Dirección'],
+                            'phone' => (!isset($value['Número de teléfono']) && empty($value['Número de teléfono'])) ? null : $value['Número de teléfono'],
+                            'email' => (!isset($value['Correo electrónico']) && empty($value['Correo electrónico'])) ? null : $value['Correo electrónico'],
+                            'country' => (!isset($value['País']) && empty($value['País'])) ? null : $value['País'],
+                            'city' => (!isset($value['Ciudad']) && empty($value['Ciudad'])) ? null : $value['Ciudad'],
+                            'NIT' => (!isset($value['NIT']) && empty($value['NIT'])) ? null : $value['NIT'],
+                            'DUI' => (!isset($value['DUI']) && empty($value['DUI'])) ? null : $value['DUI'],
+                            'NRC' => (!isset($value['NRC']) && empty($value['NRC'])) ? null : $value['NRC'],
+                            'giro' => (!isset($value['Giro']) && empty($value['Giro'])) ? null : $value['Giro'],
+                            'big_consumer' => (!isset($value['Gran Contribuyente']) && empty($value['Gran Contribuyente'])) ? null : $value['Gran Contribuyente'],
+                            'final_consumer' => (!isset($value['Consumidor Final']) && empty($value['Consumidor Final'])) ? null : $value['Consumidor Final'],
+                        ]
+                    );
+                } else {
+                    DB::table("clients")->where("code", '=', $clientCode)->update(
+                        [
+                            'name' => (!isset($value['Nombre']) && empty($value['Nombre'])) ? null : $value['Nombre'],
+                            'adresse' => (!isset($value['Dirección']) && empty($value['Dirección'])) ? null : $value['Dirección'],
+                            'phone' => (!isset($value['Número de teléfono']) && empty($value['Número de teléfono'])) ? null : $value['Número de teléfono'],
+                            'email' => (!isset($value['Correo electrónico']) && empty($value['Correo electrónico'])) ? null : $value['Correo electrónico'],
+                            'country' => (!isset($value['País']) && empty($value['País'])) ? null : $value['País'],
+                            'city' => (!isset($value['Ciudad']) && empty($value['Ciudad'])) ? null : $value['Ciudad'],
+                            'NIT' => (!isset($value['NIT']) && empty($value['NIT'])) ? null : $value['NIT'],
+                            'DUI' => (!isset($value['DUI']) && empty($value['DUI'])) ? null : $value['DUI'],
+                            'NRC' => (!isset($value['NRC']) && empty($value['NRC'])) ? null : $value['NRC'],
+                            'giro' => (!isset($value['Giro']) && empty($value['Giro'])) ? null : $value['Giro'],
+                            'big_consumer' => (!isset($value['Gran Contribuyente']) && empty($value['Gran Contribuyente'])) ? null : $value['Gran Contribuyente'],
+                            'final_consumer' => (!isset($value['Consumidor Final']) && empty($value['Consumidor Final'])) ? null : $value['Consumidor Final'],
+                        ]
+                    );
+                }
             }
 
             return response()->json([

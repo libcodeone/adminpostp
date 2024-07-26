@@ -1208,14 +1208,14 @@ class ProductsController extends BaseController
                     $rowcount++;
                 }
                 fclose($handle);
-            } else {
+            } else
                 return null;
-            }
+
 
             $warehouses = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
 
             //-- Create New Product
-            foreach ($data as $key => $value) {
+            foreach ($data as $iKey => $value) {
                 $category = Category::where('name', '=', $value['Categoría'])->get();
                 if (isset($category[0]))
                     $category_id = $category[0]["id"];
@@ -1231,34 +1231,54 @@ class ProductsController extends BaseController
                 } else
                     $brand_id = null;
 
-                $Product = new Product;
-                $Product->name = $value['Nombre'] == '' ? null : $value['Precio'];
-                $Product->code = $this->generate_random_code();
-                $Product->Type_barcode = 'CODE128';
-                $Product->price = $value['Precio'];
-                $Product->cost = $value['Costo'];
+                $productCode = $value['Código'];
 
-                $Product->brand_id = $brand_id;
-                $Product->TaxNet = 0;
-                $Product->tax_method = 1;
-                $Product->note = $value['Nota'] ? $value['Nota'] : '';
-                $Product->stock_alert = $value['Stock'] ? $value['Stock'] : 0;
-                $Product->is_variant = 0;
-                $Product->image = 'no-image.png';
-                $Product->save();
+                if (DB::table("products")->where("code", '=', $productCode)->count() >= 1) {
+                    DB::table("products")->where("code", '=', $productCode)->update(
+                        [
+                            'name' => (!isset($value['Nombre']) && empty($value['Nombre'])) ? null : $value['Nombre'],
+                            'price' => $value['Precio'],
+                            'cost' => $value['Costo'],
+                            'brand_id' => $brand_id,
+                            'note' => (isset($value['Nota']) && !empty($value['Nota'])) ? $value['Nota'] : '',
+                            'stock_alert' => (isset($value['Stock']) && !empty($value['Stock'])) ? $value['Stock'] : 0
+                        ]
+                    );
+                } else {
+                    $productCode = $this->generate_random_code();
+
+                    DB::table("products")->insert(
+                        [
+                            'name' => (!isset($value['Nombre']) && empty($value['Nombre'])) ? null : $value['Nombre'],
+                            'code' => $productCode,
+                            'Type_barcode' => 'CODE128',
+                            'price' => $value['Precio'],
+                            'cost' => $value['Costo'],
+                            'brand_id' => $brand_id,
+                            'TaxNet' => 0,
+                            'tax_method' => 1,
+                            'note' => (isset($value['Nota']) && !empty($value['Nota'])) ? $value['Nota'] : '',
+                            'stock_alert' => (isset($value['Stock']) && !empty($value['Stock'])) ? $value['Stock'] : 0,
+                            'is_variant' => 0,
+                            'image' => 'no-image.png'
+                        ]
+                    );
+                }
+
+                $productId = DB::table("products")->where("code", '=', $productCode)->pluck("id")->first();
 
                 if ($warehouses) {
                     foreach ($warehouses as $warehouse) {
                         //-- Add Adjustment
                         if (isset($value['Cantidad']) && $value['Cantidad'] !== 'N/A' && $value['Cantidad'] !== '' && $value['Cantidad'] !== 0) {
                             $product_warehouse[] = [
-                                'product_id' => $Product->id,
+                                'product_id' => $productId,
                                 'warehouse_id' => $warehouse,
                                 'qte' => $value['Cantidad'],
                             ];
                         } else {
                             $product_warehouse[] = [
-                                'product_id' => $Product->id,
+                                'product_id' => $productId,
                                 'warehouse_id' => $warehouse,
                                 'qte' => 0,
                             ];

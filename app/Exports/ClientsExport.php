@@ -43,7 +43,7 @@ class ClientsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEven
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellRange = 'A1:E1'; // All headers
+                $cellRange = 'A1:E1';
                 $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
 
                 $styleArray = [
@@ -67,14 +67,14 @@ class ClientsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEven
     public function headings(): array
     {
         return [
-            'Code',
-            'Name',
-            'Email',
-            'Phone',
-            'Adresse',
+            'Código',
+            'Nombre',
+            'Correo electrónico',
+            'Número de teléfono',
+            'Dirección',
             'NIT',
             'NRC',
-            'giro',
+            'Giro',
         ];
     }
 }

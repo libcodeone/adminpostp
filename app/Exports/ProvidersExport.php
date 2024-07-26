@@ -64,11 +64,13 @@ class ProvidersExport implements FromArray, WithHeadings, ShouldAutoSize, WithEv
     public function headings(): array
     {
         return [
-            'Code',
-            'Name',
-            'Phone',
-            'Email',
-            'Adresse',
+            'Código',
+            'Nombre',
+            'Número de telefóno',
+            'Correo electrónico',
+            'Dirección',
+            'País',
+            'Ciudad'
         ];
     }
 }
