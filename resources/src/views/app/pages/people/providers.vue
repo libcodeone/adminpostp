@@ -600,7 +600,8 @@ export default {
                 "Teléfono",
                 "Email",
                 "Departamento",
-                "Municipio"
+                "Municipio",
+                "Dirección"
             ]),
             dataArray: JSON.stringify([
                 [
@@ -609,7 +610,8 @@ export default {
                     "+503 6000 0000",
                     "roberto.garcia@email.com",
                     "La Paz",
-                    "Zacatecoluca"
+                    "Zacatecoluca",
+                    "La Paz, Zacatecoluca, El Salvador"
                 ],
                 [
                     102,
@@ -617,7 +619,8 @@ export default {
                     "+503 6100 0001",
                     "laura.mendez@email.com",
                     "San Vicente",
-                    "San Vicente"
+                    "San Vicente",
+                    "San Vicente, San Vicente, El Salvador"
                 ],
                 [
                     103,
@@ -625,7 +628,8 @@ export default {
                     "+503 6200 0002",
                     "pedro.lopez@email.com",
                     "Morazán",
-                    "San Francisco Gotera"
+                    "San Francisco Gotera",
+                    "Morazán, San Francisco Gotera, El Salvador"
                 ],
                 [
                     104,
@@ -633,7 +637,8 @@ export default {
                     "+503 6300 0003",
                     "isabel.ramirez@email.com",
                     "La Unión",
-                    "La Unión"
+                    "La Unión",
+                    "La Unión, La Unión, El Salvador"
                 ],
                 [
                     105,
@@ -641,7 +646,8 @@ export default {
                     "+503 6400 0004",
                     "fernando.martinez@email.com",
                     "Cuscatlán",
-                    "Cojutepeque"
+                    "Cojutepeque",
+                    "Cuscatlán, Cojutepeque, El Salvador"
                 ],
                 [
                     106,
@@ -649,7 +655,8 @@ export default {
                     "+503 6500 0005",
                     "elena.castro@email.com",
                     "Chalatenango",
-                    "Chalatenango"
+                    "Chalatenango",
+                    "Chalatenango, Chalatenango, El Salvador"
                 ],
                 [
                     107,
@@ -657,7 +664,8 @@ export default {
                     "+503 6600 0006",
                     "hugo.rodriguez@email.com",
                     "Ahuachapán",
-                    "Ahuachapán"
+                    "Ahuachapán",
+                    "Ahuachapán, Ahuachapán, El Salvador"
                 ],
                 [
                     108,
@@ -665,7 +673,8 @@ export default {
                     "+503 6700 0007",
                     "marcela.flores@email.com",
                     "Sonsonate",
-                    "Sonsonate"
+                    "Sonsonate",
+                    "Sonsonate, Sonsonate, El Salvador"
                 ],
                 [
                     109,
@@ -673,7 +682,8 @@ export default {
                     "+503 6800 0008",
                     "andres.hernandez@email.com",
                     "Santa Ana",
-                    "Santa Ana"
+                    "Santa Ana",
+                    "Santa Ana, Santa Ana, El Salvador"
                 ],
                 [
                     110,
@@ -681,7 +691,8 @@ export default {
                     "+503 6900 0009",
                     "carolina.perez@email.com",
                     "Usulután",
-                    "Usulután"
+                    "Usulután",
+                    "Usulután, Usulután, El Salvador"
                 ]
             ]),
             section: "providers",
@@ -990,7 +1001,7 @@ export default {
                 { title: "Código", dataKey: "code" },
                 { title: "Nombre", dataKey: "name" },
                 { title: "Número de teléfono", dataKey: "phone" },
-                { title: "Correo de electrónico", dataKey: "email" },
+                { title: "Correo electrónico", dataKey: "email" },
                 { title: "País", dataKey: "country" },
                 { title: "Ciudad", dataKey: "city" }
             ];
