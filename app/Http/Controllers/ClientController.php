@@ -236,63 +236,105 @@ class ClientController extends BaseController
                 $header = fgetcsv($handle, $max_line_length);
                 $header = array_map(
                     function ($key) use ($accents) {
-                        return strtolower(strtr($key, $accents));
+                        $string = strtolower(strtr($key, $accents));
+
+                        $string = filter_var($string, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+
+                        if (!mb_check_encoding($string, 'UTF-8'))
+                            $string = mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
+
+                        $string = utf8_encode($string);
+
+                        return $string;
                     }, $header
                 );
                 $header_colcount = count($header);
                 while (($row = fgetcsv($handle, $max_line_length)) !== false) {
                     $row_colcount = count($row);
                     if ($row_colcount == $header_colcount) {
-                        $entry = array_combine($header, $row);
+                        $entry = array_map(
+                            function ($value) {
+                                $parsedValue = null;
+
+                                if (is_numeric($value)) {
+                                    if (is_integer($value))
+                                        $parsedValue = (int)$value;
+                                    else
+                                        $parsedValue = (float)$value;
+                                }
+                                else
+                                    $parsedValue = $value;
+
+                                return $parsedValue;
+                            }, $row
+                        );
+
+                        $entry = array_combine($header, $entry);
+
                         $data[] = $entry;
-                    } else {
+                    } else
                         return null;
-                    }
+
                     $rowcount++;
                 }
                 fclose($handle);
-            } else {
+            } else
                 return null;
-            }
+
 
             foreach ($data as $iKey => $value) {
-                if (isset($value['codigo']) && !empty($value['codigo'])) {
-                    $clientCode = $value['codigo'];
+                $clientName = (isset($value["nombre"]) && !empty($value["nombre"])) ? $value["nombre"] : '';
+                $clientAddress = (isset($value["direccion"]) && !empty($value["direccion"])) ? $value["direccion"] : '';
+                $clientPhone = (isset($value["telefono"]) && !empty($value["telefono"])) ? $value["telefono"] : '';
+                $clientEmail = (isset($value["email"]) && !empty($value["email"])) ? $value["email"] : '';
+                $clientCountry = (isset($value["pais"]) && !empty($value["pais"])) ? $value["pais"] : 'El Salvador';
+                $clientCity = (isset($value["ciudad"]) && !empty($value["ciudad"])) ? $value["ciudad"] : 'San Salvador';
+                $clientNIT = (isset($value["nit"]) && !empty($value["nit"])) ? $value["nit"] : '';
+                $clientDUI = (isset($value["dui"]) && !empty($value["dui"])) ? $value["dui"] : '';
+                $clientNRC = (isset($value["nrc"]) && !empty($value["nrc"])) ? $value["nrc"] : '';
+                $clientGiro = (isset($value["giro"]) && !empty($value["giro"])) ? $value["giro"] : '';
+                $clientBigConsumer = (isset($value["gran_contribuyente"]) && !empty($value["gran_contribuyente"])) ? $value["gran_contribuyente"] : 0;
+                $clientFinalConsumer = (isset($value["consumidor_final"]) && !empty($value["consumidor_final"])) ? $value["consumidor_final"] : 0;
+
+                if (isset($value["codigo"]) && !empty($value["codigo"])) {
+                    $clientCode = $value["codigo"];
 
                     if (DB::table("clients")->where("code", '=', $clientCode)->count() >= 1) {
                         DB::table("clients")->where("code", '=', $clientCode)->update(
                             [
-                                'name' => (!isset($value['nombre']) && empty($value['nombre'])) ? '' : $value['nombre'],
-                                'adresse' => (!isset($value['direccion']) && empty($value['direccion'])) ? '' : $value['direccion'],
-                                'phone' => (!isset($value['numero de telefono']) && empty($value['numero de telefono'])) ? '' : $value['numero de telefono'],
-                                'email' => (!isset($value['correo electronico']) && empty($value['correo electronico'])) ? '' : $value['correo electronico'],
-                                'country' => (!isset($value['pais']) && empty($value['pais'])) ? 'El Salvador' : $value['pais'],
-                                'city' => (!isset($value['ciudad']) && empty($value['ciudad'])) ? 'San Salvador' : $value['ciudad'],
-                                'nit' => (!isset($value['nit']) && empty($value['nit'])) ? '' : $value['nit'],
-                                'DUI' => (!isset($value['dui']) && empty($value['dui'])) ? '' : $value['dui'],
-                                'NRC' => (!isset($value['nrc']) && empty($value['nrc'])) ? '' : $value['nrc'],
-                                'giro' => (!isset($value['giro']) && empty($value['giro'])) ? '' : $value['giro'],
-                                'big_consumer' => (!isset($value['gran contribuyente']) && empty($value['gran contribuyente'])) ? 0 : $value['gran contribuyente'],
-                                'final_consumer' => (!isset($value['Cconsumidor final']) && empty($value['consumidor final'])) ? 0 : $value['consumidor final']
+                                'name' => $clientName,
+                                'adresse' => $clientAddress,
+                                'phone' => $clientPhone,
+                                'email' => $clientEmail,
+                                'country' => $clientCountry,
+                                'city' => $clientCity,
+                                'NIT' => $clientNIT,
+                                'DUI' => $clientDUI,
+                                'NRC' => $clientNRC,
+                                'giro' => $clientGiro,
+                                'big_consumer' => $clientBigConsumer,
+                                'final_consumer' => $clientFinalConsumer
                             ]
                         );
                     }
                 } else {
+                    $clientCode = $this->getNumberOrder();
+
                     Client::create(
                         [
-                            'name' => (!isset($value['nombre']) && empty($value['nombre'])) ? '' : $value['nombre'],
-                            'code' => $this->getNumberOrder(),
-                            'adresse' => (!isset($value['direccion']) && empty($value['direccion'])) ? '' : $value['direccion'],
-                            'phone' => (!isset($value['numero de telefono']) && empty($value['numero de telefono'])) ? '' : $value['numero de telefono'],
-                            'email' => (!isset($value['correo electronico']) && empty($value['correo electronico'])) ? '' : $value['correo electronico'],
-                            'country' => (!isset($value['pais']) && empty($value['pais'])) ? 'El Salvador' : $value['pais'],
-                            'city' => (!isset($value['ciudad']) && empty($value['ciudad'])) ? 'San Salvador' : $value['ciudad'],
-                            'NIT' => (!isset($value['nit']) && empty($value['nit'])) ? '' : $value['nit'],
-                            'DUI' => (!isset($value['dui']) && empty($value['dui'])) ? '' : $value['dui'],
-                            'NRC' => (!isset($value['nrc']) && empty($value['nrc'])) ? '' : $value['nrc'],
-                            'giro' => (!isset($value['giro']) && empty($value['giro'])) ? '' : $value['giro'],
-                            'big_consumer' => (!isset($value['gran contribuyente']) && empty($value['gran contribuyente'])) ? 0 : $value['gran contribuyente'],
-                            'final_consumer' => (!isset($value['consumidor final']) && empty($value['consumidor final'])) ? 0 : $value['consumidor final']
+                            'name' => $clientName,
+                            'code' => $clientCode,
+                            'adresse' => $clientAddress,
+                            'phone' => $clientPhone,
+                            'email' => $clientEmail,
+                            'country' => $clientCountry,
+                            'city' => $clientCity,
+                            'NIT' => $clientNIT,
+                            'DUI' => $clientDUI,
+                            'NRC' => $clientNRC,
+                            'giro' => $clientGiro,
+                            'big_consumer' => $clientBigConsumer,
+                            'final_consumer' => $clientFinalConsumer
                         ]
                     );
                 }

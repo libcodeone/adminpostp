@@ -64,14 +64,13 @@ class helpers
                                 $query->where($field['value'], '=', $request[$field['value']]);
                             }, '>=', 1)->get();
 
-                        }else{
+                        }else
                             $model->where($field['value'],$request[$field['value']]);
-                        }
-                    });
+                    }
+                );
             });
         }
 
-        // Finally return the model
         return $model;
     }
 

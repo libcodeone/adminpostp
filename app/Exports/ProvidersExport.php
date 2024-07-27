@@ -40,7 +40,7 @@ class ProvidersExport implements FromArray, WithHeadings, ShouldAutoSize, WithEv
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellRange = 'A1:E1'; // All headers
+                $cellRange = 'A1:G1';
                 $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
 
                 $styleArray = [

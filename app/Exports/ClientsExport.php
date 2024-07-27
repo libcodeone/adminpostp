@@ -43,7 +43,7 @@ class ClientsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEven
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $cellRange = 'A1:E1';
+                $cellRange = 'A1:H1';
                 $event->sheet->getDelegate()->getStyle($cellRange)->getFont()->setSize(14);
 
                 $styleArray = [

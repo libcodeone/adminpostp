@@ -1214,56 +1214,133 @@ class ProductsController extends BaseController
                 $header = fgetcsv($handle, $max_line_length);
                 $header = array_map(
                     function ($key) use ($accents) {
-                        return strtolower(strtr($key, $accents));
+                        $string = strtolower(strtr($key, $accents));
+
+                        $string = filter_var($string, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+
+                        if (!mb_check_encoding($string, 'UTF-8'))
+                            $string = mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
+
+                        $string = utf8_encode($string);
+
+                        return $string;
                     }, $header
                 );
                 $header_colcount = count($header);
                 while (($row = fgetcsv($handle, $max_line_length)) !== false) {
                     $row_colcount = count($row);
                     if ($row_colcount == $header_colcount) {
-                        $entry = array_combine($header, $row);
+                        $entry = array_map(
+                            function ($value) {
+                                $parsedValue = null;
+
+                                if (is_numeric($value)) {
+                                    if (is_integer($value))
+                                        $parsedValue = (int)$value;
+                                    else
+                                        $parsedValue = (float)$value;
+                                }
+                                else
+                                    $parsedValue = $value;
+
+                                return $parsedValue;
+                            }, $row
+                        );
+
+                        $entry = array_combine($header, $entry);
+
                         $data[] = $entry;
-                    } else {
+                    } else
                         return null;
-                    }
+
                     $rowcount++;
                 }
                 fclose($handle);
             } else
                 return null;
 
-
             $warehouses = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
 
             //-- Create New Product
             foreach ($data as $iKey => $value) {
-                $category = Category::where('name', '=', $value['categoria'])->get();
+                $productName = (isset($value["nombre"]) && !empty($value["nombre"])) ? $value["nombre"] : "Producto X";
+                $productPrice = (isset($value["precio"]) && !empty($value["precio"])) ? $value["precio"] : 0.00;
+                $productCost = (isset($value["costo"]) && !empty($value["costo"])) ? $value["costo"] : 0.00;
+                $productUnit = (isset($value["unidad"]) && !empty($value["unidad"])) ? $value["unidad"] : "Und";
+                $productNote = (isset($value["nota"]) && !empty($value["nombre"])) ? $value["nota"] : 'N/A';
+                $productStockAlert = (isset($value["stock"]) && !empty($value["stock"])) ? $value["stock"] : 0;
+
+                $category = Category::where('name', '=', $value["categoria"])->get();
                 if (isset($category[0]))
                     $category_id = $category[0]["id"];
                 else {
                     $category = new Category;
-                    $category->name =  $value['categoria'];
+                    $category->name =  $value["categoria"];
                     $category->save();
+
+                    $category_id = $category->id;
                 }
 
-                if ($value['marca'] != 'N/A' && $value['marca'] != '') {
-                    $brand = Brand::firstOrCreate(['name' => $value['marca']]);
+                if ($value["marca"] != 'N/A' && $value["marca"] != '') {
+                    $brand = Brand::firstOrCreate(["name" => $value["marca"]]);
                     $brand_id = $brand->id;
                 } else
                     $brand_id = null;
 
-                if (isset($value['codigo']) && !empty($value['codigo'])) {
-                    $productCode = $value['codigo'];
+                if (isset($value["codigo"]) && !empty($value["codigo"])) {
+                    $productCode = $value["codigo"];
 
                     if (DB::table("products")->where("code", '=', $productCode)->count() >= 1) {
                         DB::table("products")->where("code", '=', $productCode)->update(
                             [
-                                'name' => (isset($value['nombre']) && !empty($value['nombre'])) ? $value['nombre'] : "Producto X",
-                                'price' => $value['precio'],
-                                'cost' => $value['costo'],
+                                'name' => $productName,
+                                'price' => $productPrice,
+                                'cost' => $productCost,
                                 'brand_id' => $brand_id,
-                                'note' => (isset($value['nota']) && !empty($value['nota'])) ? $value['nota'] : '',
-                                'stock_alert' => (isset($value['stock']) && !empty($value['stock'])) ? $value['stock'] : 0
+                                'note' => $productNote,
+                                'stock_alert' => $productStockAlert
+                            ]
+                        );
+
+                        $productId = DB::table("products")->where("code", '=', $productCode)->pluck("id")->first();
+
+                        DB::table("category_product")->updateOrInsert(
+                            [
+                                "category_id" => $category_id,
+                                "product_id" => $productId
+                            ],
+                            [
+                                "category_id" => $category_id,
+                                "product_id" => $productId
+                            ]
+                        );
+                    } else {
+                        DB::table("products")->insert(
+                            [
+                                'name' => $productName,
+                                'code' => $productCode,
+                                'Type_barcode' => 'CODE128',
+                                'price' => $productPrice,
+                                'cost' => $productCost,
+                                'brand_id' => $brand_id,
+                                'TaxNet' => 0,
+                                'unit_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
+                                'unit_sale_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
+                                'unit_purchase_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
+                                'tax_method' => 1,
+                                'note' => $productNote,
+                                'stock_alert' => $productStockAlert,
+                                'is_variant' => 0,
+                                'image' => 'no-image.png'
+                            ]
+                        );
+
+                        $productId = DB::table("products")->where("code", '=', $productCode)->pluck("id")->first();
+
+                        DB::table("category_product")->insert(
+                            [
+                                "category_id" => $category_id,
+                                "product_id" => $productId
                             ]
                         );
                     }
@@ -1272,35 +1349,42 @@ class ProductsController extends BaseController
 
                     DB::table("products")->insert(
                         [
-                            'name' => (isset($value['nombre']) && !empty($value['nombre'])) ? $value['nombre'] : "Producto X",
+                            'name' => $productName,
                             'code' => $productCode,
                             'Type_barcode' => 'CODE128',
-                            'price' => $value['precio'],
-                            'cost' => $value['costo'],
+                            'price' => $productPrice,
+                            'cost' => $productCost,
                             'brand_id' => $brand_id,
                             'TaxNet' => 0,
-                            'unit_id' => ($value['unidad'] === "Und") ? DB::table("units")->where("name", '=', $value['unidad'])->pluck("id")->first() : 1,
-                            'unit_sale_id' => ($value['unidad'] === "Und") ? DB::table("units")->where("name", '=', $value['unidad'])->pluck("id")->first() : 1,
-                            'unit_purchase_id' => ($value['unidad'] === "Und") ? DB::table("units")->where("name", '=', $value['unidad'])->pluck("id")->first() : 1,
+                            'unit_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
+                            'unit_sale_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
+                            'unit_purchase_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
                             'tax_method' => 1,
-                            'note' => (isset($value['nota']) && !empty($value['nota'])) ? $value['nota'] : '',
-                            'stock_alert' => (isset($value['stock']) && !empty($value['stock'])) ? $value['stock'] : 0,
+                            'note' => $productNote,
+                            'stock_alert' => $productStockAlert,
                             'is_variant' => 0,
                             'image' => 'no-image.png'
                         ]
                     );
-                }
 
-                $productId = DB::table("products")->where("code", '=', $productCode)->pluck("id")->first();
+                    $productId = DB::table("products")->where("code", '=', $productCode)->pluck("id")->first();
+
+                    DB::table("category_product")->insert(
+                        [
+                            "category_id" => $category_id,
+                            "product_id" => $productId
+                        ]
+                    );
+                }
 
                 if ($warehouses) {
                     foreach ($warehouses as $warehouse) {
                         //-- Add Adjustment
-                        if (isset($value['cantidad']) && $value['cantidad'] !== 'N/A' && $value['cantidad'] !== '' && $value['cantidad'] !== 0) {
+                        if (isset($value["cantidad"]) && $value["cantidad"] !== 'N/A' && $value["cantidad"] !== '' && $value["cantidad"] !== 0) {
                             $product_warehouse[] = [
                                 'product_id' => $productId,
                                 'warehouse_id' => $warehouse,
-                                'qte' => $value['cantidad'],
+                                'qte' => $value["cantidad"],
                             ];
                         } else {
                             $product_warehouse[] = [
