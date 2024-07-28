@@ -35,8 +35,8 @@ class CategoryExpenseController extends BaseController
             })
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('description', 'LIKE', "%{$request->search}%");
+                    return $query->where('name', 'LIKE', "%$request->search%")
+                        ->orWhere('description', 'LIKE', "%$request->search%");
                 });
             });
 

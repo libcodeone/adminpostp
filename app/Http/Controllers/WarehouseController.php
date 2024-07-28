@@ -32,12 +32,12 @@ class WarehouseController extends Controller
         // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('mobile', 'LIKE', "%{$request->search}%")
-                        ->orWhere('country', 'LIKE', "%{$request->search}%")
-                        ->orWhere('city', 'LIKE', "%{$request->search}%")
-                        ->orWhere('zip', 'LIKE', "%{$request->search}%")
-                        ->orWhere('email', 'LIKE', "%{$request->search}%");
+                    return $query->where('name', 'LIKE', "%$request->search%")
+                        ->orWhere('mobile', 'LIKE', "%$request->search%")
+                        ->orWhere('country', 'LIKE', "%$request->search%")
+                        ->orWhere('city', 'LIKE', "%$request->search%")
+                        ->orWhere('zip', 'LIKE', "%$request->search%")
+                        ->orWhere('email', 'LIKE', "%$request->search%");
                 });
             });
         $totalRows = $warehouses->count();

@@ -53,10 +53,10 @@ class AdjustmentController extends BaseController
         // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('Ref', 'LIKE', "%{$request->search}%")
+                    return $query->where('Ref', 'LIKE', "%$request->search%")
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('warehouse', function ($q) use ($request) {
-                                $q->where('name', 'LIKE', "%{$request->search}%");
+                                $q->where('name', 'LIKE', "%$request->search%");
                             });
                         });
                 });

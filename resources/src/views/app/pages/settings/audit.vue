@@ -25,14 +25,13 @@
         styleClass="tableOne table-hover vgt-table tableAudit"
       >
       <div slot="table-actions" class="mt-2 mb-3">
-         
-          <b-button @click="Audits_PDF()" size="sm" variant="outline-success m-1">
+          <b-button @click="Audits_PDF()" size="sm" variant="outline-danger m-1">
             <i class="i-File-Copy"></i> PDF
           </b-button>
-          <b-button @click="Audits_Excel()" size="sm" variant="outline-danger m-1">
+          <b-button @click="Audits_Excel()" size="sm" variant="outline-success m-1">
             <i class="i-File-Excel"></i> EXCEL
           </b-button>
-          
+
         </div>
       </vue-good-table>
     </div>
@@ -74,7 +73,7 @@ export default {
   computed: {
     columns() {
       return [
-       
+
         {
           label: "Evento",
           field: "event",
@@ -109,7 +108,7 @@ export default {
           label: "Valor nuevo",
           field: "new_values",
           tdClass: "text-left, tdAudit",
-          thClass: "text-left, tdAudit" 
+          thClass: "text-left, tdAudit"
         },
         {
           label: "URL",

@@ -15,9 +15,9 @@
         @on-search="onSearch"
         :search-options="{
         enabled: true,
-        placeholder: $t('Search_this_table'),  
+        placeholder: $t('Search_this_table'),
       }"
-        :select-options="{ 
+        :select-options="{
           enabled: true ,
           clearSelectionText: '',
         }"
@@ -38,10 +38,10 @@
             <i class="i-Filter-2"></i>
             {{ $t("Filter") }}
           </b-button>
-          <b-button @click="Quotation_PDF()" size="sm" variant="outline-success ripple m-1">
+          <b-button @click="Quotation_PDF()" size="sm" variant="outline-danger ripple m-1">
             <i class="i-File-Copy"></i> PDF
           </b-button>
-          <b-button @click="Quotation_Excel()" size="sm" variant="outline-danger ripple m-1">
+          <b-button @click="Quotation_Excel()" size="sm" variant="outline-success ripple m-1">
             <i class="i-File-Excel"></i> EXCEL
           </b-button>
           <router-link

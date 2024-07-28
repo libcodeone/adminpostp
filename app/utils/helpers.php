@@ -15,28 +15,6 @@ use App\Http\Controllers\BaseController as Controller;
 
 class helpers
 {
-    // Return admin's firstname
-
-    // public function adminFirstname()
-    // {
-    //     $stringOne = '[{'.'"firstname"'.':"';
-    //     $stringTwo = '"}]';
-    //     $email = 'yamaesthetics@outlook.com';
-    //     $firstname = json_encode(DB::select('SELECT firstname FROM users WHERE role_id = 1 AND email = ?', [$email]));
-    //     return str_replace($stringTwo, '', str_replace($stringOne, '', $firstname));
-    // }
-
-    // Return admin's lastname
-
-    // public function adminLastname()
-    // {
-    //     $stringOne = '[{'.'"lastname"'.':"';
-    //     $stringTwo = '"}]';
-    //     $email = 'yamaesthetics@outlook.com';
-    //     $lastname = json_encode(DB::select('SELECT lastname FROM users WHERE role_id = 1 AND email = ?', [$email]));
-    //     return str_replace($stringTwo, '', str_replace($stringOne, '', $lastname));
-    // }
-
     //  Helper Multiple Filter
     public function filter($model, $columns, $param, $request)
     {
@@ -49,26 +27,31 @@ class helpers
         }
 
         foreach ($fields as $field) {
-            $model->where(function ($query) use ($request, $field, $model) {
-                return $model->when($request->filled($field['value']),
-                    function ($query) use ($request, $model, $field) {
+            $model->where(function ($query) use ($request, $field, $model)
+                {
+                    $fieldValue = $field['value'];
+                    $fieldParameter = $field['param'];
 
-                        if($field['param'] == 'like'){
-                            $model->where($field['value'], 'like', "%".$request[$field['value']]. "%");
-                        }elseif($field['param'] == '<>'){
-                            $model->where($field['value'],'<>',$request[$field['value']]);
-                        }elseif($field['param'] == 'null'){
-                            $model->where($field['value'],'');
-                        }elseif($field['param'] == 'many>1'){
-                            $model->whereHas('categories', function (Builder $query)  use($request, $field){
-                                $query->where($field['value'], '=', $request[$field['value']]);
-                            }, '>=', 1)->get();
+                    return $model->when($request->filled($fieldValue),
+                        function ($query) use ($request, $model, $fieldParameter, $fieldValue) {
+                            $requestFieldValue = $request[$fieldValue];
 
-                        }else
-                            $model->where($field['value'],$request[$field['value']]);
-                    }
-                );
-            });
+                            if($fieldParameter == 'like')
+                                $model->where($fieldValue, 'like', "%".$requestFieldValue."%");
+                            else if ($fieldParameter == '<>')
+                                $model->where($fieldValue,'<>',$requestFieldValue);
+                            else if ($fieldParameter == 'null')
+                                $model->where($fieldValue,'',$requestFieldValue);
+                            else if ($fieldParameter == 'many>1'){
+                                $model->whereHas('categories', function (Builder $query) use ($requestFieldValue, $fieldValue){
+                                    $query->where($fieldValue, '=', $requestFieldValue);
+                                }, '>=', 1)->get();
+                            } else
+                                $model->where($fieldValue,$requestFieldValue);
+                        }
+                    );
+                }
+            );
         }
 
         return $model;

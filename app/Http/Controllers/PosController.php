@@ -664,7 +664,7 @@ class PosController extends BaseController
                 return $query->when($request->filled('search'), function ($query) use ($request) {
                     return $query->where(function ($query) use ($request) {
                         return $query->whereHas('product', function ($q) use ($request) {
-                            $q->where('name', 'LIKE', "%{$request->search}%")->orWhere('code', 'LIKE', "%{$request->search}%");
+                            $q->where('name', 'LIKE', "%$request->search%")->orWhere('code', 'LIKE', "%$request->search%");
                         });
                     });
                 });

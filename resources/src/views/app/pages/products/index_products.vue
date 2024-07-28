@@ -67,14 +67,14 @@
                     <b-button
                         @click="Product_PDF()"
                         size="sm"
-                        variant="outline-success mb-1 ml-1 mr-1"
+                        variant="outline-danger mb-1 ml-1 mr-1"
                     >
                         <i class="i-File-Copy"></i> PDF
                     </b-button>
                     <b-button
                         @click="Product_Excel()"
                         size="sm"
-                        variant="outline-danger mb-1 ml-1 mr-1"
+                        variant="outline-success mb-1 ml-1 mr-1"
                     >
                         <i class="i-File-Excel"></i> EXCEL
                     </b-button>
@@ -288,9 +288,9 @@
                                 <b-form-invalid-feedback
                                     id="File-feedback"
                                     class="d-block"
-                                    >{{
-                                        $t("field_must_be_in_csv_format")
-                                    }}</b-form-invalid-feedback
+                                >
+                                    El campo debe de ser en formato csv separado por comas, xls o xlsx
+                                </b-form-invalid-feedback
                                 >
                             </b-form-group>
                         </b-col>
@@ -741,17 +741,17 @@ export default {
             axios
                 .post("Products/import/csv", self.data)
                 .then(response => {
-                    if (response.data.status === true) {
+                    if (response.data.status) {
                         this.makeToast(
                             "success",
                             this.$t("Successfully_Imported"),
                             this.$t("Success")
                         );
                         Fire.$emit("Event_import");
-                    } else if (response.data.status === false) {
+                    } else {
                         this.makeToast(
                             "danger",
-                            this.$t("field_must_be_in_csv_format"),
+                            response.data.message,
                             this.$t("Failed")
                         );
                     }
@@ -761,12 +761,16 @@ export default {
                 .catch(error => {
                     // Complete the animation of the progress bar.
                     NProgress.done();
+
                     this.makeToast(
                         "danger",
-                        this.$t("Please_follow_the_import_instructions"),
+                        "¡Error al importar archivo!",
                         this.$t("Failed")
                     );
-                });
+
+                    console.log(error);
+                }
+            );
         },
 
         //------ Toast

@@ -52,17 +52,17 @@ class ExpensesController extends BaseController
         //Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('Ref', 'LIKE', "%{$request->search}%")
-                        ->orWhere('date', 'LIKE', "%{$request->search}%")
-                        ->orWhere('details', 'LIKE', "%{$request->search}%")
+                    return $query->where('Ref', 'LIKE', "%$request->search%")
+                        ->orWhere('date', 'LIKE', "%$request->search%")
+                        ->orWhere('details', 'LIKE', "%$request->search%")
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('expense_category', function ($q) use ($request) {
-                                $q->where('name', 'LIKE', "%{$request->search}%");
+                                $q->where('name', 'LIKE', "%$request->search%");
                             });
                         })
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('warehouse', function ($q) use ($request) {
-                                $q->where('name', 'LIKE', "%{$request->search}%");
+                                $q->where('name', 'LIKE', "%$request->search%");
                             });
                         });
                 });

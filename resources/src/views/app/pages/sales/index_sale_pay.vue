@@ -35,7 +35,7 @@
             {{ $t("Filter") }}
           </b-button>
 
-          <b-button @click="Sales_Excel()" size="sm" variant="outline-danger ripple m-1">
+          <b-button @click="Sales_Excel()" size="sm" variant="outline-success ripple m-1">
             <i class="i-File-Excel"></i> EXCEL
           </b-button>
           <b-button @click="Get_Sales(1)" size="sm" variant="btn-sm btn btn-primary ripple btn-icon m-1">
