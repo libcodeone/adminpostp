@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Throwable;
+use Illuminate\Support\Str;
 use App\Exports\ProductsExport;
 use App\Models\Brand;
+use Illuminate\Support\Facades\Log;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Mail;
@@ -23,6 +25,10 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Validation\ValidationException;
 use App\Mail\ProductPriceModification;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Writer\Csv as CsvWriter;
+use PhpOffice\PhpSpreadsheet\Reader\Csv as CsvReader;
+use PhpOffice\PhpSpreadsheet\Reader\Xls as XlsReader;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
 use \Gumlet\ImageResize;
 
 class ProductsController extends BaseController
@@ -55,15 +61,17 @@ class ProductsController extends BaseController
             // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('products.name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('products.code', 'LIKE', "%{$request->search}%")
+                    return $query->where('products.name', 'LIKE', "%$request->search%")
+                        ->orWhere('products.code', 'LIKE', "%$request->search%")
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('brand', function ($q) use ($request) {
-                                $q->where('name', 'LIKE', "%{$request->search}%");
+                                $q->where('name', 'LIKE', "%$request->search%");
                             }, '>=', 1);
-                        });
+                        }
+                    );
                 });
-            });
+            }
+        );
         $totalRows = $Filtred->count();
         $products = $Filtred->offset($offSet)
             ->limit($perPage)
@@ -1183,224 +1191,317 @@ class ProductsController extends BaseController
     // import Products
     public function import_products(Request $request)
     {
-        $file_upload = $request->file('products');
-        $ext = pathinfo($file_upload->getClientOriginalName(), PATHINFO_EXTENSION);
-        if ($ext != 'csv') {
-            return response()->json([
-                'msg' => 'must be in csv format',
-                'status' => false,
-            ]);
-        } else {
-            $accents = array(
-                'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a',
-                'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A',
-                'ß'=>'B', 'ç'=>'c', 'Ç'=>'C',
-                'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e',
-                'È'=>'E', 'É'=>'E', 'Ê'=>'E', 'Ë'=>'E',
-                'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i',
-                'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I',
-                'ñ'=>'n', 'Ñ'=>'N',
-                'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o', 'ö'=>'o',
-                'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O',
-                'š'=>'s', 'Š'=>'S',
-                'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ü'=>'u',
-                'Ù'=>'U', 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U',
-                'ý'=>'y', 'Ý'=>'Y', 'ž'=>'z', 'Ž'=>'Z'
-            );
-            $data = array();
-            $rowcount = 0;
-            if (($handle = fopen($file_upload, "r")) !== false) {
-                $max_line_length = defined('MAX_LINE_LENGTH') ? ProductsController::MAX_LINE_LENGTH : 10000;
-                $header = fgetcsv($handle, $max_line_length);
-                $header = array_map(
-                    function ($key) use ($accents) {
-                        $string = strtolower(strtr($key, $accents));
+        try
+        {
+            $user = $request->user('api');
+            $this->authorizeForUser($user, 'update', Product::class);
 
-                        $string = filter_var($string, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+            $fileUploaded = $request->file('products');
 
-                        if (!mb_check_encoding($string, 'UTF-8'))
-                            $string = mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
+            $fileName = $fileUploaded->getClientOriginalName();
+            $filePath = $fileUploaded->getPathname();
+            $fileExtension = pathinfo($fileName, PATHINFO_EXTENSION);
 
-                        $string = utf8_encode($string);
-
-                        return $string;
-                    }, $header
+            if ($fileExtension !== "xls" && $fileExtension !== "xlsx" && $fileExtension !== "csv") {
+                return response()->json(
+                    [
+                        'message' => '¡El archivo debe estar en formato csv, xls o xlsx!',
+                        'status' => false
+                    ]
                 );
-                $header_colcount = count($header);
-                while (($row = fgetcsv($handle, $max_line_length)) !== false) {
-                    $row_colcount = count($row);
-                    if ($row_colcount == $header_colcount) {
-                        $entry = array_map(
-                            function ($value) {
-                                $parsedValue = null;
+            } else {
+                if ($fileExtension === "xls") {
+                    $xlsReader = new XlsReader();
+                    $xls = $xlsReader->load($filePath);
 
-                                if (is_numeric($value)) {
-                                    if (is_integer($value))
-                                        $parsedValue = (int)$value;
-                                    else
-                                        $parsedValue = (float)$value;
-                                }
-                                else
-                                    $parsedValue = $value;
+                    $writer = new CsvWriter($xls);
+                    $csvFilePath = storage_path("app/public/converted_products-" . Str::random(16) . ".csv");
+                    $writer->save($csvFilePath);
+                } else if ($fileExtension === "xlsx") {
+                    $xlsxReader = new XlsxReader();
+                    $xlsx = $xlsxReader->load($filePath);
 
-                                return $parsedValue;
-                            }, $row
-                        );
-
-                        $entry = array_combine($header, $entry);
-
-                        $data[] = $entry;
-                    } else
-                        return null;
-
-                    $rowcount++;
-                }
-                fclose($handle);
-            } else
-                return null;
-
-            $warehouses = Warehouse::where('deleted_at', null)->pluck('id')->toArray();
-
-            //-- Create New Product
-            foreach ($data as $iKey => $value) {
-                $productName = (isset($value["nombre"]) && !empty($value["nombre"])) ? $value["nombre"] : "Producto X";
-                $productPrice = (isset($value["precio"]) && !empty($value["precio"])) ? $value["precio"] : 0.00;
-                $productCost = (isset($value["costo"]) && !empty($value["costo"])) ? $value["costo"] : 0.00;
-                $productUnit = (isset($value["unidad"]) && !empty($value["unidad"])) ? $value["unidad"] : "Und";
-                $productNote = (isset($value["nota"]) && !empty($value["nombre"])) ? $value["nota"] : 'N/A';
-                $productStockAlert = (isset($value["stock"]) && !empty($value["stock"])) ? $value["stock"] : 0;
-
-                $category = Category::where('name', '=', $value["categoria"])->get();
-                if (isset($category[0]))
-                    $category_id = $category[0]["id"];
-                else {
-                    $category = new Category;
-                    $category->name =  $value["categoria"];
-                    $category->save();
-
-                    $category_id = $category->id;
+                    $writer = new CsvWriter($xlsx);
+                    $csvFilePath = storage_path("app/public/converted_products-" . Str::random(16) . ".csv");
+                    $writer->save($csvFilePath);
                 }
 
-                if ($value["marca"] != 'N/A' && $value["marca"] != '') {
-                    $brand = Brand::firstOrCreate(["name" => $value["marca"]]);
-                    $brand_id = $brand->id;
-                } else
-                    $brand_id = null;
+                $fileUploaded = (isset($writer) && isset($csvFilePath)) ? $csvFilePath : $fileUploaded;
 
-                if (isset($value["codigo"]) && !empty($value["codigo"])) {
-                    $productCode = $value["codigo"];
+                $accents = array(
+                    'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a',
+                    'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A',
+                    'ß'=>'B', 'ç'=>'c', 'Ç'=>'C',
+                    'è'=>'e', 'é'=>'e', 'ê'=>'e', 'ë'=>'e',
+                    'È'=>'E', 'É'=>'E', 'Ê'=>'E', 'Ë'=>'E',
+                    'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i',
+                    'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I',
+                    'ñ'=>'n', 'Ñ'=>'N',
+                    'ò'=>'o', 'ó'=>'o', 'ô'=>'o', 'õ'=>'o', 'ö'=>'o',
+                    'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O', 'Õ'=>'O', 'Ö'=>'O',
+                    'š'=>'s', 'Š'=>'S',
+                    'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ü'=>'u',
+                    'Ù'=>'U', 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U',
+                    'ý'=>'y', 'Ý'=>'Y', 'ž'=>'z', 'Ž'=>'Z'
+                );
+                $data = array();
+                $rowcount = 0;
+                if (($handle = fopen($fileUploaded, "r")) !== false) {
+                    $max_line_length = defined('MAX_LINE_LENGTH') ? ProductsController::MAX_LINE_LENGTH : 10000;
+                    $header = fgetcsv($handle, $max_line_length);
 
-                    if (DB::table("products")->where("code", '=', $productCode)->count() >= 1) {
-                        DB::table("products")->where("code", '=', $productCode)->update(
+                    if (count($header) < 2) {
+                        if (isset($writer) && isset($csvFilePath))
+                            unlink($csvFilePath);
+
+                        return response()->json(
                             [
-                                'name' => $productName,
-                                'price' => $productPrice,
-                                'cost' => $productCost,
-                                'brand_id' => $brand_id,
-                                'note' => $productNote,
-                                'stock_alert' => $productStockAlert
-                            ]
-                        );
-
-                        $productId = DB::table("products")->where("code", '=', $productCode)->pluck("id")->first();
-
-                        DB::table("category_product")->updateOrInsert(
-                            [
-                                "category_id" => $category_id,
-                                "product_id" => $productId
-                            ],
-                            [
-                                "category_id" => $category_id,
-                                "product_id" => $productId
-                            ]
-                        );
-                    } else {
-                        DB::table("products")->insert(
-                            [
-                                'name' => $productName,
-                                'code' => $productCode,
-                                'Type_barcode' => 'CODE128',
-                                'price' => $productPrice,
-                                'cost' => $productCost,
-                                'brand_id' => $brand_id,
-                                'TaxNet' => 0,
-                                'unit_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
-                                'unit_sale_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
-                                'unit_purchase_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
-                                'tax_method' => 1,
-                                'note' => $productNote,
-                                'stock_alert' => $productStockAlert,
-                                'is_variant' => 0,
-                                'image' => 'no-image.png'
-                            ]
-                        );
-
-                        $productId = DB::table("products")->where("code", '=', $productCode)->pluck("id")->first();
-
-                        DB::table("category_product")->insert(
-                            [
-                                "category_id" => $category_id,
-                                "product_id" => $productId
+                                'message' => '¡Los campos del archivo en formato csv deben estar separados por comas!',
+                                'status' => false
                             ]
                         );
                     }
-                } else {
-                    $productCode = $this->generate_random_code();
 
-                    DB::table("products")->insert(
-                        [
-                            'name' => $productName,
-                            'code' => $productCode,
-                            'Type_barcode' => 'CODE128',
-                            'price' => $productPrice,
-                            'cost' => $productCost,
-                            'brand_id' => $brand_id,
-                            'TaxNet' => 0,
-                            'unit_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
-                            'unit_sale_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
-                            'unit_purchase_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
-                            'tax_method' => 1,
-                            'note' => $productNote,
-                            'stock_alert' => $productStockAlert,
-                            'is_variant' => 0,
-                            'image' => 'no-image.png'
-                        ]
+                    $header = array_map(
+                        function ($key) use ($accents) {
+                            $string = strtolower(strtr($key, $accents));
+
+                            $string = filter_var($string, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+
+                            if (!mb_check_encoding($string, 'UTF-8'))
+                                $string = mb_convert_encoding($string, 'UTF-8', 'ISO-8859-1');
+
+                            $string = utf8_encode($string);
+
+                            return $string;
+                        }, $header
                     );
+                    $header_colcount = count($header);
+                    while (($row = fgetcsv($handle, $max_line_length)) !== false) {
+                        $row_colcount = count($row);
+                        if ($row_colcount == $header_colcount) {
+                            $entry = array_map(
+                                function ($value) {
+                                    $parsedValue = null;
 
-                    $productId = DB::table("products")->where("code", '=', $productCode)->pluck("id")->first();
+                                    if (is_numeric($value)) {
+                                        if (is_integer($value))
+                                            $parsedValue = (int)$value;
+                                        else
+                                            $parsedValue = (float)$value;
+                                    }
+                                    else
+                                        $parsedValue = $value;
 
+                                    return $parsedValue;
+                                }, $row
+                            );
+
+                            $entry = array_combine($header, $entry);
+
+                            $data[] = $entry;
+                        } else
+                            return null;
+
+                        $rowcount++;
+                    }
+                    fclose($handle);
+                } else
+                    return null;
+
+                $userWarehouseId = $user->warehouse_id;
+
+                $warehouses = (isset($userWarehouseId) && !empty($userWarehouseId)) ? Warehouse::where("id", '=', $userWarehouseId)->where("deleted_at", '=', null)->pluck('id')->toArray() : Warehouse::where("deleted_at", '=', null)->pluck('id')->toArray();
+
+                //-- Create or Update Product
+                foreach ($data as $iKey => $value) {
+                    $productCodeIsSetAndNotEmpty = (isset($value["codigo"]) && !empty($value["codigo"])) ? true : false;
+                    $productNameIsSetAndNotEmpty = (isset($value["nombre"]) && !empty($value["nombre"])) ? true : false;
+                    $productPriceIsSetAndNotEmpty = (isset($value["precio"]) && !empty($value["precio"])) ? true : false;
+                    $productCostIsSetAndNotEmpty = (isset($value["costo"]) && !empty($value["costo"])) ? true : false;
+                    $productUnitIsSetAndNotEmpty = (isset($value["unidad"]) && !empty($value["unidad"])) ? true : false;
+                    $productNoteIsSetAndNotEmpty = (isset($value["nota"]) && !empty($value["nota"])) ? true : false;
+                    $productStockAlertIsSetAndNotEmpty = (isset($value["stock"]) && !empty($value["stock"])) ? true : false;
+                    $productCategoryIsSetAndNotEmpty = (isset($value["categoria"]) && !empty($value["categoria"])) ? true : false;
+                    $productBrandIsSetAndNotEmpty = (isset($value["marca"]) && !empty($value["marca"])) ? true : false;
+                    $productQuantityIsSetAndNotEmpty = (isset($value["cantidad"]) && !empty($value["cantidad"])) ? true : false;
+
+                    if ($productCodeIsSetAndNotEmpty && $productNameIsSetAndNotEmpty && $productPriceIsSetAndNotEmpty && $productCostIsSetAndNotEmpty && $productUnitIsSetAndNotEmpty && $productCategoryIsSetAndNotEmpty && $productQuantityIsSetAndNotEmpty) {
+                        $productCode = $value["codigo"];
+                        $productName = $value["nombre"];
+                        $productPrice = $value["precio"];
+                        $productCost = $value["costo"];
+                        $productUnit = $value["unidad"];
+                        $productNote = ($productNoteIsSetAndNotEmpty) ? $value["nota"] : '';
+                        $productStockAlert = ($productStockAlertIsSetAndNotEmpty) ? $value["stock"] : 0;
+                        $productCategory = explode(", ", $value["categoria"]);
+                        $productBrand = ($productBrandIsSetAndNotEmpty) ? $value["marca"] : '';
+                        $productQuantity = $value["cantidad"];
+
+                        $categoriesIds = [];
+
+                        foreach ($productCategory as $k => $pCategory) {
+                            if (DB::table("categories")->where("name", '=', $pCategory)->count() >= 1) {
+                                $category = Category::where("name", '=', $pCategory)->first();
+                                $categoryId = $category->id;
+                            } else {
+                                $category = new Category;
+                                $category->name =  $pCategory;
+                                $category->save();
+
+                                $categoryId = $category->id;
+                            }
+
+                            $categoriesIds[] = $categoryId;
+                        }
+
+                        if ($productBrand !== "N/A" && $productBrand !== '') {
+                            $brand = Brand::firstOrCreate(["name" => $productBrand]);
+                            $brand_id = $brand->id;
+                        } else
+                            $brand_id = null;
+
+                        if (DB::table("products")->where("code", '=', $productCode)->count() >= 1) {
+                            DB::table("products")->where("code", '=', $productCode)->update(
+                                [
+                                    'name' => $productName,
+                                    'price' => $productPrice,
+                                    'cost' => $productCost,
+                                    'brand_id' => $brand_id,
+                                    'note' => $productNote,
+                                    'stock_alert' => $productStockAlert
+                                ]
+                            );
+
+                            $productId = DB::table("products")->where("code", '=', $productCode)->pluck("id")->first();
+                            $categoriesProduct = json_decode(json_encode(DB::table("category_product")->whereIn("category_id", $categoriesIds)->where("product_id", '=', $productId)->get("category_id")), true);
+
+                            $this->insertOrUpdateOrDeleteRecordsToCategoryProduct($categoriesIds, $categoriesProduct, $productId);
+                        } else {
+                            $productCode = $this->generate_random_code();
+
+                            DB::table("products")->insert(
+                                [
+                                    'name' => $productName,
+                                    'code' => $productCode,
+                                    'Type_barcode' => 'CODE128',
+                                    'price' => $productPrice,
+                                    'cost' => $productCost,
+                                    'brand_id' => $brand_id,
+                                    'TaxNet' => 0,
+                                    'unit_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
+                                    'unit_sale_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
+                                    'unit_purchase_id' => ($productUnit === "Und") ? DB::table("units")->where("name", '=', $productUnit)->pluck("id")->first() : 1,
+                                    'tax_method' => 1,
+                                    'note' => $productNote,
+                                    'stock_alert' => $productStockAlert,
+                                    'is_variant' => 0,
+                                    'image' => 'no-image.png'
+                                ]
+                            );
+
+                            $productId = DB::table("products")->where("code", '=', $productCode)->pluck("id")->first();
+                            $categoriesProduct = json_decode(json_encode(DB::table("category_product")->whereIn("category_id", $categoriesIds)->where("product_id", '=', $productId)->get("category_id")), true);
+
+                            $this->insertOrUpdateOrDeleteRecordsToCategoryProduct($categoriesIds, $categoriesProduct, $productId);
+                        }
+
+                        if ($warehouses) {
+                            foreach ($warehouses as $warehouse) {
+                                if (isset($productQuantity) && $productQuantity !== 'N/A' && $productQuantity !== '' && $productQuantity !== 0) {
+                                    $product_warehouse[] = [
+                                        'product_id' => $productId,
+                                        'warehouse_id' => $warehouse,
+                                        'qte' => $productQuantity,
+                                    ];
+                                } else {
+                                    $product_warehouse[] = [
+                                        'product_id' => $productId,
+                                        'warehouse_id' => $warehouse,
+                                        'qte' => 0,
+                                    ];
+                                }
+                            }
+                        }
+                    } else {
+                        if (isset($writer) && isset($csvFilePath))
+                            unlink($csvFilePath);
+
+                        return response()->json(
+                            [
+                                "message" => "¡Todos los campos son requeridos a excepción de los campos 'marca', 'alerta de stock' y 'nota'!",
+                                "status" => false
+                            ]
+                        );
+                    };
+                }
+                ProductWarehouse::insert($product_warehouse);
+
+                if (isset($writer) && isset($csvFilePath))
+                    unlink($csvFilePath);
+
+                return response()->json(
+                    [
+                        'status' => true,
+                    ],
+                    200
+                );
+            }
+        }
+        catch (Throwable $throwable)
+        {
+            $message = $throwable->getMessage();
+
+            Log::error($message);
+
+            return response()->json(
+                [
+                    "message" => "¡Error al importar archivo!",
+                    "status" => false
+                ]
+            );
+        }
+    }
+
+    public function insertOrUpdateOrDeleteRecordsToCategoryProduct($categoriesIds, $categoriesProduct, $productId) {
+        $categoriesProduct = array_map(
+            function ($value) {
+                return (string)$value["category_id"];
+            }, $categoriesProduct
+        );
+
+        $categoriesProductMatchingWithProductId = json_decode(json_encode(DB::table("category_product")->where("product_id", '=', $productId)->get("category_id")), true);
+        $categoriesProductMatchingWithProductId = array_map(
+            function ($value) {
+                return (string)$value["category_id"];
+            }, $categoriesProductMatchingWithProductId
+        );
+
+        $recordsToDelete = array_values(array_diff_assoc($categoriesProductMatchingWithProductId, $categoriesProduct));
+
+        foreach ($recordsToDelete as $categoryProductCategoryId)
+            DB::table("category_product")->where("category_id", '=', $categoryProductCategoryId)->where("product_id", '=', $productId)->delete();
+
+        if (empty($categoriesProduct)) {
+            foreach ($categoriesIds as $cId) {
+                DB::table("category_product")->insert(
+                    [
+                        "category_id" => $cId,
+                        "product_id" => $productId
+                    ]
+                );
+            }
+        } else if (count($categoriesProduct) < count($categoriesIds) || count($categoriesProduct) > count($categoriesIds)) {
+            foreach ($categoriesIds as $cId) {
+                if (DB::table("category_product")->where("category_id", '=', $cId)->where("product_id", '=', $productId)->count() < 1) {
                     DB::table("category_product")->insert(
                         [
-                            "category_id" => $category_id,
+                            "category_id" => $cId,
                             "product_id" => $productId
                         ]
                     );
                 }
-
-                if ($warehouses) {
-                    foreach ($warehouses as $warehouse) {
-                        //-- Add Adjustment
-                        if (isset($value["cantidad"]) && $value["cantidad"] !== 'N/A' && $value["cantidad"] !== '' && $value["cantidad"] !== 0) {
-                            $product_warehouse[] = [
-                                'product_id' => $productId,
-                                'warehouse_id' => $warehouse,
-                                'qte' => $value["cantidad"],
-                            ];
-                        } else {
-                            $product_warehouse[] = [
-                                'product_id' => $productId,
-                                'warehouse_id' => $warehouse,
-                                'qte' => 0,
-                            ];
-                        }
-                    }
-                }
             }
-            ProductWarehouse::insert($product_warehouse);
-
-            return response()->json([
-                'status' => true,
-            ], 200);
         }
     }
 
@@ -1413,9 +1514,9 @@ class ProductsController extends BaseController
             $nwMsg = explode("_", $item);
             $inMsg = $nwMsg[1] + 1;
             $code = $nwMsg[0] . '_' . $inMsg;
-        } else {
+        } else
             $code = 'AD_1111';
-        }
+
         return $code;
     }
 
@@ -1424,12 +1525,12 @@ class ProductsController extends BaseController
     {
         $code = substr(number_format(time() * mt_rand(), 0, '', ''), 0, 8);
 
-        $check_code = Product::where('code', $code)->first();
+        $check_code = Product::where("code", '=', $code)->first();
 
         if ($check_code) {
             $this->generate_random_code();
-        } else {
+        } else
             return $code;
-        }
+
     }
 }

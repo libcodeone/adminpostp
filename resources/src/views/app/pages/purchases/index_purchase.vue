@@ -16,7 +16,7 @@
         placeholder: $t('Search_this_table'),
         enabled: true,
       }"
-        :select-options="{ 
+        :select-options="{
           enabled: true ,
           clearSelectionText: '',
         }"
@@ -37,10 +37,10 @@
             <i class="i-Filter-2"></i>
             {{ $t("Filter") }}
           </b-button>
-          <b-button @click="Purchase_PDF()" size="sm" variant="outline-success ripple m-1">
+          <b-button @click="Purchase_PDF()" size="sm" variant="outline-danger ripple m-1">
             <i class="i-File-Copy"></i> PDF
           </b-button>
-          <b-button @click="Purchase_Excel()" size="sm" variant="outline-danger ripple m-1">
+          <b-button @click="Purchase_Excel()" size="sm" variant="outline-success ripple m-1">
             <i class="i-File-Excel"></i> EXCEL
           </b-button>
           <router-link
@@ -267,7 +267,7 @@
                 <tr v-if="factures.length <= 0">
                   <td colspan="5">{{$t('NodataAvailable')}}</td>
                 </tr>
-                <tr v-for="facture in factures">
+                <tr v-for="facture in factures" :key="facture">
                   <td>{{facture.date}}</td>
                   <td>{{facture.Ref}}</td>
                   <td>{{formatNumber((facture.montant),2)}} {{currentUser.currency}}</td>
@@ -1125,7 +1125,7 @@ export default {
       this.paymentProcessing = true;
       NProgress.start();
       NProgress.set(0.1);
-     
+
         axios
           .put("payment/purchase/" + this.facture.id, {
             purchase_id: this.purchase.id,
@@ -1149,7 +1149,7 @@ export default {
           });
     },
 
-  
+
 
     //------------------------------------ Remove Payment -------------------------------\\
     Remove_Payment(id) {

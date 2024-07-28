@@ -441,12 +441,12 @@ class ReportController extends BaseController
             // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('code', 'LIKE', "%{$request->search}%")
-                        ->orWhere('NIT', 'LIKE', "%{$request->search}%")
-                        ->orWhere('NRC', 'LIKE', "%{$request->search}%")
-                        ->orWhere('giro', 'LIKE', "%{$request->search}%")
-                        ->orWhere('phone', 'LIKE', "%{$request->search}%");
+                    return $query->where('name', 'LIKE', "%$request->search%")
+                        ->orWhere('code', 'LIKE', "%$request->search%")
+                        ->orWhere('NIT', 'LIKE', "%$request->search%")
+                        ->orWhere('NRC', 'LIKE', "%$request->search%")
+                        ->orWhere('giro', 'LIKE', "%$request->search%")
+                        ->orWhere('phone', 'LIKE', "%$request->search%");
                 });
             });
 
@@ -736,11 +736,11 @@ class ReportController extends BaseController
             // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('purchases.Ref', 'LIKE', "%{$request->search}%")
-                        ->orWhere('purchases.statut', 'LIKE', "%{$request->search}%")
+                    return $query->where('purchases.Ref', 'LIKE', "%$request->search%")
+                        ->orWhere('purchases.statut', 'LIKE', "%$request->search%")
                         ->orWhere('purchases.GrandTotal', $request->search)
                         ->orWhere('purchases.payment_statut', 'like', "$request->search")
-                        ->orWhere('providers.name', 'LIKE', "%{$request->search}%");
+                        ->orWhere('providers.name', 'LIKE', "%$request->search%");
                 });
             });
 
@@ -810,11 +810,11 @@ class ReportController extends BaseController
             // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('sales.Ref', 'LIKE', "%{$request->search}%")
-                        ->orWhere('sales.statut', 'LIKE', "%{$request->search}%")
+                    return $query->where('sales.Ref', 'LIKE', "%$request->search%")
+                        ->orWhere('sales.statut', 'LIKE', "%$request->search%")
                         ->orWhere('sales.GrandTotal', $request->search)
                         ->orWhere('sales.payment_statut', 'like', "$request->search")
-                        ->orWhere('clients.name', 'LIKE', "%{$request->search}%");
+                        ->orWhere('clients.name', 'LIKE', "%$request->search%");
                 });
             });
 
@@ -867,9 +867,9 @@ class ReportController extends BaseController
             // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('code', 'LIKE', "%{$request->search}%")
-                        ->orWhere('phone', 'LIKE', "%{$request->search}%");
+                    return $query->where('name', 'LIKE', "%$request->search%")
+                        ->orWhere('code', 'LIKE', "%$request->search%")
+                        ->orWhere('phone', 'LIKE', "%$request->search%");
                 });
             });
 
@@ -1146,13 +1146,13 @@ class ReportController extends BaseController
             // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('Ref', 'LIKE', "%{$request->search}%")
-                        ->orWhere('statut', 'LIKE', "%{$request->search}%")
+                    return $query->where('Ref', 'LIKE', "%$request->search%")
+                        ->orWhere('statut', 'LIKE', "%$request->search%")
                         ->orWhere('GrandTotal', $request->search)
                         ->orWhere('payment_statut', 'like', "$request->search")
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('client', function ($q) use ($request) {
-                                $q->where('name', 'LIKE', "%{$request->search}%");
+                                $q->where('name', 'LIKE', "%$request->search%");
                             });
                         });
                 });
@@ -1213,12 +1213,12 @@ class ReportController extends BaseController
             //Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('Ref', 'LIKE', "%{$request->search}%")
-                        ->orWhere('statut', 'LIKE', "%{$request->search}%")
+                    return $query->where('Ref', 'LIKE', "%$request->search%")
+                        ->orWhere('statut', 'LIKE', "%$request->search%")
                         ->orWhere('GrandTotal', $request->search)
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('client', function ($q) use ($request) {
-                                $q->where('name', 'LIKE', "%{$request->search}%");
+                                $q->where('name', 'LIKE', "%$request->search%");
                             });
                         });
                 });
@@ -1276,13 +1276,13 @@ class ReportController extends BaseController
             //Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('Ref', 'LIKE', "%{$request->search}%")
-                        ->orWhere('statut', 'LIKE', "%{$request->search}%")
+                    return $query->where('Ref', 'LIKE', "%$request->search%")
+                        ->orWhere('statut', 'LIKE', "%$request->search%")
                         ->orWhere('GrandTotal', $request->search)
                         ->orWhere('payment_statut', 'like', "$request->search")
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('client', function ($q) use ($request) {
-                                $q->where('name', 'LIKE', "%{$request->search}%");
+                                $q->where('name', 'LIKE', "%$request->search%");
                             });
                         });
                 });
@@ -1343,13 +1343,13 @@ class ReportController extends BaseController
             //Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('Ref', 'LIKE', "%{$request->search}%")
-                        ->orWhere('statut', 'LIKE', "%{$request->search}%")
+                    return $query->where('Ref', 'LIKE', "%$request->search%")
+                        ->orWhere('statut', 'LIKE', "%$request->search%")
                         ->orWhere('GrandTotal', $request->search)
                         ->orWhere('payment_statut', 'like', "$request->search")
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('provider', function ($q) use ($request) {
-                                $q->where('name', 'LIKE', "%{$request->search}%");
+                                $q->where('name', 'LIKE', "%$request->search%");
                             });
                         });
                 });
@@ -1410,12 +1410,12 @@ class ReportController extends BaseController
             //Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('Ref', 'LIKE', "%{$request->search}%")
-                        ->orWhere('date', 'LIKE', "%{$request->search}%")
-                        ->orWhere('details', 'LIKE', "%{$request->search}%")
+                    return $query->where('Ref', 'LIKE', "%$request->search%")
+                        ->orWhere('date', 'LIKE', "%$request->search%")
+                        ->orWhere('details', 'LIKE', "%$request->search%")
                         ->orWhere(function ($query) use ($request) {
                             return $query->whereHas('expense_category', function ($q) use ($request) {
-                                $q->where('name', 'LIKE', "%{$request->search}%");
+                                $q->where('name', 'LIKE', "%$request->search%");
                             });
                         });
                 });

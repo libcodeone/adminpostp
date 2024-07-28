@@ -36,10 +36,10 @@
             <i class="i-Filter-2"></i>
             {{ $t("Filter") }}
           </b-button>
-          <b-button @click="Sales_PDF()" size="sm" variant="outline-success ripple m-1">
+          <b-button @click="Sales_PDF()" size="sm" variant="outline-danger ripple m-1">
             <i class="i-File-Copy"></i> PDF
           </b-button>
-          <b-button @click="Sales_Excel()" size="sm" variant="outline-danger ripple m-1">
+          <b-button @click="Sales_Excel()" size="sm" variant="outline-success ripple m-1">
             <i class="i-File-Excel"></i> EXCEL
           </b-button>
           <router-link

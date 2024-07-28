@@ -26,6 +26,8 @@ class ProvidersExport implements FromArray, WithHeadings, ShouldAutoSize, WithEv
                 $aa['phone'] = $provider->phone;
                 $aa['email'] = $provider->email;
                 $aa['adresse'] = $provider->adresse;
+                $aa['country'] = $provider->country;
+                $aa['city'] = $provider->city;
 
                 $data[] = $aa;
             }
@@ -66,8 +68,8 @@ class ProvidersExport implements FromArray, WithHeadings, ShouldAutoSize, WithEv
         return [
             'Código',
             'Nombre',
-            'Número de telefóno',
-            'Correo electrónico',
+            'Teléfono',
+            'Email',
             'Dirección',
             'País',
             'Ciudad'

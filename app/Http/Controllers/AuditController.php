@@ -24,14 +24,14 @@ class AuditController extends BaseController
             $audits = DB::table('audits')->select('audits.id','audits.event','audits.created_at','audits.auditable_type','audits.auditable_id','audits.url','audits.old_values','audits.new_values','users.username')->join('users', 'users.id', '=', 'audits.user_id')
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('audits.event', 'LIKE', "%{$request->search}%")
-                        ->orWhere('audits.created_at', 'LIKE', "%{$request->search}%")
-                        ->orWhere('audits.auditable_type', 'LIKE', "%{$request->search}%")
-                        ->orWhere('audits.auditable_id', 'LIKE', "%{$request->search}%")
-                        ->orWhere('audits.url', 'LIKE', "%{$request->search}%")
-                        ->orWhere('audits.old_values', 'LIKE', "%{$request->search}%")
-                        ->orWhere('audits.new_values', 'LIKE', "%{$request->search}%")
-                        ->orWhere('users.username', 'LIKE', "%{$request->search}%");
+                    return $query->where('audits.event', 'LIKE', "%$request->search%")
+                        ->orWhere('audits.created_at', 'LIKE', "%$request->search%")
+                        ->orWhere('audits.auditable_type', 'LIKE', "%$request->search%")
+                        ->orWhere('audits.auditable_id', 'LIKE', "%$request->search%")
+                        ->orWhere('audits.url', 'LIKE', "%$request->search%")
+                        ->orWhere('audits.old_values', 'LIKE', "%$request->search%")
+                        ->orWhere('audits.new_values', 'LIKE', "%$request->search%")
+                        ->orWhere('users.username', 'LIKE', "%$request->search%");
                 });
             });
             $totalRows = $audits->count();

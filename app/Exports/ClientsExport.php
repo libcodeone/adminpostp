@@ -69,8 +69,8 @@ class ClientsExport implements FromArray, WithHeadings, ShouldAutoSize, WithEven
         return [
             'Código',
             'Nombre',
-            'Correo electrónico',
-            'Número de teléfono',
+            'Email',
+            'Teléfono',
             'Dirección',
             'NIT',
             'NRC',

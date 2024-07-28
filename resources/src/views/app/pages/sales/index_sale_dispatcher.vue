@@ -16,7 +16,7 @@
         placeholder: $t('Search_this_table'),
         enabled: true,
       }"
-        :select-options="{ 
+        :select-options="{
           enabled: true ,
           clearSelectionText: '',
         }"
@@ -34,10 +34,10 @@
             <i class="i-Filter-2"></i>
             {{ $t("Filter") }}
           </b-button>
-          <b-button @click="Sales_PDF()" size="sm" variant="outline-success ripple m-1">
+          <b-button @click="Sales_PDF()" size="sm" variant="outline-danger ripple m-1">
             <i class="i-File-Copy"></i> PDF
           </b-button>
-          <b-button @click="Sales_Excel()" size="sm" variant="outline-danger ripple m-1">
+          <b-button @click="Sales_Excel()" size="sm" variant="outline-success ripple m-1">
             <i class="i-File-Excel"></i> EXCEL
           </b-button>
         </div>
@@ -57,7 +57,7 @@
               </router-link>
             </div>
           </span>
-          
+
           <div v-else-if="props.column.field == 'statut'">
             <span
               v-if="props.row.statut == 'completed'"
@@ -80,7 +80,7 @@
               class="badge badge-outline-primary"
             >{{$t('partial')}}</span>
             <span v-else class="badge badge-outline-warning">{{$t('Unpaid')}}</span>
-          </div>     
+          </div>
 
 
         </template>
@@ -180,7 +180,7 @@
       </b-row>
     </b-modal>
 
-   
+
 
     <!-- Modal Show Invoice POS-->
     <b-modal hide-footer size="md" scrollable id="Show_invoice" :title="$t('Invoice_POS')">
@@ -480,7 +480,7 @@ export default {
       this.search = value.searchTerm;
       this.Get_Sales(this.serverParams.page);
     },
-    
+
     //---Validate State Fields
     getValidationState({ dirty, validated, valid = null }) {
       return dirty || validated ? valid : null;
@@ -501,7 +501,7 @@ export default {
       this.Filter_Payment = "paid";
       this.Filter_Ref = "";
       this.Filter_date = "";
-      // (this.Filter_warehouse = this.currentUser.warehouse_id), 
+      // (this.Filter_warehouse = this.currentUser.warehouse_id),
       this.Get_Sales(this.serverParams.page);
     },
     //------------------------------Formetted Numbers -------------------------\\
@@ -555,7 +555,7 @@ export default {
           setTimeout(() => NProgress.done(), 500);
         });
     },
-   
+
     //-----------------------------  Invoice PDF ------------------------------\\
     Invoice_PDF(sale, id) {
       // Start the progress bar.
@@ -581,7 +581,7 @@ export default {
           setTimeout(() => NProgress.done(), 500);
         });
     },
-   
+
     //---------------------------------------- Set To Strings-------------------------\\
     setToStrings() {
       // Simply replaces null values with strings=''
@@ -650,7 +650,7 @@ export default {
         .then(({ data }) => (this.payment.Ref = data));
     },
     //----------------------------------- New Payment Sale ------------------------------\\
-    
+
     //-------------------------------Show All Payment with Sale ---------------------\\
     Show_Payments(id, sale) {
       // Start the progress bar.
@@ -661,7 +661,7 @@ export default {
       this.sale = sale;
       this.Get_Payments(id);
     },
-    
+
   },
   //----------------------------- Created function-------------------\\
   created() {

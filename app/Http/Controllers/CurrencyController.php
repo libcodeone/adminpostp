@@ -29,8 +29,8 @@ class CurrencyController extends Controller
         // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('name', 'LIKE', "%{$request->search}%")
-                        ->orWhere('code', 'LIKE', "%{$request->search}%");
+                    return $query->where('name', 'LIKE', "%$request->search%")
+                        ->orWhere('code', 'LIKE', "%$request->search%");
                 });
             });
         $totalRows = $currencies->count();

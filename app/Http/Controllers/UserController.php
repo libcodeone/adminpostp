@@ -52,11 +52,11 @@ class UserController extends BaseController
             // Search With Multiple Param
             ->where(function ($query) use ($request) {
                 return $query->when($request->filled('search'), function ($query) use ($request) {
-                    return $query->where('username', 'LIKE', "%{$request->search}%")
-                        ->orWhere('firstname', 'LIKE', "%{$request->search}%")
-                        ->orWhere('lastname', 'LIKE', "%{$request->search}%")
-                        ->orWhere('email', 'LIKE', "%{$request->search}%")
-                        ->orWhere('phone', 'LIKE', "%{$request->search}%");
+                    return $query->where('username', 'LIKE', "%$request->search%")
+                        ->orWhere('firstname', 'LIKE', "%$request->search%")
+                        ->orWhere('lastname', 'LIKE', "%$request->search%")
+                        ->orWhere('email', 'LIKE', "%$request->search%")
+                        ->orWhere('phone', 'LIKE', "%$request->search%");
                 });
             });
         $totalRows = $Filtred->count();
