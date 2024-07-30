@@ -135,7 +135,6 @@ class ProvidersController extends BaseController
 
     public function delete_by_selection(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'delete', Provider::class);
 
         $selectedIds = $request->selectedIds;
