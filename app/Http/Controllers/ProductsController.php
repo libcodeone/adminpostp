@@ -111,7 +111,7 @@ class ProductsController extends BaseController
             }
 
             $item['stock_alert'] = (isset($product->stock_alert) && !empty($product->stock_alert)) ? $product->stock_alert : 0;
-            $item['note'] = (isset($product->note) && !empty($product->note)) ? $product->note : '';
+            $item['note'] = (isset($product->note) && !empty($product->note)) ? $product->note : 'N/A';
 
             $firstimage = explode(',', $product->image);
             $item['image'] = $firstimage[0];
@@ -726,13 +726,13 @@ class ProductsController extends BaseController
     {
         $data = [];
         $product_warehouse_data = ProductWarehouse::with('warehouse', 'product', 'productVariant')
-            ->where('warehouse_id', $id)
+            ->where('warehouse_id', '=', $id)
             ->where('deleted_at', '=', null)
             ->where(function ($query) use ($request) {
-                if ($request->stock == '1') {
-                    return $query->where('qte', '>', 0);
+                    if ($request->stock == '1')
+                        return $query->where('qte', '>', 0);
                 }
-            })->get();
+            )->get();
 
         foreach ($product_warehouse_data as $product_warehouse) {
             if ($product_warehouse["product_variant_id"]) {
@@ -786,7 +786,7 @@ class ProductsController extends BaseController
             $warehouses = json_decode(json_encode(DB::table("warehouses")->where("deleted_at", '=', null)->get()), true);
 
             foreach ($warehouses as $iKey => $warehouse) {
-                $product_qte_per_warehouse = json_decode(json_encode(DB::table("product_warehouse")->where("product_id", '=', $product_warehouse["product_id"])->where("warehouse_id", '=', $warehouse["id"])->first()), true);
+                $product_qte_per_warehouse = json_decode(json_encode(DB::table("product_warehouse")->where('deleted_at', '=', null)->where("product_id", '=', $product_warehouse["product_id"])->where("warehouse_id", '=', $warehouse["id"])->first()), true);
                 $p_qte_per_w = (isset($product_qte_per_warehouse["qte"]) && !empty($product_qte_per_warehouse["qte"])) ? $product_qte_per_warehouse["qte"] : 0;
 
                 array_push(
@@ -1317,14 +1317,14 @@ class ProductsController extends BaseController
                 foreach ($data as $iKey => $value) {
                     $productCodeIsSetAndNotEmpty = (isset($value["codigo"]) && !empty($value["codigo"])) ? true : false;
                     $productNameIsSetAndNotEmpty = (isset($value["nombre"]) && !empty($value["nombre"])) ? true : false;
-                    $productPriceIsSetAndNotEmpty = (isset($value["precio"]) && !empty($value["precio"])) ? true : false;
-                    $productCostIsSetAndNotEmpty = (isset($value["costo"]) && !empty($value["costo"])) ? true : false;
+                    $productPriceIsSetAndNotEmpty = (isset($value["precio"]) && !empty($value["precio"])) ? true : (($value["precio"] >= 0) ? true : false);
+                    $productCostIsSetAndNotEmpty = (isset($value["costo"]) && !empty($value["costo"])) ? true : (($value["costo"] >= 0) ? true : false);
                     $productUnitIsSetAndNotEmpty = (isset($value["unidad"]) && !empty($value["unidad"])) ? true : false;
                     $productNoteIsSetAndNotEmpty = (isset($value["nota"]) && !empty($value["nota"])) ? true : false;
                     $productStockAlertIsSetAndNotEmpty = (isset($value["stock"]) && !empty($value["stock"])) ? true : false;
                     $productCategoryIsSetAndNotEmpty = (isset($value["categoria"]) && !empty($value["categoria"])) ? true : false;
                     $productBrandIsSetAndNotEmpty = (isset($value["marca"]) && !empty($value["marca"])) ? true : false;
-                    $productQuantityIsSetAndNotEmpty = (isset($value["cantidad"]) && !empty($value["cantidad"])) ? true : false;
+                    $productQuantityIsSetAndNotEmpty = (isset($value["cantidad"]) && !empty($value["cantidad"])) ? true : (($value["cantidad"] >= 0) ? true : false);
 
                     if ($productCodeIsSetAndNotEmpty && $productNameIsSetAndNotEmpty && $productPriceIsSetAndNotEmpty && $productCostIsSetAndNotEmpty && $productUnitIsSetAndNotEmpty && $productCategoryIsSetAndNotEmpty && $productQuantityIsSetAndNotEmpty) {
                         $productCode = $value["codigo"];
@@ -1435,7 +1435,30 @@ class ProductsController extends BaseController
                         );
                     };
                 }
-                ProductWarehouse::insert($product_warehouse);
+
+                foreach ($product_warehouse as $key => $value) {
+                    if ($value["qte"] !== 0) {
+                        if (DB::table("product_warehouse")->where("deleted_at", '=', null)->where("product_id", '=', $value["product_id"])->where("warehouse_id", '=', $value["warehouse_id"])->exists()) {
+                            $currentQte = json_decode(json_encode(DB::table("product_warehouse")->where("deleted_at", '=', null)->where("product_id", '=', $value["product_id"])->where("warehouse_id", '=', $value["warehouse_id"])->pluck("qte")->first()), true);
+
+                            DB::table("product_warehouse")->where("deleted_at", '=', null)->where("product_id", '=', $value["product_id"])->where("warehouse_id", '=', $value["warehouse_id"])->update(
+                                [
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    'qte' => $value["qte"] + $currentQte,
+                                ]
+                            );
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $value["product_id"],
+                                    "warehouse_id" => $value["warehouse_id"],
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $value["qte"]
+                                ]
+                            );
+                        }
+                    }
+                }
 
                 if (isset($writer) && isset($csvFilePath))
                     unlink($csvFilePath);

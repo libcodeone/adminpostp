@@ -723,7 +723,7 @@ class PosController extends BaseController
             $warehouses = json_decode(json_encode(DB::table("warehouses")->where("deleted_at", '=', null)->get()), true);
 
             foreach ($warehouses as $iKey => $warehouse) {
-                $product_qte_per_warehouse = json_decode(json_encode(DB::table("product_warehouse")->where("product_id", '=', $product_warehouse["product_id"])->where("warehouse_id", '=', $warehouse["id"])->first()), true);
+                $product_qte_per_warehouse = json_decode(json_encode(DB::table("product_warehouse")->where('deleted_at', '=', null)->where("product_id", '=', $product_warehouse["product_id"])->where("warehouse_id", '=', $warehouse["id"])->first()), true);
                 $p_qte_per_w = (isset($product_qte_per_warehouse["qte"]) && !empty($product_qte_per_warehouse["qte"])) ? $product_qte_per_warehouse["qte"] : 0;
 
                 array_push(

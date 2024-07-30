@@ -124,20 +124,22 @@ class ClientController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'update', Client::class);
 
-        Client::whereId($id)->update([
-            'name' => $request['name'],
-            'adresse' => $request['adresse'],
-            'phone' => $request['phone'],
-            'email' => $request['email'],
-            'country' => $request['country'],
-            'city' => $request['city'],
-            'NIT' => $request['NIT'],
-            'DUI' => $request['DUI'],
-            'NRC' => $request['NRC'],
-            'giro' => $request['giro'],
-            'big_consumer' => $request['big_consumer'],
-            'final_consumer' => $request['final_consumer'],
-        ]);
+        Client::whereId($id)->update(
+            [
+                'name' => $request['name'],
+                'adresse' => $request['adresse'],
+                'phone' => $request['phone'],
+                'email' => $request['email'],
+                'country' => $request['country'],
+                'city' => $request['city'],
+                'NIT' => $request['NIT'],
+                'DUI' => $request['DUI'],
+                'NRC' => $request['NRC'],
+                'giro' => $request['giro'],
+                'big_consumer' => $request['big_consumer'],
+                'final_consumer' => $request['final_consumer'],
+            ]
+        );
         return response()->json(['success' => true]);
 
     }
@@ -148,9 +150,11 @@ class ClientController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'delete', Client::class);
 
-        Client::whereId($id)->update([
-            'deleted_at' => Carbon::now(),
-        ]);
+        Client::whereId($id)->update(
+            [
+                'deleted_at' => Carbon::now(),
+            ]
+        );
         return response()->json(['success' => true]);
     }
 
