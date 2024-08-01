@@ -98,6 +98,8 @@ class UserController extends BaseController
         $user['warehouse_name'] = (isset($user['warehouse_id']) && !empty($user['warehouse_id'])) ? DB::table("warehouses")->where("id", '=', $user['warehouse_id'])->pluck("name")->first() : "N/A";
         $user['authorizedCode'] = Auth::user()->authorizedCode;
         $user['roles'] = (array)json_decode(json_encode(DB::table("roles")->where("id", '=', Auth::user()->role_id)->first()), true);
+        $user['role_name'] = json_decode(json_encode(DB::table("roles")->where("id", '=', Auth::user()->role_id)->pluck("name")->first()), true);
+        $user['role_name'] = strtolower($user['role_name']);
 
         $permissions = Auth::user()->roles->first()->permissions->pluck('name');
         $products_alerts = ProductWarehouse::join('products', 'product_warehouse.product_id', '=', 'products.id')

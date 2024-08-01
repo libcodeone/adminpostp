@@ -42,15 +42,16 @@
                 </div>
                 <div slot="table-actions" class="mb-3">
                     <b-button
-                        v-if="currentUser.warehouse_id !== null"
-                        @click="resetStock()"
+                        v-if="currentUser.role_name === 'owner' && currentUser.warehouse_id !== null"
+                        @click="showResetStockModal(currentUser.warehouse_id)"
                         size="sm"
                         variant="primary mb-1 ml-1 mr-1"
                     >
                         <i class="i-Recycling-2"></i> Reiniciar Stock de {{ currentUser.warehouse_name }}
                     </b-button>
                     <b-button
-                        @click="resetWholeStock()"
+                        v-if="currentUser.role_name === 'owner'"
+                        @click="showResetStockModal(0)"
                         size="sm"
                         variant="danger mb-1 ml-1 mr-1"
                     >
@@ -263,6 +264,44 @@
                     </div>
                 </div>
             </b-sidebar>
+
+            <b-modal
+                size="md"
+                hide-footer
+                :no-close-on-esc="true"
+                :no-close-on-backdrop="true"
+                id="resetStockModalConfirmation"
+                :title="`Confirmación de reinicio de stock de ${warehouseOption}`"
+            >
+                <b-form>
+                    <b-row
+                        style="align-items: center; display: flex; justify-content: space-evenly; margin: 1rem 0 0 0;"
+                    >
+                        <b-col style="align-items: center; justify-content: center;">
+                            <b-button
+                                type="button"
+                                variant="primary"
+                                size="sm"
+                                block
+                                @click="resetStock()"
+                            >
+                                Reiniciar stock de {{ warehouseOption }}
+                            </b-button>
+                        </b-col>
+                        <b-col style="align-items: center; justify-content: center;">
+                            <b-button
+                                type="button"
+                                variant="danger"
+                                size="sm"
+                                block
+                                @click="exitModal"
+                            >
+                                Cerrar
+                            </b-button>
+                        </b-col>
+                    </b-row>
+                </b-form>
+            </b-modal>
 
             <!-- Modal Show Import Products -->
             <b-modal
@@ -587,6 +626,8 @@ export default {
                     ]
                 ]
             ),
+            warehouseOption: "",
+            resetStockOption: null,
             section: "products",
             serverParams: {
                 sort: {
@@ -941,17 +982,31 @@ export default {
             }
         },
 
+        showResetStockModal(option) {
+            this.resetStockOption = option;
+            this.warehouseOption = (this.resetStockOption === 0) ? "todas las sucursales" : this.currentUser.warehouse_name;
+            this.$bvModal.show("resetStockModalConfirmation");
+        },
+
+        exitModal() {
+            this.resetStockOption = null;
+            this.$bvModal.hide("resetStockModalConfirmation");
+        },
+
         resetStock() {
             // Start the progress bar.
             NProgress.start();
             NProgress.set(0.1);
 
             axios.get(
-                    "products/reset_stock?allWarehouses=no&warehouse_id=" + this.currentUser.warehouse_id
+                    `products/reset_stock?allWarehouses=${(this.resetStockOption === 0) ? "yes" : "no"}&warehouse_id=${(this.resetStockOption === 0) ? 'null' : this.resetStockOption}`
                 )
                 .then(response => {
                     // Complete the animation of the progress bar.
                     NProgress.done();
+
+                    this.resetStockOption = null;
+                    this.$bvModal.hide("resetStockModalConfirmation");
 
                     if (response.data.success) {
                         this.makeToast(
@@ -975,47 +1030,10 @@ export default {
                 .catch(() => {
                     // Complete the animation of the progress bar.
                     NProgress.done();
-                    setTimeout(() => {
-                        this.isLoading = false;
-                    }, 500);
-                }
-            );
-        },
 
-        resetWholeStock() {
-            // Start the progress bar.
-            NProgress.start();
-            NProgress.set(0.1);
+                    this.resetStockOption = null;
+                    this.$bvModal.hide("resetStockModalConfirmation");
 
-            axios.get(
-                    "products/reset_stock?allWarehouses=yes&warehouse_id=null"
-                )
-                .then(response => {
-                    // Complete the animation of the progress bar.
-                    NProgress.done();
-
-                    if (response.data.success) {
-                        this.makeToast(
-                            "success",
-                            response.data.message,
-                            this.$t("Success")
-                        );
-                    } else {
-                        console.log(response.data.errors);
-
-                        this.makeToast(
-                            "failed",
-                            response.data.message,
-                            this.$t("Failed")
-                        );
-                    }
-
-                    this.Get_Products(1);
-                }
-            )
-                .catch(() => {
-                    // Complete the animation of the progress bar.
-                    NProgress.done();
                     setTimeout(() => {
                         this.isLoading = false;
                     }, 500);

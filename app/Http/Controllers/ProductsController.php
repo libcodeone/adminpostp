@@ -134,7 +134,7 @@ class ProductsController extends BaseController
     public function resetStock(Request $request) {
         $this->authorizeForUser($request->user('api'), 'create', Product::class);
 
-        $warehouseId = (int)$request->warehouse_id;
+        $warehouseId = ($request->warehouse_id !== "null") ? (int)$request->warehouse_id : null;
         $resetAllWarehouses = $request->allWarehouses;
 
         try {
