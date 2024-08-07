@@ -11,7 +11,7 @@ use App\Models\Role;
 use App\Models\Warehouse;
 use App\utils\helpers;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -28,7 +28,7 @@ class AdjustmentController extends BaseController
 
         // How many items do you want to display.
         $perPage = $request->limit;
-        $pageStart = \Request::get('page', 1);
+        $pageStart = $request->get('page', 1);
         // Start displaying items from this number;
         $offSet = ($pageStart * $perPage) - $perPage;
         $order = $request->SortField;
@@ -89,14 +89,13 @@ class AdjustmentController extends BaseController
 
     public function store(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'create', Adjustment::class);
 
         request()->validate([
             'warehouse_id' => 'required',
         ]);
 
-        \DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
             $order = new Adjustment;
             $order->date = $request->date;
             $order->Ref = $this->getNumberOrder();
@@ -127,7 +126,7 @@ class AdjustmentController extends BaseController
 
                         if ($product_warehouse) {
                             $product_warehouse->qte += $value['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->update();
                         }
 
                     } else {
@@ -138,7 +137,7 @@ class AdjustmentController extends BaseController
 
                         if ($product_warehouse) {
                             $product_warehouse->qte += $value['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->update();
                         }
                     }
                 } else {
@@ -152,7 +151,7 @@ class AdjustmentController extends BaseController
 
                         if ($product_warehouse) {
                             $product_warehouse->qte -= $value['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->update();
                         }
 
                     } else {
@@ -163,7 +162,7 @@ class AdjustmentController extends BaseController
 
                         if ($product_warehouse) {
                             $product_warehouse->qte -= $value['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->update();
                         }
                     }
                 }
@@ -194,7 +193,7 @@ class AdjustmentController extends BaseController
             'warehouse_id' => 'required',
         ]);
 
-        \DB::transaction(function () use ($request, $id, $current_adjustment) {
+        DB::transaction(function () use ($request, $id, $current_adjustment) {
 
             $old_adjustment_details = AdjustmentDetail::where('adjustment_id', $id)->get();
             $new_adjustment_details = $request['details'];
@@ -354,7 +353,7 @@ class AdjustmentController extends BaseController
     {
         $this->authorizeForUser($request->user('api'), 'delete', Adjustment::class);
 
-        \DB::transaction(function () use ($id, $request) {
+        DB::transaction(function () use ($id, $request) {
             $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $Adjustment = Adjustment::findOrFail($id);
@@ -380,7 +379,7 @@ class AdjustmentController extends BaseController
     public function delete_by_selection(Request $request)
     {
         $this->authorizeForUser($request->user('api'), 'delete', Adjustment::class);
-        \DB::transaction(function () use ($request) {
+        DB::transaction(function () use ($request) {
             $role = Auth::user()->roles->first();
             $view_records = Role::findOrFail($role->id)->inRole('record_view');
             $selectedIds = $request->selectedIds;
@@ -407,7 +406,6 @@ class AdjustmentController extends BaseController
 
     public function getNumberOrder()
     {
-
         $last = DB::table('adjustments')->latest('id')->first();
 
         if ($last) {
@@ -497,7 +495,7 @@ class AdjustmentController extends BaseController
                     ->where('warehouse_id', $Adjustment_data->warehouse_id)
                     ->where('product_variant_id', '=', null)
                     ->first();
-                    
+
                     $data['id'] = $detail->id;
                     $data['detail_id'] = $detail_id += 1;
                     $data['quantity'] = $detail->quantity;
