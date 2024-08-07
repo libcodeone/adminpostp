@@ -1052,12 +1052,15 @@ class SalesController extends BaseController
         $settings = Setting::where('deleted_at', '=', null)->first();
         $symbol = $helpers->Get_Currency();
 
-        $pdf = PDF::loadView('pdf.sale_pdf', [
-            'symbol' => $symbol,
-            'setting' => $settings,
-            'sale' => $sale,
-            'details' => $details,
-        ]);
+        $pdf = PDF::loadview(
+            "pdf.sale_pdf",
+            [
+                'symbol' => $symbol,
+                'setting' => $settings,
+                'sale' => $sale,
+                'details' => $details,
+            ]
+        );
 
         return $pdf->download('Sale.pdf');
     }

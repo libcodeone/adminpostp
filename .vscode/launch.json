@@ -9,17 +9,6 @@
             "type": "php",
             "request": "launch",
             "port": 9000
-        },
-        {
-            "type": "msedge",
-            "request": "launch",
-            "name": "VueJS: Edge",
-            "url": "http://192.168.0.15:7000",
-            "webRoot": "${workspaceFolder}/resources/js",
-            // "breakOnLoad": true,
-            "sourceMapPathOverrides": {
-                "webpack:///./resources/js/*": "${webRoot}/*"
-            }
         }
     ]
 }
