@@ -127,8 +127,18 @@ class AdjustmentController extends BaseController
                         if ($product_warehouse) {
                             $product_warehouse->qte += $value['quantity'];
                             $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $value["product_id"],
+                                    "product_variant_id" => $value["product_variant_id"],
+                                    "warehouse_id" => $order->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $value["quantity"]
+                                ]
+                            );
                         }
-
                     } else {
                         $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $order->warehouse_id)
@@ -138,6 +148,16 @@ class AdjustmentController extends BaseController
                         if ($product_warehouse) {
                             $product_warehouse->qte += $value['quantity'];
                             $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $value["product_id"],
+                                    "warehouse_id" => $order->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $value["quantity"]
+                                ]
+                            );
                         }
                     }
                 } else {
@@ -152,6 +172,17 @@ class AdjustmentController extends BaseController
                         if ($product_warehouse) {
                             $product_warehouse->qte -= $value['quantity'];
                             $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $value["product_id"],
+                                    "product_variant_id" => $value["product_variant_id"],
+                                    "warehouse_id" => $order->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $value["quantity"]
+                                ]
+                            );
                         }
 
                     } else {
@@ -163,6 +194,16 @@ class AdjustmentController extends BaseController
                         if ($product_warehouse) {
                             $product_warehouse->qte -= $value['quantity'];
                             $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $value["product_id"],
+                                    "warehouse_id" => $order->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $value["quantity"]
+                                ]
+                            );
                         }
                     }
                 }
@@ -177,7 +218,6 @@ class AdjustmentController extends BaseController
 
     public function update(Request $request, $id)
     {
-
         $this->authorizeForUser($request->user('api'), 'update', Adjustment::class);
         $role = Auth::user()->roles->first();
         $view_records = Role::findOrFail($role->id)->inRole('record_view');
@@ -210,7 +250,6 @@ class AdjustmentController extends BaseController
             foreach ($old_adjustment_details as $key => $value) {
                 $old_products_id[] = $value->id;
                 if ($value['type'] == "add") {
-
                     if ($value['product_variant_id'] !== null) {
                         $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $current_adjustment->warehouse_id)
@@ -219,8 +258,19 @@ class AdjustmentController extends BaseController
                             ->first();
 
                         if ($product_warehouse) {
-                            $product_warehouse->qte -= $value['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->qte += $value['quantity'];
+                            $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $value["product_id"],
+                                    "product_variant_id" => $value["product_variant_id"],
+                                    "warehouse_id" => $current_adjustment->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $value["quantity"]
+                                ]
+                            );
                         }
 
                     } else {
@@ -230,8 +280,18 @@ class AdjustmentController extends BaseController
                             ->first();
 
                         if ($product_warehouse) {
-                            $product_warehouse->qte -= $value['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->qte += $value['quantity'];
+                            $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $value["product_id"],
+                                    "warehouse_id" => $current_adjustment->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $value["quantity"]
+                                ]
+                            );
                         }
                     }
                 } else {
@@ -243,8 +303,19 @@ class AdjustmentController extends BaseController
                             ->first();
 
                         if ($product_warehouse) {
-                            $product_warehouse->qte += $value['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->qte -= $value['quantity'];
+                            $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $value["product_id"],
+                                    "product_variant_id" => $value["product_variant_id"],
+                                    "warehouse_id" => $current_adjustment->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $value["quantity"]
+                                ]
+                            );
                         }
 
                     } else {
@@ -254,8 +325,18 @@ class AdjustmentController extends BaseController
                             ->first();
 
                         if ($product_warehouse) {
-                            $product_warehouse->qte += $value['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->qte -= $value['quantity'];
+                            $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $value["product_id"],
+                                    "warehouse_id" => $current_adjustment->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $value["quantity"]
+                                ]
+                            );
                         }
                     }
                 }
@@ -281,9 +362,19 @@ class AdjustmentController extends BaseController
 
                         if ($product_warehouse) {
                             $product_warehouse->qte += $product_detail['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $product_detail["product_id"],
+                                    "product_variant_id" => $product_detail["product_variant_id"],
+                                    "warehouse_id" => $request->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $product_detail["quantity"]
+                                ]
+                            );
                         }
-
                     } else {
                         $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
                             ->where('warehouse_id', $request->warehouse_id)
@@ -292,7 +383,17 @@ class AdjustmentController extends BaseController
 
                         if ($product_warehouse) {
                             $product_warehouse->qte += $product_detail['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $product_detail["product_id"],
+                                    "warehouse_id" => $request->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $product_detail["quantity"]
+                                ]
+                            );
                         }
                     }
                 } else {
@@ -305,7 +406,18 @@ class AdjustmentController extends BaseController
 
                         if ($product_warehouse) {
                             $product_warehouse->qte -= $product_detail['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $product_detail["product_id"],
+                                    "product_variant_id" => $product_detail["product_variant_id"],
+                                    "warehouse_id" => $request->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $product_detail["quantity"]
+                                ]
+                            );
                         }
 
                     } else {
@@ -316,7 +428,17 @@ class AdjustmentController extends BaseController
 
                         if ($product_warehouse) {
                             $product_warehouse->qte -= $product_detail['quantity'];
-                            $product_warehouse->save();
+                            $product_warehouse->update();
+                        } else {
+                            DB::table("product_warehouse")->insert(
+                                [
+                                    "product_id" => $product_detail["product_id"],
+                                    "warehouse_id" => $request->warehouse_id,
+                                    "created_at" => date("Y-m-d H:i:s.mmm"),
+                                    "updated_at" => date("Y-m-d H:i:s.mmm"),
+                                    "qte" => $product_detail["quantity"]
+                                ]
+                            );
                         }
                     }
                 }
