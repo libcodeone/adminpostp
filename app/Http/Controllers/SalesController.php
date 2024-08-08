@@ -270,7 +270,7 @@ class SalesController extends BaseController
                             } else {
                                 $product_warehouse->qte -= $value['quantity'] * $unit['unitSale']->operator_value;
                             }
-                            $product_warehouse->save();
+                            $product_warehouse->update();
                         }
                     } else {
                         $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
@@ -284,7 +284,7 @@ class SalesController extends BaseController
                             } else {
                                 $product_warehouse->qte -= $value['quantity'] * $unit['unitSale']->operator_value;
                             }
-                            $product_warehouse->save();
+                            $product_warehouse->update();
                         }
                     }
                 }
@@ -460,7 +460,7 @@ class SalesController extends BaseController
                             } else {
                                 $product_warehouse->qte += $value['quantity'] * $unit['unitSale']->operator_value;
                             }
-                            $product_warehouse->save();
+                            $product_warehouse->update();
                         }
                     } else {
                         $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
@@ -473,7 +473,7 @@ class SalesController extends BaseController
                             } else {
                                 $product_warehouse->qte += $value['quantity'] * $unit['unitSale']->operator_value;
                             }
-                            $product_warehouse->save();
+                            $product_warehouse->update();
                         }
                     }
                 }
@@ -507,7 +507,7 @@ class SalesController extends BaseController
                             } else {
                                 $product_warehouse->qte -= $prod_detail['quantity'] * $unit_prod['unitSale']->operator_value;
                             }
-                            $product_warehouse->save();
+                            $product_warehouse->update();
                         }
                     } else {
                         $product_warehouse = ProductWarehouse::where('deleted_at', '=', null)
@@ -521,7 +521,7 @@ class SalesController extends BaseController
                             } else {
                                 $product_warehouse->qte -= $prod_detail['quantity'] * $unit_prod['unitSale']->operator_value;
                             }
-                            $product_warehouse->save();
+                            $product_warehouse->update();
                         }
                     }
                 }
@@ -604,8 +604,10 @@ class SalesController extends BaseController
             $unit["unitSale"] = json_decode(json_encode(DB::table("units")->where("id", $unit["unit_sale_id"])->first()), true);
 
             if ($sale_details["product_variant_id"] !== null) {
-                $productWarehouse = ProductWarehouse::where("warehouse_id", $current_Sale->warehouse_id)
-                    ->where("product_id", $sale_details["product_id"])->where("product_variant_id", $sale_details["product_variant_id"])
+                $productWarehouse = ProductWarehouse::where("deleted_at", '=', null)
+                    ->where("warehouse_id", $current_Sale->warehouse_id)
+                    ->where("product_id", $sale_details["product_id"])
+                    ->where("product_variant_id", $sale_details["product_variant_id"])
                     ->first();
 
                 if ($unit && $productWarehouse) {
@@ -614,11 +616,12 @@ class SalesController extends BaseController
                     else
                         $productWarehouse->qte -= $sale_details["quantity"] * $unit["unitSale"]["operator_value"];
 
-                    $productWarehouse->save();
+                    $productWarehouse->update();
                 }
             } else {
-                $productWarehouse = ProductWarehouse::where("warehouse_id", $current_Sale->warehouse_id)
-                    ->where("product_id", $sale_details["product_id"])
+                $productWarehouse = ProductWarehouse::where("deleted_at", '=', null)
+                    ->where("warehouse_id", '=', $current_Sale->warehouse_id)
+                    ->where("product_id", '=', $sale_details["product_id"])
                     ->first();
 
                 if ($unit && $productWarehouse) {
@@ -627,7 +630,7 @@ class SalesController extends BaseController
                     else
                         $productWarehouse->qte -= $sale_details["quantity"] * $unit["unitSale"]["operator_value"];
 
-                    $productWarehouse->save();
+                    $productWarehouse->update();
                 }
             }
         }
@@ -1069,7 +1072,6 @@ class SalesController extends BaseController
 
     public function create(Request $request)
     {
-
         $this->authorizeForUser($request->user('api'), 'create', Sale::class);
 
         $warehouses = Warehouse::where('deleted_at', '=', null)->get(['id', 'name']);
