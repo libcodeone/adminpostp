@@ -98,8 +98,24 @@
                   <b-col md="6" class="mb-2">
                     <validation-provider name="Barcode Symbology" :rules="{ required: true}">
                       <b-form-group slot-scope="{ valid, errors }" :label="$t('BarcodeSymbology')">
-                        <v-select
+                        <!-- <v-select
                           @input="changeTypeBarcode"
+                          :class="{'is-invalid': !!errors.length}"
+                          :state="errors[0] ? false : (valid ? true : null)"
+                          v-model="product.Type_barcode"
+                          :reduce="label => label.value"
+                          :placeholder="$t('Choose_Symbology')"
+                          :options="
+                              [
+                                {label: 'Code 128', value: 'CODE128'},
+                                {label: 'Code 39', value: 'CODE39'},
+                                {label: 'EAN8', value: 'EAN8'},
+                                {label: 'EAN13', value: 'EAN13'},
+                                {label: 'UPC', value: 'UPC'},
+                              ]"
+                        ></v-select> -->
+
+                        <v-select
                           :class="{'is-invalid': !!errors.length}"
                           :state="errors[0] ? false : (valid ? true : null)"
                           v-model="product.Type_barcode"
