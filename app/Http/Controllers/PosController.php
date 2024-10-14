@@ -12,8 +12,8 @@ use App\Models\ProductWarehouse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\ProductPriceModification;
+// use Illuminate\Support\Facades\Mail;
+// use App\Mail\ProductPriceModification;
 use Illuminate\Database\Eloquent\Builder;
 
 class PosController extends BaseController
@@ -179,7 +179,7 @@ class PosController extends BaseController
                 }
             }
 
-            $saleDetailsData = null;
+            $saleDetailsData = [];
 
             $productsTotalAmount = 0;
             $dividedTaxWithHeld = 0.00;
@@ -310,10 +310,12 @@ class PosController extends BaseController
                 array_push($booleansArray, $boolean);
             }
 
+            /*
             if (in_array(true, $booleansArray)) {
                 $this->Set_config_mail();
                 Mail::to($data["email"])->send(new ProductPriceModification($data, $saleDetailsData));
             }
+            */
 
             DB::table("sale_details")->insert($orderDetails);
 
