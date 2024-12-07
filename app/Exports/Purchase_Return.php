@@ -39,7 +39,7 @@ class Purchase_Return implements FromArray, WithHeadings, ShouldAutoSize, WithEv
                 $item['GrandTotal'] = number_format($purchase_return->GrandTotal, 2);
                 $item['Paid'] = number_format($purchase_return->paid_amount, 2);
                 $item['due'] = number_format($purchase_return->GrandTotal - $purchase_return->paid_amount, 2);
-                $item['payment_status'] = $purchase_return->payment_statut;
+                $item['payment_statut'] = $purchase_return->payment_statut;
 
                 $data[] = $item;
             }

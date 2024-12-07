@@ -14,9 +14,25 @@ class Product extends Model implements Auditable
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'code', 'codeAN', 'Type_barcode', 'name', 'cost', 'price', 'unit_id', 'unit_sale_id', 'unit_purchase_id',
-        'stock_alert', 'category_id', 'sub_category_id', 'is_variant',
-        'tax_method', 'image', 'brand_id', 'is_active', 'note',
+        'code',
+        'codeAN',
+        'Type_barcode',
+        'name',
+        'cost',
+        'price',
+        'unit_id',
+        'unit_sale_id',
+        'unit_purchase_id',
+        'stock_alert',
+        'category_id',
+        'sub_category_id',
+        'is_variant',
+        'tax_method',
+        'image',
+        'brand_id',
+        'is_active',
+        'note',
+        'tipoItem'
     ];
 
     protected $casts = [
@@ -54,7 +70,8 @@ class Product extends Model implements Auditable
         return $this->belongsTo('App\Models\QuotationDetail');
     }
 
-    public function categories(){
+    public function categories()
+    {
         return $this->belongsToMany('App\Models\Category')->withTimestamps();
     }
 
@@ -77,5 +94,4 @@ class Product extends Model implements Auditable
     {
         return $this->belongsTo('App\Models\Brand');
     }
-
 }

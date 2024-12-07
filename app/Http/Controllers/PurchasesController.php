@@ -117,7 +117,7 @@ class PurchasesController extends BaseController
             $item['GrandTotal'] = number_format($Purchase->GrandTotal, 2, '.', '');
             $item['paid_amount'] = number_format($Purchase->paid_amount, 2, '.', '');
             $item['due'] = number_format($Purchase->GrandTotal - $Purchase->paid_amount, 2, '.', '');
-            $item['payment_status'] = $Purchase->payment_statut;
+            $item['payment_statut'] = $Purchase->payment_statut;
 
             $data[] = $item;
         }
@@ -523,7 +523,7 @@ class PurchasesController extends BaseController
         $purchase_data['GrandTotal'] = $purchase->GrandTotal;
         $purchase_data['paid_amount'] = $purchase->paid_amount;
         $purchase_data['due'] = $purchase->GrandTotal - $purchase->paid_amount;
-        $purchase_data['payment_status'] = $purchase->payment_statut;
+        $purchase_data['payment_statut'] = $purchase->payment_statut;
 
         foreach ($purchase['details'] as $detail) {
             if ($detail->product_variant_id) {
@@ -647,7 +647,7 @@ class PurchasesController extends BaseController
         $purchase['Ref'] = $Purchase_data->Ref;
         $purchase['date'] = $Purchase_data->date;
         $purchase['GrandTotal'] = number_format($Purchase_data->GrandTotal, 2, '.', '');
-        $purchase['payment_status'] = $Purchase_data->payment_statut;
+        $purchase['payment_statut'] = $Purchase_data->payment_statut;
 
         $detail_id = 0;
         foreach ($Purchase_data['details'] as $detail) {
@@ -873,16 +873,16 @@ class PurchasesController extends BaseController
         $receiverNumber = $Purchase['provider']->phone;
         $message = "Dear" .' '.$Purchase['provider']->name." \n We are contacting you in regard to a purchase order #".$Purchase->Ref.' '.$url.' '. "that has been created on your account. \n We look forward to conducting future business with you.";
         try {
-  
+
             $account_sid = env("TWILIO_SID");
             $auth_token = env("TWILIO_TOKEN");
             $twilio_number = env("TWILIO_FROM");
-  
+
             $client = new Client_Twilio($account_sid, $auth_token);
             $client->messages->create($receiverNumber, [
-                'from' => $twilio_number, 
+                'from' => $twilio_number,
                 'body' => $message]);
-    
+
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }

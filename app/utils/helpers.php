@@ -47,7 +47,7 @@ class helpers
                                     $query->where($fieldValue, '=', $requestFieldValue);
                                 }, '>=', 1)->get();
                             } else
-                                $model->where($fieldValue,$requestFieldValue);
+                                $model->where($fieldValue, '=', $requestFieldValue);
                         }
                     );
                 }

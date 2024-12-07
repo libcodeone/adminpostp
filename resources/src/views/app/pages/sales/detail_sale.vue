@@ -78,11 +78,11 @@
               <div>
                 {{$t('PaymentStatus')}} :
                 <span
-                  v-if="sale.payment_status == 'paid'"
+                  v-if="sale.payment_statut == 'paid'"
                   class="badge badge-outline-success"
                 >{{$t('Paid')}}</span>
                 <span
-                  v-else-if="sale.payment_status == 'partial'"
+                  v-else-if="sale.payment_statut == 'partial'"
                   class="badge badge-outline-primary"
                 >{{$t('partial')}}</span>
                 <span v-else class="badge badge-outline-warning">{{$t('Unpaid')}}</span>
@@ -239,7 +239,7 @@
                 <div class="col-1">
                   <span class="h5 text-uppercase">
                    {{ detail_invoice.quantity }}
-                 
+
                       </span>
                 </div>
 

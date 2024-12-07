@@ -41,7 +41,7 @@ class SalesExport implements FromArray, WithHeadings, ShouldAutoSize, WithEvents
                 $item['GrandTotal'] = number_format($sale->GrandTotal, 2);
                 $item['Paid'] = number_format($sale->paid_amount, 2);
                 $item['due'] = number_format($sale->GrandTotal - $sale->paid_amount, 2);
-                $item['payment_status'] = $sale->payment_statut;
+                $item['payment_statut'] = $sale->payment_statut;
 
                 $data[] = $item;
             }

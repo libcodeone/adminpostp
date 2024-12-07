@@ -19,7 +19,6 @@ class Unit extends Model implements Auditable
         'base_unit' => 'integer',
         'operator_value' => 'float',
         'is_active' => 'integer',
-
     ];
 
 }

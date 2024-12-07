@@ -272,7 +272,7 @@ class ReportController extends BaseController
             $item['GrandTotal'] = $Sale['GrandTotal'];
             $item['paid_amount'] = $Sale['paid_amount'];
             $item['due'] = $Sale['GrandTotal'] - $Sale['paid_amount'];
-            $item['payment_status'] = $Sale['payment_statut'];
+            $item['payment_statut'] = $Sale['payment_statut'];
 
             $data[] = $item;
         }
@@ -409,7 +409,7 @@ class ReportController extends BaseController
             $item_sale['GrandTotal'] = $Sale['GrandTotal'];
             $item_sale['paid_amount'] = $Sale['paid_amount'];
             $item_sale['due'] = $Sale['GrandTotal'] - $Sale['paid_amount'];
-            $item_sale['payment_status'] = $Sale['payment_statut'];
+            $item_sale['payment_statut'] = $Sale['payment_statut'];
 
             $last_sales[] = $item_sale;
         }
@@ -571,7 +571,7 @@ class ReportController extends BaseController
             $item['GrandTotal'] = $sale->GrandTotal;
             $item['paid_amount'] = $sale->paid_amount;
             $item['due'] = $sale->GrandTotal - $sale->paid_amount;
-            $item['payment_status'] = $sale->payment_statut;
+            $item['payment_statut'] = $sale->payment_statut;
 
             $data[] = $item;
         }
@@ -695,7 +695,7 @@ class ReportController extends BaseController
             $item['GrandTotal'] = $Sale_Return["GrandTotal"];
             $item['paid_amount'] = $Sale_Return["paid_amount"];
             $item['due'] = $Sale_Return["GrandTotal"] - $Sale_Return["paid_amount"];
-            $item['payment_status'] = $Sale_Return["payment_statut"];
+            $item['payment_statut'] = $Sale_Return["payment_statut"];
 
             $data[] = $item;
         }
@@ -767,7 +767,7 @@ class ReportController extends BaseController
             $item['GrandTotal'] = $Purchase['GrandTotal'];
             $item['paid_amount'] = $Purchase['paid_amount'];
             $item['due'] = $Purchase['GrandTotal'] - $Purchase['paid_amount'];
-            $item['payment_status'] = $Purchase['payment_statut'];
+            $item['payment_statut'] = $Purchase['payment_statut'];
 
             $data[] = $item;
         }
@@ -840,7 +840,7 @@ class ReportController extends BaseController
             $item['GrandTotal'] = $Sale['GrandTotal'];
             $item['paid_amount'] = $Sale['paid_amount'];
             $item['due'] = $Sale['GrandTotal'] - $Sale['paid_amount'];
-            $item['payment_status'] = $Sale['payment_statut'];
+            $item['payment_statut'] = $Sale['payment_statut'];
 
             $data[] = $item;
         }
@@ -946,7 +946,7 @@ class ReportController extends BaseController
             $item['GrandTotal'] = $purchase->GrandTotal;
             $item['paid_amount'] = $purchase->paid_amount;
             $item['due'] = $purchase->GrandTotal - $purchase->paid_amount;
-            $item['payment_status'] = $purchase->payment_statut;
+            $item['payment_statut'] = $purchase->payment_statut;
 
             $data[] = $item;
         }
@@ -1040,7 +1040,7 @@ class ReportController extends BaseController
             $item['GrandTotal'] = $Purchase_Return["GrandTotal"];
             $item['paid_amount'] = $Purchase_Return["paid_amount"];
             $item['due'] = $Purchase_Return["GrandTotal"] - $Purchase_Return["paid_amount"];
-            $item['payment_status'] = $Purchase_Return["payment_statut"];
+            $item['payment_statut'] = $Purchase_Return["payment_statut"];
 
             $data[] = $item;
         }
@@ -1173,7 +1173,7 @@ class ReportController extends BaseController
             $item['GrandTotal'] = $sale["GrandTotal"];
             $item['paid_amount'] = $sale["paid_amount"];
             $item['due'] = $sale["GrandTotal"] - $sale["paid_amount"];
-            $item['payment_status'] = $sale["payment_statut"];
+            $item['payment_statut'] = $sale["payment_statut"];
 
             $data[] = $item;
         }
@@ -1301,7 +1301,7 @@ class ReportController extends BaseController
             $item['GrandTotal'] = $Sale_Return["GrandTotal"];
             $item['paid_amount'] = $Sale_Return["paid_amount"];
             $item['due'] = $Sale_Return["GrandTotal"] - $Sale_Return["paid_amount"];
-            $item['payment_status'] = $Sale_Return["payment_statut"];
+            $item['payment_statut'] = $Sale_Return["payment_statut"];
 
             $data[] = $item;
         }
@@ -1368,7 +1368,7 @@ class ReportController extends BaseController
             $item['GrandTotal'] = $Purchase_Return["GrandTotal"];
             $item['paid_amount'] = $Purchase_Return["paid_amount"];
             $item['due'] = $Purchase_Return["GrandTotal"] - $Purchase_Return["paid_amount"];
-            $item['payment_status'] = $Purchase_Return["payment_statut"];
+            $item['payment_statut'] = $Purchase_Return["payment_statut"];
 
             $data[] = $item;
         }

@@ -15,7 +15,7 @@
             <div><strong> Date: </strong>{{$return_sale['date']}}</div>
             <div><strong> Number: </strong> {{$return_sale['Ref']}}</div>
             <div><strong> Status: </strong> {{$return_sale['statut']}}</div>
-            <div><strong> Payment Status: </strong> {{$return_sale['payment_status']}}</div>
+            <div><strong> Payment Status: </strong> {{$return_sale['payment_statut']}}</div>
 
          </div>
          <div id="Title-heading">
@@ -77,7 +77,7 @@
                   </tr>
                </thead>
                <tbody>
-                  @foreach ($details as $detail)    
+                  @foreach ($details as $detail)
                   <tr>
                      <td>{{$detail['code']}} ({{$detail['name']}})</td>
                      <td>{{$detail['price']}} {{$symbol}}</td>

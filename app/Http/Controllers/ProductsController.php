@@ -194,6 +194,7 @@ class ProductsController extends BaseController
                 'Type_barcode' => 'required',
                 'price' => 'required',
                 'category_id' => 'required',
+                'tax_id' => 'required',
                 'cost' => 'required',
                 'unit_id' => 'required',
             ], [
@@ -203,13 +204,12 @@ class ProductsController extends BaseController
 
 
             DB::transaction(function () use ($request) {
-
-
                 //-- Create New Product
                 $Product = new Product;
 
                 //-- Field Required
                 $Product->name = $request['name'];
+                $Product->tipoItem = $request['tipoItem'];
                 $Product->code = $request['code'];
                 $Product->Type_barcode = $request['Type_barcode'];
                 $Product->price = $request['price'];
@@ -226,25 +226,38 @@ class ProductsController extends BaseController
 
                 if ($request['images']) {
                     $files = $request['images'];
+
                     foreach ($files as $file) {
                         $fileData = ImageResize::createFromString(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $file['path'])));
                         $fileData->resize(500, 500);
                         $name = rand(11111111, 99999999) . $file['name'];
                         $path = public_path() . '/images/products/';
-                        $success = file_put_contents($path . $name, $fileData);
+
+                        file_put_contents($path . $name, $fileData);
+
                         $images[] = $name;
                     }
+
                     $filename = implode(",", $images);
-                } else {
+                } else
                     $filename = 'no-image.png';
-                }
 
                 $Product->image = $filename;
                 $Product->save();
 
-                if ($request->get('category_id')) {
-                    $Product->categories()->sync($request['category_id']);
+                foreach ($request["tax_id"] as $key => $taxId) {
+                    DB::table("product_tax")->insert(
+                        [
+                            "productId" => $Product->id,
+                            "taxConfigurationId" => $taxId,
+                            "created_at" => date("Y-m-d H:i:s.v"),
+                            "updated_at" => date("Y-m-d H:i:s.v")
+                        ]
+                    );
                 }
+
+                if ($request->get('category_id'))
+                    $Product->categories()->sync($request['category_id']);
 
                 // Store Variants Product
                 if ($request['is_variant'] == 'true') {
@@ -725,60 +738,84 @@ class ProductsController extends BaseController
     public function Products_by_Warehouse(request $request, $id)
     {
         $data = [];
-        $product_warehouse_data = ProductWarehouse::with('warehouse', 'product', 'productVariant')
-            ->where('warehouse_id', '=', $id)
-            ->where('deleted_at', '=', null)
-            ->where(function ($query) use ($request) {
-                    if ($request->stock == '1')
-                        return $query->where('qte', '>', 0);
-                }
-            )->get();
+        $product_warehouse_data = json_decode(
+            json_encode(
+                DB::table("product_warehouse")
+                ->where('warehouse_id', '=', $id)
+                ->where('deleted_at', '=', null)
+                ->where(function ($query) use ($request)
+                    {
+                        if ($request->stock == '1')
+                            return $query->where('qte', '>', 0);
+                    }
+                )->get()
+            ),
+            true
+        );
 
-        foreach ($product_warehouse_data as $product_warehouse) {
-            if ($product_warehouse["product_variant_id"]) {
-                $item['product_variant_id'] = $product_warehouse["product_variant_id"];
-                $item['code'] = $product_warehouse['productVariant']["name"] . '-' . $product_warehouse['product']["code"];
-                $item['Variant'] = $product_warehouse['productVariant']["name"];
+        foreach ($product_warehouse_data as $pWRecord) {
+            $p = json_decode(json_encode(DB::table("products")->where("id", $pWRecord["product_id"])->where("deleted_at", '=', null)->get()), true);
+            $pV = json_decode(json_encode(DB::table("product_variants")->where("id", $pWRecord["product_variant_id"])->where("deleted_at", '=', null)->get()), true);
+
+            $item['id'] = (isset($p)) ? ((count($p) > 0) ? $p[0]["id"] : null) : null;
+            $item['name'] = (isset($p)) ? ((count($p) > 0) ? $p[0]["name"] : null) : null;
+
+            if (isset($pV)) {
+                if (count($pV) > 0) {
+                    $item['product_variant_id'] = $pV["id"];
+                    $item['code'] = $pV["name"] . (isset($p)) ? ((count($p) > 0) ? " - " . $p[0]["code"] : null) : null;
+                    $item['Variant'] = $pV["name"];
+                } else {
+                    $item['product_variant_id'] = null;
+                    $item['code'] = (isset($p)) ? ((count($p) > 0) ? $p[0]["code"] : null) : null;
+                    $item['Variant'] = null;
+                }
             } else {
                 $item['product_variant_id'] = null;
+                $item['code'] = (isset($p)) ? ((count($p) > 0) ? $p[0]["code"] : null) : null;
                 $item['Variant'] = null;
-                $item['code'] = $product_warehouse['product']["code"];
             }
 
-            $item['id'] = $product_warehouse["product_id"];
-            $item['name'] = $product_warehouse['product']["name"];
-            $firstimage = explode(',', $product_warehouse['product']["image"]);
-            $item['image'] = $firstimage[0];
-            $item['imageList'] = [];
+            $images = (isset($p)) ? ((count($p) > 0) ? ((!empty($p[0]["image"])) ? ((explode(',', $p[0]["image"]) !== false) ? explode(',', $p[0]["image"]) : null) : null) : null) : null;
 
-            if ($product_warehouse['product']["image"] != '') {
-                foreach (explode(',', $product_warehouse['product']["image"]) as $img) {
+            if (isset($images)) {
+                $item['image'] = $images[0];
+                $item['imageList'] = [];
+
+                foreach ($images as $img) {
                     $item['imageList'][] = $img;
                 }
             }
 
-            // $prod_id = $product_warehouse['product']['id'];
-            $prod_price = (float)$product_warehouse['product']['price'];
-            // $prod_warehouse_id = $product_warehouse['warehouse_id'];
+            $productPrice = (isset($p)) ? ((count($p) > 0) ? (double)$p[0]["price"] : null) : null;
 
-            // $discount = (isset($prod_id) && isset($prod_price)) ? PosController::checkTimeAndGetDiscountPricePerProduct(date("Y-m-d"), date("H:i:s"), $prod_id, $prod_price, $prod_warehouse_id) : 0.00;
+            $pUS = (isset($p)) ? ((count($p) > 0) ? json_decode(json_encode(DB::table("units")->where("id", '=', $p[0]["unit_sale_id"])->where("deleted_at", '=', null)->get()), true) : null) : null;
+            $pUP = (isset($p)) ? ((count($p) > 0) ? json_decode(json_encode(DB::table("units")->where("id", '=', $p[0]["unit_purchase_id"])->where("deleted_at", '=', null)->get()), true) : null) : null;
 
-            if ($product_warehouse['product']['unitSale']["operator"] == '/') {
-                $item['qte_sale'] = $product_warehouse["qte"] * $product_warehouse['product']['unitSale']["operator_value"];
-                $price = ($prod_price / (float)$product_warehouse['product']['unitSale']["operator_value"]) /* - $discount */;
-            } else {
-                $item['qte_sale'] = $product_warehouse["qte"] / $product_warehouse['product']['unitSale']["operator_value"];
-                $price = ($prod_price * (float)$product_warehouse['product']['unitSale']["operator_value"]) /* - $discount */;
+            if (isset($pUS)) {
+                if (count($pUS) > 0) {
+                    if ($pUS[0]["operator"] === '/') {
+                        $item['qte_sale'] = $pWRecord["qte"] * $pUS[0]["operator_value"];
+                        $price = ($productPrice / (float)$pUS[0]["operator_value"]);
+                    } else {
+                        $item['qte_sale'] = $pWRecord["qte"] / $pUS[0]["operator_value"];
+                        $price = ($productPrice * (float)$pUS[0]["operator_value"]);
+                    }
+                }
             }
 
-            if ($product_warehouse['product']['unitPurchase']["operator"] == '/') {
-                $item['qte_purchase'] = round($product_warehouse["qte"] * $product_warehouse['product']['unitPurchase']["operator_value"], 5);
-            } else {
-                $item['qte_purchase'] = round($product_warehouse["qte"] / $product_warehouse['product']['unitPurchase']["operator_value"], 5);
+            if (isset($pUP)) {
+                if (count($pUP)) {
+                    if ($pUP[0]["operator"] === '/')
+                        $item['qte_purchase'] = round($pWRecord["qte"] * $pUP[0]["operator_value"], 5);
+                    else
+                        $item['qte_purchase'] = round($pWRecord["qte"] / $pUP[0]["operator_value"], 5);
+                }
             }
-            $item['qte'] = $product_warehouse["qte"];
-            $item['unitSale'] = $product_warehouse['product']['unitSale']["ShortName"];
-            $item['unitPurchase'] = $product_warehouse['product']['unitPurchase']["ShortName"];
+
+            $item['qte'] = $pWRecord["qte"];
+            $item['unitSale'] = (isset($pUS)) ? ((count($pUS) > 0) ? $pUS[0]["ShortName"] : null) : null;
+            $item['unitPurchase'] = (isset($pUP)) ? ((count($pUP) > 0) ? $pUP[0]["ShortName"] : null) : null;
 
             $item["product_qte_per_warehouse"] = [];
             $p_qte_per_w = 0;
@@ -786,7 +823,7 @@ class ProductsController extends BaseController
             $warehouses = json_decode(json_encode(DB::table("warehouses")->where("deleted_at", '=', null)->get()), true);
 
             foreach ($warehouses as $iKey => $warehouse) {
-                $product_qte_per_warehouse = json_decode(json_encode(DB::table("product_warehouse")->where('deleted_at', '=', null)->where("product_id", '=', $product_warehouse["product_id"])->where("warehouse_id", '=', $warehouse["id"])->first()), true);
+                $product_qte_per_warehouse = json_decode(json_encode(DB::table("product_warehouse")->where('deleted_at', '=', null)->where("product_id", '=', $pWRecord["product_id"])->where("warehouse_id", '=', $warehouse["id"])->first()), true);
                 $p_qte_per_w = (isset($product_qte_per_warehouse["qte"]) && !empty($product_qte_per_warehouse["qte"])) ? $product_qte_per_warehouse["qte"] : 0;
 
                 array_push(
@@ -798,18 +835,24 @@ class ProductsController extends BaseController
                 );
             }
 
-            if ($product_warehouse['product']["TaxNet"] !== 0.0) {
-                //Exclusive
-                if ($product_warehouse['product']["tax_method"] == '1') {
-                    $tax_price = $price * $product_warehouse['product']["TaxNet"] / 100;
-                    $item['Net_price'] = ($price + $tax_price);
-                    // Inxclusive
-                } else
-                    $item['Net_price'] = $price;
-            } else
-                $item['Net_price'] = $price;
+            if (isset($p) && isset($price)) {
+                if (count($p) > 0) {
+                    if ($p[0]["TaxNet"] !== 0.00) {
+                        if ($p[0]["tax_method"] === '1') {
+                            //Exclusive
+                            $tax_price = $price * $p[0]["TaxNet"] / 100;
+                            $item['Net_price'] = ($price + $tax_price);
+                        } else {
+                            // Inclusive
+                            $item['Net_price'] = $price;
+                        }
+                    } else
+                        $item['Net_price'] = $price;
+                }
+            }
 
-            $data[] = $item;
+            if (isset($item["id"]) && isset($item["name"]) && isset($item["code"]) && isset($item["qte_sale"]) && isset($item["qte_purchase"]) && isset($item["unitSale"]) && isset($item["unitPurchase"]) && isset($item["product_qte_per_warehouse"]) && isset($item["Net_price"]))
+                $data[] = $item;
         }
 
         return response()->json($data);
@@ -932,8 +975,8 @@ class ProductsController extends BaseController
                     $item['Unit_price'] = $price;
 
                     if ($dataOfProduct["TaxNet"] !== 0.0) {
-                        //Exclusive
                         if ($dataOfProduct['tax_method'] == '1') {
+                            //Exclusive
                             $tax_price = $price * $dataOfProduct['TaxNet'] / 100;
                             $tax_cost = $cost * $dataOfProduct['TaxNet'] / 100;
 
@@ -943,9 +986,8 @@ class ProductsController extends BaseController
                             $item['Net_price'] = $price;
                             $item['tax_price'] = $tax_price;
                             $item['tax_cost'] = $tax_cost;
-
-                            // Inclusive
                         } else {
+                            // Inclusive
                             $item['Total_cost'] = $cost;
                             $item['Total_price'] = $price;
                             $item['Net_cost'] = $cost / (($dataOfProduct['TaxNet'] / 100) + 1);
@@ -1044,10 +1086,13 @@ class ProductsController extends BaseController
         $categories = Category::where('deleted_at', null)->get(['id', 'name']);
         $brands = Brand::where('deleted_at', null)->get(['id', 'name']);
         $units = Unit::where('deleted_at', null)->where('base_unit', null)->get();
+        $taxes = DB::table("taxes_configurations")->where("deleted_at", '=', null)->get(["id", "name"]);
+
         return response()->json([
+            'taxes' => $taxes,
             'categories' => $categories,
             'brands' => $brands,
-            'units' => $units,
+            'units' => $units
         ]);
     }
 

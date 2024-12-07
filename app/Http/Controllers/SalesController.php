@@ -52,18 +52,18 @@ class SalesController extends BaseController
                 0 => 'null',
                 1 => '<>',
                 2 => '=',
-                3 => 'like',
+                3 => '=',
                 4 => '=',
-                5 => '=',
+                5 => 'like',
             );
         } else {
             $param = array(
                 0 => 'like',
                 1 => 'like',
                 2 => '=',
-                3 => 'like',
+                3 => '=',
                 4 => '=',
-                5 => '=',
+                5 => 'like',
             );
         }
         $columns = array(
@@ -118,6 +118,7 @@ class SalesController extends BaseController
             $item['date'] = $Sale['date'];
             $item['Ref'] = $Sale['Ref'];
             $item['statut'] = $Sale['statut'];
+            $item['payment_statut'] = $Sale['payment_statut'];
             $item['discount'] = $Sale['discount'];
             $item['shipping'] = $Sale['shipping'];
             $item['warehouse_name'] = $Sale['warehouse']['name'];
@@ -210,7 +211,7 @@ class SalesController extends BaseController
             $order->payment_statut = 'unpaid';
             $order->notes = $request->notes;
             $order->refCreditCard = $request->refCreditCard;
-            $order->refTrasnsferedBank = $request->refTrasnsferedBank;
+            $order->refBankTransfer = $request->refBankTransfer;
             $order->type_invoice = $request->type_invoice;
             $order->Ref = $request->type_invoice == 'CF' ? $user['currentCF'] + 1 : $user['currentCCF'] + 1;
             $order->refInvoice = $request->type_invoice == 'CF' ? $user['currentCF'] + 1 : $user['currentCCF'] + 1;
@@ -655,7 +656,7 @@ class SalesController extends BaseController
             'GrandTotal' => $request['GrandTotal'],
             'payment_statut' => $payment_statut,
             'paid_amount' => $request['GrandTotal'],
-            'refTrasnsferedBank' => $request['RefTransfer'],
+            'refBankTransfer' => $request['RefTransfer'],
             'refCreditCard' => $request['RefCreditCard'],
             'type_invoice' => $request['type_invoice'],
             'Ref' => $request['type_invoice'] == 'CF' ? $user['currentCF'] + 1 : $user['currentCCF'] + 1,
@@ -817,7 +818,7 @@ class SalesController extends BaseController
         $sale_details['GrandTotal'] = $sale_data->GrandTotal;
         $sale_details['paid_amount'] = $sale_data->paid_amount;
         $sale_details['due'] = $sale_data->GrandTotal - $sale_data->paid_amount;
-        $sale_details['payment_status'] = $sale_data->payment_statut;
+        $sale_details['payment_statut'] = $sale_data->payment_statut;
         $sale_details['created_at'] = date_format($sale_data['created_at'], 'Y-m-d H:i a');
         foreach ($sale_data['details'] as $detail) {
             if ($detail->product_variant_id) {
@@ -1013,7 +1014,7 @@ class SalesController extends BaseController
         $sale['Ref'] = $sale_data->Ref;
         $sale['date'] = $sale_data->date;
         $sale['GrandTotal'] = number_format($sale_data->GrandTotal, 2, '.', '');
-        $sale['payment_status'] = $sale_data->payment_statut;
+        $sale['payment_statut'] = $sale_data->payment_statut;
         $detail_id = 0;
 
         foreach ($sale_data['details'] as $detail) {
@@ -1453,10 +1454,10 @@ class SalesController extends BaseController
         $order->discount = $sale['discount'];
         $order->shipping = $sale['shipping'];
         $order->statut = $sale['statut'];
-        $order->payment_statut = $sale['payment_status'];
+        $order->payment_statut = $sale['payment_statut'];
         $order->notes = $sale['notes'];
         $order->refCreditCard = $sale['refCreditCard'];
-        $order->refTrasnsferedBank = $sale['refTrasnsferedBank'];
+        $order->refBankTransfer = $sale['refBankTransfer'];
         $order->type_invoice = $sale['type_invoice'];
         $order->Ref = $sale['type_invoice'] == 'CF' ? $user['currentCF'] + 1 : $user['currentCCF'] + 1;
         $order->refInvoice = $sale['type_invoice'] == 'CF' ? $user['currentCF'] + 1 : $user['currentCCF'] + 1;
@@ -1644,7 +1645,7 @@ class SalesController extends BaseController
         $sale_details['GrandTotal'] = $sale_data->GrandTotal - $totalDevolucion;
         $sale_details['paid_amount'] = $sale_data->paid_amount - $totalDevolucionPaidAmount;
         $sale_details['due'] = $sale_details['GrandTotal'] - $sale_details['paid_amount'];
-        $sale_details['payment_status'] = $sale_data->payment_statut;
+        $sale_details['payment_statut'] = $sale_data->payment_statut;
 
         $sale_details['created_at'] = date_format($sale_data['created_at'], 'Y-m-d H:i a');
         foreach ($sale_data['details'] as $detail) {
@@ -1770,12 +1771,12 @@ class SalesController extends BaseController
         $sale_details['TaxNet'] = $TaxNet;
         $sale_details['refCreditCard'] = $sale_data->refCreditCard;
         $sale_details['type_invoice'] = $sale_data->type_invoice;
-        $sale_details['refTrasnsferedBank'] = $sale_data->refTrasnsferedBank;
+        $sale_details['refBankTransfer'] = $sale_data->refBankTransfer;
         $sale_details['client_id'] = $sale_data->client_id;
         $sale_details['GrandTotal'] = $sale_data->GrandTotal - $totalDevolucion;
         $sale_details['paid_amount'] = $sale_data->paid_amount - $totalDevolucionPaidAmount;
         $sale_details['due'] = $sale_details['GrandTotal'] - $sale_details['paid_amount'];
-        $sale_details['payment_status'] = $sale_data->payment_statut;
+        $sale_details['payment_statut'] = $sale_data->payment_statut;
         foreach ($sale_data['details'] as $detail) {
             $data['product_id'] = $detail->product_id;
             if ($detail->product_variant_id) {

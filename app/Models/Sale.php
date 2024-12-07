@@ -17,9 +17,38 @@ class Sale extends Model implements Auditable
     protected $dates = ['deleted_at'];
 
     protected $fillable = [
-        'date', 'Ref', 'is_pos', 'client_id', 'GrandTotal','subTotal', 'qte_retturn', 'TaxNet', 'tax_rate', 'TaxWithheld', 'notes',
-        'total_retturn', 'warehouse_id', 'user_id', 'statut', 'discount', 'shipping',
-        'paid_amount','cash','change', 'payment_statut', 'type_invoice', 'refInvoice', 'refTrasnsferedBank', 'refCreditCard', 'created_at', 'updated_at', 'deleted_at',
+        'date',
+        'Ref',
+        'is_pos',
+        'client_id',
+        'GrandTotal',
+        'subTotal',
+        'qte_retturn',
+        'TaxNet',
+        'tax_rate',
+        'TaxWithheld',
+        'notes',
+        'total_retturn',
+        'warehouse_id',
+        'user_id',
+        'statut',
+        'discount',
+        'shipping',
+        'paid_amount',
+        'cash',
+        'change',
+        'payment_statut',
+        'type_invoice',
+        'refInvoice',
+        'refCreditCard',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'refBankTransfer',
+        'signedDTE',
+        'controlNumber',
+        'generationCode',
+        'receptionSeal'
     ];
 
     protected $casts = [
@@ -64,5 +93,4 @@ class Sale extends Model implements Auditable
     {
         return $this->belongsTo('App\Models\Warehouse');
     }
-
 }

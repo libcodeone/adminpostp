@@ -39,7 +39,7 @@ class Sale_Return implements FromArray, WithHeadings, ShouldAutoSize, WithEvents
                 $item['GrandTotal'] = number_format($sale_return->GrandTotal, 2);
                 $item['Paid'] = number_format($sale_return->paid_amount, 2);
                 $item['due'] = number_format($sale_return->GrandTotal - $sale_return->paid_amount, 2);
-                $item['payment_status'] = $sale_return->payment_statut;
+                $item['payment_statut'] = $sale_return->payment_statut;
 
                 $data[] = $item;
             }

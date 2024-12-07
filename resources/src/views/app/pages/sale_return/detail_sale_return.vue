@@ -71,11 +71,11 @@
               <div>
                 {{$t('PaymentStatus')}} :
                 <span
-                  v-if="sale_return.payment_status == 'paid'"
+                  v-if="sale_return.payment_statut == 'paid'"
                   class="badge badge-outline-success"
                 >{{$t('Paid')}}</span>
                 <span
-                  v-else-if="sale_return.payment_status == 'partial'"
+                  v-else-if="sale_return.payment_statut == 'partial'"
                   class="badge badge-outline-primary"
                 >{{$t('partial')}}</span>
                 <span v-else class="badge badge-outline-warning">{{$t('Unpaid')}}</span>
@@ -255,7 +255,7 @@ export default {
     },
 
       //---------SMS notification
-     
+
      Return_SMS() {
       // Start the progress bar.
       NProgress.start();

@@ -104,6 +104,7 @@
                                         ref="autocomplete"
                                     />
                                 </b-col>
+
                                 <!-- Products -->
                                 <b-col md="12">
                                     <div class="table-responsive">
@@ -327,6 +328,7 @@ export default {
                 product_variant_id: "",
                 unit: ""
             },
+            selectedProduct: "",
             symbol: ""
         };
     },
@@ -362,10 +364,8 @@ export default {
         //---------------- Submit Search Product-----------------\\
         Submit_Search_Product(result) {
             this.product = {};
-            if (
-                this.details.length > 0 &&
-                this.details.some(detail => detail.code === result.code)
-            ) {
+
+            if (this.details.length > 0 && this.details.some(detail => detail.code === result.code)) {
                 this.makeToast(
                     "warning",
                     this.$t("AlreadyAdd"),
@@ -374,14 +374,16 @@ export default {
             } else {
                 this.product.code = result.code;
                 this.product.current = result.qte;
-                if (result.qte < 1) {
+
+                if (result.qte < 1)
                     this.product.quantity = result.qte;
-                } else {
+                else
                     this.product.quantity = 1;
-                }
+
                 this.product.product_variant_id = result.product_variant_id;
                 this.Get_Product_Details(result.id);
             }
+            
             this.$refs.autocomplete.value = "";
         },
 

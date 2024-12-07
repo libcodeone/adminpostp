@@ -36,7 +36,7 @@
               <div>{{sale.client_NIT}}</div>
               <div>{{sale.client_NRC}}</div>
               <div>{{sale.client_giro}}</div>
-              
+
             </b-col>
             <b-col lg="4" md="4" sm="12" class="mb-4">
               <h5 class="font-weight-bold">{{$t('Company_Info')}}</h5>
@@ -51,11 +51,11 @@
               <div>
                 {{$t('PaymentStatus')}} :
                 <span
-                  v-if="sale.payment_status == 'paid'"
+                  v-if="sale.payment_statut == 'paid'"
                   class="badge badge-outline-success"
                 >{{$t('Paid')}}</span>
                 <span
-                  v-else-if="sale.payment_status == 'partial'"
+                  v-else-if="sale.payment_statut == 'partial'"
                   class="badge badge-outline-primary"
                 >{{$t('partial')}}</span>
                 <span v-else class="badge badge-outline-warning">{{$t('Unpaid')}}</span>
@@ -302,7 +302,7 @@ export default {
         });
     },
 
-    
+
   }, //end Methods
 
   //----------------------------- Created function-------------------

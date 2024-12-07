@@ -457,7 +457,7 @@
             {{ $t("print") }}
           </button>
         </b-modal>
-       
+
       </b-row>
       <div class="invoice" id="print_Invoice">
         <div class="invoice-print">
@@ -491,12 +491,12 @@
               <div>
                 {{ $t("PaymentStatus") }} :
                 <span
-                  v-if="sale.payment_status == 'paid'"
+                  v-if="sale.payment_statut == 'paid'"
                   class="badge badge-outline-success"
                   >{{ $t("Paid") }}</span
                 >
                 <span
-                  v-else-if="sale.payment_status == 'partial'"
+                  v-else-if="sale.payment_statut == 'partial'"
                   class="badge badge-outline-primary"
                   >{{ $t("partial") }}</span
                 >
@@ -709,7 +709,7 @@ export default {
 
   methods: {
     ...mapGetters(["currentUser"]),
-    
+
     keyup_Cash() {
       if (isNaN(this.payment.cash)) {
         this.payment.cash = 0;

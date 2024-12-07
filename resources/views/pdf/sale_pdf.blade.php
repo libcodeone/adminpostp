@@ -15,7 +15,7 @@
             <div><strong> Date: </strong>{{$sale['date']}}</div>
             <div><strong> Number: </strong> {{$sale['Ref']}}</div>
             <div><strong> Status: </strong> {{$sale['statut']}}</div>
-            <div><strong> Payment Status: </strong> {{$sale['payment_status']}}</div>
+            <div><strong> Payment Status: </strong> {{$sale['payment_statut']}}</div>
          </div>
          <div id="Title-heading">
             Sale  {{$sale['Ref']}}

@@ -118,7 +118,7 @@ class SalesReturnController extends BaseController
             $item['GrandTotal'] = number_format($Sale_Return['GrandTotal'], 2, '.', '');
             $item['paid_amount'] = number_format($Sale_Return['paid_amount'], 2, '.', '');
             $item['due'] = number_format($Sale_Return['GrandTotal'] - $Sale_Return['paid_amount'], 2, '.', '');
-            $item['payment_status'] = $Sale_Return['payment_statut'];
+            $item['payment_statut'] = $Sale_Return['payment_statut'];
 
             $data[] = $item;
         }
@@ -557,7 +557,7 @@ class SalesReturnController extends BaseController
         $return_details['client_adr'] = $Sale_Return['client']->adresse;
         $return_details['client_email'] = $Sale_Return['client']->email;
         $return_details['warehouse'] = $Sale_Return['warehouse']->name;
-        
+
         $return_details['client_NIT'] = "NIT :".$Sale_Return['client']->NIT;
         $return_details['client_NRC'] = "NRC :".$Sale_Return['client']->NRC;
         $return_details['client_giro'] = "GIRO :".$Sale_Return['client']->giro;
@@ -565,7 +565,7 @@ class SalesReturnController extends BaseController
         $return_details['GrandTotal'] = $Sale_Return->GrandTotal;
         $return_details['paid_amount'] = $Sale_Return->paid_amount;
         $return_details['due'] = $Sale_Return->GrandTotal - $Sale_Return->paid_amount;
-        $return_details['payment_status'] = $Sale_Return->payment_statut;
+        $return_details['payment_statut'] = $Sale_Return->payment_statut;
         if($Sale_Return->ref_invoice){
             $return_details['SalesOfInvoice'] = $this->invoiceDetail($Sale_Return->ref_invoice);
         }else{
@@ -664,7 +664,7 @@ class SalesReturnController extends BaseController
         $return_details['Ref'] = $Sale_Return->Ref;
         $return_details['date'] = $Sale_Return->date;
         $return_details['GrandTotal'] = number_format($Sale_Return->GrandTotal, 2, '.', '');
-        $return_details['payment_status'] = $Sale_Return->payment_statut;
+        $return_details['payment_statut'] = $Sale_Return->payment_statut;
 
         $detail_id = 0;
         foreach ($Sale_Return['details'] as $detail) {
@@ -877,16 +877,16 @@ class SalesReturnController extends BaseController
          $receiverNumber = $SaleReturn['client']->phone;
          $message = "Dear" .' '.$SaleReturn['client']->name." \n We are contacting you in regard to a Sale Return #".$SaleReturn->Ref.' '.$url.' '. "that has been created on your account. \n We look forward to conducting future business with you.";
          try {
-   
+
              $account_sid = env("TWILIO_SID");
              $auth_token = env("TWILIO_TOKEN");
              $twilio_number = env("TWILIO_FROM");
-   
+
              $client = new Client_Twilio($account_sid, $auth_token);
              $client->messages->create($receiverNumber, [
-                 'from' => $twilio_number, 
+                 'from' => $twilio_number,
                  'body' => $message]);
-     
+
          } catch (Exception $e) {
              return response()->json(['message' => $e->getMessage()], 500);
          }

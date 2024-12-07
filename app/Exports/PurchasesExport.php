@@ -41,7 +41,7 @@ class PurchasesExport implements FromArray, WithHeadings, ShouldAutoSize, WithEv
                 $item['GrandTotal'] = number_format($Purchase->GrandTotal, 2);
                 $item['Paid'] = number_format($Purchase->paid_amount, 2);
                 $item['due'] = number_format($Purchase->GrandTotal - $Purchase->paid_amount, 2);
-                $item['payment_status'] = $Purchase->payment_statut;
+                $item['payment_statut'] = $Purchase->payment_statut;
 
                 $data[] = $item;
             }

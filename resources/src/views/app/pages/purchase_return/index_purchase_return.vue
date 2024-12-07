@@ -138,13 +138,13 @@
             <span v-else class="badge badge-outline-info">{{$t('Pending')}}</span>
           </div>
 
-          <div v-else-if="props.column.field == 'payment_status'">
+          <div v-else-if="props.column.field == 'payment_statut'">
             <span
-              v-if="props.row.payment_status == 'paid'"
+              v-if="props.row.payment_statut == 'paid'"
               class="badge badge-outline-success"
             >{{$t('Paid')}}</span>
             <span
-              v-else-if="props.row.payment_status == 'partial'"
+              v-else-if="props.row.payment_statut == 'partial'"
               class="badge badge-outline-primary"
             >{{$t('partial')}}</span>
             <span v-else class="badge badge-outline-warning">{{$t('Unpaid')}}</span>
@@ -557,7 +557,7 @@ export default {
         },
         {
           label: this.$t("PaymentStatus"),
-          field: "payment_status",
+          field: "payment_statut",
           html: true,
           tdClass: "text-left",
           thClass: "text-left"
@@ -752,7 +752,7 @@ export default {
         { title: "Total", dataKey: "GrandTotal" },
         { title: "Paid", dataKey: "paid_amount" },
         { title: "Due", dataKey: "due" },
-        { title: "Status Payment", dataKey: "payment_status" }
+        { title: "Status Payment", dataKey: "payment_statut" }
       ];
       pdf.autoTable(columns, self.purchase_returns);
       pdf.text("Purchase Returns", 40, 25);
@@ -795,7 +795,7 @@ export default {
 
     //----------------------------------- Add Payment Return Purchase ------------------------------\\
     New_Payment(purchase_return) {
-      if (purchase_return.payment_status == "paid") {
+      if (purchase_return.payment_statut == "paid") {
         this.$swal({
           icon: "error",
           title: "¡Oops...",

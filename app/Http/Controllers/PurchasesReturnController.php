@@ -116,7 +116,7 @@ class PurchasesReturnController extends BaseController
             $item['GrandTotal'] = number_format($Purchase_Return['GrandTotal'], 2, '.', '');
             $item['paid_amount'] = number_format($Purchase_Return['paid_amount'], 2, '.', '');
             $item['due'] = number_format($Purchase_Return['GrandTotal'] - $Purchase_Return['paid_amount'], 2, '.', '');
-            $item['payment_status'] = $Purchase_Return['payment_statut'];
+            $item['payment_statut'] = $Purchase_Return['payment_statut'];
 
             $data[] = $item;
         }
@@ -585,7 +585,7 @@ class PurchasesReturnController extends BaseController
         $return_details['GrandTotal'] = $Purchase_Return->GrandTotal;
         $return_details['paid_amount'] = $Purchase_Return->paid_amount;
         $return_details['due'] = $Purchase_Return->GrandTotal - $Purchase_Return->paid_amount;
-        $return_details['payment_status'] = $Purchase_Return->payment_statut;
+        $return_details['payment_statut'] = $Purchase_Return->payment_statut;
 
         foreach ($Purchase_Return['details'] as $detail) {
             if ($detail->product_variant_id) {
@@ -656,7 +656,7 @@ class PurchasesReturnController extends BaseController
         $return_details['Ref'] = $PurchaseReturn->Ref;
         $return_details['date'] = $PurchaseReturn->date;
         $return_details['GrandTotal'] = number_format($PurchaseReturn->GrandTotal, 2, '.', '');
-        $return_details['payment_status'] = $PurchaseReturn->payment_statut;
+        $return_details['payment_statut'] = $PurchaseReturn->payment_statut;
 
         $detail_id = 0;
         foreach ($PurchaseReturn['details'] as $detail) {
@@ -862,7 +862,7 @@ class PurchasesReturnController extends BaseController
             'warehouses' => $warehouses,
         ]);
 
-    } 
+    }
 
     //------------------ Send SMS ----------------------------------\\
 
@@ -873,16 +873,16 @@ class PurchasesReturnController extends BaseController
         $receiverNumber = $PurchaseReturn['provider']->phone;
         $message = "Dear" .' '.$PurchaseReturn['provider']->name." \n We are contacting you in regard to a purchase Return #".$PurchaseReturn->Ref.' '.$url.' '. "that has been created on your account. \n We look forward to conducting future business with you.";
         try {
-  
+
             $account_sid = env("TWILIO_SID");
             $auth_token = env("TWILIO_TOKEN");
             $twilio_number = env("TWILIO_FROM");
-  
+
             $client = new Client_Twilio($account_sid, $auth_token);
             $client->messages->create($receiverNumber, [
-                'from' => $twilio_number, 
+                'from' => $twilio_number,
                 'body' => $message]);
-    
+
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }

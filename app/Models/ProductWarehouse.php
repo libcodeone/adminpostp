@@ -35,5 +35,4 @@ class ProductWarehouse extends Model implements Auditable
     {
         return $this->belongsTo('App\Models\ProductVariant');
     }
-
 }
